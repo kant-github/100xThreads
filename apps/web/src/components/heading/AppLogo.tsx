@@ -25,7 +25,7 @@ export default function ({className}: props) {
             />
             <div
                 className={`text-xl md:text-3xl tracking-widest text-black dark:text-gray-300 flex items-center font-afacad`}>
-                <span className="text-[#f5a331]">B</span>anter
+                100 <span className="text-red-500">x</span> Threads
             </div>
         </div>
     );

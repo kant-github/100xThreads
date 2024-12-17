@@ -16,40 +16,58 @@ model Users {
   oauth_id             String
   image                String?
   created_at           DateTime               @default(now())
-  ChatGroup            ChatGroup[]
-  GroupUsers           GroupUsers[]
+  isOnline             Boolean                @default(false)
+  lastSeen             DateTime?
+  Organizations        OrganizationUsers[]    // Relation to organizations the user is part of
+  OwnedOrganizations   Organization[]         // Add this to represent ownership of organizations
   Chats                Chats[]
   RecentlyJoinedGroups RecentlyJoinedGroups[]
   LikedMessages        LikedUser[]
-  isOnline             Boolean                @default(false)
-  lastSeen             DateTime?
+
+  @@map("users")
+}
+
+model Organization {
+  id             String                 @id @default(uuid()) @db.Uuid
+  name           String                 @db.VarChar(191)
+  description    String                 @default("")
+  owner          Users                  @relation(fields: [owner_id], references: [id], onDelete: Cascade)
+  owner_id       Int
+  created_at     DateTime               @default(now())
+  ChatGroups     ChatGroup[]            // Groups inside the organization
+  OrganizationUsers OrganizationUsers[] // Users in the organization
+
+  @@map("organizations")
+  @@unique([name, owner_id])
+}
+
+
+model OrganizationUsers {
+  id             Int          @id @default(autoincrement())
+  organization   Organization  @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  organization_id String       @db.Uuid
+  user           Users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id        Int
+  role           String        @default("member") // Role within the organization (e.g., member, admin)
+  joined_at      DateTime      @default(now())
+
+  @@unique([organization_id, user_id])
+  @@map("organization_users")
 }
 
 model ChatGroup {
   id                   String                 @id @default(uuid()) @db.Uuid
-  user                 Users                  @relation(fields: [user_id], references: [id])
-  user_id              Int
+  organization         Organization           @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  organization_id      String                 @db.Uuid
   title                String                 @db.VarChar(191)
   passcode             String                 @db.VarChar(20)
   groupImage           String?
   created_at           DateTime               @default(now())
   Chats                Chats[]
-  GroupUsers           GroupUsers[]
-  RecentlyJoinedGroups RecentlyJoinedGroups[] // Add this line
+  RecentlyJoinedGroups RecentlyJoinedGroups[]
 
-  @@index([user_id, created_at])
+  @@index([organization_id, created_at])
   @@map("chat_groups")
-}
-
-model GroupUsers {
-  id        Int       @id @default(autoincrement())
-  group     ChatGroup @relation(fields: [group_id], references: [id], onDelete: Cascade)
-  group_id  String    @db.Uuid
-  user      Users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id   Int
-  joined_at DateTime  @default(now())
-
-  @@map("group_users")
 }
 
 model Chats {

@@ -13,16 +13,25 @@ import getChats from "../chatController/getChats";
 import { getUserDetails } from "../userController/getUserDetails";
 import { getRecentJoinedChatGroup } from "../chatGroupController/getRecentJoinedChatGroup";
 import { updateUserDetails } from "../userController/updateUserDetails";
+import { getOrganizations } from "../organizationsController/getOrganizations";
+import { storeOrganization } from "../organizationsController/storeOrganization";
 const router = Router();
 
 // user_controller
 router.get("/user/:id", authmiddleware, getUserDetails);
 router.put("/user", authmiddleware, updateUserDetails);
 
+
+
+// organizations controller
+router.get("/organizations", authmiddleware, getOrganizations);
+router.post("/organizations", authmiddleware, storeOrganization);
+
+
 //chat-group-controller
 router.get("/chat-group", authmiddleware, getChatGroups);
 router.post("/chat-group", authmiddleware, storeChatGroup);
-router.get("/chat-group-check/:id",authmiddleware, getChatGroupsById);
+router.get("/chat-group-check/:id", authmiddleware, getChatGroupsById);
 router.put("/chat-group/:id", authmiddleware, updateChatGroupById);
 router.delete("/chat-group/:id", authmiddleware, DeleteChatGroupById);
 router.get("/chat-group-by-search", getChatGroupUserBySearch);
