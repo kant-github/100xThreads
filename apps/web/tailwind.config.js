@@ -5,13 +5,13 @@ module.exports = {
 		"./app/**/*.{js,ts,jsx,tsx,mdx}",
 		"./pages/**/*.{js,ts,jsx,tsx,mdx}",
 		"./components/**/*.{js,ts,jsx,tsx,mdx}",
-		"./styles/**/*.{css}",  // Ensure global styles are included if needed
+		"./styles/**/*.{css}",
 		"./src/**/*.{js,ts,jsx,tsx,mdx}",
 	],
 	theme: {
 		extend: {
 			fontFamily: {
-				afacad: ['Afacad', 'sans-serif'], // Add the font family
+				afacad: ['Afacad', 'sans-serif'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

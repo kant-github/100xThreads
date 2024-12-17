@@ -17,7 +17,6 @@ export default function CreateRoomComponent({ user }: { user: any }) {
     const [createRoomModal, setCreateRoomModal] = useState<boolean>(false);
     const [roomTitle, setRoomTitle] = useState<string>("");
     const [roomPasscode, setRoomPasscode] = useState<string>("");
-    const [loading, setLoading] = useState(false);
     const [groupPhoto, setGroupPhoto] = useState<File | null>(null);
     const [icon, setIcon] = useState<string | null>(null);
 
@@ -44,7 +43,6 @@ export default function CreateRoomComponent({ user }: { user: any }) {
 
 
         try {
-            setLoading(true);
             const { data } = await axios.post(`${CHAT_GROUP}`, finalPayload, {
                 headers: {
                     authorization: `Bearer ${user.token}`,
@@ -65,8 +63,6 @@ export default function CreateRoomComponent({ user }: { user: any }) {
         } catch (err) {
             console.log(err);
             toast.error("Failed to create chat room. Please try again.");
-        } finally {
-            setLoading(false);
         }
     }
 
