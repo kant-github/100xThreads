@@ -15,6 +15,7 @@ import { getRecentJoinedChatGroup } from "../chatGroupController/getRecentJoined
 import { updateUserDetails } from "../userController/updateUserDetails";
 import { getOrganizations } from "../organizationsController/getOrganizations";
 import { storeOrganization } from "../organizationsController/storeOrganization";
+import { deleteOrganizations } from "../organizationsController/deleteOrganizations";
 const router = Router();
 
 // user_controller
@@ -24,8 +25,9 @@ router.put("/user", authmiddleware, updateUserDetails);
 
 
 // organizations controller
-router.get("/organizations", authmiddleware, getOrganizations);
-router.post("/organizations", authmiddleware, storeOrganization);
+router.get("/organizations", getOrganizations);
+router.post("/organizations", storeOrganization);
+router.delete("/organizations/:id", deleteOrganizations);
 
 
 //chat-group-controller

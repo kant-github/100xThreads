@@ -8,7 +8,7 @@ export async function storeOrganization(req: Request, res: Response) {
         })
     }
 
-    const { name, description } = req.body;
+    const { name, description, selectedGroups } = req.body;
 
     if (!name || name.trim() === "") {
         return res.status(400).json({
@@ -32,8 +32,36 @@ export async function storeOrganization(req: Request, res: Response) {
                 }
             }
         });
+
+        if (existingOrg) {
+            return res.status(400).json({
+                message: "An organization with this name already exists"
+            })
+        }
+
+        const newOrganization = await prisma.organization.create({
+            data: {
+                name: name,
+                description: description,
+                owner_id: req.user.id
+            }
+        })
+
+        const createdGroups = await prisma.chatGroup.createMany({
+            data: selectedGroups.map((groupTitle: string) => ({
+                organization_id: newOrganization.id,
+                title: groupTitle
+            }))
+        })
+
+        return res.status(201).json({
+            message: "Organization created carefully",
+            data: newOrganization
+        })
+
     } catch (err) {
-
+        return res.status(500).json({
+            message: "Error in creating organizations",
+        });
     }
-
 }

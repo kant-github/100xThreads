@@ -4,10 +4,9 @@ import { fileUploader } from "../utils/cloudinary/fileUploader"; // Adjust the i
 
 export default async function updateChatGroup(req: Request, res: Response) {
   try {
-    const { id: groupId } = req.params; // Extract group ID from URL parameters
-    const { title, passcode, icon } = req.body; // Extract title, passcode, and icon from the request body
+    const { id: groupId } = req.params;
+    const { title, passcode, icon } = req.body;
 
-    // Ensure the group ID is provided
     if (!groupId) {
       return res.status(400).json({
         message: "Group ID is required",
