@@ -11,17 +11,19 @@ import { createChatSchema } from "@/validations/createChatZod";
 import { clearCache } from "actions/common";
 import { CHAT_GROUP } from "@/lib/apiAuthRoutes";
 import { CgMathPlus } from "react-icons/cg";
+import { CustomSession } from "app/api/auth/[...nextauth]/options";
 
 
-export default function CreateRoomComponent({ user }: { user: any }) {
+export default function CreateRoomComponent({ session }: { session: CustomSession | null }) {
     const [createRoomModal, setCreateRoomModal] = useState<boolean>(false);
-    const [roomTitle, setRoomTitle] = useState<string>("");
+    const [organizationName, setOrganizationName] = useState<string>("");
     const [roomPasscode, setRoomPasscode] = useState<string>("");
     const [groupPhoto, setGroupPhoto] = useState<File | null>(null);
     const [icon, setIcon] = useState<string | null>(null);
+    const [name, setName] = useState<string | null>(session?.user?.name!);
 
     async function createChatHandler() {
-        const payload = { title: roomTitle, passcode: roomPasscode };
+        const payload = { title: organizationName, passcode: roomPasscode };
         const result = createChatSchema.safeParse(payload);
 
         if (!result.success) {
@@ -45,7 +47,7 @@ export default function CreateRoomComponent({ user }: { user: any }) {
         try {
             const { data } = await axios.post(`${CHAT_GROUP}`, finalPayload, {
                 headers: {
-                    authorization: `Bearer ${user.token}`,
+                    authorization: `Bearer ${session?.user?.token}`,
                     'Content-Type': 'multipart/form-data',
                 },
             });
@@ -55,7 +57,7 @@ export default function CreateRoomComponent({ user }: { user: any }) {
                 description: formattedDate
             });
 
-            setRoomTitle("");
+            setOrganizationName("");
             setRoomPasscode("");
             setIcon("");
             clearCache("dashboard");
@@ -96,8 +98,10 @@ export default function CreateRoomComponent({ user }: { user: any }) {
             </div>
             <CreateRoom
                 createChatHandler={createChatHandler}
-                roomTitle={roomTitle}
-                setRoomTitle={setRoomTitle}
+                name={name}
+                setName={setName}
+                organizationName={organizationName}
+                setOrganizationName={setOrganizationName}
                 roomPasscode={roomPasscode}
                 setRoomPasscode={setRoomPasscode}
                 open={createRoomModal}

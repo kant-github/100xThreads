@@ -24,7 +24,7 @@ export default function ({ label, input, setInput, type, value, placeholder }: T
             </label>
             <div className="relative">
                 <input
-                    value={value}
+                    value={input}
                     onChange={handleChange}
                     placeholder={placeholder}
                     id="input"
