@@ -1,0 +1,38 @@
+import prisma from "@repo/db/client";
+import { Request, Response } from "express";
+
+export default async function getOrganizationBySearch(req: Request, res: Response) {
+    try {
+        const name = req.params.name;
+        const user = req.user;
+
+        const existingOrg = await prisma.organization.findFirst({
+            where: {
+                name: {
+                    equals: name,
+                    mode: "insensitive",
+                },
+                owner_id: user?.id,
+            },
+        });
+
+
+        if (existingOrg) {
+            return res.status(400).json({
+                message: "An organization with this name already exists.",
+                exists: true,
+            });
+        }
+
+
+        return res.status(200).json({
+            message: "No organization found with this name.",
+            exists: false,
+        });
+    } catch (err) {
+        return res.status(500).json({
+            message: "Error in searching for the organization.",
+            exists: false,
+        });
+    }
+}

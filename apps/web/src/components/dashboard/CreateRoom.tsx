@@ -7,6 +7,8 @@ import Spinner from "../loaders/Spinner";
 import RemoveIconCrossButton from "../ui/RemoveIconCrossButton";
 import SelectBox from "../utility/SelectBox";
 import CheckBox from "../utility/CheckBox";
+import { IoCheckmarkCircle } from "react-icons/io5";
+
 
 
 
@@ -44,7 +46,7 @@ export default function CreateRoom({
     const dynamicLastName = name?.split(" ")[1];
     const [firstName, setFirstName] = useState<string>(dynamicFirstName!);
     const [lastName, setLastName] = useState<string>(dynamicLastName!);
-    const [ organizationType, setOrganizationType] = useState<string | null>(null);
+    const [organizationType, setOrganizationType] = useState<string | null>(null);
     const [selectedGroups, setSelectedGroups] = useState({
         generalChat: true,
         adminPage: true,
@@ -74,7 +76,7 @@ export default function CreateRoom({
             {open && (
                 <div className="fixed w-screen h-screen inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <form
-                        className="bg-white dark:bg-[#262629] dark:text-gray-200 p-6 rounded-[6px] shadow-lg w-5/12 relative flex flex-col gap-y-2"
+                        className="bg-white dark:bg-[#262629] dark:text-gray-200 p-6 rounded-[6px] shadow-lg w-5/12 relative flex flex-col gap-y-3"
                         onSubmit={(e) => {
                             e.preventDefault();
                             handleSubmit();
@@ -97,18 +99,22 @@ export default function CreateRoom({
                             }
                             <RemoveIconCrossButton icon={icon} setIcon={setIcon} />
                         </div>
-                        <InputBox type="password" input={organizationName} setInput={setOrganizationName} label="Organization's name" />
+                        <div className="relative">
+                            <IoCheckmarkCircle className="absolute text-sm right-1 -top-1 text-green-500" />
+
+                            <InputBox input={organizationName} setInput={setOrganizationName} label="Organization's name" />
+                        </div>
                         <SelectBox selectedType={organizationType!} onTypeChange={setOrganizationType} />
                         <div className="flex flex-col gap-y-2 mt-2">
                             <p className="text-zinc-300 text-[11px] font-thin italic">
                                 Choose the default chat groups that best suit your organization's communication needs.
                                 You can always add more later, but these will get the conversation started!
                             </p>
-                            <CheckBox onChange={handleCheckBoxChange} label="General chat / Water cooler" name="kela" checked={selectedGroups.generalChat} />
-                            <CheckBox onChange={handleCheckBoxChange} label="Admin Page" name="kela" checked={selectedGroups.adminPage} />
-                            <CheckBox onChange={handleCheckBoxChange} label="Projects specific channel" name="kela" checked={selectedGroups.projectsChannel} />
-                            <CheckBox onChange={handleCheckBoxChange} label="Events" name="kela" checked={selectedGroups.events} />
-                            <CheckBox onChange={handleCheckBoxChange} label="Announcements" name="kela" checked={selectedGroups.announcements} />
+                            <CheckBox onChange={handleCheckBoxChange} label="General chat / Water cooler" name="generalChat" checked={selectedGroups.generalChat} />
+                            <CheckBox onChange={handleCheckBoxChange} label="Admin Page" name="adminPage" checked={selectedGroups.adminPage} />
+                            <CheckBox onChange={handleCheckBoxChange} label="Projects specific channel" name="projectsChannel" checked={selectedGroups.projectsChannel} />
+                            <CheckBox onChange={handleCheckBoxChange} label="Events" name="events" checked={selectedGroups.events} />
+                            <CheckBox onChange={handleCheckBoxChange} label="Announcements" name="announcements" checked={selectedGroups.announcements} />
                         </div>
 
                         <div className="flex justify-end mt-6">

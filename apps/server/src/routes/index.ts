@@ -16,11 +16,13 @@ import { updateUserDetails } from "../userController/updateUserDetails";
 import { getOrganizations } from "../organizationsController/getOrganizations";
 import { storeOrganization } from "../organizationsController/storeOrganization";
 import { deleteOrganizations } from "../organizationsController/deleteOrganizations";
+import getOrganizationBySearch from "../organizationsController/getOrganizationBysearch";
 const router = Router();
 
 // user_controller
 router.get("/user/:id", authmiddleware, getUserDetails);
 router.put("/user", authmiddleware, updateUserDetails);
+router.get("/organization-by-search", authmiddleware, getOrganizationBySearch);
 
 
 

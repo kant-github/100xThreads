@@ -91,7 +91,7 @@ export default function CreateRoomComponent({ session }: { session: CustomSessio
                     <div className="w-3/5 flex flex-row justify-center mt-8 mb-3 group">
                         <BigWhiteBtn onClick={openModal}>
                             <CgMathPlus className="group-hover:rotate-90 group-hover:-translate-x-3 transition-transform duration-300 ease-in-out" size={16} />
-                            Create Room
+                            Create Organization
                         </BigWhiteBtn>
                     </div>
                 </div>
