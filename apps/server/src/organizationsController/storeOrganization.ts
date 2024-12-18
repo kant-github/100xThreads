@@ -7,8 +7,13 @@ export async function storeOrganization(req: Request, res: Response) {
             message: "You are not authorized"
         })
     }
+    console.log("hello");
+    console.log(req.body);
 
-    const { name, description, selectedGroups } = req.body;
+    const { name, description, selectedGroups, type } = req.body;
+
+    const parsedSelectedGroups = JSON.parse(selectedGroups);
+
 
     if (!name || name.trim() === "") {
         return res.status(400).json({
@@ -32,6 +37,7 @@ export async function storeOrganization(req: Request, res: Response) {
                 }
             }
         });
+        console.log("existing org is : ", existingOrg);
 
         if (existingOrg) {
             return res.status(400).json({
@@ -42,13 +48,16 @@ export async function storeOrganization(req: Request, res: Response) {
         const newOrganization = await prisma.organization.create({
             data: {
                 name: name,
-                description: description,
-                owner_id: req.user.id
+                description: "",
+                owner_id: req.user.id,
+                organization_type: type.toUpperCase()
             }
         })
 
+        console.log("parsed selected group is : ", parsedSelectedGroups);
+
         const createdGroups = await prisma.chatGroup.createMany({
-            data: selectedGroups.map((groupTitle: string) => ({
+            data: parsedSelectedGroups.map((groupTitle: string) => ({
                 organization_id: newOrganization.id,
                 title: groupTitle
             }))

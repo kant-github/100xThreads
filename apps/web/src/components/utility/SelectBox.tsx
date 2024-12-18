@@ -16,6 +16,7 @@ export default function SelectBox({
     "Government",
     "Corporate",
     "Community",
+    "Other"
   ];
 
   return (

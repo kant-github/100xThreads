@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect, SetStateAction, Dispatch } from "react";
 import { GiAbstract006, GiAbstract018, GiAbstract042, GiAbstract045, GiAmericanFootballHelmet, GiBarbute, GiBiceps, GiBoar, GiBookmarklet, GiBuffaloHead, GiCyberEye, GiDinosaurRex, GiDread, GiEagleHead } from "react-icons/gi";
+import { GoOrganization } from "react-icons/go";
 import { MdAddAPhoto, MdFavorite, MdThumbUp } from "react-icons/md";
 
 interface PhotoUploadIconProps {
@@ -63,9 +64,9 @@ export default function PhotoUploadIcon({ setGroupPhoto, setIcon }: PhotoUploadI
 
     return (
         <div className="p-2 dark:bg-zinc-900 dark:hover:bg-black mt-4 rounded cursor-pointer relative">
-            <MdAddAPhoto
+            <GoOrganization
                 className="text-gray-400"
-                size={30}
+                size={24}
                 onClick={() => setShowOptionMenu(!showOptionMenu)}
             />
 

@@ -33,6 +33,7 @@ model Organization {
   description       String              @default("")
   owner             Users               @relation(fields: [owner_id], references: [id], onDelete: Cascade)
   owner_id          Int
+  organization_type OrganizationType
   created_at        DateTime            @default(now())
   ChatGroups        ChatGroup[] // Groups inside the organization
   OrganizationUsers OrganizationUsers[] // Users in the organization
@@ -107,4 +108,12 @@ model RecentlyJoinedGroups {
 
   @@unique([user_id, group_id])
   @@map("recently_joined_groups")
+}
+
+enum OrganizationType {
+  CORPORATE
+  NON_PROFIT
+  EDUCATIONAL
+  GOVERNMENT
+  OTHER
 }

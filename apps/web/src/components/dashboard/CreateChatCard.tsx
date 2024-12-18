@@ -7,9 +7,9 @@ import CreateRoom from "./CreateRoom";
 import axios from "axios";
 import { toast } from "sonner";
 import moment from 'moment';
-import { createChatSchema } from "@/validations/createChatZod";
+import { createRoomSchema } from "@/validations/createChatZod";
 import { clearCache } from "actions/common";
-import { CHAT_GROUP } from "@/lib/apiAuthRoutes";
+import { CHAT_GROUP, ORGANIZATION } from "@/lib/apiAuthRoutes";
 import { CgMathPlus } from "react-icons/cg";
 import { CustomSession } from "app/api/auth/[...nextauth]/options";
 
@@ -32,49 +32,69 @@ export default function CreateRoomComponent({ session }: { session: CustomSessio
     });
 
     async function createChatHandler() {
-        const payload = { name: organizationName, type: organizationType, termsAndCond: termsAndconditionChecked, selectedGroups: selectedGroups };
-        console.log("payload is : ", payload);
-        // const result = createChatSchema.safeParse(payload);
 
-        // if (!result.success) {
-        //     const errorMessages = result.error.errors.map(err => err.message).join(", ");
-        //     toast.error(`Error: ${errorMessages}`);
-        //     return;
-        // }
+        const selectedGroupNames = Object.entries(selectedGroups)
+            .filter(([key, value]) => value === true)  // Keep only groups where value is `true`
+            .map(([key]) => key);  // Map to only group names
 
-        // const finalPayload = new FormData();
-        // finalPayload.append('title', result.data.title);
-        // finalPayload.append('passcode', result.data.passcode);
-        // if (groupPhoto) {
-        //     finalPayload.append('groupPhoto', groupPhoto);
-        // }
-        // if (icon) {
-        //     finalPayload.append("icon", icon);
-        // }
+        const payload = {
+            name: organizationName,
+            passcode: roomPasscode,
+            icon: icon,
+            type: organizationType,
+            termsAndCond: termsAndconditionChecked,
+            selectedGroups: selectedGroupNames,  // Send only the selected group names
+        };
 
-        // try {
-        //     const { data } = await axios.post(`${CHAT_GROUP}`, finalPayload, {
-        //         headers: {
-        //             authorization: `Bearer ${session?.user?.token}`,
-        //             'Content-Type': 'multipart/form-data',
-        //         },
-        //     });
+        console.log("payload is:", payload);
 
-        //     const formattedDate = moment().format('dddd, MMMM D, YYYY');
-        //     toast.message(data.message, {
-        //         description: formattedDate
-        //     });
+        // Validate payload with Zod
+        const result = createRoomSchema.safeParse(payload);
+        console.log("result is:", result);
 
-        //     setOrganizationName("");
-        //     setRoomPasscode("");
-        //     setIcon("");
-        //     clearCache("dashboard");
-        //     setCreateRoomModal(false);
-        // } catch (err) {
-        //     console.log(err);
-        //     toast.error("Failed to create chat room. Please try again.");
-        // }
+        if (!result.success) {
+            const errorMessages = result.error.errors.map((err) => err.message).join(", ");
+            toast.error(`Error: ${errorMessages}`);
+            return;
+        }
+
+        // Create FormData
+        const finalPayload = new FormData();
+        finalPayload.append("name", result.data.name);
+
+        if (result.data.icon) {
+            finalPayload.append("icon", result.data.icon);
+        }
+
+        finalPayload.append("type", result.data.type);
+        finalPayload.append("termsAndCond", String(result.data.termsAndCond));
+
+        // Send only the selected group names as a JSON string
+        finalPayload.append("selectedGroups", JSON.stringify(result.data.selectedGroups));
+
+        try {
+            const { data } = await axios.post(`${ORGANIZATION}`, finalPayload, {
+                headers: {
+                    authorization: `Bearer ${session?.user?.token}`,
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            const formattedDate = moment().format("dddd, MMMM D, YYYY");
+            toast.message(data.message, {
+                description: formattedDate,
+            });
+
+            setOrganizationName("");
+            setIcon("");
+            clearCache("dashboard");
+            setCreateRoomModal(false);
+        } catch (err) {
+            console.error(err);
+            toast.error("Failed to create chat room. Please try again.");
+        }
     }
+
 
     function openModal() {
         setCreateRoomModal(true);

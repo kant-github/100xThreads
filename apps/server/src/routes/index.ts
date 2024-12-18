@@ -26,9 +26,9 @@ router.put("/user", authmiddleware, updateUserDetails);
 
 
 // organizations controller
-router.get("/organizations", getOrganizations);
-router.post("/organizations", storeOrganization);
-router.delete("/organizations/:id", deleteOrganizations);
+router.get("/organizations", authmiddleware, getOrganizations);
+router.post("/organizations", authmiddleware, storeOrganization);
+router.delete("/organizations/:id", authmiddleware, deleteOrganizations);
 router.get("/organizations-by-search", authmiddleware, getOrganizationBySearch);
 
 

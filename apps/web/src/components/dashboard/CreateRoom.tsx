@@ -15,6 +15,7 @@ import { CustomSession } from "app/api/auth/[...nextauth]/options";
 import InputBoxCalls from "../utility/InputBoxCalls";
 import { debounce } from "@/lib/debounce";
 import TermsAndCondition from "../utility/TermsAndCondition";
+import { FaUser } from "react-icons/fa6";
 
 interface SelectedGroups {
     generalChat: boolean;
@@ -135,9 +136,17 @@ export default function CreateRoom({
                             </p>
                             <CrossButton setOpen={setOpen} /></div>
                         <div className="mt-4 flex flex-row items-center gap-x-3 w-full">
-                            <PhotoUploadIcon setIcon={setIcon} setGroupPhoto={setGroupPhoto} />
+                            <div className="p-2 dark:bg-zinc-900 dark:hover:bg-black mt-4 rounded cursor-pointer relative">
+                                <FaUser size={24} className="text-gray-400" />
+                            </div>
                             <InputBox input={firstName} setInput={setFirstName} label="Owner's first name" />
                             <InputBox input={lastName} setInput={setLastName} label="Owner's last name" />
+                        </div>
+
+                        <div className="relative flex items-center gap-x-2">
+                            <IoCheckmarkCircle className="absolute text-sm right-1 -top-1 text-green-500" />
+                            <PhotoUploadIcon setIcon={setIcon} setGroupPhoto={setGroupPhoto} />
+                            <InputBoxCalls input={organizationName} onChange={handleOrganizationNameChange} label="Organization's name" />
                         </div>
                         <div className="text-gray-600 text-sm ml-0.5 flex items-center justify-start gap-x-1">
                             {
@@ -147,19 +156,9 @@ export default function CreateRoom({
                             }
                             <RemoveIconCrossButton icon={icon} setIcon={setIcon} />
                         </div>
-                        <div className="relative flex items-center gap-x-2">
-                            <IoCheckmarkCircle className="absolute text-sm right-1 -top-1 text-green-500" />
-                            <div className="p-2 dark:bg-zinc-900 dark:hover:bg-black mt-4 rounded">
-                                <GoOrganization
-                                    className="text-gray-400"
-                                    size={30}
-                                />
-                            </div>
-                            <InputBoxCalls input={organizationName} onChange={handleOrganizationNameChange} label="Organization's name" />
-                        </div>
                         <SelectBox selectedType={organizationType!} onTypeChange={setOrganizationType} />
                         <div className="flex flex-col gap-y-2 mt-2 border-[1px] px-6 py-2 border-gray-300 dark:border-zinc-600 rounded-[4px]">
-                            <p className="text-zinc-300 text-[11px] font-thin italic">
+                            <p className="text-zinc-300 text-[11px] font-light italic">
                                 Choose the default chat groups that best suit your organization's communication needs.
                                 You can always add more later, but these will get the conversation started!
                             </p>
