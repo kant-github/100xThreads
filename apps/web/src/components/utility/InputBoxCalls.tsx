@@ -4,13 +4,13 @@ import ShowPassword from './ShowPassword';
 interface TextInputProps {
     label?: string;
     input?: string;
-    setInput?: Dispatch<SetStateAction<string>>;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     type?: string;
     value?: string;
     placeholder?: string;
 }
 
-export default function ({ label, input, setInput, type, value, placeholder }: TextInputProps) {
+export default function ({ label, input, onChange, type, value, placeholder }: TextInputProps) {
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
     return (
@@ -21,11 +21,7 @@ export default function ({ label, input, setInput, type, value, placeholder }: T
             <div className="relative">
                 <input
                     value={input}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        if (setInput) {
-                            setInput(e.target.value);
-                        }
-                    }}
+                    onChange={onChange}
                     placeholder={placeholder}
                     id="input"
                     type={type ? showPassword ? 'text' : 'password' : "text"}

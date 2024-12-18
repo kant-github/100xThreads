@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import InputBox from "../utility/InputBox";
 import BigBlackButton from "../buttons/BigBlackButton";
 import PhotoUploadIcon from "../ui/PhotoUploadIcon";
@@ -8,17 +8,34 @@ import RemoveIconCrossButton from "../ui/RemoveIconCrossButton";
 import SelectBox from "../utility/SelectBox";
 import CheckBox from "../utility/CheckBox";
 import { IoCheckmarkCircle } from "react-icons/io5";
+import axios from "axios";
+import { ORGANIZATION } from "@/lib/apiAuthRoutes";
+import { GoOrganization } from "react-icons/go";
+import { CustomSession } from "app/api/auth/[...nextauth]/options";
+import InputBoxCalls from "../utility/InputBoxCalls";
+import { debounce } from "@/lib/debounce";
+import TermsAndCondition from "../utility/TermsAndCondition";
 
-
-
+interface SelectedGroups {
+    generalChat: boolean;
+    adminPage: boolean;
+    projectsChannel: boolean;
+    events: boolean;
+    announcements: boolean;
+}
 
 interface CreateRoomProps {
+    session: CustomSession | null
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
     name: string | null;
     setName: Dispatch<SetStateAction<string | null>>;
     organizationName: string;
     setOrganizationName: Dispatch<SetStateAction<string>>;
+    organizationType: string | null;
+    setOrganizationType: Dispatch<SetStateAction<string | null>>;
+    selectedGroups: SelectedGroups;
+    setSelectedGroups: Dispatch<SetStateAction<SelectedGroups>>;
     roomPasscode: string;
     setRoomPasscode: Dispatch<SetStateAction<string>>;
     createChatHandler: () => Promise<void>;
@@ -26,34 +43,37 @@ interface CreateRoomProps {
     setGroupPhoto: Dispatch<SetStateAction<File | null>>;
     setIcon: Dispatch<SetStateAction<string | null>>;
     icon: string | null;
+    termsAndconditionChecked: boolean;
+    setTermsAndConditionchecked: Dispatch<SetStateAction<boolean>>;
 }
 
 export default function CreateRoom({
+    session,
     open,
     setOpen,
     name,
     setName,
     organizationName,
     setOrganizationName,
+    organizationType,
+    setOrganizationType,
+    selectedGroups,
+    setSelectedGroups,
     createChatHandler,
     groupPhoto,
     setGroupPhoto,
     setIcon,
-    icon
+    icon,
+    termsAndconditionChecked,
+    setTermsAndConditionchecked
 }: CreateRoomProps) {
     const [submitting, setSubmitting] = useState(false);
     const dynamicFirstName = name?.split(" ")[0];
     const dynamicLastName = name?.split(" ")[1];
     const [firstName, setFirstName] = useState<string>(dynamicFirstName!);
     const [lastName, setLastName] = useState<string>(dynamicLastName!);
-    const [organizationType, setOrganizationType] = useState<string | null>(null);
-    const [selectedGroups, setSelectedGroups] = useState({
-        generalChat: true,
-        adminPage: true,
-        projectsChannel: true,
-        events: true,
-        announcements: true,
-    });
+    const [organizationNameAvailable, setOrganizationNameAvailable] = useState<boolean | null>(null);
+
 
     const handleCheckBoxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, checked } = event.target;
@@ -71,12 +91,40 @@ export default function CreateRoom({
     }
 
 
+    const handleOrganizationNameChangeDebounced = useCallback(
+        debounce(async (organizationName: string) => {
+
+            if (organizationName.length > 0) {
+                try {
+                    const data = await axios.get(`${ORGANIZATION}-by-search`, {
+                        headers: {
+                            authorization: `Bearer ${session?.user?.token}`,
+                        },
+                        params: {
+                            name: organizationName
+                        }
+                    })
+                    setOrganizationNameAvailable(data.data.exist);
+                } catch (err) {
+                    console.error("Error checking organization name", err);
+                    setOrganizationNameAvailable(false);
+                }
+            }
+        }, 500), [session]
+    )
+
+    const handleOrganizationNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newOrganizationName = e.target.value;
+        setOrganizationName(newOrganizationName);
+        handleOrganizationNameChangeDebounced(newOrganizationName);
+    };
+
     return (
         <>
             {open && (
                 <div className="fixed w-screen h-screen inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <form
-                        className="bg-white dark:bg-[#262629] dark:text-gray-200 p-6 rounded-[6px] shadow-lg w-5/12 relative flex flex-col gap-y-3"
+                        className="bg-white dark:bg-[#262629] dark:text-gray-200 px-8 py-6 rounded-[6px] shadow-lg w-5/12 relative flex flex-col gap-y-3"
                         onSubmit={(e) => {
                             e.preventDefault();
                             handleSubmit();
@@ -99,13 +147,18 @@ export default function CreateRoom({
                             }
                             <RemoveIconCrossButton icon={icon} setIcon={setIcon} />
                         </div>
-                        <div className="relative">
+                        <div className="relative flex items-center gap-x-2">
                             <IoCheckmarkCircle className="absolute text-sm right-1 -top-1 text-green-500" />
-
-                            <InputBox input={organizationName} setInput={setOrganizationName} label="Organization's name" />
+                            <div className="p-2 dark:bg-zinc-900 dark:hover:bg-black mt-4 rounded">
+                                <GoOrganization
+                                    className="text-gray-400"
+                                    size={30}
+                                />
+                            </div>
+                            <InputBoxCalls input={organizationName} onChange={handleOrganizationNameChange} label="Organization's name" />
                         </div>
                         <SelectBox selectedType={organizationType!} onTypeChange={setOrganizationType} />
-                        <div className="flex flex-col gap-y-2 mt-2">
+                        <div className="flex flex-col gap-y-2 mt-2 border-[1px] px-6 py-2 border-gray-300 dark:border-zinc-600 rounded-[4px]">
                             <p className="text-zinc-300 text-[11px] font-thin italic">
                                 Choose the default chat groups that best suit your organization's communication needs.
                                 You can always add more later, but these will get the conversation started!
@@ -116,6 +169,7 @@ export default function CreateRoom({
                             <CheckBox onChange={handleCheckBoxChange} label="Events" name="events" checked={selectedGroups.events} />
                             <CheckBox onChange={handleCheckBoxChange} label="Announcements" name="announcements" checked={selectedGroups.announcements} />
                         </div>
+                        <TermsAndCondition termsAndconditionChecked={termsAndconditionChecked} setTermsAndConditionchecked={setTermsAndConditionchecked} />
 
                         <div className="flex justify-end mt-6">
                             <BigBlackButton disabled={submitting}>

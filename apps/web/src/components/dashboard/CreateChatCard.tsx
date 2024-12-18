@@ -21,51 +21,59 @@ export default function CreateRoomComponent({ session }: { session: CustomSessio
     const [groupPhoto, setGroupPhoto] = useState<File | null>(null);
     const [icon, setIcon] = useState<string | null>(null);
     const [name, setName] = useState<string | null>(session?.user?.name!);
+    const [organizationType, setOrganizationType] = useState<string | null>(null);
+    const [termsAndconditionChecked, setTermsAndConditionchecked] = useState<boolean>(false);
+    const [selectedGroups, setSelectedGroups] = useState({
+        generalChat: true,
+        adminPage: true,
+        projectsChannel: true,
+        events: true,
+        announcements: true,
+    });
 
     async function createChatHandler() {
-        const payload = { title: organizationName, passcode: roomPasscode };
-        const result = createChatSchema.safeParse(payload);
+        const payload = { name: organizationName, type: organizationType, termsAndCond: termsAndconditionChecked, selectedGroups: selectedGroups };
+        console.log("payload is : ", payload);
+        // const result = createChatSchema.safeParse(payload);
 
-        if (!result.success) {
-            const errorMessages = result.error.errors.map(err => err.message).join(", ");
-            toast.error(`Error: ${errorMessages}`);
-            return;
-        }
+        // if (!result.success) {
+        //     const errorMessages = result.error.errors.map(err => err.message).join(", ");
+        //     toast.error(`Error: ${errorMessages}`);
+        //     return;
+        // }
 
-        const finalPayload = new FormData();
-        finalPayload.append('title', result.data.title);
-        finalPayload.append('passcode', result.data.passcode);
-        if (groupPhoto) {
-            finalPayload.append('groupPhoto', groupPhoto);
-        }
-        if (icon) {
-            finalPayload.append("icon", icon);
-        }
+        // const finalPayload = new FormData();
+        // finalPayload.append('title', result.data.title);
+        // finalPayload.append('passcode', result.data.passcode);
+        // if (groupPhoto) {
+        //     finalPayload.append('groupPhoto', groupPhoto);
+        // }
+        // if (icon) {
+        //     finalPayload.append("icon", icon);
+        // }
 
+        // try {
+        //     const { data } = await axios.post(`${CHAT_GROUP}`, finalPayload, {
+        //         headers: {
+        //             authorization: `Bearer ${session?.user?.token}`,
+        //             'Content-Type': 'multipart/form-data',
+        //         },
+        //     });
 
+        //     const formattedDate = moment().format('dddd, MMMM D, YYYY');
+        //     toast.message(data.message, {
+        //         description: formattedDate
+        //     });
 
-        try {
-            const { data } = await axios.post(`${CHAT_GROUP}`, finalPayload, {
-                headers: {
-                    authorization: `Bearer ${session?.user?.token}`,
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-
-            const formattedDate = moment().format('dddd, MMMM D, YYYY');
-            toast.message(data.message, {
-                description: formattedDate
-            });
-
-            setOrganizationName("");
-            setRoomPasscode("");
-            setIcon("");
-            clearCache("dashboard");
-            setCreateRoomModal(false);
-        } catch (err) {
-            console.log(err);
-            toast.error("Failed to create chat room. Please try again.");
-        }
+        //     setOrganizationName("");
+        //     setRoomPasscode("");
+        //     setIcon("");
+        //     clearCache("dashboard");
+        //     setCreateRoomModal(false);
+        // } catch (err) {
+        //     console.log(err);
+        //     toast.error("Failed to create chat room. Please try again.");
+        // }
     }
 
     function openModal() {
@@ -97,11 +105,16 @@ export default function CreateRoomComponent({ session }: { session: CustomSessio
                 </div>
             </div>
             <CreateRoom
+                session={session}
                 createChatHandler={createChatHandler}
                 name={name}
                 setName={setName}
                 organizationName={organizationName}
                 setOrganizationName={setOrganizationName}
+                organizationType={organizationType}
+                setOrganizationType={setOrganizationType}
+                selectedGroups={selectedGroups}
+                setSelectedGroups={setSelectedGroups}
                 roomPasscode={roomPasscode}
                 setRoomPasscode={setRoomPasscode}
                 open={createRoomModal}
@@ -110,6 +123,8 @@ export default function CreateRoomComponent({ session }: { session: CustomSessio
                 setGroupPhoto={setGroupPhoto}
                 setIcon={setIcon}
                 icon={icon}
+                termsAndconditionChecked={termsAndconditionChecked}
+                setTermsAndConditionchecked={setTermsAndConditionchecked}
             />
         </>
     );

@@ -22,7 +22,6 @@ const router = Router();
 // user_controller
 router.get("/user/:id", authmiddleware, getUserDetails);
 router.put("/user", authmiddleware, updateUserDetails);
-router.get("/organization-by-search", authmiddleware, getOrganizationBySearch);
 
 
 
@@ -30,6 +29,7 @@ router.get("/organization-by-search", authmiddleware, getOrganizationBySearch);
 router.get("/organizations", getOrganizations);
 router.post("/organizations", storeOrganization);
 router.delete("/organizations/:id", deleteOrganizations);
+router.get("/organizations-by-search", authmiddleware, getOrganizationBySearch);
 
 
 //chat-group-controller
