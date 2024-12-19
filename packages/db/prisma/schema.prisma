@@ -18,11 +18,12 @@ model Users {
   created_at           DateTime               @default(now())
   isOnline             Boolean                @default(false)
   lastSeen             DateTime?
-  Organizations        OrganizationUsers[] // Relation to organizations the user is part of
-  OwnedOrganizations   Organization[] // Add this to represent ownership of organizations
+  Organizations        OrganizationUsers[]
+  OwnedOrganizations   Organization[]
   Chats                Chats[]
   RecentlyJoinedGroups RecentlyJoinedGroups[]
   LikedMessages        LikedUser[]
+  EventAttendee        EventAttendee[]
 
   @@map("users")
 }
@@ -35,8 +36,9 @@ model Organization {
   owner_id          Int
   organization_type OrganizationType
   created_at        DateTime            @default(now())
-  ChatGroups        ChatGroup[] // Groups inside the organization
-  OrganizationUsers OrganizationUsers[] // Users in the organization
+  ChatGroups        ChatGroup[]
+  EventRoom         EventRoom[]
+  OrganizationUsers OrganizationUsers[]
 
   @@unique([name, owner_id])
   @@map("organizations")
@@ -110,10 +112,71 @@ model RecentlyJoinedGroups {
   @@map("recently_joined_groups")
 }
 
+model EventRoom {
+  id              String       @id @default(uuid()) @db.Uuid
+  organization    Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  organization_id String       @db.Uuid
+  title           String       @db.VarChar(191) // Name of the event room
+  description     String? // Description of the event room
+  created_at      DateTime     @default(now()) // Timestamp of room creation
+  created_by      Int // User who created the event room
+  events          Event[] // List of events in this room
+
+  @@index([organization_id]) // Index on organization_id for efficient lookups
+  @@map("event_rooms")
+}
+
+model Event {
+  id            String      @id @default(uuid()) @db.Uuid
+  event_room    EventRoom   @relation(fields: [event_room_id], references: [id], onDelete: Cascade)
+  event_room_id String      @db.Uuid
+  title         String      @db.VarChar(191) // Event title
+  description   String? // Event description
+  start_time    DateTime // When the event starts
+  end_time      DateTime? // When the event ends (optional)
+  location      String? // Physical or virtual event location
+  status        EventStatus @default(PENDING) // Event status (pending, live, completed, canceled)
+  rsvp_count    Int         @default(0) // Number of users who have RSVP'd
+  created_at    DateTime    @default(now()) // Timestamp of event creation
+  created_by    Int // User who created the event
+
+  attendees EventAttendee[]
+
+  @@index([event_room_id, start_time]) // Indexing for faster searches
+  @@map("events")
+}
+
+model EventAttendee {
+  id       Int        @id @default(autoincrement())
+  user     Users      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id  Int
+  event    Event      @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  event_id String     @db.Uuid
+  status   RSVPStatus // RSVP status (e.g., going, maybe, not going)
+
+  @@unique([user_id, event_id]) // Ensure a user can only RSVP once per event
+  @@map("event_attendees")
+}
+
+enum RSVPStatus {
+  GOING
+  MAYBE
+  NOT_GOING
+}
+
 enum OrganizationType {
+  COMMUNITY
+  STARTUP
   CORPORATE
   NON_PROFIT
   EDUCATIONAL
   GOVERNMENT
   OTHER
+}
+
+enum EventStatus {
+  PENDING
+  LIVE
+  COMPLETED
+  CANCELED
 }
