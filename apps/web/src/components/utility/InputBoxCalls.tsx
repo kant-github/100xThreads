@@ -3,7 +3,7 @@ import ShowPassword from './ShowPassword';
 
 interface TextInputProps {
     label?: string;
-    input?: string;
+    input?: string | null;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     type?: string;
     value?: string;
@@ -20,7 +20,7 @@ export default function ({ label, input, onChange, type, value, placeholder }: T
             </label>
             <div className="relative">
                 <input
-                    value={input}
+                    value={input!}
                     onChange={onChange}
                     placeholder={placeholder}
                     id="input"

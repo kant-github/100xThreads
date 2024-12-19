@@ -45,6 +45,7 @@ export async function storeOrganization(req: Request, res: Response) {
             })
         }
 
+        console.log("parsed selected group is : ", parsedSelectedGroups);
         const newOrganization = await prisma.organization.create({
             data: {
                 name: name,
@@ -54,9 +55,10 @@ export async function storeOrganization(req: Request, res: Response) {
             }
         })
 
-        console.log("parsed selected group is : ", parsedSelectedGroups);
+        console.log("new org is : ", newOrganization);
 
-        const createdGroups = await prisma.chatGroup.createMany({
+
+        await prisma.chatGroup.createMany({
             data: parsedSelectedGroups.map((groupTitle: string) => ({
                 organization_id: newOrganization.id,
                 title: groupTitle
@@ -69,6 +71,7 @@ export async function storeOrganization(req: Request, res: Response) {
         })
 
     } catch (err) {
+        console.log(err);
         return res.status(500).json({
             message: "Error in creating organizations",
         });

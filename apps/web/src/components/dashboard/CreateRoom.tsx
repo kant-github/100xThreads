@@ -10,12 +10,12 @@ import CheckBox from "../utility/CheckBox";
 import { IoCheckmarkCircle } from "react-icons/io5";
 import axios from "axios";
 import { ORGANIZATION } from "@/lib/apiAuthRoutes";
-import { GoOrganization } from "react-icons/go";
 import { CustomSession } from "app/api/auth/[...nextauth]/options";
 import InputBoxCalls from "../utility/InputBoxCalls";
 import { debounce } from "@/lib/debounce";
 import TermsAndCondition from "../utility/TermsAndCondition";
 import { FaUser } from "react-icons/fa6";
+import { OrganizationType } from "./CreateChatCard";
 
 interface SelectedGroups {
     generalChat: boolean;
@@ -31,10 +31,10 @@ interface CreateRoomProps {
     setOpen: Dispatch<SetStateAction<boolean>>;
     name: string | null;
     setName: Dispatch<SetStateAction<string | null>>;
-    organizationName: string;
-    setOrganizationName: Dispatch<SetStateAction<string>>;
-    organizationType: string | null;
-    setOrganizationType: Dispatch<SetStateAction<string | null>>;
+    organizationName: string | null;
+    setOrganizationName: Dispatch<SetStateAction<string | null>>;
+    organizationType: OrganizationType;
+    setOrganizationType: Dispatch<SetStateAction<OrganizationType>>;
     selectedGroups: SelectedGroups;
     setSelectedGroups: Dispatch<SetStateAction<SelectedGroups>>;
     roomPasscode: string;
@@ -73,7 +73,9 @@ export default function CreateRoom({
     const dynamicLastName = name?.split(" ")[1];
     const [firstName, setFirstName] = useState<string>(dynamicFirstName!);
     const [lastName, setLastName] = useState<string>(dynamicLastName!);
+    const [isLoading, setIsLoading] = useState(false);  // Add this line
     const [organizationNameAvailable, setOrganizationNameAvailable] = useState<boolean | null>(null);
+
 
 
     const handleCheckBoxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,6 +99,7 @@ export default function CreateRoom({
 
             if (organizationName.length > 0) {
                 try {
+                    setIsLoading(true);
                     const data = await axios.get(`${ORGANIZATION}-by-search`, {
                         headers: {
                             authorization: `Bearer ${session?.user?.token}`,
@@ -105,10 +108,13 @@ export default function CreateRoom({
                             name: organizationName
                         }
                     })
-                    setOrganizationNameAvailable(data.data.exist);
+                    console.log("data is : ", data.data.exists);
+                    setOrganizationNameAvailable(data.data.exists);
                 } catch (err) {
                     console.error("Error checking organization name", err);
                     setOrganizationNameAvailable(false);
+                } finally {
+                    setIsLoading(false);
                 }
             }
         }, 500), [session]
@@ -144,7 +150,15 @@ export default function CreateRoom({
                         </div>
 
                         <div className="relative flex items-center gap-x-2">
-                            <IoCheckmarkCircle className="absolute text-sm right-1 -top-1 text-green-500" />
+                            {
+                                isLoading ? (
+                                    <Spinner size="3" className="absolute right-2 -top-1" />
+                                ) : !organizationNameAvailable ? (
+                                    <IoCheckmarkCircle className="absolute text-sm right-1 -top-1 text-green-500" />
+                                ) : (
+                                    <p className="absolute text-[11px] font-light right-1 top-0 text-red-500">Name already taken</p>
+                                )
+                            }
                             <PhotoUploadIcon setIcon={setIcon} setGroupPhoto={setGroupPhoto} />
                             <InputBoxCalls input={organizationName} onChange={handleOrganizationNameChange} label="Organization's name" />
                         </div>
@@ -156,8 +170,8 @@ export default function CreateRoom({
                             }
                             <RemoveIconCrossButton icon={icon} setIcon={setIcon} />
                         </div>
-                        <SelectBox selectedType={organizationType!} onTypeChange={setOrganizationType} />
-                        <div className="flex flex-col gap-y-2 mt-2 border-[1px] px-6 py-2 border-gray-300 dark:border-zinc-600 rounded-[4px]">
+                        <SelectBox selectedType={organizationType} onTypeChange={setOrganizationType} />
+                        <div className="flex flex-col gap-y-2.5 mt-2 border-[1px] px-6 py-3 border-gray-300 dark:border-zinc-600 rounded-[4px]">
                             <p className="text-zinc-300 text-[11px] font-light italic">
                                 Choose the default chat groups that best suit your organization's communication needs.
                                 You can always add more later, but these will get the conversation started!

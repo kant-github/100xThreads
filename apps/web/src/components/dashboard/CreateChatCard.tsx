@@ -13,15 +13,25 @@ import { CHAT_GROUP, ORGANIZATION } from "@/lib/apiAuthRoutes";
 import { CgMathPlus } from "react-icons/cg";
 import { CustomSession } from "app/api/auth/[...nextauth]/options";
 
+export enum OrganizationType {
+    Startup = "Startup",
+    NonProfit = "Non-Profit",
+    Educational = "Educational",
+    Government = "Government",
+    Corporate = "Corporate",
+    Community = "Community",
+    Other = "Other"
+}
+
 
 export default function CreateRoomComponent({ session }: { session: CustomSession | null }) {
     const [createRoomModal, setCreateRoomModal] = useState<boolean>(false);
-    const [organizationName, setOrganizationName] = useState<string>("");
+    const [organizationName, setOrganizationName] = useState<string | null>(null);
     const [roomPasscode, setRoomPasscode] = useState<string>("");
     const [groupPhoto, setGroupPhoto] = useState<File | null>(null);
     const [icon, setIcon] = useState<string | null>(null);
     const [name, setName] = useState<string | null>(session?.user?.name!);
-    const [organizationType, setOrganizationType] = useState<string | null>(null);
+    const [organizationType, setOrganizationType] = useState<OrganizationType>(OrganizationType.Community);
     const [termsAndconditionChecked, setTermsAndConditionchecked] = useState<boolean>(false);
     const [selectedGroups, setSelectedGroups] = useState({
         generalChat: true,
@@ -33,9 +43,7 @@ export default function CreateRoomComponent({ session }: { session: CustomSessio
 
     async function createChatHandler() {
 
-        const selectedGroupNames = Object.entries(selectedGroups)
-            .filter(([key, value]) => value === true)  // Keep only groups where value is `true`
-            .map(([key]) => key);  // Map to only group names
+        const selectedGroupNames = Object.entries(selectedGroups).filter(([key, value]) => value === true).map(([key]) => key);
 
         const payload = {
             name: organizationName,
@@ -45,6 +53,8 @@ export default function CreateRoomComponent({ session }: { session: CustomSessio
             termsAndCond: termsAndconditionChecked,
             selectedGroups: selectedGroupNames,  // Send only the selected group names
         };
+
+        console.log("payload is : ", payload);
 
         console.log("payload is:", payload);
 
@@ -85,8 +95,9 @@ export default function CreateRoomComponent({ session }: { session: CustomSessio
                 description: formattedDate,
             });
 
-            setOrganizationName("");
-            setIcon("");
+            setOrganizationName(null);
+            setOrganizationType(OrganizationType.Community);
+            setIcon(null);
             clearCache("dashboard");
             setCreateRoomModal(false);
         } catch (err) {

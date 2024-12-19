@@ -3,22 +3,28 @@ import { Request, Response } from "express";
 
 export default async function getOrganizationBySearch(req: Request, res: Response) {
     try {
-        const name = req.params.name;
+        const { name } = req.query;
         const user = req.user;
+        console.log("printing user is : ", user);
+        console.log("printing : ", name);
+
+        await new Promise(t => setTimeout(t, 1000));
 
         const existingOrg = await prisma.organization.findFirst({
             where: {
                 name: {
-                    equals: name,
+                    equals: name?.toString(),
                     mode: "insensitive",
                 },
                 owner_id: user?.id,
             },
         });
 
+        console.log("existing org is : ", existingOrg);
+
 
         if (existingOrg) {
-            return res.status(400).json({
+            return res.status(200).json({
                 message: "An organization with this name already exists.",
                 exists: true,
             });

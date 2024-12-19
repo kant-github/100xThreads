@@ -1,37 +1,25 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
+import { OrganizationType } from "../dashboard/CreateChatCard";
 
 interface OrganizationTypeProps {
-  selectedType: string;
-  onTypeChange: (type: string) => void;
+  selectedType: OrganizationType;
+  onTypeChange: Dispatch<SetStateAction<OrganizationType>>;
 }
 
-export default function SelectBox({
-  selectedType,
-  onTypeChange,
-}: OrganizationTypeProps) {
-  const organizationTypes = [
-    "Startup",
-    "Non-Profit",
-    "Educational",
-    "Government",
-    "Corporate",
-    "Community",
-    "Other"
-  ];
+export default function SelectBox({ selectedType, onTypeChange }: OrganizationTypeProps) {
+
+  const organizationTypes = Object.values(OrganizationType);
 
   return (
     <div className="flex flex-col space-y-2 relative">
-      <label
-        htmlFor="organizationType"
-        className="text-xs font-light tracking-wider text-gray-700 dark:text-gray-200"
-      >
+      <label htmlFor="organizationType" className="text-xs font-light tracking-wider text-gray-700 dark:text-gray-200">
         Organization Type
       </label>
       <div className="relative">
         <select
           id="organizationType"
           value={selectedType}
-          onChange={(e) => onTypeChange(e.target.value)}
+          onChange={(e) => onTypeChange(e.target.value as OrganizationType)}  // Cast the value to OrganizationType
           className="px-4 py-[9px] text-xs font-thin border border-gray-300 dark:border-zinc-600 text-black shadow-sm focus:outline-none rounded-[4px] w-full pr-4 placeholder:text-black dark:bg-zinc-800 dark:text-gray-200 dark:placeholder:text-gray-200 appearance-none"
         >
           <option value="" disabled className="text-gray-700 dark:text-gray-200">
