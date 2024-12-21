@@ -29,7 +29,7 @@ export default function DashboardPageClient() {
     return (
         <div>
             <DashNav groups={groups} />
-            <Dashboard recentGroups={recentGroups} groups={groups.slice(0, 6)} session={session} />
+            <Dashboard session={session} />
             <Footer />
         </div>
     );

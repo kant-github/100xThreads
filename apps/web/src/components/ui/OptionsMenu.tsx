@@ -7,15 +7,15 @@ import { toast } from "sonner";
 import { AnimatePresence, motion } from "framer-motion";
 import { FRONTEND_BASE_URL } from "@/lib/apiAuthRoutes";
 import { useSession } from "next-auth/react";
-import { ChatGroupType } from "types";
+import { OrganizationType } from "types";
 import { handleClickOutside } from "@/lib/handleClickOutside";
 
 interface OptionsMenuProps {
     className?: string;
     setDeleteDialogBox: Dispatch<SetStateAction<boolean>>;
     setEditDialogBox: Dispatch<SetStateAction<boolean>>;
-    setSelectedItem: Dispatch<SetStateAction<ChatGroupType | null>>;
-    item: ChatGroupType;
+    setSelectedItem: Dispatch<SetStateAction<OrganizationType | null>>;
+    orgs: OrganizationType;
     color?: string;
 }
 
@@ -24,13 +24,13 @@ export function OptionsMenu({
     setDeleteDialogBox,
     setEditDialogBox,
     setSelectedItem,
-    item,
+    orgs,
 }: OptionsMenuProps) {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const { data: session } = useSession();
     //error here
-    const userCheck = Number(session?.user?.id) === item.user_id;
+    const userCheck = Number(session?.user?.id) === orgs.owner_id;
 
     const toggleMenu = () => {
         setIsOpen((prev) => !prev);
@@ -70,7 +70,7 @@ export function OptionsMenu({
                         <div className="py-0.5 text-sm text-zinc-900 dark:text-zinc-100">
                             <div
                                 onClick={() => {
-                                    navigator.clipboard.writeText(`${FRONTEND_BASE_URL}/chat/${item.id}`).then(() => {
+                                    navigator.clipboard.writeText(`${FRONTEND_BASE_URL}/chat/${orgs.id}`).then(() => {
                                         toast.success("Room link copied to clipboard");
                                         setIsOpen(false);
                                     })
@@ -84,7 +84,7 @@ export function OptionsMenu({
                                 type="button"
                                 disabled={!userCheck}
                                 onClick={() => {
-                                    setSelectedItem(item);
+                                    setSelectedItem(orgs);
                                     setEditDialogBox(true);
                                 }}
                                 className={`flex items-center justify-between w-full px-4 py-2 dark:bg-zinc-700 text-xs ${
@@ -100,7 +100,7 @@ export function OptionsMenu({
                                 type="button"
                                 disabled={!userCheck}
                                 onClick={() => {
-                                    setSelectedItem(item);
+                                    setSelectedItem(orgs);
                                     setDeleteDialogBox(true);
                                 }}
                                 className={`flex items-center justify-between w-full px-4 py-2 text-xs bg-red-50 dark:bg-red-700 ${

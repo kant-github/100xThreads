@@ -1,21 +1,17 @@
 import Image from "next/image";
 import ChatCards from "../base/ChatCards";
 import CreateChatCard from "./CreateChatCard";
-import { ChatGroupType, OrganizationType } from "types";
+import { OrganizationType } from "types";
 import { CustomSession } from "app/api/auth/[...nextauth]/options";
-import { useRecoilValue, useRecoilValueLoadable } from "recoil";
+import { useRecoilValueLoadable } from "recoil";
 import { organizationsSelector } from "@/recoil/selectors/organizationsSelector";
 interface props {
-    groups: ChatGroupType[];
     session: CustomSession | null;
-    recentGroups?: any
 }
 
-export default function Dashboard({ groups, session, recentGroups }: props) {
-    console.log("rendered");
+export default function Dashboard({ session, }: props) {
     const organizationsLoadable = useRecoilValueLoadable(organizationsSelector);
-
-    let organizations:OrganizationType;
+    let organizations: OrganizationType[] = [];
     if (organizationsLoadable.state === "hasValue") {
         organizations = organizationsLoadable.contents;
     }
@@ -34,9 +30,7 @@ export default function Dashboard({ groups, session, recentGroups }: props) {
                     />
                 </div>
             </div>
-            <div>
-                <ChatCards token={session?.user?.token!} groups={groups} />
-            </div>
+            <ChatCards />
         </div>
     );
 }

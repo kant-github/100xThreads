@@ -9,17 +9,17 @@ import PhotoUploadIcon from "../ui/PhotoUploadIcon";
 import CrossButton from "./CrossButton";
 import Spinner from "../loaders/Spinner";
 import { CHAT_GROUP } from "@/lib/apiAuthRoutes";
-import { ChatGroupType } from "types";
+import { OrganizationType } from "types";
 import RemoveIconCrossButton from "../ui/RemoveIconCrossButton";
 
 interface Props {
-  item: ChatGroupType;
+  orgs: OrganizationType;
   editDialogBox: boolean;
   setEditDialogBox: Dispatch<SetStateAction<boolean>>;
 }
 
 export default function EditDialogBox({
-  item,
+  orgs,
   editDialogBox,
   setEditDialogBox,
 }: Props) {
@@ -35,11 +35,11 @@ export default function EditDialogBox({
   }
 
   useEffect(() => {
-    if (item) {
-      setTitle(item.title);
-      setPasscode(item?.passcode);
+    if (orgs) {
+      setTitle(orgs.name);
+      // setPasscode(orgs?.passcode);
     }
-  }, [item]);
+  }, [orgs]);
 
   const handleSaveChanges = async (e: FormEvent) => {
     e.preventDefault(); // Prevents the default form submission
@@ -47,7 +47,7 @@ export default function EditDialogBox({
       setLoading(true);
       const finalPayload = new FormData();
       finalPayload.append("title", title);
-      finalPayload.append("passcode", passcode);
+      // finalPayload.append("passcode", passcode);
       if (groupPhoto) {
         finalPayload.append("groupPhoto", groupPhoto);
       }
@@ -55,7 +55,7 @@ export default function EditDialogBox({
         finalPayload.append("icon", icon);
       }
 
-      const { data } = await axios.put(`${CHAT_GROUP}/${item.id}`,
+      const { data } = await axios.put(`${CHAT_GROUP}/${orgs.id}`,
         finalPayload,
         {
           headers: {
@@ -73,7 +73,7 @@ export default function EditDialogBox({
     }
   };
 
-  if (!item) {
+  if (!orgs) {
     return null;
   }
 
@@ -84,7 +84,7 @@ export default function EditDialogBox({
       <div className="bg-white dark:bg-[#262629] dark:text-gray-200 p-6 rounded-lg shadow-lg max-w-lg relative w-2/6">
         <div className="flex justify-between">
           <p className="text-md font-semibold">
-            Update {`${item.title.trim()}`}'s title and passcode.
+            Update {`${orgs.name.trim()}`}'s title and passcode.
           </p>
           <CrossButton setOpen={setEditDialogBox} />
         </div>
@@ -116,7 +116,7 @@ export default function EditDialogBox({
               type="password"
               label="Passcode"
               input={passcode}
-              setInput={setPasscode}
+              // setInput={setPasscode}
             />
           </div>
           <div className="w-full pt-4 flex items-center justify-center">

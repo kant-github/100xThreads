@@ -11,35 +11,27 @@ import { IoEye } from "react-icons/io5";
 import { IoEyeOff } from "react-icons/io5";
 import { IoIosCopy } from "react-icons/io";
 import { toast } from "sonner";
-import { ChatGroupType, UserType } from "types";
+import { OrganizationType, UserType } from "types";
 import GroupImage from "./GroupImage";
 
-interface Item {
-  id: string;
-  user_id: number;
-  title: string;
-  passcode: string;
-  created_at: string;
-  user: UserType
+
+interface CardHoverChatCardsProps {
+  organizations: OrganizationType[];
+  className?: string
 }
 
-interface CardListProps {
-  items: ChatGroupType[];
-  className?: string;
-}
-
-export default function CardList({ items, className }: CardListProps) {
+export default function CardList({ organizations, className }: CardHoverChatCardsProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [selectedItem, setSelectedItem] = useState<ChatGroupType | null>(null);
+  const [selectedItem, setSelectedItem] = useState<OrganizationType | null>(null);
   const [deleteDialogBox, setDeleteDialogBox] = useState<boolean>(false);
   const [editDialogBox, setEditDialogBox] = useState<boolean>(false);
   const router = useRouter();
-  
+
 
   return (
     <>
       <div className={cn("flex flex-wrap gap-x-4 justify-center", className)}>
-        {items.length === 0 && (
+        {organizations.length === 0 && (
           <div className="p-16 text-white text-xs font-extralight tracking-wide">
             No rooms found,{" "}
             <i>
@@ -48,12 +40,12 @@ export default function CardList({ items, className }: CardListProps) {
             to chat with your peer groups
           </div>
         )}
-        {items.map((item, idx) => (
+        {organizations.map((orgs, idx) => (
           <div
             onDoubleClick={() => {
-              router.push(`${FRONTEND_BASE_URL}/chat/${item.id}`);
+              router.push(`${FRONTEND_BASE_URL}/organizations/${orgs.id}`);
             }}
-            key={item.id}
+            key={orgs.id}
             className="relative group block p-2 h-full w-1/4 select-none"
             onMouseEnter={() => setHoveredIndex(idx)}
             onMouseLeave={() => setHoveredIndex(null)}
@@ -77,30 +69,30 @@ export default function CardList({ items, className }: CardListProps) {
             </AnimatePresence>
             <Card>
               <div className="flex justify-between items-start">
-                <CardTitle groupImage={item.groupImage}>{item.title}</CardTitle>
+                <CardTitle>{orgs.name}</CardTitle>
                 <OptionsMenu
                   setDeleteDialogBox={setDeleteDialogBox}
                   setEditDialogBox={setEditDialogBox}
                   setSelectedItem={setSelectedItem}
-                  item={item}
+                  orgs={orgs}
                 />
               </div>
-              <CardDescription>{item.passcode}</CardDescription>
-              <CardDate>{item.created_at}</CardDate>
+              {/* <CardDescription>{orgs.passcode}</CardDescription> */}
+              <CardDate>{orgs.created_at}</CardDate>
             </Card>
           </div>
         ))}
       </div>
       {deleteDialogBox && selectedItem && (
         <DeleteDialogBox
-          item={selectedItem}
+          orgs={selectedItem}
           deleteDialogBox={deleteDialogBox}
           setDeleteDialogBox={setDeleteDialogBox}
         />
       )}
       {editDialogBox && selectedItem && (
         <EditDialogBox
-          item={selectedItem}
+          orgs={selectedItem}
           editDialogBox={editDialogBox}
           setEditDialogBox={setEditDialogBox}
         />
@@ -154,7 +146,7 @@ function CardTitle({
           className="rounded-[20px]"
         />
       )} */}
-      <GroupImage groupImage={groupImage!} groupTitle={title}/>
+      <GroupImage groupImage={groupImage!} groupTitle={title} />
       <h4 className={cn("text-zinc-100 font-bold tracking-wide", className)}>
         {truncatedTitle}
       </h4>

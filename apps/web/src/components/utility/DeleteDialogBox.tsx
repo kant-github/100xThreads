@@ -7,18 +7,18 @@ import axios from "axios";
 import { clearCache } from "actions/common";
 import { toast, Toaster } from "sonner";
 import BigWhiteBtn from "../buttons/BigWhiteBtn";
-import { CHAT_GROUP } from "@/lib/apiAuthRoutes";
-import { ChatGroupType } from "types";
+import { CHAT_GROUP, ORGANIZATION } from "@/lib/apiAuthRoutes";
+import { ChatGroupType, OrganizationType } from "types";
 import CrossButton from "./CrossButton";
 
 interface Props {
-    item: ChatGroupType;
+    orgs: OrganizationType;
     deleteDialogBox: boolean;
     setDeleteDialogBox: Dispatch<SetStateAction<boolean>>;
 }
 
 export default function DeleteDialogBox({
-    item,
+    orgs,
     deleteDialogBox,
     setDeleteDialogBox,
 }: Props) {
@@ -32,7 +32,7 @@ export default function DeleteDialogBox({
         }
         setLoading(true);
         try {
-            const { data } = await axios.delete(`${CHAT_GROUP}/${item.id}`, {
+            const { data } = await axios.delete(`${ORGANIZATION}/${orgs.id}`, {
                 headers: {
                     authorization: `Bearer ${session.user.token}`,
                 },
@@ -54,7 +54,7 @@ export default function DeleteDialogBox({
 
                     <div className="flex justify-between">
                         <p className="text-sm font-bold mb-4">
-                            Delete {" " + item.title} ??
+                            Delete {" " + orgs.name} ??
                         </p>
                         <CrossButton setOpen={setDeleteDialogBox}/>
                     </div>
