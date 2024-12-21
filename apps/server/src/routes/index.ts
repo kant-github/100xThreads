@@ -31,7 +31,7 @@ router.get("/organizations", authmiddleware, getOrganizations);
 router.post("/organizations", authmiddleware, storeOrganization);
 router.delete("/organizations/:id", authmiddleware, deleteOrganizations);
 router.get("/organizations-by-search", authmiddleware, getOrganizationBySearch);
-router.get("/organiaztions-all", getAllOrganizations);
+router.get("/organizations-all", authmiddleware, getAllOrganizations);
 
 
 //chat-group-controller

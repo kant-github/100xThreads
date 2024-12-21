@@ -45,3 +45,13 @@ export type LikedUser = {
   username: string
   created_at?: string;
 };
+
+
+export type OrganizationType = {
+  id: string;
+  name: string;
+  description: string;
+  owner_id: number;
+  organization_type: string;
+  created_at: string;
+}

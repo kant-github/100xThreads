@@ -7,6 +7,7 @@ export async function getOrganizations(req: Request, res: Response) {
             message: "You are not authorized"
         })
     }
+    console.log("getting organizationssş");
     try {
         const data = await prisma.organization.findMany({
             where: {

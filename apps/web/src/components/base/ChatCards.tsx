@@ -8,11 +8,9 @@ import Spinner from "../loaders/Spinner";
 
 export default function ({
   groups,
-  recentGroups,
   token,
 }: {
   groups: any;
-  recentGroups: any;
   token: string | null;
 }) {
   const [roomType, setRoomType] = useState("created by you");
@@ -23,66 +21,12 @@ export default function ({
   const [fullCreatedGroups, setFullCreatedGroups] = useState<any[]>([]); // Store full created by you groups
   const [fullRecentGroups, setFullRecentGroups] = useState<any[]>([]); // Store full recent joined groups
 
-  function toggleRoomType() {
-    setFade(true);
-    setTimeout(() => {
-      setRoomType((prev) =>
-        prev === "recent joined rooms" ? "created by you" : "recent joined rooms"
-      );
-    }, 150);
-  }
-
-  useEffect(() => {
-    if (fetchAll) {
-      // Display all groups based on current roomType
-      setDisplayGroups(
-        roomType === "recent joined rooms" ? fullRecentGroups : fullCreatedGroups
-      );
-    } else {
-      setDisplayGroups(roomType === "recent joined rooms" ? recentGroups : groups);
-    }
-    setFade(false); // Start fading in
-  }, [roomType, groups, recentGroups, fetchAll, fullCreatedGroups, fullRecentGroups]);
-
-  async function loadMore() {
-    if (isLoading) return;
-
-    if (fetchAll) {
-      setDisplayGroups(roomType === "recent joined rooms" ? recentGroups : groups);
-      setFetchAll(false);
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const allGroups = await fetchRecentGroup(token, true);
-      if (allGroups) {
-        // Separate full data for each room type
-        if (roomType === "recent joined rooms") {
-          setFullRecentGroups(allGroups);
-        } else {
-          setFullCreatedGroups(allGroups);
-        }
-
-        setDisplayGroups(allGroups);
-        setFetchAll(true);
-      } else {
-        console.error("No more rooms available.");
-      }
-    } catch (err) {
-      console.error("Error loading more rooms:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  }
 
   return (
     <div className="bg-[#37474f] dark:bg-[#141313] pt-6 pb-16">
       {displayGroups.length > 0 ? (
         <>
           <span
-            onClick={toggleRoomType}
             className="inline-flex items-center justify-start select-none gap-x-2 text-white text-xs font-extralight ml-48 mb-3 tracking-wide group italic cursor-pointer dark:text-gray-200"
           >
             {roomType}

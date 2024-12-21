@@ -1,6 +1,6 @@
 "use server"
 
-import { CHAT_GROUP, CHAT_GROUP_USERS } from "@/lib/apiAuthRoutes";
+import { CHAT_GROUP, CHAT_GROUP_USERS, ORGANIZATION } from "@/lib/apiAuthRoutes";
 import { notFound } from "next/navigation";
 
 export async function fetchGroups(token: string | null) {
@@ -25,6 +25,7 @@ export async function fetchGroups(token: string | null) {
         return [];
     }
 }
+
 export async function fetchGroup(token: string, group_id: string | null) {
     try {
         const res = await fetch(`${CHAT_GROUP}-check/${group_id}`, {

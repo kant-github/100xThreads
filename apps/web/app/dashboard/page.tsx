@@ -1,29 +1,30 @@
 'use client';
 import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react'; // For managing fetching state and effect
-import { fetchGroups } from "fetch/fetchGroups";
-import { fetchRecentGroup } from "fetch/fetchRecentGroups";
+import { useEffect, useState, useMemo } from 'react';
 import Dashboard from "@/components/dashboard/Dashboard";
 import DashNav from "@/components/dashboard/DashNav";
 import Footer from "@/components/footer/Footer";
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import SkeletonDashboard from '@/components/skeletons/DashboardSkeleton';
+import { useSetRecoilState } from 'recoil';
 import { userTokenAtom } from '@/recoil/atoms/atom';
 
 export default function DashboardPageClient() {
-    const { data: session } = useSession();
+    const { data: session, status } = useSession();
+    const setUserToken = useSetRecoilState(userTokenAtom);
     const [groups, setGroups] = useState<any[]>([]);
     const [recentGroups, setRecentGroups] = useState<any[]>([]);
-    const setUserToken = useSetRecoilState(userTokenAtom);
-    const token = useRecoilValue(userTokenAtom);
 
-
+    const sessionToken = useMemo(() => session?.user?.token, [session]);
 
     useEffect(() => {
-        if (session?.user?.token) {
-            setUserToken(session.user.token);
+        if (sessionToken) {
+            setUserToken(sessionToken);
         }
-        console.log(token);
-    }, [session]);
+    }, [sessionToken, setUserToken]);
+
+    if (status === 'loading') {
+        return <SkeletonDashboard />;
+    }
 
     return (
         <div>
