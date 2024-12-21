@@ -1,10 +1,10 @@
 import Image from "next/image";
 import ChatCards from "../base/ChatCards";
 import CreateChatCard from "./CreateChatCard";
-import { GroupChatType } from "types";
+import { ChatGroupType } from "types";
 import { CustomSession } from "app/api/auth/[...nextauth]/options";
 interface props {
-    groups: GroupChatType[];
+    groups: ChatGroupType[];
     session: CustomSession | null;
     recentGroups?: any
 }

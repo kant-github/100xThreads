@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
-import { GroupChatType, GroupChatUserType, LikedUser, MessageType, UserType } from "types";
+import { ChatGroupType, GroupChatUserType, LikedUser, MessageType, UserType } from "types";
 import { getSocket, sendMessage, sendTypingEvent } from "@/lib/socket.config";
 import { v4 as uuidv4 } from "uuid";
 import Messages from "./messages/Messages";
@@ -12,7 +12,7 @@ import { IoSendSharp } from "react-icons/io5";
 interface Props {
   olderChats: MessageType[];
   chatUser?: UserType | null;
-  group: GroupChatType;
+  group: ChatGroupType;
   users: GroupChatUserType[];
   socket: WebSocket | null
 }

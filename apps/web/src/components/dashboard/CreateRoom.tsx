@@ -73,7 +73,7 @@ export default function CreateRoom({
     const dynamicLastName = name?.split(" ")[1];
     const [firstName, setFirstName] = useState<string>(dynamicFirstName!);
     const [lastName, setLastName] = useState<string>(dynamicLastName!);
-    const [isLoading, setIsLoading] = useState(false);  // Add this line
+    const [isLoading, setIsLoading] = useState(false);
     const [organizationNameAvailable, setOrganizationNameAvailable] = useState<boolean | null>(null);
 
 

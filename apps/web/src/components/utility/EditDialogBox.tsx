@@ -9,11 +9,11 @@ import PhotoUploadIcon from "../ui/PhotoUploadIcon";
 import CrossButton from "./CrossButton";
 import Spinner from "../loaders/Spinner";
 import { CHAT_GROUP } from "@/lib/apiAuthRoutes";
-import { GroupChatType } from "types";
+import { ChatGroupType } from "types";
 import RemoveIconCrossButton from "../ui/RemoveIconCrossButton";
 
 interface Props {
-  item: GroupChatType;
+  item: ChatGroupType;
   editDialogBox: boolean;
   setEditDialogBox: Dispatch<SetStateAction<boolean>>;
 }
@@ -24,7 +24,7 @@ export default function EditDialogBox({
   setEditDialogBox,
 }: Props) {
   const [title, setTitle] = useState("");
-  const [passcode, setPasscode] = useState("");
+  const [passcode, setPasscode] = useState<string | undefined>("");
   const [groupPhoto, setGroupPhoto] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [icon, setIcon] = useState<string | null>(null);
@@ -37,7 +37,7 @@ export default function EditDialogBox({
   useEffect(() => {
     if (item) {
       setTitle(item.title);
-      setPasscode(item.passcode);
+      setPasscode(item?.passcode);
     }
   }, [item]);
 

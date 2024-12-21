@@ -7,15 +7,15 @@ import { toast } from "sonner";
 import { AnimatePresence, motion } from "framer-motion";
 import { FRONTEND_BASE_URL } from "@/lib/apiAuthRoutes";
 import { useSession } from "next-auth/react";
-import { GroupChatType } from "types";
+import { ChatGroupType } from "types";
 import { handleClickOutside } from "@/lib/handleClickOutside";
 
 interface OptionsMenuProps {
     className?: string;
     setDeleteDialogBox: Dispatch<SetStateAction<boolean>>;
     setEditDialogBox: Dispatch<SetStateAction<boolean>>;
-    setSelectedItem: Dispatch<SetStateAction<GroupChatType | null>>;
-    item: GroupChatType;
+    setSelectedItem: Dispatch<SetStateAction<ChatGroupType | null>>;
+    item: ChatGroupType;
     color?: string;
 }
 
@@ -29,6 +29,7 @@ export function OptionsMenu({
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const { data: session } = useSession();
+    //error here
     const userCheck = Number(session?.user?.id) === item.user_id;
 
     const toggleMenu = () => {

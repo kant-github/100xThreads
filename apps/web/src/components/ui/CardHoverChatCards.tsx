@@ -11,7 +11,7 @@ import { IoEye } from "react-icons/io5";
 import { IoEyeOff } from "react-icons/io5";
 import { IoIosCopy } from "react-icons/io";
 import { toast } from "sonner";
-import { GroupChatType, UserType } from "types";
+import { ChatGroupType, UserType } from "types";
 import GroupImage from "./GroupImage";
 
 interface Item {
@@ -24,13 +24,13 @@ interface Item {
 }
 
 interface CardListProps {
-  items: GroupChatType[];
+  items: ChatGroupType[];
   className?: string;
 }
 
 export default function CardList({ items, className }: CardListProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [selectedItem, setSelectedItem] = useState<GroupChatType | null>(null);
+  const [selectedItem, setSelectedItem] = useState<ChatGroupType | null>(null);
   const [deleteDialogBox, setDeleteDialogBox] = useState<boolean>(false);
   const [editDialogBox, setEditDialogBox] = useState<boolean>(false);
   const router = useRouter();

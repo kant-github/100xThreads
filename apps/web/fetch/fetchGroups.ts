@@ -19,11 +19,7 @@ export async function fetchGroups(token: string | null) {
             throw new Error("Failed to fetch data");
         }
         const groups = await res.json();
-        if (groups.data) {
-            return groups.data;
-        } else {
-            return [];
-        }
+        return groups.data || [];
     } catch (error) {
         console.error("Error fetching groups:", error);
         return [];
@@ -31,8 +27,8 @@ export async function fetchGroups(token: string | null) {
 }
 export async function fetchGroup(token: string, group_id: string | null) {
     try {
-        const res = await fetch(`${CHAT_GROUP}-check/${group_id}`,{
-            headers : {
+        const res = await fetch(`${CHAT_GROUP}-check/${group_id}`, {
+            headers: {
                 authorization: `Bearer ${token}`
             },
             cache: "no-cache"

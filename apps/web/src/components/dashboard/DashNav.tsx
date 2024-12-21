@@ -4,7 +4,7 @@ import SearchInput from "../utility/SearchInput";
 import ProfileDropDown from "./ProfileDropDown";
 import axios from "axios";
 import { CHAT_GROUP } from "@/lib/apiAuthRoutes";
-import { GroupChatType } from "types";
+import { ChatGroupType } from "types";
 import SearchResultDialogBox from "../utility/SearchResultDialogBox";
 import AppLogo from "../heading/AppLogo";
 import DarkMode from "../base/DarkMode";
@@ -26,7 +26,7 @@ interface Props {
 export const globalGroupId: string = "d023e34a-3aaf-46f4-88b5-b38b2ec6cffe";
 export default function Header({ groups }: Props) {
   const [searchInput, setSearchInput] = useState("");
-  const [searchResults, setSearchResults] = useState<GroupChatType[] | []>([]);
+  const [searchResults, setSearchResults] = useState<ChatGroupType[] | []>([]);
   const [searchResultDialogBox, setSearchResultDialogBox] =
     useState<boolean>(false);
   const { data: session } = useSession();

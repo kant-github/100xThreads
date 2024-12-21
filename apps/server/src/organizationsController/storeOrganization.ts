@@ -7,11 +7,9 @@ export async function storeOrganization(req: Request, res: Response) {
             message: "You are not authorized"
         })
     }
-    console.log("hello");
-    console.log(req.body);
 
     const { name, description, selectedGroups, type } = req.body;
-
+ 
     const parsedSelectedGroups = JSON.parse(selectedGroups);
 
 
@@ -27,7 +25,6 @@ export async function storeOrganization(req: Request, res: Response) {
         });
     }
 
-
     try {
         const existingOrg = await prisma.organization.findUnique({
             where: {
@@ -37,7 +34,6 @@ export async function storeOrganization(req: Request, res: Response) {
                 }
             }
         });
-        console.log("existing org is : ", existingOrg);
 
         if (existingOrg) {
             return res.status(400).json({
@@ -45,7 +41,6 @@ export async function storeOrganization(req: Request, res: Response) {
             })
         }
 
-        console.log("parsed selected group is : ", parsedSelectedGroups);
         const newOrganization = await prisma.organization.create({
             data: {
                 name: name,
@@ -54,12 +49,32 @@ export async function storeOrganization(req: Request, res: Response) {
                 organization_type: type.toUpperCase()
             }
         })
+        
+        await prisma.organizationUsers.create({
+            data: {
+                organization_id: newOrganization.id,
+                user_id: Number(req.user.id),
+                role: "ADMIN"
+            }
+        })
 
-        console.log("new org is : ", newOrganization);
+
+        if (parsedSelectedGroups.includes("events")) {
+            await prisma.eventRoom.create({
+                data: {
+                    organization_id: newOrganization.id,
+                    title: "Event Room",
+                    description: "Welcome to the Event Room, a dedicated space where connections are made, stories are shared, and moments come to life. Host events, engage with your community, and create memories that last beyond the day.",
+                    created_by: Number(req.user.id)
+                }
+            })
+        }
+
+        const filteredSelectedGroups = parsedSelectedGroups.filter((grouptitle: string) => grouptitle !== "events");
 
 
         await prisma.chatGroup.createMany({
-            data: parsedSelectedGroups.map((groupTitle: string) => ({
+            data: filteredSelectedGroups.map((groupTitle: string) => ({
                 organization_id: newOrganization.id,
                 title: groupTitle
             }))

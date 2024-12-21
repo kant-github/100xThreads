@@ -1,10 +1,11 @@
-export type GroupChatType = {
+export type ChatGroupType = {
   id: string;
-  user_id: number;
-  title: string;
-  passcode: string;
-  created_at: string;
-  groupImage: string;
+  organization_id: string;
+  title: string; 
+  passcode?: string;
+  groupImage?: string;
+  created_at: string; 
+  Chats: MessageType[];
 };
 
 export type GroupChatUserType = {

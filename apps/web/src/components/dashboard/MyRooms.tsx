@@ -1,5 +1,5 @@
 import { RxCross2 } from "react-icons/rx";
-import { GroupChatType } from "types";
+import { ChatGroupType } from "types";
 import { OptionsMenu } from "../ui/OptionsMenu";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import DeleteDialogBox from "../utility/DeleteDialogBox";
@@ -10,13 +10,13 @@ import { useRouter } from "next/navigation";
 interface Props {
     myRoomDropdown: boolean;
     setMyRoomDropDown: Dispatch<SetStateAction<boolean>>;
-    groups: GroupChatType[];
+    groups: ChatGroupType[];
 }
 
 export default function MyRoomDropdown({ myRoomDropdown, setMyRoomDropDown, groups = [] }: Props) {
     const [deleteDialogBox, setDeleteDialogBox] = useState<boolean>(false);
     const [editDialogBox, setEditDialogBox] = useState<boolean>(false);
-    const [selectedItem, setSelectedItem] = useState<GroupChatType | null>(null);
+    const [selectedItem, setSelectedItem] = useState<ChatGroupType | null>(null);
     const ref = useRef<HTMLDivElement | null>(null)
 
     useEffect(() => {

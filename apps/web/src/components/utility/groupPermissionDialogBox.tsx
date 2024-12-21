@@ -4,14 +4,14 @@ import BigBlackButton from "../buttons/BigBlackButton";
 import { useParams } from "next/navigation";
 import axios from "axios";
 import { CHAT_GROUP_USERS } from "@/lib/apiAuthRoutes";
-import { GroupChatType } from "types";
+import { ChatGroupType } from "types";
 import { toast } from "sonner";
 import { clearCache } from "actions/common";
 import { useSession } from "next-auth/react";
 import { fetchChatGroupUsers } from "fetch/fetchGroups";
 
 interface Props {
-    group: GroupChatType;
+    group: ChatGroupType;
     setPermissionDialogBox: Dispatch<SetStateAction<boolean>>;
     setChatGroupUsers: Dispatch<SetStateAction<any[]>>;
 }

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import LogOutDialogBox from "../utility/LogOutDialogBox";
 import MyRooms from "./MyRooms";
-import { GroupChatType } from "types";
+import { ChatGroupType } from "types";
 import { FaGithub } from "react-icons/fa";
 import { IoLogOutOutline } from "react-icons/io5";
 import AccountInfoDropDown from "../utility/AccountInfoDropDown";
@@ -16,7 +16,7 @@ import { handleClickOutside } from "@/lib/handleClickOutside";
 
 
 interface props {
-    groups?: GroupChatType[];
+    groups?: ChatGroupType[];
 }
 
 export default function UserMenu({ groups }: props) {

@@ -1,4 +1,4 @@
-import { GroupChatType, GroupChatUserType, MessageType, UserType } from "types";
+import { ChatGroupType, GroupChatUserType, MessageType, UserType } from "types";
 import Chat from "../Chat";
 import ChatSideBar from "../ChatSideBar";
 import { useEffect, useMemo, useState } from "react";
@@ -7,7 +7,7 @@ import { globalGroupId } from "@/components/dashboard/DashNav";
 import { getSocket } from "@/lib/socket.config";
 
 interface Props {
-    group: GroupChatType;
+    group: ChatGroupType;
     users: GroupChatUserType[];
     olderChats: MessageType[];
 }
@@ -65,7 +65,7 @@ export default function ({ group, users, olderChats }: Props) {
             <div className="flex flex-row w-screen bg-[#f2f2f2] dark:bg-[#1c1c1c]">
                 <ChatSideBar onlineUsersList={onlineUsersList} users={users} />
                 <div className="w-full mx-6">
-                    <GlobalChatNavTitle onlineUsersCount={onlineUsersCount} groupImage={group.groupImage} groupTitle={group.title} />
+                    <GlobalChatNavTitle onlineUsersCount={onlineUsersCount} groupImage={group.groupImage!} groupTitle={group.title} />
                     <Chat socket={socket} users={users} chatUser={chatUser} olderChats={olderChats} group={group} />
                 </div>
             </div>

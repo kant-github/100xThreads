@@ -15,7 +15,7 @@ export default function ChatComponent({ params }: { params: { id: string } }) {
   const [chats, setChats] = useState<MessageType[]>([]);
   const [chatGroupUsers, setChatGroupUsers] = useState<any[]>([]);
   const [group, setGroup] = useState<any>(null);
-  const [hasPermission, setHasPermission] = useState<boolean>(false); // Initially false
+  const [hasPermission, setHasPermission] = useState<boolean>(false);
   const [permissionChecked, setPermissionChecked] = useState<boolean>(false); // New
   const { data: session, status } = useSession();
 

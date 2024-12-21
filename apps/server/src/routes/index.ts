@@ -17,6 +17,7 @@ import { getOrganizations } from "../organizationsController/getOrganizations";
 import { storeOrganization } from "../organizationsController/storeOrganization";
 import { deleteOrganizations } from "../organizationsController/deleteOrganizations";
 import getOrganizationBySearch from "../organizationsController/getOrganizationBysearch";
+import { getAllOrganizations } from "../organizationsController/getAllOrganizations";
 const router = Router();
 
 // user_controller
@@ -30,6 +31,7 @@ router.get("/organizations", authmiddleware, getOrganizations);
 router.post("/organizations", authmiddleware, storeOrganization);
 router.delete("/organizations/:id", authmiddleware, deleteOrganizations);
 router.get("/organizations-by-search", authmiddleware, getOrganizationBySearch);
+router.get("/organiaztions-all", getAllOrganizations);
 
 
 //chat-group-controller

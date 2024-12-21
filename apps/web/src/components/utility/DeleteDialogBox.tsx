@@ -8,11 +8,11 @@ import { clearCache } from "actions/common";
 import { toast, Toaster } from "sonner";
 import BigWhiteBtn from "../buttons/BigWhiteBtn";
 import { CHAT_GROUP } from "@/lib/apiAuthRoutes";
-import { GroupChatType } from "types";
+import { ChatGroupType } from "types";
 import CrossButton from "./CrossButton";
 
 interface Props {
-    item: GroupChatType;
+    item: ChatGroupType;
     deleteDialogBox: boolean;
     setDeleteDialogBox: Dispatch<SetStateAction<boolean>>;
 }

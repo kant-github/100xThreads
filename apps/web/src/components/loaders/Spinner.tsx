@@ -1,4 +1,4 @@
-export default function ({className, size}: {className?: string; size: string}) {
+export default function ({className, size}: {className?: string; size?: string}) {
     return (
 
         <div role="status" className={`${className}`}>

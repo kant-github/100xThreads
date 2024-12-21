@@ -1,21 +1,35 @@
+'use client';
+import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react'; // For managing fetching state and effect
+import { fetchGroups } from "fetch/fetchGroups";
+import { fetchRecentGroup } from "fetch/fetchRecentGroups";
 import Dashboard from "@/components/dashboard/Dashboard";
 import DashNav from "@/components/dashboard/DashNav";
 import Footer from "@/components/footer/Footer";
-import { authOption, CustomSession } from "app/api/auth/[...nextauth]/options";
-import { fetchGroups } from "fetch/fetchGroups";
-import { fetchRecentGroup } from "fetch/fetchRecentGroups";
-import { getServerSession } from "next-auth";
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { userTokenAtom } from '@/recoil/atoms/atom';
 
-export default async function () {
-    const session:CustomSession | null = await getServerSession(authOption);
-    const groups = await fetchGroups(session?.user?.token || null);
+export default function DashboardPageClient() {
+    const { data: session } = useSession();
+    const [groups, setGroups] = useState<any[]>([]);
+    const [recentGroups, setRecentGroups] = useState<any[]>([]);
+    const setUserToken = useSetRecoilState(userTokenAtom);
+    const token = useRecoilValue(userTokenAtom);
 
-    const recentGroups = await fetchRecentGroup(session?.user?.token || null, false);
+
+
+    useEffect(() => {
+        if (session?.user?.token) {
+            setUserToken(session.user.token);
+        }
+        console.log(token);
+    }, [session]);
+
     return (
         <div>
             <DashNav groups={groups} />
             <Dashboard recentGroups={recentGroups} groups={groups.slice(0, 6)} session={session} />
             <Footer />
         </div>
-    )
+    );
 }

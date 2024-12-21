@@ -3,12 +3,12 @@ import { useEffect, useMemo, useState } from "react";
 import ChatSideBar from "./ChatSideBar";
 import ChatNavTitle from "./ChatNavTitle";
 import Chat from "./Chat";
-import { GroupChatType, GroupChatUserType, MessageType, UserType } from "types";
+import { ChatGroupType, GroupChatUserType, MessageType, UserType } from "types";
 import { getSocket } from "@/lib/socket.config";
 
 interface Props {
   groupId: string;
-  group: GroupChatType | null;
+  group: ChatGroupType | null;
   users: GroupChatUserType[];
   olderChats: MessageType[];
 }
