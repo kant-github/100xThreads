@@ -53,7 +53,7 @@ export function OptionsMenu({
     }, [isOpen]);
 
     return (
-        <div ref={menuRef} className={`relative ${className}`}>
+        <div ref={menuRef} className={`relative ${className} z-50`}>
             <SlOptionsVertical
                 size={12}
                 className="cursor-pointer dark:text-zinc-100 text-zinc-100"
@@ -67,7 +67,7 @@ export function OptionsMenu({
                         exit={{ opacity: 0, y: -10 }}
                         className="absolute rounded-[4px] right-0 w-28 bg-white dark:bg-zinc-700 shadow-lg z-50"
                     >
-                        <div className="py-0.5 text-sm text-zinc-900 dark:text-zinc-100">
+                        <div className="py-0.5 text-sm text-zinc-900 dark:text-zinc-100 z-50">
                             <div
                                 onClick={() => {
                                     navigator.clipboard.writeText(`${FRONTEND_BASE_URL}/chat/${orgs.id}`).then(() => {
