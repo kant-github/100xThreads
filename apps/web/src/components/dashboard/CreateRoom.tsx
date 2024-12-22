@@ -39,7 +39,7 @@ interface CreateRoomProps {
     setSelectedGroups: Dispatch<SetStateAction<SelectedGroups>>;
     roomPasscode: string;
     setRoomPasscode: Dispatch<SetStateAction<string>>;
-    createChatHandler: () => Promise<void>;
+    creaOrganizationHandler: () => Promise<void>;
     groupPhoto: File | null;
     setGroupPhoto: Dispatch<SetStateAction<File | null>>;
     setIcon: Dispatch<SetStateAction<string | null>>;
@@ -60,7 +60,7 @@ export default function CreateRoom({
     setOrganizationType,
     selectedGroups,
     setSelectedGroups,
-    createChatHandler,
+    creaOrganizationHandler,
     groupPhoto,
     setGroupPhoto,
     setIcon,
@@ -89,7 +89,7 @@ export default function CreateRoom({
 
     async function handleSubmit() {
         setSubmitting(true);
-        await createChatHandler();
+        await creaOrganizationHandler();
         setSubmitting(false);
     }
 

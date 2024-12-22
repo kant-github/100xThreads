@@ -1,19 +1,28 @@
 "use client";
 
-import { organizationsSelector } from "@/recoil/selectors/organizationsSelector";
 import CardHoverChatCards from "../ui/CardHoverChatCards";
 import { IoIosArrowForward } from "react-icons/io";
-import { useRecoilValueLoadable } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { OrganizationType } from "types";
+import { organizationsAtom } from "@/recoil/atoms/organizationsAtom";
+import { useEffect } from "react";
+import { fetchAllOrganization } from "fetch/fetchOrganizations";
+import { userTokenAtom } from "@/recoil/atoms/atom";
 
 export default function () {
 
-  const organizationsLoadable = useRecoilValueLoadable(organizationsSelector);
-  let organizations: OrganizationType[] = [];
+  const [organizations, setOrganizations] = useRecoilState<OrganizationType[] | []>(organizationsAtom);
+  const token = useRecoilValue(userTokenAtom);
 
-  if (organizationsLoadable.state === 'hasValue') {
-    organizations = organizationsLoadable.contents;
-  }
+  useEffect(() => {
+    const fetchCall = async () => {
+      if (token) {
+        const data = await fetchAllOrganization(token);
+        setOrganizations(data);
+      }
+    }
+    fetchCall();
+  }, [token]);
 
 
   return (

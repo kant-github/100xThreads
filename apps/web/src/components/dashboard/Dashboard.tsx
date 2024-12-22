@@ -1,20 +1,14 @@
 import Image from "next/image";
 import ChatCards from "../base/ChatCards";
 import CreateChatCard from "./CreateChatCard";
-import { OrganizationType } from "types";
 import { CustomSession } from "app/api/auth/[...nextauth]/options";
-import { useRecoilValueLoadable } from "recoil";
-import { organizationsSelector } from "@/recoil/selectors/organizationsSelector";
+
 interface props {
     session: CustomSession | null;
 }
 
 export default function Dashboard({ session, }: props) {
-    const organizationsLoadable = useRecoilValueLoadable(organizationsSelector);
-    let organizations: OrganizationType[] = [];
-    if (organizationsLoadable.state === "hasValue") {
-        organizations = organizationsLoadable.contents;
-    }
+
 
     return (
         <div className="w-full bg-[#f2f2f2] dark:bg-[#1c1c1c]">

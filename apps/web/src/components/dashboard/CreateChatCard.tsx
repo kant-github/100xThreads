@@ -12,6 +12,8 @@ import { clearCache } from "actions/common";
 import { CHAT_GROUP, ORGANIZATION } from "@/lib/apiAuthRoutes";
 import { CgMathPlus } from "react-icons/cg";
 import { CustomSession } from "app/api/auth/[...nextauth]/options";
+import { useRecoilRefresher_UNSTABLE, useSetRecoilState } from "recoil";
+import { userTokenAtom } from "@/recoil/atoms/atom";
 
 export enum OrganizationType {
     Startup = "Startup",
@@ -41,7 +43,10 @@ export default function CreateRoomComponent({ session }: { session: CustomSessio
         announcements: true,
     });
 
-    async function createChatHandler() {
+    const setUserToken = useSetRecoilState(userTokenAtom);
+
+
+    async function creaOrganizationHandler() {
 
         const selectedGroupNames = Object.entries(selectedGroups).filter(([key, value]) => value === true).map(([key]) => key);
 
@@ -51,14 +56,8 @@ export default function CreateRoomComponent({ session }: { session: CustomSessio
             icon: icon,
             type: organizationType,
             termsAndCond: termsAndconditionChecked,
-            selectedGroups: selectedGroupNames,  // Send only the selected group names
+            selectedGroups: selectedGroupNames,
         };
-
-        console.log("payload is : ", payload);
-
-        console.log("payload is:", payload);
-
-        // Validate payload with Zod
         const result = createRoomSchema.safeParse(payload);
         console.log("result is:", result);
 
@@ -68,7 +67,6 @@ export default function CreateRoomComponent({ session }: { session: CustomSessio
             return;
         }
 
-        // Create FormData
         const finalPayload = new FormData();
         finalPayload.append("name", result.data.name);
 
@@ -78,8 +76,6 @@ export default function CreateRoomComponent({ session }: { session: CustomSessio
 
         finalPayload.append("type", result.data.type);
         finalPayload.append("termsAndCond", String(result.data.termsAndCond));
-
-        // Send only the selected group names as a JSON string
         finalPayload.append("selectedGroups", JSON.stringify(result.data.selectedGroups));
 
         try {
@@ -94,7 +90,7 @@ export default function CreateRoomComponent({ session }: { session: CustomSessio
             toast.message(data.message, {
                 description: formattedDate,
             });
-
+            setUserToken(session?.user?.token!);
             setOrganizationName(null);
             setOrganizationType(OrganizationType.Community);
             setIcon(null);
@@ -137,7 +133,7 @@ export default function CreateRoomComponent({ session }: { session: CustomSessio
             </div>
             <CreateRoom
                 session={session}
-                createChatHandler={createChatHandler}
+                creaOrganizationHandler={creaOrganizationHandler}
                 name={name}
                 setName={setName}
                 organizationName={organizationName}

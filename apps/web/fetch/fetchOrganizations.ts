@@ -8,9 +8,6 @@ export async function fetchAllOrganization(token: string | null) {
         const res = await fetch(`${ORGANIZATION}-all`, {
             headers: {
                 authorization: `Bearer ${token}`,
-            }, next: {
-                revalidate: 60 * 60,
-                tags: ["dashboard"],
             }
         })
 
