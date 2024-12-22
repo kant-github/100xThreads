@@ -12,8 +12,7 @@ import { clearCache } from "actions/common";
 import { ORGANIZATION } from "@/lib/apiAuthRoutes";
 import { CgMathPlus } from "react-icons/cg";
 import { CustomSession } from "app/api/auth/[...nextauth]/options";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { userTokenAtom } from "@/recoil/atoms/atom";
+import { useRecoilState } from "recoil";
 import { organizationsAtom } from "@/recoil/atoms/organizationsAtom";
 
 export enum OrganizationType {
@@ -44,10 +43,6 @@ export default function CreateRoomComponent({ session }: { session: CustomSessio
         announcements: true,
     });
     const [organizations, setOrganizations] = useRecoilState(organizationsAtom);
-
-    const setUserToken = useSetRecoilState(userTokenAtom);
-
-
     async function creaOrganizationHandler() {
 
         const selectedGroupNames = Object.entries(selectedGroups).filter(([key, value]) => value === true).map(([key]) => key);
@@ -94,7 +89,6 @@ export default function CreateRoomComponent({ session }: { session: CustomSessio
             toast.message(data.message, {
                 description: formattedDate,
             });
-            setUserToken(session?.user?.token!);
             setOrganizationName(null);
             setOrganizationType(OrganizationType.Community);
             setIcon(null);
