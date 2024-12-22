@@ -5,13 +5,11 @@ export default function ({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    return <div>
-        <div>
+    return (
+        <div className="h-screen">
             <RecoilRoot>
                 {children}
             </RecoilRoot>
-
-
         </div>
-    </div>
+    )
 }

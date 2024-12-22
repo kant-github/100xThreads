@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import SessionProvider from "providers/SessionProvider";
 import localFont from "next/font/local";
 import { Toaster } from 'sonner';
-import { RecoilRoot } from 'recoil';
 import "./globals.css";
 
 const geistSans = localFont({

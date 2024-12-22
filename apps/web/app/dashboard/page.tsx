@@ -3,7 +3,6 @@ import { useSession } from 'next-auth/react';
 import { useEffect, useState, useMemo } from 'react';
 import Dashboard from "@/components/dashboard/Dashboard";
 import DashNav from "@/components/dashboard/DashNav";
-import Footer from "@/components/footer/Footer";
 import SkeletonDashboard from '@/components/skeletons/DashboardSkeleton';
 import { useSetRecoilState } from 'recoil';
 import { userSessionAtom } from '@/recoil/atoms/atom';
@@ -27,16 +26,13 @@ export default function DashboardPageClient() {
     }
 
     return (
-        <div className="flex flex-col h-screen">
-        {/* Navigation bar */}
-        <div className="h-16">
-            <DashNav groups={groups} />
+        <div className="h-full flex flex-col">
+            <div className='h-20'>
+                <DashNav groups={groups} />
+            </div>
+            <div className='flex-grow'>
+                <Dashboard session={session} />
+            </div>
         </div>
-
-        {/* Dashboard content takes remaining height */}
-        <div className="flex-grow">
-            <Dashboard session={session} />
-        </div>
-    </div>
     );
 }
