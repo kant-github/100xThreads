@@ -24,6 +24,7 @@ export default function () {
     fetchCall();
   }, [token]);
 
+  console.log("organizations are in dashboard is : ", organizations);
 
   return (
     <div className="bg-[#37474f] dark:bg-[#141313] pt-6 pb-16">

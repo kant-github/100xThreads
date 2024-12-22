@@ -9,11 +9,12 @@ import { toast } from "sonner";
 import moment from 'moment';
 import { createRoomSchema } from "@/validations/createChatZod";
 import { clearCache } from "actions/common";
-import { CHAT_GROUP, ORGANIZATION } from "@/lib/apiAuthRoutes";
+import { ORGANIZATION } from "@/lib/apiAuthRoutes";
 import { CgMathPlus } from "react-icons/cg";
 import { CustomSession } from "app/api/auth/[...nextauth]/options";
-import { useRecoilRefresher_UNSTABLE, useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { userTokenAtom } from "@/recoil/atoms/atom";
+import { organizationsAtom } from "@/recoil/atoms/organizationsAtom";
 
 export enum OrganizationType {
     Startup = "Startup",
@@ -42,6 +43,7 @@ export default function CreateRoomComponent({ session }: { session: CustomSessio
         events: true,
         announcements: true,
     });
+    const [organizations, setOrganizations] = useRecoilState(organizationsAtom);
 
     const setUserToken = useSetRecoilState(userTokenAtom);
 
@@ -85,6 +87,8 @@ export default function CreateRoomComponent({ session }: { session: CustomSessio
                     "Content-Type": "multipart/form-data",
                 },
             });
+            console.log("new created data : ", data.data);
+            setOrganizations([data.data, ...organizations]);
 
             const formattedDate = moment().format("dddd, MMMM D, YYYY");
             toast.message(data.message, {
