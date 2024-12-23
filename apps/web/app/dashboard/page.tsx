@@ -31,7 +31,7 @@ export default function DashboardPageClient() {
                 <DashNav groups={groups} />
             </div>
             <div className='flex-grow'>
-                <Dashboard session={session} />
+                <Dashboard />
             </div>
         </div>
     );

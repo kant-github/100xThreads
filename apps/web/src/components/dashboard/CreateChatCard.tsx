@@ -14,7 +14,14 @@ import { CgMathPlus } from "react-icons/cg";
 import { CustomSession } from "app/api/auth/[...nextauth]/options";
 import { useRecoilState } from "recoil";
 import { organizationsAtom } from "@/recoil/atoms/organizationsAtom";
+import { Racing_Sans_One } from 'next/font/google';
+import { FaIndustry } from "react-icons/fa6";
+import CreateOrganizationButton from "../buttons/CreateOrganizationButton";
 
+const doto = Racing_Sans_One({
+    subsets: ['latin'],
+    weight: ['400'],
+});
 export enum OrganizationType {
     Startup = "Startup",
     NonProfit = "Non-Profit",
@@ -26,7 +33,7 @@ export enum OrganizationType {
 }
 
 
-export default function CreateRoomComponent({ session }: { session: CustomSession | null }) {
+export default function ({ session }: { session: CustomSession | null }) {
     const [createRoomModal, setCreateRoomModal] = useState<boolean>(false);
     const [organizationName, setOrganizationName] = useState<string | null>(null);
     const [roomPasscode, setRoomPasscode] = useState<string>("");
@@ -106,28 +113,28 @@ export default function CreateRoomComponent({ session }: { session: CustomSessio
     }
 
     return (
-        <>
+        <div className="w-full flex flex-row justify-start gap-x-40 items-center px-24">
             <div className="md:w-2/5 w-screen transform dark:bg-[#f5a331] bg-[#202a2e] px-12 py-4 rounded-[8px] mx-4 my-12">
                 <div className="flex flex-col">
-                    <div className="flex flex-row gap-x-8 items-center mt-4 justify-between">
-                        <div>
-                            <div className="flex flex-row items-center ml-0.5 gap-x-2">
-                                <ImHome size={18} className="dark:text-gray-800 text-gray-200" />
-                                <h3 className="dark:text-gray-800 pt-1 text-gray-200 font-bold">Create a Room</h3>
-                            </div>
-                            <p className="text-gray-200 dark:text-gray-800 font-normal tracking-wider md:text-xs text-[8px] mt-3">
-                                Start a chat room with just a few clicks and stay connected with friends. Chat, share, and catch up anytime!
-                            </p>
+                    <div>
+                        <div className="flex flex-row items-center ml-0.5 gap-x-2">
+                            <FaIndustry size={24} className="dark:text-gray-800 text-gray-200 text-20" />
+                            <h3 className={`${doto.className} dark:text-gray-800 pt-1 text-gray-200 text-xl font-bold tracking-wider`}>CREATE ORGANIZATION</h3>
                         </div>
-                        <Image src="/images/talking.png" width={80} height={80} alt="talking" />
+                        <p className="text-gray-200 dark:text-gray-800 font-semibold italic tracking-wider md:text-xs text-[8px] mt-3">
+                            Start a chat room with just a few clicks and stay connected with friends. Chat, share, and catch up anytime!
+                        </p>
                     </div>
-                    <div className="w-3/5 flex flex-row justify-center mt-8 mb-3 group">
-                        <BigWhiteBtn onClick={openModal}>
+                    <div className="w-full flex flex-row justify-center mt-8 mb-3 group">
+                        <CreateOrganizationButton onClick={openModal}>
                             <CgMathPlus className="group-hover:rotate-90 group-hover:-translate-x-3 transition-transform duration-300 ease-in-out" size={16} />
                             Create Organization
-                        </BigWhiteBtn>
+                        </CreateOrganizationButton>
                     </div>
                 </div>
+            </div>
+            <div className="md:block hidden">
+                <Image src="/images/dashImage.jpeg" width={400} height={400} className="rounded-[8px]" alt="dashboard-conversation" />
             </div>
             <CreateRoom
                 session={session}
@@ -151,6 +158,6 @@ export default function CreateRoomComponent({ session }: { session: CustomSessio
                 termsAndconditionChecked={termsAndconditionChecked}
                 setTermsAndConditionchecked={setTermsAndConditionchecked}
             />
-        </>
+        </div>
     );
 }
