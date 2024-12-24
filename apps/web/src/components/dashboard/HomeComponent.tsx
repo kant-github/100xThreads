@@ -8,7 +8,7 @@ export default function () {
     return (
         <div className="flex flex-col h-full">
             <CreateChatCard session={session} />
-            {/* <HomeCards/> */}
+            <HomeCards/>
         </div>
     )
 }

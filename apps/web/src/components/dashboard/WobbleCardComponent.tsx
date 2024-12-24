@@ -17,7 +17,6 @@ export default function () {
                             <li>Google Calendar Integration</li>
                             <li>Multiple Channels</li>
                             <li>Role based access</li>
-
                         </ul>
                     </p>
                 </div>
