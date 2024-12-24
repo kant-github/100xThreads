@@ -5,7 +5,7 @@ import OwnedByYouComponent from "./OwnedByYouComponent";
 import SettingsComponent from "./SettingsComponent";
 import { dashboardOptionsAtom, RendererOption } from "@/recoil/atoms/DashboardOptionsAtom";
 
-export default function DashboardRenderer() {
+export default function () {
   const renderOption = useRecoilValue(dashboardOptionsAtom);
 
   const renderComponent = () => {

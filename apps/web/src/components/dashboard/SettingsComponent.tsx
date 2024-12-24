@@ -1,5 +1,21 @@
+import { useState } from "react";
+import DashboardComponentHeading from "./DashboardComponentHeading";
+import SettingsToggle from "../settings/SettingsToggle";
+import SettingsRenderer from "../settings/SettingsRenderer";
+
+
+
 export default function () {
+    const [isToggled, setIsToggled] = useState(false);
+    const toggle = () => setIsToggled(!isToggled);
+
     return (
-        <div>Settings</div>
+        <div className="bg-[#37474f] dark:bg-[#141313] h-full">
+            <DashboardComponentHeading className="pt-4 pl-12" description="Manage your preferences and account settings">Settings</DashboardComponentHeading>
+            <div className="pt-8 mx-12">
+                <SettingsToggle />
+                <SettingsRenderer/>
+            </div>
+        </div>
     )
 }

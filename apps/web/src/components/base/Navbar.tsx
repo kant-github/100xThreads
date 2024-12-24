@@ -5,7 +5,6 @@ import LoginModal from "./LoginModal";
 import { useSession } from "next-auth/react";
 import AppLogo from "../heading/AppLogo";
 import { useRouter } from "next/navigation";
-import DarkMode from "./DarkMode";
 import { WhiteBtn } from "../buttons/WhiteBtn";
 
 export default function () {
@@ -26,7 +25,6 @@ export default function () {
       <div className="flex justify-between w-full px-16 py-4 bg-white dark:bg-[#171717] border-b dark:border-zinc-700 dark:shadow-[40px]">
         <AppLogo />
         <div className="flex items-center gap-x-12">
-          <DarkMode/>
           <div className="flex flex-row items-center justify-center gap-x-6">
             {
               session?.user ? (

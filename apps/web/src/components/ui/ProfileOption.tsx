@@ -32,7 +32,7 @@ export default function () {
   }, [open, setOpen]);
 
   return (
-    <div ref={ref} className={`px-2 py-1.5 bg-zinc-800 rounded-[8px] cursor-pointer`}>
+    <div ref={ref} className={`px-2 py-1.5 bg-zinc-800 rounded-[8px] cursor-pointer`} onClick={() => setOpen(prev => !prev)}>
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-x-3">
           <span className="relative">
@@ -49,8 +49,7 @@ export default function () {
             {session.user?.name}
           </span>
         </div>
-
-        <span className="cursor p-1" onClick={() => setOpen(prev => !prev)}>
+        <span className="cursor p-1">
           <MdOutlineKeyboardArrowDown size={18} />
         </span>
       </div>

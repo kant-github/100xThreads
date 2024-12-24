@@ -1,5 +1,4 @@
 "use client";
-import DarkMode from "../base/DarkMode";
 import ProfileDropDown from "../dashboard/ProfileDropDown";
 import AppLogo from "../heading/AppLogo";
 import Version from "../buttons/Version";
@@ -14,8 +13,7 @@ export default function () {
                 <Version />
             </div>
             <div className="flex flex-row justify-center items-center gap-x-8">
-                <Greetings/>
-                <DarkMode />
+                <Greetings />
                 <ProfileDropDown />
             </div>
         </div>

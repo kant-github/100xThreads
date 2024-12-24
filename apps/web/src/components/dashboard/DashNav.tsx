@@ -7,7 +7,6 @@ import { CHAT_GROUP } from "@/lib/apiAuthRoutes";
 import { ChatGroupType } from "types";
 import SearchResultDialogBox from "../utility/SearchResultDialogBox";
 import AppLogo from "../heading/AppLogo";
-import DarkMode from "../base/DarkMode";
 import { useSession } from "next-auth/react";
 import { Cedarville_Cursive } from "next/font/google";
 import { WhiteBtn } from "../buttons/WhiteBtn";
@@ -72,7 +71,6 @@ export default function Header({ groups }: Props) {
       <div className="flex flex-row justify-center items-center gap-x-6">
         <Greetings/>
         <WhiteBtn onClick={globalRoomButtonHandler}>Global room</WhiteBtn>
-        <DarkMode />
         <div className="w-[340px]">
           <SearchInput
             setSearchResultDialogBox={setSearchResultDialogBox}
