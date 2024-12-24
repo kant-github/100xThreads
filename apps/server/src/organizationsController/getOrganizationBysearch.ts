@@ -5,10 +5,6 @@ export default async function getOrganizationBySearch(req: Request, res: Respons
     try {
         const { name } = req.query;
         const user = req.user;
-        console.log("printing user is : ", user);
-        console.log("printing : ", name);
-
-        await new Promise(t => setTimeout(t, 1000));
 
         const existingOrg = await prisma.organization.findFirst({
             where: {
@@ -20,16 +16,12 @@ export default async function getOrganizationBySearch(req: Request, res: Respons
             },
         });
 
-        console.log("existing org is : ", existingOrg);
-
-
         if (existingOrg) {
             return res.status(200).json({
                 message: "An organization with this name already exists.",
                 exists: true,
             });
         }
-
 
         return res.status(200).json({
             message: "No organization found with this name.",

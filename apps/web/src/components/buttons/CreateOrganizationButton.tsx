@@ -21,7 +21,7 @@ export default function OrganizationButton({
     <button
       type="button"
       onClick={onClick}
-      className={`flex items-center tracking-wider shadow-md shadow-zinc-800 justify-center gap-x-4 w-full px-6 py-3 rounded-[8px] bg-black text-zinc-100 text-sm font-light transition-all duration-200 hover:bg-zinc-800 focus:outline-none${lexendDeca.className}`}
+      className={`flex items-center tracking-wider shadow-sm shadow-zinc-800 justify-center gap-x-4 w-full px-6 py-3 rounded-[8px] bg-black text-zinc-100 text-sm font-light transition-all duration-200 hover:bg-zinc-800 focus:outline-none${lexendDeca.className}`}
     >
       {children}
     </button>

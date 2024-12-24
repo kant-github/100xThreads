@@ -14,13 +14,15 @@ import { CgMathPlus } from "react-icons/cg";
 import { CustomSession } from "app/api/auth/[...nextauth]/options";
 import { useRecoilState } from "recoil";
 import { organizationsAtom } from "@/recoil/atoms/organizationsAtom";
-import { Racing_Sans_One } from 'next/font/google';
+import { Belanosima } from 'next/font/google';
 import { FaIndustry } from "react-icons/fa6";
 import CreateOrganizationButton from "../buttons/CreateOrganizationButton";
+import { WobbleCard } from "../ui/wobble-card";
+import WobbleCardComponent from "./WobbleCardComponent";
 
-const doto = Racing_Sans_One({
+const doto = Belanosima({
     subsets: ['latin'],
-    weight: ['400'],
+    weight: ['700'],
 });
 export enum OrganizationType {
     Startup = "Startup",
@@ -113,15 +115,15 @@ export default function ({ session }: { session: CustomSession | null }) {
     }
 
     return (
-        <div className="w-full flex flex-row justify-start gap-x-40 items-center px-24">
-            <div className="md:w-2/5 w-screen transform dark:bg-[#f5a331] bg-[#202a2e] px-12 py-4 rounded-[8px] mx-4 my-12">
+        <div className="w-full  flex flex-row justify-center items-center gap-x-12 px-12">
+            <div className="md:w-4/6 w-screen transform dark:bg-[#f5a331] bg-[#202a2e] px-12 py-4 rounded-[8px] mx-4 my-12">
                 <div className="flex flex-col">
                     <div>
                         <div className="flex flex-row items-center ml-0.5 gap-x-2">
-                            <FaIndustry size={24} className="dark:text-gray-800 text-gray-200 text-20" />
-                            <h3 className={`${doto.className} dark:text-gray-800 pt-1 text-gray-200 text-xl font-bold tracking-wider`}>CREATE ORGANIZATION</h3>
+                            <FaIndustry size={26} className="dark:text-gray-800 text-gray-200 text-20" />
+                            <h3 className={`${doto.className} dark:text-gray-800 pt-1 text-gray-200 text-2xl font-bold tracking-wider`}>CREATE ORGANIZATION</h3>
                         </div>
-                        <p className="text-gray-200 dark:text-gray-800 font-semibold italic tracking-wider md:text-xs text-[8px] mt-3">
+                        <p className="text-gray-200 dark:text-gray-800 font-semibold italic tracking-wider md:text-[13px] text-xs mt-3">
                             Start a chat room with just a few clicks and stay connected with friends. Chat, share, and catch up anytime!
                         </p>
                     </div>
@@ -133,9 +135,7 @@ export default function ({ session }: { session: CustomSession | null }) {
                     </div>
                 </div>
             </div>
-            <div className="md:block hidden">
-                <Image src="/images/dashImage.jpeg" width={400} height={400} className="rounded-[8px]" alt="dashboard-conversation" />
-            </div>
+            <WobbleCardComponent/>
             <CreateRoom
                 session={session}
                 creaOrganizationHandler={creaOrganizationHandler}

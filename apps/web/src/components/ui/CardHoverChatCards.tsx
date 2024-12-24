@@ -20,7 +20,7 @@ interface CardHoverChatCardsProps {
   className?: string
 }
 
-export default function CardList({ organizations, className }: CardHoverChatCardsProps) {
+export default function ({ organizations, className }: CardHoverChatCardsProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [selectedItem, setSelectedItem] = useState<OrganizationType | null>(null);
   const [deleteDialogBox, setDeleteDialogBox] = useState<boolean>(false);
@@ -111,7 +111,7 @@ function Card({
   return (
     <div
       className={cn(
-        "rounded-2xl h-full w-full bg-[#1f282e] dark:bg-[#1c1c1c] border border-transparent dark:border-white/[0.2] relative z-20",
+        "rounded-2xl h-32 w-full bg-[#1f282e] dark:bg-[#1c1c1c] border border-transparent dark:border-white/[0.2] relative z-20",
         "w-full md:w-4/5 lg:w-full",
         "sm:px-2 md:px-4 lg:px-6",
         className
@@ -147,7 +147,7 @@ function CardTitle({
         />
       )} */}
       <GroupImage groupImage={groupImage!} groupTitle={title} />
-      <h4 className={cn("text-zinc-100 font-bold tracking-wide", className)}>
+      <h4 className={cn("text-zinc-100  font-bold tracking-wide", className)}>
         {truncatedTitle}
       </h4>
     </div>
