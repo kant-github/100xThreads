@@ -9,7 +9,7 @@ export default function () {
                 className="">
                 <div className="max-w-xs">
                     <h2 className="text-left font-extrabold text-balance text-base md:text-xl lg:text-3xl tracking-[-0.015em] text-white">
-                        100xThreads
+                        100<span className="text-red-500">x</span>Threads
                     </h2>
                     <p className="mt-4 ml-2 w-52 text-left text-[13px] text-zinc-100">
                         <ul className="list-disc flex flex-col gap-y-1">

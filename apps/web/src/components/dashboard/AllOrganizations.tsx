@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { fetchAllOrganization } from "fetch/fetchOrganizations";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import HomeOrganizationsSkeleton from "../skeletons/HomeOrganizationsSkeleton";
+import DashboardComponentHeading from "./DashboardComponentHeading";
 
 
 export default function () {
@@ -20,6 +21,7 @@ export default function () {
   useEffect(() => {
     const fetchCall = async () => {
       setLoading(true);
+      await new Promise(t => setTimeout(t, 2000));
       if (session.user?.token) {
         const data = await fetchAllOrganization(session.user.token);
         setOrganizations(data);
@@ -31,11 +33,14 @@ export default function () {
 
 
   return (
-    <div className="bg-[#37474f] dark:bg-[#141313] py-8">
-      {!loading ?
-        (<CardHoverChatCards organizations={organizations} />) :
-        (<HomeOrganizationsSkeleton />)
-      }
+    <div className="bg-[#37474f] dark:bg-[#141313] h-full">
+      <DashboardComponentHeading description="Browse through the organi¯tions which previously joined">Organizations you joined in the past</DashboardComponentHeading>
+      <div className="bg-[#37474f] dark:bg-[#141313] mt-8">
+                {!loading ?
+                    (<CardHoverChatCards organizations={organizations} />) :
+                    (<HomeOrganizationsSkeleton />)
+                }
+            </div>
     </div>
   );
 }
