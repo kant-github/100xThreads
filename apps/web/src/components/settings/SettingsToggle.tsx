@@ -5,12 +5,9 @@ export default function SettingsOptions() {
     const [settingsAtom, setSettingsAtom] = useRecoilState(settingsOptionAtom);
 
     return (
-        <div className="flex items-center gap-x-12"> {/* Adjusted the gap between items */}
+        <div className="flex items-center gap-x-12 select-none">
             <div
-                onClick={() => {
-                    // console.log(settingsAtom);
-                    setSettingsAtom(settingsOptionEnum.Appearance)
-                }}
+                onClick={() => setSettingsAtom(settingsOptionEnum.Appearance)}
                 className={`cursor-pointer text-md font-light text-zinc-100 
                 ${settingsAtom === settingsOptionEnum.Appearance && "underline decoration-blue-500 decoration-4 underline-offset-4 space-y-[4 underline-offset-4px]"}`}>
                 Appearance

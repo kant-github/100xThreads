@@ -14,7 +14,6 @@ export default function () {
                     <div className="flex flex-row items-center gap-x-2">
                         <div className="text-lg font-medium">{"Rishi Kant"}</div>
                         <div className="flex items-center gap-x-1 text-green-500 text-[11px] "><IoIosCheckmarkCircleOutline size={14} /> {" "} Active</div>
-                        
                     </div>
                     <div>
                         <WhiteText className="text-xs">Delhi, India</WhiteText>

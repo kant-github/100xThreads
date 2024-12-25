@@ -1,4 +1,5 @@
 import Userdata from "./user/UserData";
+import UserEventCards from "./UserEventCards";
 
 export default function () {
 
@@ -7,7 +8,7 @@ export default function () {
             <div className="">
                 <Userdata />
                 <hr className="border-t border-zinc-600 border-0 h-px bg-zinc-500  mt-8" />
-                
+                <UserEventCards className={"mt-4"} />
             </div>
         </div>
     )
