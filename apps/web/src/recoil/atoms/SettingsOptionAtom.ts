@@ -9,5 +9,5 @@ export enum settingsOptionEnum {
 
 export const settingsOptionAtom = atom<settingsOptionEnum>({
     key: "settingsOption",
-    default: settingsOptionEnum.Appearance
+    default: settingsOptionEnum.Profile
 })
