@@ -33,13 +33,13 @@ export default function () {
 
   return (
     <div className="bg-[#37474f] dark:bg-[#141313] h-full">
-      <DashboardComponentHeading className="pt-4 pl-12" description="Browse through the organi¯tions which previously joined">All organizations</DashboardComponentHeading>
-      <div className="bg-[#37474f] dark:bg-[#141313] mt-8">
-                {!loading ?
-                    (<CardHoverChatCards organizations={organizations} />) :
-                    (<HomeOrganizationsSkeleton />)
-                }
-            </div>
+      <DashboardComponentHeading className="pt-4 pl-12" description="Browse through the organizations which previously joined">All organizations</DashboardComponentHeading>
+      <div className="bg-[#37474f] dark:bg-[#262629] mt-8 pt-8 mx-12 h-[48%] overflow-auto scrollbar-hide rounded-[8px] shadow-lg shadow-black/40">
+        {!loading ?
+          (<CardHoverChatCards organizations={organizations} />) :
+          (<HomeOrganizationsSkeleton />)
+        }
+      </div>
     </div>
   );
 }

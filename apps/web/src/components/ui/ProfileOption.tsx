@@ -1,17 +1,21 @@
 import { userSessionAtom } from "@/recoil/atoms/atom"
 import Image from "next/image";
-import { useRecoilValue } from "recoil"
+import { useRecoilState, useRecoilValue } from "recoil"
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { useEffect, useRef, useState } from "react";
 import { PiSignOut } from "react-icons/pi";
 import { TiUser } from "react-icons/ti";
 import { handleClickOutside } from "@/lib/handleClickOutside";
 import LogOutDialogBox from "../utility/LogOutDialogBox";
+import { settingsOptionAtom, settingsOptionEnum } from "@/recoil/atoms/SettingsOptionAtom";
+import { dashboardOptionsAtom, RendererOption } from "@/recoil/atoms/DashboardOptionsAtom";
 
 
 export default function () {
   const [open, setOpen] = useState<boolean>(false);
   const [logoutDropdown, setLogoutDropdown] = useState<boolean>(false);
+  const [settingsAtom, setSettingsAtom] = useRecoilState(settingsOptionAtom);
+  const [dashboardAtom, setDashboardAtom] = useRecoilState(dashboardOptionsAtom);
   const session = useRecoilValue(userSessionAtom);
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -57,7 +61,12 @@ export default function () {
         open && (
           <div className="flex flex-col mt-2">
 
-            <div className="flex gap-x-3 py-2 px-3 rounded-[8px] cursor-pointer hover:bg-zinc-700 text-[13px] text-gray-100 dark:text-[#d6d6d6] font-normal mt-0.5 tracking-wide select-none">
+            <div onClick={() => {
+              console.log(settingsAtom);
+              window.location.hash = "Settings";
+              setDashboardAtom(RendererOption.Settings);
+              setSettingsAtom(settingsOptionEnum.Profile)
+            }} className="flex gap-x-3 py-2 px-3 rounded-[8px] cursor-pointer hover:bg-zinc-700 text-[13px] text-gray-100 dark:text-[#d6d6d6] font-normal mt-0.5 tracking-wide select-none">
               <TiUser size={18} />
               <span>Profile</span>
             </div>

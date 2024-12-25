@@ -30,16 +30,8 @@ export default function ({ organizations, className }: CardHoverChatCardsProps) 
 
   return (
     <>
-      <div className={cn("flex flex-wrap gap-x-4 justify-center", className)}>
-        {organizations.length === 0 && (
-          <div className="p-16 text-white text-xs font-extralight tracking-wide">
-            No rooms found,{" "}
-            <i>
-              <u>Create a room</u>
-            </i>{" "}
-            to chat with your peer groups
-          </div>
-        )}
+      <div className={cn("flex flex-wrap gap-x-8 justify-center", className)}>
+        
         {organizations.map((orgs, idx) => (
           <div
             onDoubleClick={() => {

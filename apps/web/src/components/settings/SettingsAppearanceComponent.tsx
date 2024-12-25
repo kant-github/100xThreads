@@ -40,7 +40,7 @@ export default function () {
         <div className="text-zinc-100 pl-8 py-6 w-full">
             <DashboardComponentHeading description="Choose your preferred theme for a personalized experience.">Theme</DashboardComponentHeading>
             <div className="mt-4 flex flex-row justify-around">
-                <div onClick={() => handleThemeChange("light")} className="flex flex-col items-center">
+                <div onClick={() => handleThemeChange("light")} className="flex flex-col items-center gap-y-2">
                     <Image
                         className={`${theme === 'light' && "border-[4px] border-blue-500 transform scale-105"} rounded-[6px] box-border`}
                         src={"/images/LightMode.svg"}
@@ -48,9 +48,9 @@ export default function () {
                         height={400}
                         alt="light-mode"
                     />
-                    <span>Light mode</span>
+                    <span className="text-xs">Light mode</span>
                 </div>
-                <div onClick={() => handleThemeChange("system")} className="flex flex-col items-center">
+                <div onClick={() => handleThemeChange("system")} className="flex flex-col items-center gap-y-2">
                     <Image
                         className={`${theme === 'system' && "border-[4px] border-blue-500 transform scale-105"} rounded-[6px] box-border`}
                         src={"/images/SystemDefault.svg"}
@@ -58,9 +58,9 @@ export default function () {
                         height={400}
                         alt="system-default"
                     />
-                    <span>System Default</span>
+                    <span className="text-xs">System Default</span>
                 </div>
-                <div onClick={() => handleThemeChange("dark")} className="flex flex-col items-center">
+                <div onClick={() => handleThemeChange("dark")} className="flex flex-col items-center gap-y-2">
                     <Image
                         className={`${theme === 'dark' && "border-[4px] border-blue-500 transform scale-105"} rounded-[6px] box-border`}
                         src={"/images/DarkMode.svg"}
@@ -68,7 +68,7 @@ export default function () {
                         height={400}
                         alt="dark-mode"
                     />
-                    <span>Dark mode</span>
+                    <span className="text-xs">Dark mode</span>
                 </div>
             </div>
         </div>

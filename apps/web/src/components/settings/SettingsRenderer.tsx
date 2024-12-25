@@ -22,7 +22,7 @@ export default function () {
     };
 
     return (
-        <div className="flex items-center gap-x-24 dark:bg-[#262629] w-full mt-6 rounded-[8px]">
+        <div className="flex items-center gap-x-24 dark:bg-[#262629] w-full mt-6 rounded-[8px] shadow-lg shadow-black/40 ">
             {renderComponent()}
         </div>
     );

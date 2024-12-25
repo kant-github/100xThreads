@@ -28,7 +28,7 @@ export default function () {
     return (
         <div className="h-full bg-[#141313]">
             <DashboardComponentHeading className="pt-4 pl-12" description="Browse through all the organizations you own">Owned by you</DashboardComponentHeading>
-            <div className="bg-[#37474f] dark:bg-[#141313] mt-8">
+            <div className="bg-[#37474f] dark:bg-[#262629] mt-8 pt-8 mx-12 h-[48%] overflow-auto rounded-[8px] shadow-lg shadow-black/40">
                 {!loading ?
                     (<CardHoverChatCards organizations={ownedOrganizations} />) :
                     (<HomeOrganizationsSkeleton />)

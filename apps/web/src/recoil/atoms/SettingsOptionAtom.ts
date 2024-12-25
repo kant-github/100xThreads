@@ -1,10 +1,11 @@
 import { atom } from "recoil";
 
 export enum settingsOptionEnum {
-    Appearance,
-    Visibility,
-    Profile
+    Appearance = "Appearance",
+    Visibility = "Visibility",
+    Profile = "Profile"
 }
+
 
 export const settingsOptionAtom = atom<settingsOptionEnum>({
     key: "settingsOption",
