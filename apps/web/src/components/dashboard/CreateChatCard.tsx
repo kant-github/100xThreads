@@ -3,7 +3,7 @@ import Image from "next/image";
 import { ImHome } from "react-icons/im";
 import BigWhiteBtn from "../buttons/BigWhiteBtn";
 import React, { useState } from "react";
-import CreateRoom from "./CreateRoom";
+import CreateRoomForm from "./CreateRoomForm";
 import axios from "axios";
 import { toast } from "sonner";
 import moment from 'moment';
@@ -136,7 +136,7 @@ export default function ({ session }: { session: CustomSession | null }) {
                 </div>
             </div>
             <WobbleCardComponent/>
-            <CreateRoom
+            <CreateRoomForm
                 session={session}
                 creaOrganizationHandler={creaOrganizationHandler}
                 name={name}
