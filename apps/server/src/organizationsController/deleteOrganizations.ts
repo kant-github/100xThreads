@@ -28,14 +28,15 @@ export async function deleteOrganizations(req: Request, res: Response) {
             })
         }
 
-        await prisma.organization.delete({
+        const data = await prisma.organization.delete({
             where: {
                 id: organizationId
             }
         })
 
         return res.status(200).json({
-            message: "Organization deleted successfully"
+            message: "Organization deleted successfully",
+            data: data
         })
     } catch (err) {
         return res.status(500).json({

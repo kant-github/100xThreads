@@ -10,6 +10,8 @@ import BigWhiteBtn from "../buttons/BigWhiteBtn";
 import { CHAT_GROUP, ORGANIZATION } from "@/lib/apiAuthRoutes";
 import { ChatGroupType, OrganizationType } from "types";
 import CrossButton from "./CrossButton";
+import { useRecoilState } from "recoil";
+import { userCreatedOrganizationAtom } from "@/recoil/atoms/organizationsAtom";
 
 interface Props {
     orgs: OrganizationType;
@@ -23,6 +25,7 @@ export default function DeleteDialogBox({
     setDeleteDialogBox,
 }: Props) {
     const [loading, setLoading] = useState(false);
+    const [ownedOrganization, setOwnedOrganization] = useRecoilState(userCreatedOrganizationAtom);
     const { data: session } = useSession();
 
     async function deleteRoomHandler() {
@@ -39,6 +42,8 @@ export default function DeleteDialogBox({
             });
             clearCache("dashboard");
             toast.success(data.message);
+            setOwnedOrganization(prev => [..prev])
+
             setDeleteDialogBox(false);
         } catch (err) {
             console.error("Failed to delete the room:", err);
@@ -56,7 +61,7 @@ export default function DeleteDialogBox({
                         <p className="text-sm font-bold mb-4">
                             Delete {" " + orgs.name} ??
                         </p>
-                        <CrossButton setOpen={setDeleteDialogBox}/>
+                        <CrossButton setOpen={setDeleteDialogBox} />
                     </div>
                     <p className="text-xs font-light mb-4">
                         Are you sure you want to delete this room? Remember this action can't be undone, and you will lose all your data including chats...
