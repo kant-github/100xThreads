@@ -23,6 +23,7 @@ import { z } from "zod"
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import DashboardComponentHeading from "./DashboardComponentHeading";
+import FormProgressBar from "../utility/FormProgressBar";
 
 interface SelectedGroups {
     generalChat: boolean;
@@ -69,6 +70,7 @@ export default function CreateRoom({ open }: CreateRoomProps) {
                     <UtilityCard className="w-5/12 px-12">
                         <DashboardComponentHeading description="start creating organization with your preferred choice">Create Organization</DashboardComponentHeading>
                         <form onSubmit={handleSubmit(onSubmit)} >
+                            <FormProgressBar />
                             <div>
                                 <div className="flex flex-row items-center justify-center mt-4">
                                     <Controller
