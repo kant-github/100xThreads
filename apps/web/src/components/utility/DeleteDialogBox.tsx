@@ -42,7 +42,6 @@ export default function DeleteDialogBox({
             });
             clearCache("dashboard");
             toast.success(data.message);
-            setOwnedOrganization(prev => [..prev])
 
             setDeleteDialogBox(false);
         } catch (err) {
