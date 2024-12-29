@@ -31,6 +31,7 @@ const formSchema = z.object({
         (color) => !color || presetColors.some((preset) => preset.value === color),
         "Invalid color selection"
     ),
+    presetChannels: z.array(z.string()).min(1, 'Select at least one channel'),
 });
 
 export type FormValues = z.infer<typeof formSchema>;
