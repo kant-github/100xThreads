@@ -23,7 +23,13 @@ import { z } from "zod"
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import DashboardComponentHeading from "./DashboardComponentHeading";
-import FormProgressBar from "../utility/FormProgressBar";
+import FormProgressBar from "../form/FormProgressBar";
+import ProgressBarButtons from "../form/ProgressBarButtons";
+import FirstComponent, { presetColors } from "../form/FirstComponent";
+import SecondComponent from "../form/SecondComponent";
+import ThirdComponent from "../form/ThirdComponent";
+import { useRecoilValue } from "recoil";
+import { progressBarAtom } from "@/recoil/atoms/progressBarAtom";
 
 interface SelectedGroups {
     generalChat: boolean;
@@ -46,17 +52,35 @@ const formSchema = z.object({
         .refine(
             (files) => !files || files?.[0]?.type.startsWith("image/"),
             "Only image files are allowed"
-        )
+        ),
+    organizationColor: z.string().optional().refine(
+        (color) => !color || presetColors.some((preset) => preset.value === color),
+        "Invalid color selection"
+    ),
 });
 
-type FormValues = z.infer<typeof formSchema>;
+export type FormValues = z.infer<typeof formSchema>;
 
 
 export default function CreateRoom({ open }: CreateRoomProps) {
-
+    const currentStep = useRecoilValue(progressBarAtom);
+    console.log("current step is : ", currentStep);
     const { control, handleSubmit, formState: { errors } } = useForm<FormValues>({
         resolver: zodResolver(formSchema)
     })
+
+    const renderComponent = () => {
+        switch (currentStep) {
+            case 1:
+                return <FirstComponent control={control} errors={errors} />;
+            case 2:
+                return <SecondComponent control={control} errors={errors} />;
+            case 3:
+                return <ThirdComponent control={control} errors={errors} />;
+            default:
+                return null;
+        }
+    }
 
     const onSubmit = (data: FormValues) => {
         console.log("hi")
@@ -67,56 +91,12 @@ export default function CreateRoom({ open }: CreateRoomProps) {
         <>
             {open && (
                 <OpacityBackground className="">
-                    <UtilityCard className="w-5/12 px-12">
+                    <UtilityCard className="w-5/12 px-12 relative py-8">
+                        <ProgressBarButtons />
                         <DashboardComponentHeading description="start creating organization with your preferred choice">Create Organization</DashboardComponentHeading>
                         <form onSubmit={handleSubmit(onSubmit)} >
-                            <FormProgressBar />
-                            <div>
-                                <div className="flex flex-row items-center justify-center mt-4">
-                                    <Controller
-                                        name="image"
-                                        control={control}
-                                        render={({ field }) => (
-                                            <FileUpload
-                                                value={field.value}
-                                                onChange={field.onChange}
-                                                error={errors.image?.message}
-                                            />
-                                        )}
-                                    />
-                                    <Controller
-                                        name="ownerName"
-                                        control={control}
-                                        render={({ field }) => (
-                                            <InputBox
-                                                label="owner's name"
-                                                value={field.value}
-                                                onChange={field.onChange}
-                                                error={errors.ownerName?.message}
-                                            />
-                                        )}
-                                    />
-
-                                </div>
-                                <div className="flex flex-row items-center justify-start gap-x-2 mt-2">
-                                    <span className="px-3 py-2 mt-4 border-zinc-600 bg-zinc-900 text-xs text-zinc-400">/orgs/</span>
-                                    <Controller
-                                        name="organizationName"
-                                        control={control}
-                                        render={({ field }) => (
-                                            <InputBox
-                                                label="organization's name"
-                                                value={field.value}
-                                                onChange={field.onChange}
-                                                error={errors.organizationName?.message}
-                                            />
-                                        )}
-                                    />
-                                </div>
-                            </div>
-                            <div className="mt-4 flex justify-end">
-                                <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded"> Submit</button>
-                            </div>
+                            <FormProgressBar className="mt-8" />
+                            {renderComponent()}
                         </form>
                     </UtilityCard>
                 </OpacityBackground>
