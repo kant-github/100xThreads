@@ -16,13 +16,18 @@ export const presetChannels = [
     },
     {
         id: 'general',
-        name: 'General Chat',
+        name: 'General Chat / Water Cooler',
         description: 'General discussion and conversations',
         defaultEnabled: true,
     },
     {
         id: 'admin',
         name: 'Admin',
+        description: 'Private channel for administrators',
+        defaultEnabled: true,
+    }, {
+        id: 'projects',
+        name: 'Projects',
         description: 'Private channel for administrators',
         defaultEnabled: true,
     }

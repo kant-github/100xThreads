@@ -32,6 +32,15 @@ const formSchema = z.object({
         "Invalid color selection"
     ),
     presetChannels: z.array(z.string()).min(1, 'Select at least one channel'),
+    isPrivate: z.boolean().default(false),
+    hasPassword: z.boolean().default(false),
+    password: z.string().optional().refine(
+        (pass) => {
+            if (!pass) return true;
+            return pass.length >= 8;
+        },
+        "Password must be at least 8 characters long"
+    ),
 });
 
 export type FormValues = z.infer<typeof formSchema>;
@@ -65,7 +74,7 @@ export default function CreateRoom({ open }: CreateRoomProps) {
         <>
             {open && (
                 <OpacityBackground className="">
-                    <UtilityCard className="w-5/12 px-12 relative pb-12 pt-8">
+                    <UtilityCard className="w-5/12 px-12 relative pb-20 pt-8">
                         <ProgressBarButtons />
                         <DashboardComponentHeading description="start creating organization with your preferred choice">Create Organization</DashboardComponentHeading>
                         <form onSubmit={handleSubmit(onSubmit)} >
