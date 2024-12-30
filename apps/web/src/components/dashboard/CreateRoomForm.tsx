@@ -35,11 +35,12 @@ const formSchema = z.object({
     isPrivate: z.boolean().default(false),
     hasPassword: z.boolean().default(false),
     password: z.string().optional().refine(
-        (pass) => {
-            if (!pass) return true;
+        (pass, ctx) => {
+            if (!ctx.parent.hasPassword) return true;
+            if (!pass) return false;
             return pass.length >= 8;
         },
-        "Password must be at least 8 characters long"
+        "Password is required and must be at least 8 characters long"
     ),
 });
 
@@ -48,7 +49,7 @@ export type FormValues = z.infer<typeof formSchema>;
 
 export default function CreateRoom({ open }: CreateRoomProps) {
     const currentStep = useRecoilValue(progressBarAtom);
-    const { control, handleSubmit, formState: { errors } } = useForm<FormValues>({
+    const { control, watch, handleSubmit, formState: { errors } } = useForm<FormValues>({
         resolver: zodResolver(formSchema)
     })
 
@@ -59,7 +60,7 @@ export default function CreateRoom({ open }: CreateRoomProps) {
             case 2:
                 return <SecondComponent control={control} errors={errors} />;
             case 3:
-                return <ThirdComponent control={control} errors={errors} />;
+                return <ThirdComponent control={control} errors={errors} watch={watch} />;
             default:
                 return null;
         }

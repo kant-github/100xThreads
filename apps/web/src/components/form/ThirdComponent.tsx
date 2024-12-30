@@ -3,85 +3,87 @@ import { FormValues } from "../dashboard/CreateRoomForm";
 import InputBox from "../utility/InputBox";
 import Switch from "../buttons/Switch";
 
-interface OrganizationDetailsSectionProps {
+interface ThirdComponentProps {
     control: Control<FormValues>;
     errors: FieldErrors<FormValues>;
+    watch: (name: string) => any;
 }
 
-export default function ({
+export default function ThirdComponent({
     control,
-    errors
-}: OrganizationDetailsSectionProps) {
+    errors,
+    watch
+}: ThirdComponentProps) {
     return (
-        <div className="space-y-6">
-            <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                    Organization Privacy
-                </label>
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                            <label className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                Private Organization
-                            </label>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                                Make your organization visible to members only
-                            </p>
+        <div className="mt-8 space-y-8">
+            <div className="space-y-6">
+                <div>
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                            <div className="space-y-0.5">
+                                <label className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                                    Private Organization
+                                </label>
+                                <p className="text-[12px] text-zinc-500 dark:text-zinc-400">
+                                    Make your organization visible to members only
+                                </p>
+                            </div>
+                            <Controller
+                                name="isPrivate"
+                                control={control}
+                                render={({ field: { value, onChange } }) => (
+                                    <Switch
+                                        checked={value}
+                                        onCheckedChange={onChange}
+                                    />
+                                )}
+                            />
                         </div>
-                        <Controller
-                            name="isPrivate"
-                            control={control}
-                            render={({ field: { value, onChange } }) => (
-                                <Switch
-                                    checked={value}
-                                    onCheckedChange={onChange}
-                                />
-                            )}
-                        />
-                    </div>
 
-                    <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                            <label className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                Password Protection
-                            </label>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                                Require a password to join your organization
-                            </p>
+                        <div className="flex items-center justify-between">
+                            <div className="space-y-0.5">
+                                <label className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                                    Password Protection
+                                </label>
+                                <p className="text-[12px] text-zinc-500 dark:text-zinc-400">
+                                    Require a password to join your organization
+                                </p>
+                            </div>
+                            <Controller
+                                name="hasPassword"
+                                control={control}
+                                render={({ field: { value, onChange } }) => (
+                                    <Switch
+                                        checked={value}
+                                        onCheckedChange={onChange}
+                                    />
+                                )}
+                            />
                         </div>
-                        <Controller
-                            name="hasPassword"
-                            control={control}
-                            render={({ field: { value, onChange } }) => (
-                                <Switch
-                                    checked={value}
-                                    onCheckedChange={onChange}
-                                />
-                            )}
-                        />
                     </div>
                 </div>
+
+                {/* Password Input Field - Only shown when hasPassword is true */}
+                <Controller
+                    name="password"
+                    control={control}
+                    render={({ field }) => {
+                        const showPasswordField = watch('hasPassword');
+                        if (!showPasswordField) return null;
+
+                        return (
+                            <InputBox
+                                label="Organization Password"
+                                type="password"
+                                value={field.value}
+                                onChange={field.onChange}
+                                error={errors.password?.message}
+                                placeholder="Enter a strong password (minimum 8 characters)"
+                            />
+                        );
+                    }}
+                />
             </div>
-
-            <Controller
-                name="password"
-                control={control}
-                render={({ field, formState }) => {
-                    const showPasswordField = formState.watch?.('hasPassword');
-                    if (!showPasswordField) return null;
-
-                    return (
-                        <InputBox
-                            label="Organization Password"
-                            type="password"
-                            value={field.value}
-                            onChange={field.onChange}
-                            error={errors.password?.message}
-                            placeholder="Enter a strong password"
-                        />
-                    );
-                }}
-            />
         </div>
-    )
+    );
 }

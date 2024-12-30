@@ -19,24 +19,24 @@ export default function () {
   const session = useRecoilValue(userSessionAtom);
   const ref = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    const handleClick = (event: MouseEvent) => {
-      handleClickOutside(event, ref, setOpen);
-    }
+  // useEffect(() => {
+  //   const handleClick = (event: MouseEvent) => {
+  //     handleClickOutside(event, ref, setOpen);
+  //   }
 
-    if (open) {
-      document.addEventListener("mousedown", handleClick);
-    } else {
-      document.removeEventListener("mousedown", handleClick)
-    }
+  //   if (open) {
+  //     document.addEventListener("mousedown", handleClick);
+  //   } else {
+  //     document.removeEventListener("mousedown", handleClick)
+  //   }
 
-    return () => {
-      document.removeEventListener("mousedown", handleClick);
-    }
-  }, [open, setOpen]);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClick);
+  //   }
+  // }, [open, setOpen]);
 
   return (
-    <div ref={ref} className={`px-2 py-1.5 bg-zinc-800 rounded-[8px] cursor-pointer`} onClick={() => setOpen(prev => !prev)}>
+    <div ref={ref} className={`px-2 py-1.5 bg-zinc-800 rounded-[8px] cursor-pointer select-none`} onClick={() => setOpen(prev => !prev)}>
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-x-3">
           <span className="relative">

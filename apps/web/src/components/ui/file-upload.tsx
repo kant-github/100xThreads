@@ -121,7 +121,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onChange, value, error }
 
                   <motion.div
                     variants={secondaryVariant}
-                    className="absolute opacity-0 border border-dashed border-yellow-500 inset-0 z-30 bg-transparent flex items-center justify-center mt-4 w-20 h-20 rounded-md"
+                    className="absolute opacity-0 border border-dashed border-blue-400 inset-0 z-30 bg-transparent flex items-center justify-center mt-4 w-20 h-20 rounded-md"
                   ></motion.div>
                 </>
               )}

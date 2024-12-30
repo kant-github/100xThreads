@@ -13,7 +13,7 @@ export default function({ checked, onCheckedChange, disabled }: CustomSwitchProp
             className={`
                 relative w-11 h-6 rounded-full cursor-pointer transition-all duration-200
                 ${disabled ? 'cursor-not-allowed opacity-50' : ''}
-                ${checked ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'}
+                ${checked ? 'bg-[#f5a331]' : 'bg-gray-300 dark:bg-gray-600'}
             `}
         >
             <div 

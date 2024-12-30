@@ -56,7 +56,7 @@ export default function ({
                         {presetChannels.map((channel) => (
                             <label
                                 key={channel.id}
-                                className="flex items-start space-x-3 cursor-pointer group"
+                                className="flex items-start space-x-3 cursor-pointer group dark:bg-zinc-900/80 py-2.5 px-4 rounded-[8px] select-none"
                             >
                                 <div className="flex items-center h-5">
                                     <input
