@@ -11,19 +11,15 @@ export default function () {
   const renderComponent = () => {
     switch (renderOption) {
       case RendererOption.Home:
-        window.location.hash = "home";
         return <HomeComponent />;
       case RendererOption.AllOrganization:
-        window.location.hash = "allOrganizations";
         return <AllOrganizations />;
       case RendererOption.OwnedByYou:
-        window.location.hash = "OwnedByYou";
         return <OwnedByYouComponent />;
       case RendererOption.Settings:
-        window.location.hash = "Settings";
         return <SettingsComponent />;
       default:
-        return <div>No matching component found!</div>; // Fallback
+        return <div>No matching component found!</div>;
     }
   };
 

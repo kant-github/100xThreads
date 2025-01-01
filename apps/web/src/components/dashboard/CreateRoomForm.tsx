@@ -22,7 +22,7 @@ interface CreateRoomProps {
 
 export type FormValues = z.infer<typeof formSchema>;
 
-export default function CreateRoom({ open, setOpen }: CreateRoomProps) {
+export default function ({ open, setOpen }: CreateRoomProps) {
 
 
 

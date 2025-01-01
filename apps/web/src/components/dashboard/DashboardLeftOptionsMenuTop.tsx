@@ -7,6 +7,7 @@ import { dashboardOptionsAtom, RendererOption } from "@/recoil/atoms/DashboardOp
 import { FaUserFriends } from "react-icons/fa";
 import { useState } from "react";
 import UtilitySideBar from "../utility/UtilitySideBar";
+import DashboardComponentHeading from "./DashboardComponentHeading";
 
 
 export const baseDivStyles = "flex items-center justify-start gap-x-3 py-2 px-3 rounded-[8px] cursor-pointer select-none";
@@ -53,18 +54,18 @@ export default function () {
                     label="All Organizations"
                 />
                 <Option
+                    onClick={() => setOpen(prev => !prev)}
+                    Icon={FaUserFriends}
+                    label="Friends"
+                />
+                <Option
                     isSelected={renderOption === RendererOption.Settings}
                     onClick={() => setRenderOption(RendererOption.Settings)}
                     Icon={IoMdSettings}
                     label="Settings"
                 />
-                <Option
-                    onClick={() => setOpen(prev => !prev)}
-                    Icon={FaUserFriends}
-                    label="Friends"
-                />
             </div>
-            <UtilitySideBar open={open} setOpen={setOpen} />
+            <UtilitySideBar open={open} setOpen={setOpen} content={<DashboardComponentHeading className="pt-6 pl-8" description="check list of friends you made">Friends</DashboardComponentHeading>} />
         </div>
     );
 }
