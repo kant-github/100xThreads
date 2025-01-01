@@ -6,48 +6,27 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import DashboardComponentHeading from "./DashboardComponentHeading";
 import FormProgressBar from "../form/FormProgressBar";
 import ProgressBarButtons from "../form/ProgressBarButtons";
-import FirstComponent, { presetColors } from "../form/FirstComponent";
+import FirstComponent from "../form/FirstComponent";
 import SecondComponent from "../form/SecondComponent";
 import ThirdComponent from "../form/ThirdComponent";
 import { useRecoilValue } from "recoil";
 import { progressBarAtom } from "@/recoil/atoms/progressBarAtom";
+import { formSchema } from "@/validations/createOrganizationForm";
+import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 
 
 interface CreateRoomProps {
     open: boolean;
+    setOpen: Dispatch<SetStateAction<boolean>>;
 }
-
-const formSchema = z.object({
-    ownerName: z.string().min(1, "Can't be empty"),
-    organizationName: z.string().min(1, "Can't be empty"),
-    image: z
-        .custom<FileList>()
-        .optional()
-        .refine(
-            (files) => !files || files?.[0]?.type.startsWith("image/"),
-            "Only image files are allowed"
-        ),
-    organizationColor: z.string().optional().refine(
-        (color) => !color || presetColors.some((preset) => preset.value === color),
-        "Invalid color selection"
-    ),
-    presetChannels: z.array(z.string()).min(1, 'Select at least one channel'),
-    isPrivate: z.boolean().default(false),
-    hasPassword: z.boolean().default(false),
-    password: z.string().optional().refine(
-        (pass, ctx) => {
-            if (!ctx.parent.hasPassword) return true;
-            if (!pass) return false;
-            return pass.length >= 8;
-        },
-        "Password is required and must be at least 8 characters long"
-    ),
-});
 
 export type FormValues = z.infer<typeof formSchema>;
 
+export default function CreateRoom({ open, setOpen }: CreateRoomProps) {
 
-export default function CreateRoom({ open }: CreateRoomProps) {
+
+
+
     const currentStep = useRecoilValue(progressBarAtom);
     const { control, watch, handleSubmit, formState: { errors } } = useForm<FormValues>({
         resolver: zodResolver(formSchema)
@@ -72,20 +51,18 @@ export default function CreateRoom({ open }: CreateRoomProps) {
     };
 
     return (
-        <>
-            {open && (
-                <OpacityBackground className="">
-                    <UtilityCard className="w-5/12 px-12 relative pb-20 pt-8">
-                        <ProgressBarButtons />
-                        <DashboardComponentHeading description="start creating organization with your preferred choice">Create Organization</DashboardComponentHeading>
-                        <form onSubmit={handleSubmit(onSubmit)} >
-                            <FormProgressBar className="mt-8" />
-                            {renderComponent()}
-                        </form>
-                    </UtilityCard>
-                </OpacityBackground>
-            )}
-        </>
+        open && (
+            <OpacityBackground className="">
+                <UtilityCard open={open} setOpen={setOpen} className="w-5/12 px-12 relative pb-20 pt-8">
+                    <ProgressBarButtons />
+                    <DashboardComponentHeading description="start creating organization with your preferred choice">Create Organization</DashboardComponentHeading>
+                    <form onSubmit={handleSubmit(onSubmit)} >
+                        <FormProgressBar className="mt-8" />
+                        {renderComponent()}
+                    </form>
+                </UtilityCard>
+            </OpacityBackground>
+        )
     );
 }
 

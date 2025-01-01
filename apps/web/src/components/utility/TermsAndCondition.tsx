@@ -18,9 +18,6 @@ export default function ({ termsAndconditionChecked, setTermsAndConditionchecked
             <p className="italic text-gray-700 dark:text-gray-200 text-[11px]">
                 By checking this box, you agree to our <a href="/terms" className="underline">Terms and Conditions</a> and <a href="/privacy" className="underline">Privacy Policy</a>.
             </p>
-
-
-
         </div>
     )
 }

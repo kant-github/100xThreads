@@ -4,13 +4,16 @@ import { IoMdBody, IoMdSettings } from "react-icons/io";
 import ProfileOption from "../ui/ProfileOption";
 import { useRecoilState } from "recoil";
 import { dashboardOptionsAtom, RendererOption } from "@/recoil/atoms/DashboardOptionsAtom";
+import { FaUserFriends } from "react-icons/fa";
+import { useState } from "react";
+import UtilitySideBar from "../utility/UtilitySideBar";
 
 
 export const baseDivStyles = "flex items-center justify-start gap-x-3 py-2 px-3 rounded-[8px] cursor-pointer select-none";
 const textStyles = "text-[13px] text-gray-100 dark:text-[#d6d6d6] font-normal mt-0.5 tracking-wide";
 
 function Option({ isSelected, onClick, Icon, label, }: {
-    isSelected: boolean;
+    isSelected?: boolean;
     onClick: () => void;
     Icon: React.ComponentType<{ size: number }>;
     label: string;
@@ -25,6 +28,7 @@ function Option({ isSelected, onClick, Icon, label, }: {
 
 export default function () {
     const [renderOption, setRenderOption] = useRecoilState(dashboardOptionsAtom);
+    const [open, setOpen] = useState<boolean>(false);
 
     return (
         <div className="h-24 py-2 rounded-[8px]">
@@ -54,7 +58,13 @@ export default function () {
                     Icon={IoMdSettings}
                     label="Settings"
                 />
+                <Option
+                    onClick={() => setOpen(prev => !prev)}
+                    Icon={FaUserFriends}
+                    label="Friends"
+                />
             </div>
+            <UtilitySideBar open={open} setOpen={setOpen} />
         </div>
     );
 }

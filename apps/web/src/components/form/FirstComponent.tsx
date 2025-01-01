@@ -54,7 +54,7 @@ export default function ({
                 />
             </div>
             <div className="flex flex-row items-center justify-start gap-x-2 mt-2">
-                <span className="px-3 py-2 mt-4 border-zinc-600 dark:bg-zinc-800/80 text-xs text-zinc-400">
+                <span className="px-3 py-2 mt-4 border-zinc-600 bg-white dark:bg-zinc-900/80 text-xs text-zinc-400">
                     /orgs/
                 </span>
                 <Controller

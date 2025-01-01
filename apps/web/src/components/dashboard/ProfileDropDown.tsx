@@ -32,6 +32,7 @@ export default function UserMenu({ groups }: props) {
         setAccountInfoDropDown(true);
         setDropDown(false);
     }
+
     async function globalRoomButtonHandler() {
 
         if (!session?.user?.id) {

@@ -101,7 +101,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onChange, value, error }
                       damping: 20,
                     }}
                     className={cn(
-                      "relative group-hover/file:shadow-2xl z-40 border-[1px] border-zinc-400 dark:border-zinc-600 bg-white dark:bg-zinc-800/80  flex items-center justify-center h-20 w-20 mt-4 rounded-md",
+                      "relative group-hover/file:shadow-2xl z-40  bg-white dark:bg-zinc-900/80  flex items-center justify-center h-20 w-20 mt-4 rounded-md",
                       "shadow-[0px_10px_50px_rgba(0,0,0,0.1)]"
                     )}
                   >

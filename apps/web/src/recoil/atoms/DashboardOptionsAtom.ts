@@ -4,7 +4,7 @@ export enum RendererOption{
     Home,
     AllOrganization,
     OwnedByYou,
-    Settings
+    Settings,
 }
 
 export const dashboardOptionsAtom = atom<RendererOption>({
