@@ -9,7 +9,6 @@ import { useState } from "react";
 import UtilitySideBar from "../utility/UtilitySideBar";
 import DashboardComponentHeading from "./DashboardComponentHeading";
 
-
 export const baseDivStyles = "flex items-center justify-start gap-x-3 py-2 px-3 rounded-[8px] cursor-pointer select-none";
 const textStyles = "text-[13px] text-gray-100 dark:text-[#d6d6d6] font-normal mt-0.5 tracking-wide";
 

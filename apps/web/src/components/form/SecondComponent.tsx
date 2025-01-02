@@ -1,5 +1,5 @@
 import { Control, Controller, FieldErrors } from "react-hook-form";
-import { FormValues } from "../dashboard/CreateRoomForm";
+import { FormValues } from "../dashboard/CreateOrganizationForm";
 
 export const presetChannels = [
     {

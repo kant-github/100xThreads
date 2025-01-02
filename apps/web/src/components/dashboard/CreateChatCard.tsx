@@ -3,7 +3,7 @@ import Image from "next/image";
 import { ImHome } from "react-icons/im";
 import BigWhiteBtn from "../buttons/BigWhiteBtn";
 import React, { useState } from "react";
-import CreateRoomForm from "./CreateRoomForm";
+import CreateRoomForm from "./CreateOrganizationForm";
 import axios from "axios";
 import { toast } from "sonner";
 import moment from 'moment';
@@ -19,6 +19,7 @@ import { FaIndustry } from "react-icons/fa6";
 import CreateOrganizationButton from "../buttons/CreateOrganizationButton";
 import { WobbleCard } from "../ui/wobble-card";
 import WobbleCardComponent from "./WobbleCardComponent";
+import { createOrganizationAtom } from "@/recoil/atoms/atom";
 
 const doto = Belanosima({
     subsets: ['latin'],
@@ -36,7 +37,7 @@ export enum OrganizationType {
 
 
 export default function ({ session }: { session: CustomSession | null }) {
-    const [createRoomModal, setCreateRoomModal] = useState<boolean>(false);
+    const [ open, setOpen ] = useRecoilState(createOrganizationAtom)
     const [organizationName, setOrganizationName] = useState<string | null>(null);
     const [roomPasscode, setRoomPasscode] = useState<string>("");
     const [groupPhoto, setGroupPhoto] = useState<File | null>(null);
@@ -102,7 +103,7 @@ export default function ({ session }: { session: CustomSession | null }) {
             setOrganizationType(OrganizationType.Community);
             setIcon(null);
             clearCache("dashboard");
-            setCreateRoomModal(false);
+            setOpen(false);
         } catch (err) {
             console.error(err);
             toast.error("Failed to create chat room. Please try again.");
@@ -111,7 +112,7 @@ export default function ({ session }: { session: CustomSession | null }) {
 
 
     function openModal() {
-        setCreateRoomModal(true);
+        setOpen(true);
     }
 
     return (
@@ -149,8 +150,8 @@ export default function ({ session }: { session: CustomSession | null }) {
                 setSelectedGroups={setSelectedGroups}
                 roomPasscode={roomPasscode}
                 setRoomPasscode={setRoomPasscode}
-                open={createRoomModal}
-                setOpen={setCreateRoomModal}
+                open={open}
+                setOpen={setOpen}
                 groupPhoto={groupPhoto}
                 setGroupPhoto={setGroupPhoto}
                 setIcon={setIcon}

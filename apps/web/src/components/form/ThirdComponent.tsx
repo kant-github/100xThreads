@@ -1,5 +1,5 @@
 import { Control, Controller, FieldErrors } from "react-hook-form";
-import { FormValues } from "../dashboard/CreateRoomForm";
+import { FormValues } from "../dashboard/CreateOrganizationForm";
 import InputBox from "../utility/InputBox";
 import Switch from "../buttons/Switch";
 
@@ -63,26 +63,25 @@ export default function ThirdComponent({
                     </div>
                 </div>
 
-                {/* Password Input Field - Only shown when hasPassword is true */}
                 <Controller
                     name="password"
                     control={control}
                     render={({ field }) => {
                         const showPasswordField = watch('hasPassword');
-                        if (!showPasswordField) return null;
-
+                        if (!showPasswordField) return <></>;
                         return (
                             <InputBox
                                 label="Organization Password"
                                 type="password"
-                                value={field.value}
+                                value={field.value || ''}
                                 onChange={field.onChange}
-                                error={errors.password?.message}
+                                error={errors.password?.message || undefined}
                                 placeholder="Enter a strong password (minimum 8 characters)"
                             />
                         );
                     }}
                 />
+                <button type="submit">Submit</button>
             </div>
         </div>
     );

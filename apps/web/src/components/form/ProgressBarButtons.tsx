@@ -8,7 +8,7 @@ export default function () {
 
     const totalLevels = useRecoilValue(progressBarTotalLevelAtom);
     const [currentLevel, setCurrentLevel] = useRecoilState(progressBarAtom);
-    
+
     useEffect(() => {
         const handleKeyPress = (event: KeyboardEvent) => {
             if (event.key === 'ArrowLeft') {

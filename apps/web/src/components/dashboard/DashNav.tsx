@@ -15,9 +15,11 @@ import { toast } from "sonner";
 import { globalRoomHandler } from "@/lib/globalRoomHandler";
 import Greetings from "../utility/Greetings";
 import { GoPlus } from "react-icons/go";
-import CreateRoomForm from "./CreateRoomForm";
+import CreateRoomForm from "./CreateOrganizationForm";
 import { MdKeyboardControlKey } from "react-icons/md";
 import { TbLetterK } from "react-icons/tb";
+import { createOrganizationAtom } from "@/recoil/atoms/atom";
+import { useRecoilState } from "recoil";
 
 interface Props {
   groups: any;
@@ -27,7 +29,7 @@ export const globalGroupId: string = "d023e34a-3aaf-46f4-88b5-b38b2ec6cffe";
 export default function Header({ groups }: Props) {
   const [searchInput, setSearchInput] = useState("");
   const [searchResults, setSearchResults] = useState<ChatGroupType[] | []>([]);
-  const [createRoomFormDialogBox, setCreateRoomFormDialogBox] = useState<boolean>(false);
+  const [open, setOpen] = useRecoilState(createOrganizationAtom);
   const [searchResultDialogBox, setSearchResultDialogBox] = useState<boolean>(false);
   const { data: session } = useSession();
   const router = useRouter();
@@ -65,10 +67,9 @@ export default function Header({ groups }: Props) {
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
-      // Check for Ctrl + K
       if (event.ctrlKey && event.key === "K") {
         event.preventDefault();
-        setCreateRoomFormDialogBox((prev) => !prev);
+        setOpen((prev) => !prev);
       }
     }
 
@@ -88,7 +89,7 @@ export default function Header({ groups }: Props) {
       </div>
       <div className="flex flex-row justify-center items-center gap-x-6">
         <Greetings />
-        <WhiteBtn onClick={() => setCreateRoomFormDialogBox(true)}>
+        <WhiteBtn onClick={() => setOpen(true)}>
           <span className="flex items-center gap-x-2">
             <span>Create Org</span>
             <span className="flex flex-row gap-x-1">
@@ -112,7 +113,7 @@ export default function Header({ groups }: Props) {
           )}
         </div>
         <ProfileDropDown groups={groups} />
-        <CreateRoomForm open={createRoomFormDialogBox} setOpen={setCreateRoomFormDialogBox} />
+        <CreateRoomForm open={open} setOpen={setOpen} />
       </div>
     </div>
   );

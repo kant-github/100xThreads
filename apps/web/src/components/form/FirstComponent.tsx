@@ -2,7 +2,7 @@
 import { Control, Controller, FieldErrors } from 'react-hook-form';
 
 
-import { FormValues } from '../dashboard/CreateRoomForm';
+import { FormValues } from '../dashboard/CreateOrganizationForm';
 import { FileUpload } from '../ui/file-upload';
 import InputBox from '../utility/InputBox';
 
@@ -112,6 +112,7 @@ export default function ({
                     )}
                 />
             </div>
+            <button type='submit'>submit</button>
         </div>
     );
 };
