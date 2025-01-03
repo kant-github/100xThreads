@@ -39,7 +39,7 @@ export default function ({ organizations }: ListTypeOrganizations) {
                     <div className="flex flex-row justify-between">
                         <div className="flex flex-row items-center gap-x-6 text-xs">
                             <span>
-                                <span className="text-green-500 text-xs">{organization.onlineUsers}</span>
+                                <span className="text-green-500 text-[10px]">{organization.onlineUsers}</span>
                                 <span className="text-zinc-500 font-medium"> online users</span>
                             </span>
                             <div className="flex flex-row items-center gap-x-2 text-zinc-300">
