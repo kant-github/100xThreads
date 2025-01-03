@@ -1,4 +1,5 @@
 'use client';
+
 import { useSession } from 'next-auth/react';
 import { useEffect, useState, useMemo } from 'react';
 import Dashboard from "@/components/dashboard/Dashboard";
@@ -11,8 +12,6 @@ export default function DashboardPageClient() {
     const { data: session, status } = useSession();
     const setUserSession = useSetRecoilState(userSessionAtom);
     const [groups, setGroups] = useState<any[]>([]);
-
-
     const sessionToken = useMemo(() => session, [session]);
 
     useEffect(() => {
@@ -26,11 +25,11 @@ export default function DashboardPageClient() {
     }
 
     return (
-        <div className="h-full flex flex-col">
-            <div className='h-20'>
+        <div className="h-[100dvh] w-full flex flex-col overflow-hidden">
+            <div className="min-h-[60px] sm:min-h-[70px] md:min-h-20">
                 <DashNav groups={groups} />
             </div>
-            <div className='flex-grow'>
+            <div className="flex-1 overflow-auto">
                 <Dashboard />
             </div>
         </div>

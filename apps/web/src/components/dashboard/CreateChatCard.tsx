@@ -1,23 +1,11 @@
 "use client";
-import Image from "next/image";
-import { ImHome } from "react-icons/im";
-import BigWhiteBtn from "../buttons/BigWhiteBtn";
-import React, { useState } from "react";
+import React from "react";
 import CreateRoomForm from "./CreateOrganizationForm";
-import axios from "axios";
-import { toast } from "sonner";
-import moment from 'moment';
-import { createRoomSchema } from "@/validations/createChatZod";
-import { clearCache } from "actions/common";
-import { ORGANIZATION } from "@/lib/apiAuthRoutes";
 import { CgMathPlus } from "react-icons/cg";
-import { CustomSession } from "app/api/auth/[...nextauth]/options";
 import { useRecoilState } from "recoil";
-import { organizationsAtom } from "@/recoil/atoms/organizationsAtom";
 import { Belanosima } from 'next/font/google';
 import { FaIndustry } from "react-icons/fa6";
 import CreateOrganizationButton from "../buttons/CreateOrganizationButton";
-import { WobbleCard } from "../ui/wobble-card";
 import WobbleCardComponent from "./WobbleCardComponent";
 import { createOrganizationAtom } from "@/recoil/atoms/atom";
 
@@ -36,80 +24,8 @@ export enum OrganizationType {
 }
 
 
-export default function ({ session }: { session: CustomSession | null }) {
-    const [ open, setOpen ] = useRecoilState(createOrganizationAtom)
-    const [organizationName, setOrganizationName] = useState<string | null>(null);
-    const [roomPasscode, setRoomPasscode] = useState<string>("");
-    const [groupPhoto, setGroupPhoto] = useState<File | null>(null);
-    const [icon, setIcon] = useState<string | null>(null);
-    const [name, setName] = useState<string | null>(session?.user?.name!);
-    const [organizationType, setOrganizationType] = useState<OrganizationType>(OrganizationType.Community);
-    const [termsAndconditionChecked, setTermsAndConditionchecked] = useState<boolean>(false);
-    const [selectedGroups, setSelectedGroups] = useState({
-        generalChat: true,
-        adminPage: true,
-        projectsChannel: true,
-        events: true,
-        announcements: true,
-    });
-    const [organizations, setOrganizations] = useRecoilState(organizationsAtom);
-    async function creaOrganizationHandler() {
-
-        const selectedGroupNames = Object.entries(selectedGroups).filter(([key, value]) => value === true).map(([key]) => key);
-
-        const payload = {
-            name: organizationName,
-            passcode: roomPasscode,
-            icon: icon,
-            type: organizationType,
-            termsAndCond: termsAndconditionChecked,
-            selectedGroups: selectedGroupNames,
-        };
-        const result = createRoomSchema.safeParse(payload);
-        console.log("result is:", result);
-
-        if (!result.success) {
-            const errorMessages = result.error.errors.map((err) => err.message).join(", ");
-            toast.error(`Error: ${errorMessages}`);
-            return;
-        }
-
-        const finalPayload = new FormData();
-        finalPayload.append("name", result.data.name);
-
-        if (result.data.icon) {
-            finalPayload.append("icon", result.data.icon);
-        }
-
-        finalPayload.append("type", result.data.type);
-        finalPayload.append("termsAndCond", String(result.data.termsAndCond));
-        finalPayload.append("selectedGroups", JSON.stringify(result.data.selectedGroups));
-
-        try {
-            const { data } = await axios.post(`${ORGANIZATION}`, finalPayload, {
-                headers: {
-                    authorization: `Bearer ${session?.user?.token}`,
-                    "Content-Type": "multipart/form-data",
-                },
-            });
-            console.log("new created data : ", data.data);
-            setOrganizations([data.data, ...organizations]);
-
-            const formattedDate = moment().format("dddd, MMMM D, YYYY");
-            toast.message(data.message, {
-                description: formattedDate,
-            });
-            setOrganizationName(null);
-            setOrganizationType(OrganizationType.Community);
-            setIcon(null);
-            clearCache("dashboard");
-            setOpen(false);
-        } catch (err) {
-            console.error(err);
-            toast.error("Failed to create chat room. Please try again.");
-        }
-    }
-
+export default function () {
+    const [open, setOpen] = useRecoilState(createOrganizationAtom)
 
     function openModal() {
         setOpen(true);
@@ -136,29 +52,8 @@ export default function ({ session }: { session: CustomSession | null }) {
                     </div>
                 </div>
             </div>
-            <WobbleCardComponent/>
-            <CreateRoomForm
-                session={session}
-                creaOrganizationHandler={creaOrganizationHandler}
-                name={name}
-                setName={setName}
-                organizationName={organizationName}
-                setOrganizationName={setOrganizationName}
-                organizationType={organizationType}
-                setOrganizationType={setOrganizationType}
-                selectedGroups={selectedGroups}
-                setSelectedGroups={setSelectedGroups}
-                roomPasscode={roomPasscode}
-                setRoomPasscode={setRoomPasscode}
-                open={open}
-                setOpen={setOpen}
-                groupPhoto={groupPhoto}
-                setGroupPhoto={setGroupPhoto}
-                setIcon={setIcon}
-                icon={icon}
-                termsAndconditionChecked={termsAndconditionChecked}
-                setTermsAndConditionchecked={setTermsAndConditionchecked}
-            />
+            <WobbleCardComponent />
+            <CreateRoomForm open={open} setOpen={setOpen} />
         </div>
     );
 }

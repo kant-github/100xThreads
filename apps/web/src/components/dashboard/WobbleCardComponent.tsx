@@ -3,11 +3,12 @@ import { WobbleCard } from "../ui/wobble-card";
 
 export default function () {
     return (
-        <div className="w-[70%]">
+        <div className="w-full lg:w-[70%]">
             <WobbleCard
-                containerClassName="col-span-5 h-[250px] bg-zinc-800"
-                className="">
-                <div className="max-w-xs">
+                containerClassName="col-span-5 h-[200px] sm:h-[225px] lg:h-[250px] bg-zinc-800 relative overflow-hidden"
+                className="relative"
+            >
+                <div className="max-w-[280px] sm:max-w-xs z-10 relative">
                     <h2 className="text-left font-extrabold text-balance text-base md:text-xl lg:text-3xl tracking-[-0.015em] text-white">
                         100<span className="text-red-500">x</span>Threads
                     </h2>
@@ -20,8 +21,18 @@ export default function () {
                         </ul>
                     </p>
                 </div>
-                <Image src="/images/dashImage.jpeg" width={450} height={450} alt="linear demo image" className="absolute -right-4 lg:-right-[50%] grayscale filter -bottom-24 object-contain rounded-2xl" />
+                <Image 
+                    src="/images/dashImage.jpeg" 
+                    width={450} 
+                    height={450} 
+                    alt="linear demo image" 
+                    className="absolute 
+                        -right-4 lg:-right-[50%]
+                        -bottom-20 sm:-bottom-24
+                        w-[300px] sm:w-[350px] md:w-[400px] lg:w-[450px]
+                        grayscale filter object-contain rounded-2xl" 
+                />
             </WobbleCard>
         </div>
-    )
+    );
 }

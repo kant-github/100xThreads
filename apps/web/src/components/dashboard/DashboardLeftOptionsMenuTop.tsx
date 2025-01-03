@@ -9,10 +9,10 @@ import { useState } from "react";
 import UtilitySideBar from "../utility/UtilitySideBar";
 import DashboardComponentHeading from "./DashboardComponentHeading";
 
-export const baseDivStyles = "flex items-center justify-start gap-x-3 py-2 px-3 rounded-[8px] cursor-pointer select-none";
-const textStyles = "text-[13px] text-gray-100 dark:text-[#d6d6d6] font-normal mt-0.5 tracking-wide";
+export const baseDivStyles = "flex items-center justify-start gap-x-2 sm:gap-x-3 py-1.5 sm:py-2 px-2 sm:px-3 rounded-[8px] cursor-pointer select-none";
+const textStyles = "text-[12px] sm:text-[13px] text-gray-100 dark:text-[#d6d6d6] font-normal mt-0.5 tracking-wide hidden sm:block";
 
-function Option({ isSelected, onClick, Icon, label, }: {
+function Option({ isSelected, onClick, Icon, label }: {
     isSelected?: boolean;
     onClick: () => void;
     Icon: React.ComponentType<{ size: number }>;
@@ -20,7 +20,8 @@ function Option({ isSelected, onClick, Icon, label, }: {
 }) {
     return (
         <div onClick={onClick} className={`${baseDivStyles} ${isSelected ? "bg-zinc-700 text-white" : "hover:bg-zinc-800"}`}>
-            <Icon size={18} />
+            <Icon size={16} className="sm:hidden" />
+            <Icon size={18} className="hidden sm:block" />
             <span className={`${textStyles}`}>{label}</span>
         </div>
     );
@@ -31,9 +32,9 @@ export default function () {
     const [open, setOpen] = useState<boolean>(false);
 
     return (
-        <div className="h-24 py-2 rounded-[8px]">
+        <div className="h-auto sm:h-24 py-1 sm:py-2 rounded-[8px]">
             <ProfileOption />
-            <div className="flex flex-col mt-3">
+            <div className="flex flex-row sm:flex-col justify-around sm:justify-start sm:mt-3 gap-x-1">
                 <Option
                     isSelected={renderOption === RendererOption.Home}
                     onClick={() => setRenderOption(RendererOption.Home)}
@@ -64,7 +65,18 @@ export default function () {
                     label="Settings"
                 />
             </div>
-            <UtilitySideBar open={open} setOpen={setOpen} content={<DashboardComponentHeading className="pt-6 pl-8" description="check list of friends you made">Friends</DashboardComponentHeading>} />
+            <UtilitySideBar
+                open={open}
+                setOpen={setOpen}
+                content={
+                    <DashboardComponentHeading
+                        className="pt-4 sm:pt-6 pl-4 sm:pl-8"
+                        description="check list of friends you made"
+                    >
+                        Friends
+                    </DashboardComponentHeading>
+                }
+            />
         </div>
     );
 }

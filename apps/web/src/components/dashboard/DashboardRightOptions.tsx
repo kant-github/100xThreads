@@ -24,7 +24,7 @@ export default function () {
   };
 
   return (
-    <div className="w-full bg-[#f2f2f2] dark:bg-[#1c1c1c]">
+    <div className="w-full bg-[#f2f2f2] dark:bg-[#1c1c1c] h-full">
       {renderComponent()}
     </div>
   );
