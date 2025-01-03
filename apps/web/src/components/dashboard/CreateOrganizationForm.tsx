@@ -41,20 +41,21 @@ export default function CreateRoom({ open, setOpen }: CreateRoomProps) {
     };
 
     const onSubmit = (data: FormValues) => {
+        console.log("form submitted");
         console.log(data);
     };
 
     return open ? (
-        <OpacityBackground 
+        <OpacityBackground
             className=""
             onBackgroundClick={() => setOpen(false)}
         >
-            <UtilityCard 
-                open={open} 
-                setOpen={setOpen} 
+            <UtilityCard
+                open={open}
+                setOpen={setOpen}
                 className="w-5/12 px-12 relative pb-20 pt-8"
             >
-                <DashboardComponentHeading 
+                <DashboardComponentHeading
                     description="start creating organization with your preferred choice"
                 >
                     Create Organization

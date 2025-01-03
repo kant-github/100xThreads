@@ -1,6 +1,5 @@
 "use client";
-import { FaList } from "react-icons/fa";
-import { HiViewGridAdd } from "react-icons/hi";
+
 import CardHoverChatCards from "../ui/CardHoverChatCards";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { OrganizationType } from "types";
@@ -11,8 +10,9 @@ import { allOrganizationDisplaytype, DisplayType, userSessionAtom } from "@/reco
 import HomeOrganizationsSkeleton from "../skeletons/HomeOrganizationsSkeleton";
 import DashboardComponentHeading from "./DashboardComponentHeading";
 import ListTypeOrganizations from "../ui/ListTypeOrganizations";
+import OrganizationDisplayTypeToggleButton from "../buttons/OrganizationDisplayTypeToggleButton";
 
-const testOrgs = [
+export const testOrgs = [
   {
     title: "Tech Innovators",
     description: "A community for tech enthusiasts and innovators.",
@@ -173,7 +173,8 @@ export default function () {
   const [organizations, setOrganizations] = useRecoilState<OrganizationType[] | []>(organizationsAtom);
   const [loading, setLoading] = useState<boolean>(false);
   const session = useRecoilValue(userSessionAtom);
-  const [displayType, setDisplayType] = useRecoilState<DisplayType>(allOrganizationDisplaytype);
+  const displayType = useRecoilValue<DisplayType>(allOrganizationDisplaytype);
+
 
   useEffect(() => {
     const fetchCall = async () => {
@@ -191,12 +192,9 @@ export default function () {
 
   return (
     <div className="bg-[#37474f] dark:bg-[#141313] h-full relative flex flex-col">
-      <div className="flex flex-row items-center gap-x-3 px-2 py-1 absolute top-6 right-12 dark:bg-zinc-600/30 rounded-[4px]">
-        <HiViewGridAdd onClick={() => setDisplayType(DisplayType.grid)} size={22} className="text-zinc-400" />
-        <FaList onClick={() => setDisplayType(DisplayType.list)} size={19} className="text-zinc-400" />
-      </div>
+      <OrganizationDisplayTypeToggleButton />
       <DashboardComponentHeading className="pt-4 pl-12" description="Browse through the organizations which previously joined">All organizations</DashboardComponentHeading>
-      <div className="bg-[#37474f] dark:bg-[#262629] my-8 mx-12 rounded-[8px] shadow-lg shadow-black/40 flex-grow overflow-hidden ">
+      <div className="bg-[#37474f] dark:bg-[#262629] my-8 mx-12 py-4 rounded-[8px] shadow-lg shadow-black/40 flex-grow overflow-hidden ">
         {loading ?
           (<HomeOrganizationsSkeleton />) :
           (
@@ -204,7 +202,6 @@ export default function () {
               : <CardHoverChatCards className="py-8" organizations={organizations} />
           )
         }
-        {/* <CardHoverChatCards className="py-8" organizations={organizations} /> */}
       </div>
     </div>
   );

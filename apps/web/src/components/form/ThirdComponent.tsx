@@ -80,7 +80,6 @@ export default function ThirdComponent({
                         );
                     }}
                 />
-                <button type="submit">Submit</button>
             </div>
         </div>
     );

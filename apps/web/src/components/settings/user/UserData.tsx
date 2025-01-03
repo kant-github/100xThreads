@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRecoilValue } from "recoil";
 import WhiteText from "@/components/heading/WhiteText";
 import { IoMdMail } from "react-icons/io";
+import { BsTextParagraph } from "react-icons/bs";
 
 export default function () {
     const session = useRecoilValue(userSessionAtom);
@@ -24,10 +25,13 @@ export default function () {
             </div>
 
             <div className="flex items-center justify-start gap-x-4 mt-3">
-                <WhiteText className="text-xs px-3 py-1 rounded-[4px] border-[1px] border-zinc-600">{"Faraaz aao sitaare safar ke dekhte hai 🌻"}</WhiteText>
-                <WhiteText className="text-xs px-3 py-1 rounded-[4px] border-[1px] border-zinc-600 flex items-center gap-x-2">
+            <WhiteText className="text-xs px-3 py-1 rounded-[4px] border-[1px] border-zinc-600 flex items-center gap-x-2">
                     <IoMdMail />
                     {session.user?.email}
+                </WhiteText>
+                <WhiteText className="text-xs px-3 py-1 rounded-[4px] border-[1px] border-zinc-600 flex items-center gap-x-2">
+                    <BsTextParagraph />
+                    {"faraaz aao sitaare safar ke dekhte hain 🌻"}
                 </WhiteText>
             </div>
         </div>

@@ -32,8 +32,8 @@ export default function ({ organizations }: ListTypeOrganizations) {
                             </div>
                         </div>
                         <div className="flex flex-row items-center gap-x-4">
-                            <div className="text-xs dark:text-zinc-200 font-semibold border-[0.5px] border-zinc-600 py-1 px-3 rounded-[8px] dark:bg-zinc-800/20">{organization.owner}</div>
-                            <SlOptions className="border-[0.5px] rounded-[7px] border-zinc-600 dark:text-zinc-300 p-1.5 text-2xl" />
+                            <div className="text-xs dark:text-zinc-200 font-semibold border-[0.5px] border-zinc-600 py-1 px-3 rounded-[8px] dark:bg-zinc-800/20 dark:hover:bg-zinc-600/40">{organization.owner}</div>
+                            <SlOptions className="border-[0.5px] rounded-[7px] border-zinc-600 dark:text-zinc-300 p-1.5 text-2xl cursor-pointer" />
                         </div>
                     </div>
                     <div className="flex flex-row justify-between">
@@ -49,7 +49,7 @@ export default function ({ organizations }: ListTypeOrganizations) {
                         </div>
                         <div className="flex flex-row gap-x-3 text-xs">
                             {organization.tags.map((tag, tagIndex) => (
-                                <CompanyTagTicker>{tag}</CompanyTagTicker>
+                                <CompanyTagTicker key={tagIndex}>{tag}</CompanyTagTicker>
                             ))}
                         </div>
                     </div>
