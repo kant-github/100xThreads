@@ -196,7 +196,7 @@ export default function () {
         <FaList onClick={() => setDisplayType(DisplayType.list)} size={19} className="text-zinc-400" />
       </div>
       <DashboardComponentHeading className="pt-4 pl-12" description="Browse through the organizations which previously joined">All organizations</DashboardComponentHeading>
-      <div className="flex-grow bg-[#37474f] dark:bg-[#262629] mt-8 mx-12 overflow-auto scrollbar-hide rounded-[8px] shadow-lg shadow-black/40">
+      <div className="bg-[#37474f] dark:bg-[#262629] my-8 mx-12 rounded-[8px] shadow-lg shadow-black/40 flex-grow overflow-hidden ">
         {loading ?
           (<HomeOrganizationsSkeleton />) :
           (
@@ -204,6 +204,7 @@ export default function () {
               : <CardHoverChatCards className="py-8" organizations={organizations} />
           )
         }
+        {/* <CardHoverChatCards className="py-8" organizations={organizations} /> */}
       </div>
     </div>
   );

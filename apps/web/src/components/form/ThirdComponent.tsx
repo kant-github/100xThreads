@@ -62,7 +62,6 @@ export default function ThirdComponent({
                         </div>
                     </div>
                 </div>
-
                 <Controller
                     name="password"
                     control={control}
