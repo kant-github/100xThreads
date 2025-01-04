@@ -31,16 +31,17 @@ model Users {
 model Organization {
   id                String              @id @default(uuid()) @db.Uuid
   name              String              @db.VarChar(191)
-  description       String              @default("This is a default description for the organization, you can change it anytime")
+  description       String              @default("")
   owner             Users               @relation(fields: [owner_id], references: [id], onDelete: Cascade)
   owner_id          Int
   privateFlag       Boolean             @default(false)
   hasPassword       Boolean             @default(false)
   password          String?             @db.VarChar(191)
   image             String?             @db.VarChar(191)
-  organizationColor String              @db.VarChar(7)
+  organizationColor String?              @db.VarChar(7)
   organization_type OrganizationType
   created_at        DateTime            @default(now())
+  tags              String[]            @default([]) @db.VarChar(50)
   ChatGroups        ChatGroup[]
   EventRoom         EventRoom[]
   OrganizationUsers OrganizationUsers[]

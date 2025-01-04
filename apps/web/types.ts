@@ -52,6 +52,7 @@ export type OrganizationType = {
   name: string;
   description: string;
   owner_id: number;
+  owner: UserType;
   privateFlag: boolean;
   hasPassword: boolean;
   password?: string;
@@ -59,4 +60,5 @@ export type OrganizationType = {
   organizationColor: string;
   organization_type: string;
   created_at: string;
+  tags: string[];
 };

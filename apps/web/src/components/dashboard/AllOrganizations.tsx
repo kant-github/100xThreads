@@ -198,7 +198,7 @@ export default function () {
         {loading ?
           (<HomeOrganizationsSkeleton />) :
           (
-            displayType === DisplayType.list ? <ListTypeOrganizations organizations={testOrgs} />
+            displayType === DisplayType.list ? <ListTypeOrganizations organizations={organizations} />
               : <CardHoverChatCards className="py-8" organizations={organizations} />
           )
         }

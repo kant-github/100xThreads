@@ -7,12 +7,12 @@ import HomeOrganizationsSkeleton from "../skeletons/HomeOrganizationsSkeleton";
 import CardHoverChatCards from "../ui/CardHoverChatCards";
 import DashboardComponentHeading from "./DashboardComponentHeading";
 import ListTypeOrganizations from "../ui/ListTypeOrganizations";
-import { testOrgs } from "./AllOrganizations";
 import OrganizationDisplayTypeToggleButton from "../buttons/OrganizationDisplayTypeToggleButton";
+import { OrganizationType } from "types";
 
 export default function () {
     const session = useRecoilValue(userSessionAtom);
-    const [ownedOrganizations, setOwnedOrganizations] = useRecoilState(userCreatedOrganizationAtom);
+    const [ownedOrganizations, setOwnedOrganizations] = useRecoilState<OrganizationType[]>(userCreatedOrganizationAtom);
     const displayType = useRecoilValue<DisplayType>(allOrganizationDisplaytype);
     const [loading, setLoading] = useState<boolean>(false);
     useEffect(() => {
@@ -37,7 +37,7 @@ export default function () {
                 {loading ?
                     (<HomeOrganizationsSkeleton />) :
                     (
-                        displayType === DisplayType.list ? <ListTypeOrganizations organizations={testOrgs} />
+                        displayType === DisplayType.list ? <ListTypeOrganizations organizations={ownedOrganizations} />
                             : <CardHoverChatCards className="py-8" organizations={ownedOrganizations} />
                     )
                 }

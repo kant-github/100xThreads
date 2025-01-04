@@ -9,7 +9,7 @@ import ProgressBarButtons from "../form/ProgressBarButtons";
 import FirstComponent from "../form/FirstComponent";
 import SecondComponent from "../form/SecondComponent";
 import ThirdComponent from "../form/ThirdComponent";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { progressBarAtom } from "@/recoil/atoms/progressBarAtom";
 import { formSchema } from "@/validations/createOrganizationFormSchema";
 import { Dispatch, SetStateAction, useState } from "react";
@@ -28,7 +28,7 @@ interface CreateRoomProps {
 export type FormValues = z.infer<typeof formSchema>;
 
 export default function CreateRoom({ open, setOpen }: CreateRoomProps) {
-    const currentStep = useRecoilValue(progressBarAtom);
+    const [currentStep, setCurrentStep] = useRecoilState(progressBarAtom);
     const session = useRecoilValue(userSessionAtom);
     const setOwnedOrganization = useSetRecoilState(userCreatedOrganizationAtom);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -83,7 +83,7 @@ export default function CreateRoom({ open, setOpen }: CreateRoomProps) {
             toast.success("Organization created successfully!", {
                 description: moment().format("dddd, MMMM D, YYYY"),
             });
-
+            setCurrentStep(1);
             reset();
             setOpen(false);
 

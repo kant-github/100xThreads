@@ -20,6 +20,9 @@ export async function getAllOrganizations(req: Request, res: Response) {
                     }
                 }
             },
+            include: {
+                owner: true
+            },
             orderBy: {
                 created_at: "desc"
             },
