@@ -31,9 +31,14 @@ model Users {
 model Organization {
   id                String              @id @default(uuid()) @db.Uuid
   name              String              @db.VarChar(191)
-  description       String              @default("")
+  description       String              @default("This is a default description for the organization, you can change it anytime")
   owner             Users               @relation(fields: [owner_id], references: [id], onDelete: Cascade)
   owner_id          Int
+  privateFlag       Boolean             @default(false)
+  hasPassword       Boolean             @default(false)
+  password          String?             @db.VarChar(191)
+  image             String?             @db.VarChar(191)
+  organizationColor String              @db.VarChar(7)
   organization_type OrganizationType
   created_at        DateTime            @default(now())
   ChatGroups        ChatGroup[]
@@ -50,7 +55,7 @@ model OrganizationUsers {
   organization_id String       @db.Uuid
   user            Users        @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id         Int
-  role            UserRole       @default(MEMBER)
+  role            UserRole     @default(MEMBER)
   joined_at       DateTime     @default(now())
 
   @@unique([organization_id, user_id])

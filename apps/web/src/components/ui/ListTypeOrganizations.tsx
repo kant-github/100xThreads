@@ -20,7 +20,7 @@ interface Organization {
 
 export default function ({ organizations }: ListTypeOrganizations) {
     return (
-        <div className="flex flex-col overflow-y-auto scrollbar-hide h-[70vh]">
+        <div className="flex flex-col overflow-y-auto gap-y-8 scrollbar-hide h-[70vh]">
             {organizations.map((organization, index) => (
                 <div className="w-full flex flex-col justify-between gap-y-4 md:gap-y-6 lg:gap-y-8 items-between px-4 md:px-6 lg:px-10 py-4 border-b-[0.5px] border-zinc-700" key={index}>
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-y-3 sm:gap-y-0">
@@ -33,7 +33,7 @@ export default function ({ organizations }: ListTypeOrganizations) {
                                 alt="logo" 
                             />
                             <div className="flex-col flex-1">
-                                <div className="text-sm md:text-md dark:text-zinc-200">{organization.title}</div>
+                                <div className="text-md font-bold md:text-md dark:text-zinc-200">{organization.title}</div>
                                 <div className="text-xs dark:text-zinc-400 line-clamp-2 sm:line-clamp-1">{organization.description}</div>
                             </div>
                         </div>
@@ -41,7 +41,7 @@ export default function ({ organizations }: ListTypeOrganizations) {
                             <div className="text-xs dark:text-zinc-200 font-semibold border-[0.5px] border-zinc-600 py-1 px-2 md:px-3 rounded-[8px] dark:bg-zinc-800/20 dark:hover:bg-zinc-500/40 truncate max-w-[120px] sm:max-w-none cursor-pointer">
                                 {organization.owner}
                             </div>
-                            <SlOptions className="border-[0.5px] rounded-[7px] border-zinc-600 dark:text-zinc-300 p-1.5 text-xl md:text-2xl cursor-pointer" />
+                            <SlOptions className="border-[0.5px] rounded-[7px] border-zinc-600 dark:text-zinc-300 p-1.5 text-xl md:text-2xl cursor-pointer dark:bg-zinc-800/20 dark:hover:bg-zinc-500/40 " />
                         </div>
                     </div>
                     <div className="flex flex-col sm:flex-row justify-between gap-y-3 sm:gap-y-0">

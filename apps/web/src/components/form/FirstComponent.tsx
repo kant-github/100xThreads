@@ -1,10 +1,10 @@
-// OrganizationDetailsSection.tsx
-import { Control, Controller, FieldErrors } from 'react-hook-form';
-
-
+import { useEffect } from 'react';
+import { Control, Controller, FieldErrors, useWatch } from 'react-hook-form';
 import { FormValues } from '../dashboard/CreateOrganizationForm';
 import { FileUpload } from '../ui/file-upload';
 import InputBox from '../utility/InputBox';
+import { progressBarAtom } from '@/recoil/atoms/progressBarAtom';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 interface OrganizationDetailsSectionProps {
     control: Control<FormValues>;
@@ -22,10 +22,32 @@ export const presetColors = [
     { name: 'Indigo', value: '#6366f1' },
 ];
 
-export default function ({
+export default function OrganizationDetailsSection({
     control,
-    errors
+    errors,
 }: OrganizationDetailsSectionProps) {
+    const [currentLevel, setCurrentLevel] = useRecoilState(progressBarAtom);
+
+    const image = useWatch({ control, name: 'image' });
+    const ownerName = useWatch({ control, name: 'ownerName' });
+    const organizationName = useWatch({ control, name: 'organizationName' });
+    const organizationColor = useWatch({ control, name: 'organizationColor' });
+
+    useEffect(() => {
+        console.log("rendered");
+        const allFieldsFilled =
+            image && ownerName && organizationName && organizationColor;
+        const noErrors =
+            !errors.image &&
+            !errors.ownerName &&
+            !errors.organizationName &&
+            !errors.organizationColor;
+
+        if (allFieldsFilled && noErrors) {
+            setCurrentLevel((prev) => prev + 1);
+        }
+    }, [image, ownerName, organizationName, organizationColor, errors, setCurrentLevel, currentLevel]);
+
     return (
         <div>
             <div className="flex flex-row items-center justify-center">
@@ -45,7 +67,7 @@ export default function ({
                     control={control}
                     render={({ field }) => (
                         <InputBox
-                            label="owner's name"
+                            label="Owner's Name"
                             value={field.value}
                             onChange={field.onChange}
                             error={errors.ownerName?.message}
@@ -62,7 +84,7 @@ export default function ({
                     control={control}
                     render={({ field }) => (
                         <InputBox
-                            label="organization's name"
+                            label="Organization's Name"
                             value={field.value}
                             onChange={field.onChange}
                             error={errors.organizationName?.message}
@@ -106,7 +128,9 @@ export default function ({
                                 </div>
                             )}
                             {errors.organizationColor && (
-                                <p className="text-red-500 text-sm">{errors.organizationColor.message}</p>
+                                <p className="text-red-500 text-sm">
+                                    {errors.organizationColor.message}
+                                </p>
                             )}
                         </div>
                     )}
@@ -114,4 +138,4 @@ export default function ({
             </div>
         </div>
     );
-};
+}

@@ -1,10 +1,10 @@
 import { createServer } from "http";
 import express from "express";
-import { WebSocketServer } from "ws"; // Change here
+import { WebSocketServer } from "ws";
 import cors from "cors";
 import fileUpload from "express-fileupload";
-import Routes from "./routes"; // Your routes
-import { setupWebSocket } from "./socket"; // Your WebSocket setup
+import Routes from "./routes"; 
+import { setupWebSocket } from "./socket";
 
 const app = express();
 
@@ -32,7 +32,7 @@ app.get("/health-check", (req, res) => {
     res.send("Server started");
 });
 
-app.use("/api", Routes); // Set up routes
+app.use("/api", Routes);
 
 // Start the server
 server.listen(PORT, () => {

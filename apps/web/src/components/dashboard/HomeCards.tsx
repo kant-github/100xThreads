@@ -16,51 +16,52 @@ export default function () {
       title: "Real-Time Messaging",
       description:
         "Instant communication with live updates for seamless conversations.",
-      icon: <IconMessageCircle />,
+      icon: <IconMessageCircle style={{ color: "#FF5733" }} />, // Bright Orange
     },
     {
       title: "Secure Authentication",
       description:
         "Robust and secure login powered by NextAuth.js with credentials-based authentication.",
-      icon: <IconShieldLock />,
+      icon: <IconShieldLock style={{ color: "#2ECC71" }} />, // Green
     },
     {
       title: "Media Sharing",
       description:
         "Share images, videos, voice notes, GIFs, and stickers to enhance your chats.",
-      icon: <IconPhoto />,
+      icon: <IconPhoto style={{ color: "#3498DB" }} />, // Blue
     },
     {
       title: "User Presence Indicators",
       description:
         "See who's online, typing, or away in real-time to stay connected.",
-      icon: <IconUserCheck />,
+      icon: <IconUserCheck style={{ color: "#F1C40F" }} />, // Yellow
     },
     {
       title: "Chat History",
       description:
         "Access past conversations anytime with our persistent message storage.",
-      icon: <IconArchive />,
+      icon: <IconArchive style={{ color: "#9B59B6" }} />, // Purple
     },
     {
       title: "Polls and Surveys",
       description:
         "Create and share polls to gather opinions or plan group activities.",
-      icon: <IconChartBar />,
+      icon: <IconChartBar style={{ color: "#E74C3C" }} />, // Red
     },
     {
       title: "Event Scheduling",
       description:
         "Organize events with group chats, announcements, and Google Calendar integration.",
-      icon: <IconCalendarEvent />,
+      icon: <IconCalendarEvent style={{ color: "#1ABC9C" }} />, // Teal
     },
     {
       title: "Customizable Notifications",
       description:
         "Stay in the loop with tailored notifications for new messages and updates.",
-      icon: <IconBell />,
+      icon: <IconBell style={{ color: "#E67E22" }} />, // Vibrant Orange
     },
   ];
+
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4  relative z-10 py-8 max-w-7xl mx-auto">

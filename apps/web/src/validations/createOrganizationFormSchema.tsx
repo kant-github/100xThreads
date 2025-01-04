@@ -18,7 +18,10 @@ export const formSchema = z.object({
     presetChannels: z.array(z.string()).min(1, 'Select at least one channel'),
     isPrivate: z.boolean().default(false),
     hasPassword: z.boolean().default(false),
-    password: z.string().optional()
+    password: z.string().optional(),
+    organizationTags: z.array(z.string())
+        .min(1, "Add at least one tag")
+        .max(5, "Maximum 5 tags allowed")
 }).refine(
     (data) => {
         if (!data.hasPassword) return true;
@@ -26,6 +29,6 @@ export const formSchema = z.object({
     },
     {
         message: "Password is required and must be at least 8 characters long",
-        path: ["password"], // This tells Zod to show the error on the password field
+        path: ["password"],
     }
 );

@@ -8,28 +8,35 @@ export async function storeOrganization(req: Request, res: Response) {
         })
     }
 
-    const { name, description, selectedGroups, type } = req.body;
- 
-    const parsedSelectedGroups = JSON.parse(selectedGroups);
+    console.log("body is : ", req.body);
+
+    const { organizationName, image, organizationColor, isPrivate, hasPassword, password } = req.body;
+    const presetChannels: string[] = Object.entries(req.body)
+        .filter(([key]) => key.startsWith('presetChannels['))
+        .map(([_, value]) => String(value));
 
 
-    if (!name || name.trim() === "") {
+    const organizationTags = Object.entries(req.body)
+        .filter(([key]) => key.startsWith('organizationTags['))
+        .map(([_, value]) => value);
+
+    console.log('Preset Channels:', presetChannels);
+    console.log('Organization Tags:', organizationTags);
+    console.log("image is : ", image);
+
+
+
+    if (!organizationName || organizationName.trim() === "") {
         return res.status(400).json({
             message: "Organization's name is required"
         })
-    }
-
-    if (name.length > 100) {
-        return res.status(400).json({
-            message: "Organization name must be less than 100 characters"
-        });
     }
 
     try {
         const existingOrg = await prisma.organization.findUnique({
             where: {
                 name_owner_id: {
-                    name: name,
+                    name: organizationName,
                     owner_id: req.user.id
                 }
             }
@@ -43,13 +50,21 @@ export async function storeOrganization(req: Request, res: Response) {
 
         const newOrganization = await prisma.organization.create({
             data: {
-                name: name,
-                description: "",
+                name: organizationName,
                 owner_id: req.user.id,
-                organization_type: type.toUpperCase()
+                // organization_type: type.toUpperCase(),
+                privateFlag: Boolean(isPrivate),
+                hasPassword: Boolean(hasPassword),
+                password,
+                image: "",
+                organizationColor: organizationColor,
+                organization_type: 'STARTUP'
+            },
+            include: {
+                owner: true
             }
         })
-        
+
         await prisma.organizationUsers.create({
             data: {
                 organization_id: newOrganization.id,
@@ -59,7 +74,7 @@ export async function storeOrganization(req: Request, res: Response) {
         })
 
 
-        if (parsedSelectedGroups.includes("events")) {
+        if (presetChannels.includes("events")) {
             await prisma.eventRoom.create({
                 data: {
                     organization_id: newOrganization.id,
@@ -70,7 +85,7 @@ export async function storeOrganization(req: Request, res: Response) {
             })
         }
 
-        const filteredSelectedGroups = parsedSelectedGroups.filter((grouptitle: string) => grouptitle !== "events");
+        const filteredSelectedGroups = presetChannels.filter((grouptitle: string) => grouptitle !== "events");
 
 
         await prisma.chatGroup.createMany({
