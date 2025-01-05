@@ -1,8 +1,12 @@
 import { presetColors } from "@/components/form/FirstComponent";
+import { userSessionAtom } from "@/recoil/atoms/atom";
+import { useRecoilValue } from "recoil";
 import { z } from "zod";
 
+// const session = useRecoilValue(userSessionAtom);
+
 export const formSchema = z.object({
-    ownerName: z.string().min(1, "Can't be empty"),
+    ownerName: z.string().min(1, "Can't be empty").default("John Doe"),
     organizationName: z.string().min(1, "Can't be empty"),
     image: z
         .custom<FileList>()

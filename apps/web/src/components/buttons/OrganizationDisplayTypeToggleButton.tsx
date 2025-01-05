@@ -9,6 +9,7 @@ export default function ViewToggle() {
     return (
         <div className="flex items-center bg-zinc-800/30 rounded-[8px] absolute top-6 right-12 border-[0.5px] border-zinc-600 overflow-hidden">
             <button
+                aria-label="grid"
                 type="button"
                 onClick={() => setDisplayType(DisplayType.grid)}
                 className={`p-1.5 rounded-[6px] transition-all duration-200 ${displayType === DisplayType.grid
@@ -19,6 +20,7 @@ export default function ViewToggle() {
                 <HiViewGridAdd size={16} />
             </button>
             <button
+                aria-label="list"
                 type="button"
                 onClick={() => setDisplayType(DisplayType.list)}
                 className={`p-1.5 rounded-[6px] transition-all duration-200 ${displayType === DisplayType.list

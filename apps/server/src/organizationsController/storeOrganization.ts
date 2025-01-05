@@ -10,6 +10,8 @@ export async function storeOrganization(req: Request, res: Response) {
 
     const { organizationName, image, organizationColor, isPrivate, hasPassword, password } = req.body;
 
+    console.log("image is : ", image);
+
     const presetChannels: string[] = Object.entries(req.body)
         .filter(([key]) => key.startsWith("presetChannels["))
         .map(([_, value]) => String(value));

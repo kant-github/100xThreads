@@ -12,7 +12,7 @@ import ThirdComponent from "../form/ThirdComponent";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { progressBarAtom } from "@/recoil/atoms/progressBarAtom";
 import { formSchema } from "@/validations/createOrganizationFormSchema";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import axios from "axios";
 import { ORGANIZATION } from "@/lib/apiAuthRoutes";
 import { userSessionAtom } from "@/recoil/atoms/atom";
@@ -33,8 +33,19 @@ export default function CreateRoom({ open, setOpen }: CreateRoomProps) {
     const setOwnedOrganization = useSetRecoilState(userCreatedOrganizationAtom);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { control, watch, reset, handleSubmit, formState: { errors } } = useForm<FormValues>({
-        resolver: zodResolver(formSchema)
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            ownerName: session.user?.name || "Your Name"
+        }
     });
+
+    useEffect(() => {
+        if (session.user?.name) {
+            reset({
+                ownerName: session.user.name
+            });
+        }
+    }, [session.user?.name, reset]);
 
     const renderComponent = () => {
         switch (currentStep) {
@@ -51,7 +62,6 @@ export default function CreateRoom({ open, setOpen }: CreateRoomProps) {
 
     const onSubmit = async (data: FormValues) => {
         if (isSubmitting) return;
-
         setIsSubmitting(true);
         try {
             if (!session?.user?.token) {
@@ -59,17 +69,28 @@ export default function CreateRoom({ open, setOpen }: CreateRoomProps) {
             }
 
             const formData = new FormData();
+
             Object.entries(data).forEach(([key, value]) => {
-                if (value instanceof File) {
-                    formData.append(key, value);
-                } else if (Array.isArray(value)) {
-                    value.forEach((item, index) => {
-                        formData.append(`${key}[${index}]`, item);
+
+                if (key === 'image' && value instanceof FileList) {
+                    const file = value.item(0);
+                    if (file) {
+                        formData.append('image', file);
+                    }
+                }
+                else if (Array.isArray(value)) {
+                    value.forEach((item) => {
+                        formData.append(key, item);
                     });
-                } else {
+                }
+                else if (value !== undefined && value !== null) {
                     formData.append(key, String(value));
                 }
             });
+
+            for (const [key, value] of formData.entries()) {
+                console.log(`${key}:`, value);
+            }
 
             const response = await axios.post(`${ORGANIZATION}`, formData, {
                 headers: {
@@ -79,7 +100,6 @@ export default function CreateRoom({ open, setOpen }: CreateRoomProps) {
             });
 
             setOwnedOrganization(prev => [response.data.data, ...prev]);
-
             toast.success("Organization created successfully!", {
                 description: moment().format("dddd, MMMM D, YYYY"),
             });
@@ -89,11 +109,9 @@ export default function CreateRoom({ open, setOpen }: CreateRoomProps) {
 
         } catch (error) {
             const errorMessage = "Failed to create organization. Please try again.";
-
             toast.error(errorMessage, {
                 description: "Please check your input and try again.",
             });
-
             console.error("Organization creation error:", error);
         } finally {
             setIsSubmitting(false);

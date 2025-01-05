@@ -4,7 +4,7 @@ import { FormValues } from '../dashboard/CreateOrganizationForm';
 import { FileUpload } from '../ui/file-upload';
 import InputBox from '../utility/InputBox';
 import { progressBarAtom } from '@/recoil/atoms/progressBarAtom';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 interface OrganizationDetailsSectionProps {
     control: Control<FormValues>;
@@ -34,30 +34,30 @@ export default function OrganizationDetailsSection({
     const organizationColor = useWatch({ control, name: 'organizationColor' });
 
     useEffect(() => {
-        console.log("rendered");
-        const allFieldsFilled =
-            image && ownerName && organizationName && organizationColor;
+        // Check if all required fields are filled and valid
+        const isImageValid = !errors.image;  // Changed this since image is optional
+        const allFieldsFilled = ownerName && organizationName && organizationColor;
         const noErrors =
-            !errors.image &&
+            isImageValid &&
             !errors.ownerName &&
             !errors.organizationName &&
             !errors.organizationColor;
 
-        if (allFieldsFilled && noErrors) {
-            setCurrentLevel((prev) => prev + 1);
+        if (allFieldsFilled && noErrors && currentLevel === 1) {
+            setCurrentLevel(2);
         }
     }, [image, ownerName, organizationName, organizationColor, errors, setCurrentLevel, currentLevel]);
 
     return (
-        <div>
-            <div className="flex flex-row items-center justify-center">
+        <div className="space-y-6">
+            <div className="flex flex-row items-start justify-center gap-x-6">
                 <Controller
                     name="image"
                     control={control}
-                    render={({ field }) => (
+                    render={({ field: { onChange, value } }) => (
                         <FileUpload
-                            value={field.value}
-                            onChange={field.onChange}
+                            value={value}
+                            onChange={onChange}
                             error={errors.image?.message}
                         />
                     )}
@@ -67,6 +67,7 @@ export default function OrganizationDetailsSection({
                     control={control}
                     render={({ field }) => (
                         <InputBox
+                            disable={true}
                             label="Owner's Name"
                             value={field.value}
                             onChange={field.onChange}
@@ -75,8 +76,9 @@ export default function OrganizationDetailsSection({
                     )}
                 />
             </div>
-            <div className="flex flex-row items-center justify-start gap-x-2 mt-2">
-                <span className="px-3 py-2 mt-4 border-zinc-600 bg-white dark:bg-zinc-900/80 text-xs text-zinc-400">
+
+            <div className="flex flex-row items-center justify-start gap-x-2">
+                <span className="px-3 py-2 border-zinc-600 bg-white dark:bg-zinc-900/80 text-xs text-zinc-400">
                     /orgs/
                 </span>
                 <Controller
@@ -92,7 +94,8 @@ export default function OrganizationDetailsSection({
                     )}
                 />
             </div>
-            <div className="mt-6">
+
+            <div>
                 <label className="block text-xs font-medium text-gray-700 dark:text-gray-200 mb-2">
                     Choose Organization Color
                 </label>
@@ -101,15 +104,15 @@ export default function OrganizationDetailsSection({
                     control={control}
                     render={({ field: { onChange, value } }) => (
                         <div className="space-y-3">
-                            <div className="flex flex-wrap gap-x-4">
+                            <div className="flex flex-wrap gap-4">
                                 {presetColors.map((color) => (
                                     <button
                                         key={color.value}
                                         type="button"
                                         onClick={() => onChange(color.value)}
                                         className={`w-8 h-8 rounded-[4px] transition-all duration-200 ${value === color.value
-                                            ? 'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-black ring-black dark:ring-white scale-110'
-                                            : 'hover:scale-110'
+                                                ? 'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-black ring-black dark:ring-white scale-110'
+                                                : 'hover:scale-110'
                                             }`}
                                         style={{ backgroundColor: color.value }}
                                         title={color.name}

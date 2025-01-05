@@ -10,9 +10,10 @@ interface TextInputProps {
     type?: string;
     value?: string;
     placeholder?: string;
+    disable?: boolean
 }
 
-export default function ({ label, onChange, type, value, placeholder, error }: TextInputProps) {
+export default function ({ label, onChange, type, value, placeholder, error, disable }: TextInputProps) {
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
     return (
@@ -28,6 +29,7 @@ export default function ({ label, onChange, type, value, placeholder, error }: T
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         onChange(e.target.value);
                     }}
+                    disabled={disable}
                     placeholder={placeholder}
                     id="input"
                     type={type ? showPassword ? 'text' : 'password' : "text"}
