@@ -7,9 +7,6 @@ export async function getAllOrganizations(req: Request, res: Response) {
         return res.send("returned");
     }
 
-    console.log(req.user);
-    console.log("hi there");
-
     try {
 
         const data = await prisma.organization.findMany({
@@ -29,7 +26,6 @@ export async function getAllOrganizations(req: Request, res: Response) {
 
         });
 
-        console.log(data);
         res.status(200).json({
             message: "Data is fetched successfully",
             data: data,

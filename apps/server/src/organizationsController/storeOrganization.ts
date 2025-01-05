@@ -8,7 +8,9 @@ export async function storeOrganization(req: Request, res: Response) {
         });
     }
 
-    const { organizationName, image, organizationColor, isPrivate, hasPassword, password } = req.body;
+    const { organizationName, image, organizationColor, organizationTags, isPrivate, hasPassword, password } = req.body;
+
+    console.log(req.body);
 
     console.log("image is : ", image);
 
@@ -16,15 +18,14 @@ export async function storeOrganization(req: Request, res: Response) {
         .filter(([key]) => key.startsWith("presetChannels["))
         .map(([_, value]) => String(value));
 
-    const organizationTags: string[] = Object.entries(req.body)
-        .filter(([key]) => key.startsWith("organizationTags["))
-        .map(([_, value]) => String(value));
 
     if (!organizationName || organizationName.trim() === "") {
         return res.status(400).json({
             message: "Organization's name is required",
         });
     }
+
+    console.log("organzations tags : ", organizationTags);
 
     const validateHexColor = (color: string): boolean => /^#[0-9A-Fa-f]{6}$/.test(color);
 

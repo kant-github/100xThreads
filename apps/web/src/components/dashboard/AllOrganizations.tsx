@@ -11,6 +11,7 @@ import HomeOrganizationsSkeleton from "../skeletons/HomeOrganizationsSkeleton";
 import DashboardComponentHeading from "./DashboardComponentHeading";
 import ListTypeOrganizations from "../ui/ListTypeOrganizations";
 import OrganizationDisplayTypeToggleButton from "../buttons/OrganizationDisplayTypeToggleButton";
+import ListTypeOrganizationSkeleton from "../skeletons/ListTypeOrganizationSkeleton";
 
 export const testOrgs = [
   {
@@ -179,7 +180,7 @@ export default function () {
   useEffect(() => {
     const fetchCall = async () => {
       setLoading(true);
-      await new Promise(t => setTimeout(t, 500));
+      await new Promise(t => setTimeout(t, 1000));
       if (session.user?.token) {
         const data = await fetchAllOrganization(session.user.token);
         setOrganizations(data);
@@ -195,12 +196,9 @@ export default function () {
       <OrganizationDisplayTypeToggleButton />
       <DashboardComponentHeading className="pt-4 pl-12" description="Browse through the organizations which previously joined">All organizations</DashboardComponentHeading>
       <div className="bg-[#37474f] dark:bg-[#262629] my-8 mx-12 rounded-[8px] shadow-lg shadow-black/40 flex-grow overflow-hidden ">
-        {loading ?
-          (<HomeOrganizationsSkeleton />) :
-          (
-            displayType === DisplayType.list ? <ListTypeOrganizations organizations={organizations} />
-              : <CardHoverChatCards className="py-8" organizations={organizations} />
-          )
+        {
+          displayType === DisplayType.list ? loading ? <ListTypeOrganizationSkeleton /> : <ListTypeOrganizations organizations={organizations} /> :
+            loading ? <HomeOrganizationsSkeleton /> : <CardHoverChatCards className="py-8" organizations={organizations} />
         }
       </div>
     </div>

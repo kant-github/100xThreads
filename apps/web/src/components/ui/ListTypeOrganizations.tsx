@@ -3,6 +3,7 @@ import { MdDateRange } from "react-icons/md";
 import CompanyTagTicker from "../utility/CompanyTagTicker";
 import { SlOptions } from "react-icons/sl";
 import { OrganizationType } from "types";
+import Link from "next/link";
 
 interface ListTypeOrganizations {
     organizations: OrganizationType[] | [];
@@ -14,7 +15,8 @@ export default function ({ organizations }: ListTypeOrganizations) {
     return (
         <div className="flex flex-col overflow-y-auto scrollbar-hide max-h-[70vh]">
             {organizations.map((organization, index) => (
-                <div className="w-full flex flex-col justify-between gap-y-4 md:gap-y-6 lg:gap-y-8 items-between px-4 md:px-6 lg:px-10 py-4 border-b-[0.5px] border-zinc-700" key={index}>
+                <Link href={`/org/${organization.id}`}
+                 className="w-full flex flex-col justify-between gap-y-4 md:gap-y-6 lg:gap-y-8 items-between px-4 md:px-6 lg:px-12 py-4 border-b-[0.5px] border-zinc-700 " key={index}>
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-y-3 sm:gap-y-0">
                         <div className="flex flex-row items-center gap-x-3 w-full sm:w-auto">
                             {/* <Image 
@@ -53,7 +55,7 @@ export default function ({ organizations }: ListTypeOrganizations) {
                             ))}
                         </div>
                     </div>
-                </div>
+                </Link>
             ))}
         </div>
     );

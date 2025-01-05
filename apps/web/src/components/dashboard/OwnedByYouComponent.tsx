@@ -9,6 +9,7 @@ import DashboardComponentHeading from "./DashboardComponentHeading";
 import ListTypeOrganizations from "../ui/ListTypeOrganizations";
 import OrganizationDisplayTypeToggleButton from "../buttons/OrganizationDisplayTypeToggleButton";
 import { OrganizationType } from "types";
+import ListTypeOrganizationSkeleton from "../skeletons/ListTypeOrganizationSkeleton";
 
 export default function () {
     const session = useRecoilValue(userSessionAtom);
@@ -18,7 +19,7 @@ export default function () {
     useEffect(() => {
         async function fetchUserCreatedOrganization() {
             setLoading(true);
-            await new Promise(t => setTimeout(t, 500));
+            await new Promise(t => setTimeout(t, 1000));
             if (session.user?.token) {
                 const ownedOrganization = await fetchOrganization(session.user.token);
                 setOwnedOrganizations(ownedOrganization);
@@ -30,18 +31,24 @@ export default function () {
     }, [session.user?.token])
 
     return (
-        <div className="h-full bg-[#141313] relative">
+        <div className="h-full bg-[#141313] relative flex flex-col">
             <OrganizationDisplayTypeToggleButton />
             <DashboardComponentHeading className="pt-4 pl-12" description="Browse through all the organizations owned by you">Owned by you</DashboardComponentHeading>
-            <div className="bg-[#37474f] dark:bg-[#262629] my-8 mx-12 py-4 rounded-[8px] shadow-lg shadow-black/40 flex-grow overflow-hidden ">
-                {loading ?
-                    (<HomeOrganizationsSkeleton />) :
-                    (
-                        displayType === DisplayType.list ? <ListTypeOrganizations organizations={ownedOrganizations} />
-                            : <CardHoverChatCards className="py-8" organizations={ownedOrganizations} />
-                    )
+            <div className="bg-[#37474f] dark:bg-[#262629] my-8 mx-12 rounded-[8px] shadow-lg shadow-black/40 flex-grow overflow-hidden ">
+                {
+                    displayType === DisplayType.list ? loading ? <ListTypeOrganizationSkeleton /> : <ListTypeOrganizations organizations={ownedOrganizations} /> :
+                        loading ? <HomeOrganizationsSkeleton /> : <CardHoverChatCards className="py-8" organizations={ownedOrganizations} />
                 }
             </div>
         </div>
     )
 }
+
+
+// {loading ?
+//     (<HomeOrganizationsSkeleton />) :
+//     (
+//         displayType === DisplayType.list ? <ListTypeOrganizations organizations={ownedOrganizations} />
+//             : <CardHoverChatCards className="py-8" organizations={ownedOrganizations} />
+//     )
+// }

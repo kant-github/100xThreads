@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+"use client"
 import SessionProvider from "providers/SessionProvider";
 import localFont from "next/font/local";
 import { Toaster } from 'sonner';
 import "./globals.css";
+import { RecoilRoot } from "recoil";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -13,10 +14,10 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
 });
 
-export const metadata: Metadata = {
-  title: "Banter",
-  description: "Send chats fast and foremost",
-};
+// export const metadata: Metadata = {
+//   title: "Banter",
+//   description: "Send chats fast and foremost",
+// };
 
 export default function RootLayout({
   children,
@@ -45,7 +46,9 @@ export default function RootLayout({
           />
         </head>
         <body className={`${geistSans.variable} ${geistMono.variable} dark:bg-zinc-800 bg-[#f2f2f2]`}>
-          {children}
+          <RecoilRoot>
+            {children}
+          </RecoilRoot>
           <Toaster position="bottom-right" closeButton duration={2300} />
         </body>
       </SessionProvider>

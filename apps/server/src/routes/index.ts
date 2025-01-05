@@ -18,6 +18,7 @@ import { storeOrganization } from "../organizationsController/storeOrganization"
 import { deleteOrganizations } from "../organizationsController/deleteOrganizations";
 import getOrganizationBySearch from "../organizationsController/getOrganizationBysearch";
 import { getAllOrganizations } from "../organizationsController/getAllOrganizations";
+import { getOrganizationsMetaDeta } from "../organizationsController/getOrganizationsMetaDeta";
 const router = Router();
 
 // user_controller
@@ -28,6 +29,7 @@ router.put("/user", authmiddleware, updateUserDetails);
 
 // organizations controller
 router.get("/organizations", authmiddleware, getOrganizations);
+router.get("/organizations/:id", authmiddleware, getOrganizationsMetaDeta);
 router.post("/organizations", authmiddleware, storeOrganization);
 router.delete("/organizations/:id", authmiddleware, deleteOrganizations);
 router.get("/organizations-by-search", authmiddleware, getOrganizationBySearch);
