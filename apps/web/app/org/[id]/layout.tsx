@@ -19,9 +19,7 @@ export default function ({
         }
     }, [sessionToken, setUserSession]);
 
-    if (status === 'loading') {
-        return <SkeletonDashboard />;
-    }
+    
     return (
         <div className="h-screen">
             {children}

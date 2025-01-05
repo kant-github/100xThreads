@@ -8,24 +8,13 @@ export async function storeOrganization(req: Request, res: Response) {
         });
     }
 
-    const { organizationName, image, organizationColor, organizationTags, isPrivate, hasPassword, password } = req.body;
-
-    console.log(req.body);
-
-    console.log("image is : ", image);
-
-    const presetChannels: string[] = Object.entries(req.body)
-        .filter(([key]) => key.startsWith("presetChannels["))
-        .map(([_, value]) => String(value));
-
+    const { organizationName, image, organizationColor, presetChannels, organizationTags, isPrivate, hasPassword, password } = req.body;
 
     if (!organizationName || organizationName.trim() === "") {
         return res.status(400).json({
             message: "Organization's name is required",
         });
     }
-
-    console.log("organzations tags : ", organizationTags);
 
     const validateHexColor = (color: string): boolean => /^#[0-9A-Fa-f]{6}$/.test(color);
 
@@ -51,8 +40,8 @@ export async function storeOrganization(req: Request, res: Response) {
             data: {
                 name: organizationName,
                 owner_id: req.user.id,
-                privateFlag: Boolean(isPrivate),
-                hasPassword: Boolean(hasPassword),
+                privateFlag: isPrivate === 'true',
+                hasPassword: hasPassword === 'true',
                 password,
                 image: image || "",
                 organizationColor: resolvedOrganizationColor,
@@ -72,7 +61,10 @@ export async function storeOrganization(req: Request, res: Response) {
             },
         });
 
+        console.log("preset channels are ", presetChannels);
+
         if (presetChannels.includes("events")) {
+            console.log("yes it includes events");
             await prisma.eventRoom.create({
                 data: {
                     organization_id: newOrganization.id,
@@ -88,7 +80,7 @@ export async function storeOrganization(req: Request, res: Response) {
             (groupTitle: string) => groupTitle !== "events"
         );
 
-        await prisma.chatGroup.createMany({
+        await prisma.channel.createMany({
             data: filteredSelectedGroups.map((groupTitle: string) => ({
                 organization_id: newOrganization.id,
                 title: groupTitle,
