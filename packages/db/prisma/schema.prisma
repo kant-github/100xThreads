@@ -42,7 +42,7 @@ model Organization {
   organization_type OrganizationType
   created_at        DateTime            @default(now())
   tags              String[]            @default([]) @db.VarChar(50)
-  ChatGroups        ChatGroup[]
+  Channels        Channel[]
   EventRoom         EventRoom[]
   OrganizationUsers OrganizationUsers[]
 
@@ -63,7 +63,7 @@ model OrganizationUsers {
   @@map("organization_users")
 }
 
-model ChatGroup {
+model Channel {
   id                   String                 @id @default(uuid()) @db.Uuid
   organization         Organization           @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   organization_id      String                 @db.Uuid
@@ -80,7 +80,7 @@ model ChatGroup {
 
 model Chats {
   id         String      @id @default(uuid()) @db.Uuid
-  group      ChatGroup   @relation(fields: [group_id], references: [id], onDelete: Cascade)
+  group      Channel   @relation(fields: [group_id], references: [id], onDelete: Cascade)
   group_id   String      @db.Uuid
   user       Users       @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id    Int
@@ -110,7 +110,7 @@ model RecentlyJoinedGroups {
   id        Int       @id @default(autoincrement())
   user      Users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id   Int
-  group     ChatGroup @relation(fields: [group_id], references: [id], onDelete: Cascade)
+  group     Channel @relation(fields: [group_id], references: [id], onDelete: Cascade)
   group_id  String    @db.Uuid
   joined_at DateTime  @default(now())
 
