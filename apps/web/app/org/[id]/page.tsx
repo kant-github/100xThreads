@@ -6,6 +6,7 @@ import { ORGANIZATION } from '@/lib/apiAuthRoutes';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { userSessionAtom } from '@/recoil/atoms/atom';
 import { organizationChannels, organizationEventChannels, organizationWelcomeChannel } from '@/recoil/atoms/organizationMetaDataAtom';
+import OrgNavBar from '@/components/organization/OrgNavBar';
 
 export default function OrgPage({ params }: { params: { id: string } }) {
     const session = useRecoilValue(userSessionAtom);
@@ -20,6 +21,7 @@ export default function OrgPage({ params }: { params: { id: string } }) {
                         authorization: `Bearer ${session.user?.token}`,
                     },
                 });
+                console.log("data is : ", response.data.data);
 
                 if (response.status === 200) {
                     setEventChannel(response.data.data.eventChannel);

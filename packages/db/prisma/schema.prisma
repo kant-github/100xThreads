@@ -67,19 +67,6 @@ model OrganizationUsers {
   @@map("organization_users")
 }
 
-enum ChannelType {
-  WELCOME // Onboarding, introduction
-  GENERAL // Regular discussions
-  ANNOUNCEMENT // Official updates
-  RESOURCE // Knowledge sharing
-  HELP_DESK // Support tickets
-  PROJECT // Project management
-  LEARNING // Educational content
-  MENTORSHIP // Mentoring programs
-  SOCIAL // Community engagement
-  CAREER // Job opportunities
-}
-
 model Channel {
   id                   String                 @id @default(uuid()) @db.Uuid
   organization         Organization           @relation(fields: [organization_id], references: [id], onDelete: Cascade)
@@ -303,4 +290,17 @@ enum UserRole {
   IT_SUPPORT
   HR_MANAGER
   FINANCE_MANAGER
+}
+
+enum ChannelType {
+  WELCOME // Onboarding, introduction
+  GENERAL // Regular discussions
+  ANNOUNCEMENT // Official updates
+  RESOURCE // Knowledge sharing
+  HELP_DESK // Support tickets
+  PROJECT // Project management
+  LEARNING // Educational content
+  MENTORSHIP // Mentoring programs
+  SOCIAL // Community engagement
+  CAREER // Job opportunities
 }

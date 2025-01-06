@@ -12,21 +12,20 @@ export default function () {
     const eventRooms = useRecoilValue(organizationEventChannels);
     const channels = useRecoilValue(organizationChannels);
     const welcomeChannel = useRecoilValue(organizationWelcomeChannel);
-    console.log("welcome channel is : ", welcomeChannel);
     const [organizationChannelOption, setOrganizationChannelOption] = useRecoilState(organizationChannelOptionAtom);
 
     return (
         <div className="h-auto sm:h-24 py-1 sm:py-2 rounded-[8px]">
             <WhiteText className="ml-3 text-sm flex items-center justify-between mx-2 select-none">
-                <span>#Welcome</span>
+                <span>recent joinees</span>
                 <BiSolidParty />
             </WhiteText>
             <div className="mt-1">
-                <Option onClick={() => setOrganizationChannelOption(welcomeChannel.id)} isSelected={organizationChannelOption === welcomeChannel.id} key={welcomeChannel.id} label={"On boarders"} />
+                <Option onClick={() => setOrganizationChannelOption(welcomeChannel.id)} isSelected={organizationChannelOption === welcomeChannel.id} key={welcomeChannel.id} label={"Welcome"} />
             </div>
             <div className="border-b-[0.5px] border-zinc-600 my-2" />
             <WhiteText className="ml-3 text-sm flex items-center justify-between mx-2 select-none">
-                <span>#General</span>
+                <span>general</span>
                 <MdMeetingRoom />
             </WhiteText>
             <div className="mt-1">
@@ -38,7 +37,7 @@ export default function () {
             </div>
             <div className="border-b-[0.5px] border-zinc-600 my-2" />
             <WhiteText className="ml-3 text-sm flex items-center justify-between mx-2 select-none">
-                <span>#Events</span>
+                <span>events</span>
                 <MdEvent />
             </WhiteText>
             <div className="mt-1">

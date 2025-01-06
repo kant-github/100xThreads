@@ -96,7 +96,6 @@ export async function storeOrganization(req: Request, res: Response) {
                     description: `Channel for ${channelId.replace(/-/g, ' ')}`
                 })),
             });
-
             return org;
         });
 

@@ -38,6 +38,8 @@ export async function getOrganizationsMetaDeta(req: Request, res: Response) {
             welcomeChannel
         };
 
+        console.log("data finally is : ", data);
+
         return res.status(200).json({
             data,
             message: "Successfully retrieved data.",
