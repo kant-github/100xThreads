@@ -1,13 +1,9 @@
-import { userSessionAtom } from "@/recoil/atoms/atom"
-import { useRecoilValue } from "recoil"
+import OrganizationLeftDashboard from "./OrganizationLeftDashboard";
 
 export default function () {
-    const session = useRecoilValue(userSessionAtom);
-
     return (
-        <div>
-            
-            {session.user?.token}
+        <div className="flex flex-col md:flex-row h-full">
+            <OrganizationLeftDashboard />
         </div>
     )
 }

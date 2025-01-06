@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from "react";
-import { OrganizationType } from "../dashboard/CreateChatCard";
+import { OrganizationType } from "../dashboard/CreateOrganizationCard";
 
 interface OrganizationTypeProps {
   selectedType: OrganizationType;

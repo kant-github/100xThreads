@@ -13,16 +13,6 @@ const doto = Belanosima({
     subsets: ['latin'],
     weight: ['700'],
 });
-export enum OrganizationType {
-    Startup = "Startup",
-    NonProfit = "Non-Profit",
-    Educational = "Educational",
-    Government = "Government",
-    Corporate = "Corporate",
-    Community = "Community",
-    Other = "Other"
-}
-
 
 export default function () {
     const [open, setOpen] = useRecoilState(createOrganizationAtom)
@@ -45,7 +35,7 @@ export default function () {
                         </p>
                     </div>
                     <div className="w-full flex flex-row justify-center mt-8 mb-3 group">
-                        <CreateOrganizationButton onClick={openModal}>
+                        <CreateOrganizationButton className="shadow-lg shadow-yellow-900" onClick={openModal}>
                             <CgMathPlus className="group-hover:rotate-90 group-hover:-translate-x-3 transition-transform duration-300 ease-in-out" size={16} />
                             Create Organization
                         </CreateOrganizationButton>

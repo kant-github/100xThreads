@@ -1,4 +1,4 @@
-import CreateChatCard from "./CreateChatCard";
+import CreateChatCard from "./CreateOrganizationCard";
 import HomeCards from "./HomeCards";
 
 export default function () {

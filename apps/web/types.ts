@@ -1,10 +1,10 @@
-export type ChatGroupType = {
+export type ChannelType = {
   id: string;
   organization_id: string;
-  title: string; 
+  title: string;
   passcode?: string;
   groupImage?: string;
-  created_at: string; 
+  created_at: string;
   Chats: MessageType[];
 };
 
@@ -62,3 +62,13 @@ export type OrganizationType = {
   created_at: string;
   tags: string[];
 };
+
+
+export type EventChannelType = {
+  id: string;
+  organization_id: string;
+  title: string;
+  description: string;
+  created_at: string;
+  created_by: number;
+}
