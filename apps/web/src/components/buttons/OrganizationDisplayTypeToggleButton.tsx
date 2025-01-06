@@ -13,7 +13,7 @@ export default function ViewToggle() {
                 type="button"
                 onClick={() => setDisplayType(DisplayType.grid)}
                 className={`p-1.5 rounded-[6px] transition-all duration-200 ${displayType === DisplayType.grid
-                    ? 'bg-zinc-900 text-yellow-400/70 shadow-md'
+                    ? 'bg-zinc-900 text-yellow-500/80 shadow-md'
                     : 'text-zinc-400 hover:bg-zinc-700/50 hover:text-zinc-300'
                     }`}
             >
@@ -24,7 +24,7 @@ export default function ViewToggle() {
                 type="button"
                 onClick={() => setDisplayType(DisplayType.list)}
                 className={`p-1.5 rounded-[6px] transition-all duration-200 ${displayType === DisplayType.list
-                    ? 'bg-zinc-900 text-yellow-400/70 shadow-md'
+                    ? 'bg-zinc-900 text-yellow-500/80 shadow-md'
                     : 'text-zinc-400 hover:bg-zinc-700/50 hover:text-zinc-300'
                     }`}
             >

@@ -10,6 +10,8 @@ import ListTypeOrganizations from "../ui/ListTypeOrganizations";
 import OrganizationDisplayTypeToggleButton from "../buttons/OrganizationDisplayTypeToggleButton";
 import { OrganizationType } from "types";
 import ListTypeOrganizationSkeleton from "../skeletons/ListTypeOrganizationSkeleton";
+import CreateOrganizationCard from "./CreateOrganizationCard";
+import CreateOrganizationDottedButton from "../buttons/EmptyOrganizationMessage";
 
 export default function () {
     const session = useRecoilValue(userSessionAtom);
@@ -36,19 +38,12 @@ export default function () {
             <DashboardComponentHeading className="pt-4 pl-12" description="Browse through all the organizations owned by you">Owned by you</DashboardComponentHeading>
             <div className="bg-[#37474f] dark:bg-[#262629] my-8 mx-12 rounded-[8px] shadow-lg shadow-black/40 flex-grow overflow-hidden ">
                 {
-                    displayType === DisplayType.list ? loading ? <ListTypeOrganizationSkeleton /> : <ListTypeOrganizations organizations={ownedOrganizations} /> :
-                        loading ? <HomeOrganizationsSkeleton /> : <CardHoverChatCards className="py-8" organizations={ownedOrganizations} />
+                    !ownedOrganizations || ownedOrganizations.length === 0 ? <CreateOrganizationDottedButton /> : (
+                        displayType === DisplayType.list ? loading ? <ListTypeOrganizationSkeleton /> : <ListTypeOrganizations organizations={ownedOrganizations} /> :
+                            loading ? <HomeOrganizationsSkeleton /> : <CardHoverChatCards className="py-8" organizations={ownedOrganizations} />
+                    )
                 }
             </div>
         </div>
     )
 }
-
-
-// {loading ?
-//     (<HomeOrganizationsSkeleton />) :
-//     (
-//         displayType === DisplayType.list ? <ListTypeOrganizations organizations={ownedOrganizations} />
-//             : <CardHoverChatCards className="py-8" organizations={ownedOrganizations} />
-//     )
-// }

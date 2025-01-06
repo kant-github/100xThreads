@@ -17,7 +17,7 @@ export default function () {
     return (
         <div className="h-auto sm:h-24 py-1 sm:py-2 rounded-[8px]">
             <WhiteText className="ml-3 text-sm flex items-center justify-between mx-2 select-none">
-                <span>recent joinees</span>
+                <span className="text-[13px]">recent joinees</span>
                 <BiSolidParty />
             </WhiteText>
             <div className="mt-1">
@@ -25,7 +25,7 @@ export default function () {
             </div>
             <div className="border-b-[0.5px] border-zinc-600 my-2" />
             <WhiteText className="ml-3 text-sm flex items-center justify-between mx-2 select-none">
-                <span>general</span>
+                <span className="text-[13px]">general</span>
                 <MdMeetingRoom />
             </WhiteText>
             <div className="mt-1">
@@ -37,7 +37,7 @@ export default function () {
             </div>
             <div className="border-b-[0.5px] border-zinc-600 my-2" />
             <WhiteText className="ml-3 text-sm flex items-center justify-between mx-2 select-none">
-                <span>events</span>
+                <span className="text-[13px]">events</span>
                 <MdEvent />
             </WhiteText>
             <div className="mt-1">

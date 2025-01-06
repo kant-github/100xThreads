@@ -27,7 +27,7 @@ interface CreateRoomProps {
 
 export type FormValues = z.infer<typeof formSchema>;
 
-export default function CreateRoom({ open, setOpen }: CreateRoomProps) {
+export default function ({ open, setOpen }: CreateRoomProps) {
     const [currentStep, setCurrentStep] = useRecoilState(progressBarAtom);
     const session = useRecoilValue(userSessionAtom);
     const setOwnedOrganization = useSetRecoilState(userCreatedOrganizationAtom);
