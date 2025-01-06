@@ -1,23 +1,36 @@
 import prisma from "@repo/db/client";
 import { Request, Response } from "express";
 
+const channelTypeMap: Record<string, 'ANNOUNCEMENT' | 'GENERAL' | 'RESOURCE' | 'HELP_DESK' | 'PROJECT' | 'LEARNING'> = {
+    'announcements': 'ANNOUNCEMENT',
+    'general': 'GENERAL',
+    'resources': 'RESOURCE',
+    'help-desk': 'HELP_DESK',
+    'projects': 'PROJECT',
+    'learning': 'LEARNING'
+};
+
 export async function storeOrganization(req: Request, res: Response) {
     if (!req.user) {
-        return res.status(401).json({
-            message: "You are not authorized",
-        });
+        return res.status(401).json({ message: "You are not authorized" });
     }
 
-    const { organizationName, image, organizationColor, presetChannels, organizationTags, isPrivate, hasPassword, password } = req.body;
+    const {
+        organizationName,
+        image,
+        organizationColor,
+        presetChannels,
+        organizationTags,
+        isPrivate,
+        hasPassword,
+        password
+    } = req.body;
 
-    if (!organizationName || organizationName.trim() === "") {
-        return res.status(400).json({
-            message: "Organization's name is required",
-        });
+    if (!organizationName?.trim()) {
+        return res.status(400).json({ message: "Organization's name is required" });
     }
 
     const validateHexColor = (color: string): boolean => /^#[0-9A-Fa-f]{6}$/.test(color);
-
     const resolvedOrganizationColor = validateHexColor(organizationColor) ? organizationColor : "#f7b602";
 
     try {
@@ -31,60 +44,60 @@ export async function storeOrganization(req: Request, res: Response) {
         });
 
         if (existingOrg) {
-            return res.status(400).json({
-                message: "An organization with this name already exists",
-            });
+            return res.status(400).json({ message: "An organization with this name already exists" });
         }
 
-        const newOrganization = await prisma.organization.create({
-            data: {
-                name: organizationName,
-                owner_id: req.user.id,
-                privateFlag: isPrivate === 'true',
-                hasPassword: hasPassword === 'true',
-                password,
-                image: image || "",
-                organizationColor: resolvedOrganizationColor,
-                organization_type: "STARTUP",
-                tags: organizationTags,
-            },
-            include: {
-                owner: true,
-            },
-        });
-
-        await prisma.organizationUsers.create({
-            data: {
-                organization_id: newOrganization.id,
-                user_id: Number(req.user.id),
-                role: "ADMIN",
-            },
-        });
-
-        console.log("preset channels are ", presetChannels);
-
-        if (presetChannels.includes("events")) {
-            console.log("yes it includes events");
-            await prisma.eventRoom.create({
+        const newOrganization = await prisma.$transaction(async (tx) => {
+            const org = await tx.organization.create({
                 data: {
-                    organization_id: newOrganization.id,
-                    title: "Event Room",
-                    description:
-                        "Welcome to the Event Room, a dedicated space where connections are made, stories are shared, and moments come to life. Host events, engage with your community, and create memories that last beyond the day.",
-                    created_by: Number(req.user.id),
+                    name: organizationName,
+                    owner_id: Number(req.user?.id),
+                    privateFlag: isPrivate === 'true',
+                    hasPassword: hasPassword === 'true',
+                    password,
+                    image: image || "",
+                    organizationColor: resolvedOrganizationColor,
+                    organization_type: "STARTUP",
+                    tags: organizationTags,
+                },
+                include: { owner: true },
+            });
+
+            await tx.eventChannel.create({
+                data: {
+                    organization_id: org.id,
+                    title: 'Events',
+                    description: 'Welcome to Events! Create, manage, and discover upcoming events. From virtual meetups to in-person gatherings, this space helps you stay connected with the community. Join discussions, RSVP to events, and shape memorable experiences together.',
+                }
+            })
+
+            await tx.organizationUsers.create({
+                data: {
+                    organization_id: org.id,
+                    user_id: Number(req.user?.id),
+                    role: "ADMIN",
                 },
             });
-        }
 
-        const filteredSelectedGroups = presetChannels.filter(
-            (groupTitle: string) => groupTitle !== "events"
-        );
+            await tx.welcomeChannel.create({
+                data: {
+                    organization_id: org.id,
+                    welcome_message: "Welcome to our organization!"
+                }
+            });
 
-        await prisma.channel.createMany({
-            data: filteredSelectedGroups.map((groupTitle: string) => ({
-                organization_id: newOrganization.id,
-                title: groupTitle,
-            })),
+            await tx.channel.createMany({
+                data: presetChannels.map((channelId: string) => ({
+                    organization_id: org.id,
+                    title: channelId.charAt(0).toUpperCase() + channelId.slice(1).replace(/-/g, ' '),
+                    type: channelTypeMap[channelId] || 'GENERAL',
+                    created_by: Number(req.user?.id),
+                    allowed_roles: ["MEMBER"],
+                    description: `Channel for ${channelId.replace(/-/g, ' ')}`
+                })),
+            });
+
+            return org;
         });
 
         return res.status(201).json({
@@ -92,9 +105,7 @@ export async function storeOrganization(req: Request, res: Response) {
             data: newOrganization,
         });
     } catch (err) {
-        console.log(err);
-        return res.status(500).json({
-            message: "Error in creating organizations",
-        });
+        console.error(err);
+        return res.status(500).json({ message: "Error in creating organization" });
     }
 }

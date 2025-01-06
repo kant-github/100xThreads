@@ -24,6 +24,9 @@ model Users {
   RecentlyJoinedGroups RecentlyJoinedGroups[]
   LikedMessages        LikedUser[]
   EventAttendee        EventAttendee[]
+  Channel              Channel[]
+  WelcomedChannels     WelcomedUser[]
+  EventChannel         EventChannel[]
 
   @@map("users")
 }
@@ -38,13 +41,14 @@ model Organization {
   hasPassword       Boolean             @default(false)
   password          String?             @db.VarChar(191)
   image             String?             @db.VarChar(191)
-  organizationColor String?              @db.VarChar(7)
+  organizationColor String?             @db.VarChar(7)
   organization_type OrganizationType
   created_at        DateTime            @default(now())
   tags              String[]            @default([]) @db.VarChar(50)
-  Channels        Channel[]
-  EventRoom         EventRoom[]
+  Channels          Channel[]
+  EventChannel      EventChannel[]
   OrganizationUsers OrganizationUsers[]
+  WelcomeChannel    WelcomeChannel?
 
   @@unique([name, owner_id])
   @@map("organizations")
@@ -63,24 +67,139 @@ model OrganizationUsers {
   @@map("organization_users")
 }
 
+enum ChannelType {
+  WELCOME // Onboarding, introduction
+  GENERAL // Regular discussions
+  ANNOUNCEMENT // Official updates
+  RESOURCE // Knowledge sharing
+  HELP_DESK // Support tickets
+  PROJECT // Project management
+  LEARNING // Educational content
+  MENTORSHIP // Mentoring programs
+  SOCIAL // Community engagement
+  CAREER // Job opportunities
+}
+
 model Channel {
   id                   String                 @id @default(uuid()) @db.Uuid
   organization         Organization           @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   organization_id      String                 @db.Uuid
   title                String                 @db.VarChar(191)
+  type                 ChannelType            @default(GENERAL)
   passcode             String?                @db.VarChar(20)
   groupImage           String?
   created_at           DateTime               @default(now())
+  created_by           Int?
+  creator              Users?                 @relation(fields: [created_by], references: [id])
+  is_archived          Boolean                @default(false)
+  allowed_roles        UserRole[]             @default([MEMBER])
+  description          String?
   Chats                Chats[]
+  Announcements        Announcement[]
   RecentlyJoinedGroups RecentlyJoinedGroups[]
 
   @@index([organization_id, created_at])
   @@map("chat_groups")
 }
 
+model EventChannel {
+  id              String       @id @default(uuid()) @db.Uuid
+  organization    Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  organization_id String       @db.Uuid
+  title           String       @db.VarChar(191)
+  description     String?
+  created_at      DateTime     @default(now())
+  created_by      Int?
+  creator         Users?       @relation(fields: [created_by], references: [id])
+  events          Event[]
+
+  @@index([organization_id])
+  @@map("event_rooms")
+}
+
+model WelcomeChannel {
+  id              String         @id @default(uuid()) @db.Uuid
+  organization    Organization   @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  organization_id String         @unique @db.Uuid
+  welcome_message String?
+  welcomed_users  WelcomedUser[]
+  role_requests   RoleRequest[]
+  created_at      DateTime       @default(now())
+
+  @@map("welcome_channels")
+}
+
+model WelcomedUser {
+  id                 String         @id @default(uuid()) @db.Uuid
+  welcome_channel    WelcomeChannel @relation(fields: [welcome_channel_id], references: [id], onDelete: Cascade)
+  welcome_channel_id String         @db.Uuid
+  user_id            Int
+  user               Users          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  message            String?
+  welcomed_at        DateTime       @default(now())
+
+  @@unique([welcome_channel_id, user_id])
+  @@map("welcomed_users")
+}
+
+model RoleRequest {
+  id                 String         @id @default(uuid()) @db.Uuid
+  welcome_channel    WelcomeChannel @relation(fields: [welcome_channel_id], references: [id])
+  welcome_channel_id String         @db.Uuid
+  user_id            Int
+  requested_role     UserRole
+  status             RequestStatus  @default(PENDING)
+  created_at         DateTime       @default(now())
+  updated_at         DateTime       @updatedAt
+
+  @@map("role_requests")
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Announcement {
+  id           String            @id @default(uuid()) @db.Uuid
+  channel      Channel           @relation(fields: [channel_id], references: [id], onDelete: Cascade)
+  channel_id   String            @db.Uuid
+  title        String
+  content      String
+  priority     Priority          @default(NORMAL)
+  created_by   Int
+  created_at   DateTime          @default(now())
+  expires_at   DateTime?
+  is_pinned    Boolean           @default(false)
+  requires_ack Boolean           @default(false)
+  AckStatus    AnnouncementAck[]
+
+  @@index([channel_id, created_at])
+  @@map("announcements")
+}
+
+model AnnouncementAck {
+  id              Int          @id @default(autoincrement())
+  announcement    Announcement @relation(fields: [announcement_id], references: [id], onDelete: Cascade)
+  announcement_id String       @db.Uuid
+  user_id         Int
+  acked_at        DateTime     @default(now())
+
+  @@unique([announcement_id, user_id])
+  @@map("announcement_acknowledgments")
+}
+
+enum Priority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
 model Chats {
   id         String      @id @default(uuid()) @db.Uuid
-  group      Channel   @relation(fields: [group_id], references: [id], onDelete: Cascade)
+  group      Channel     @relation(fields: [group_id], references: [id], onDelete: Cascade)
   group_id   String      @db.Uuid
   user       Users       @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id    Int
@@ -107,43 +226,29 @@ model LikedUser {
 }
 
 model RecentlyJoinedGroups {
-  id        Int       @id @default(autoincrement())
-  user      Users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  id        Int      @id @default(autoincrement())
+  user      Users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id   Int
-  group     Channel @relation(fields: [group_id], references: [id], onDelete: Cascade)
-  group_id  String    @db.Uuid
-  joined_at DateTime  @default(now())
+  group     Channel  @relation(fields: [group_id], references: [id], onDelete: Cascade)
+  group_id  String   @db.Uuid
+  joined_at DateTime @default(now())
 
   @@unique([user_id, group_id])
   @@map("recently_joined_groups")
 }
 
-model EventRoom {
-  id              String       @id @default(uuid()) @db.Uuid
-  organization    Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  organization_id String       @db.Uuid
-  title           String       @db.VarChar(191)
-  description     String?
-  created_at      DateTime     @default(now())
-  created_by      Int
-  events          Event[]
-
-  @@index([organization_id])
-  @@map("event_rooms")
-}
-
 model Event {
-  id            String      @id @default(uuid()) @db.Uuid
-  event_room    EventRoom   @relation(fields: [event_room_id], references: [id], onDelete: Cascade)
-  event_room_id String      @db.Uuid
-  title         String      @db.VarChar(191)
+  id            String       @id @default(uuid()) @db.Uuid
+  event_room    EventChannel @relation(fields: [event_room_id], references: [id], onDelete: Cascade)
+  event_room_id String       @db.Uuid
+  title         String       @db.VarChar(191)
   description   String?
   start_time    DateTime
   end_time      DateTime?
   location      String?
-  status        EventStatus @default(PENDING)
-  rsvp_count    Int         @default(0)
-  created_at    DateTime    @default(now())
+  status        EventStatus  @default(PENDING)
+  rsvp_count    Int          @default(0)
+  created_at    DateTime     @default(now())
   created_by    Int
 
   attendees EventAttendee[]

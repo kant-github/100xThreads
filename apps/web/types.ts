@@ -72,3 +72,50 @@ export type EventChannelType = {
   created_at: string;
   created_by: number;
 }
+
+export type WelcomeChannel = {
+ id: string
+ organizationId: string
+ welcomeMessage: string | null
+ welcomedUsers: WelcomedUser[]
+ roleRequests: RoleRequest[]
+ createdAt: Date
+}
+
+export type WelcomedUser = {
+ id: string
+ welcomeChannelId: string
+ userId: number
+ user: UserType
+ message: string | null
+ welcomedAt: Date
+}
+
+export type RoleRequest = {
+ id: string
+ welcomeChannelId: string
+ userId: number
+ requestedRole: UserRole
+ status: RequestStatus
+ createdAt: Date
+ updatedAt: Date
+}
+
+export enum RequestStatus {
+ PENDING = 'PENDING',
+ APPROVED = 'APPROVED', 
+ REJECTED = 'REJECTED'
+}
+
+export enum UserRole {
+ ADMIN = 'ADMIN',
+ EVENT_MANAGER = 'EVENT_MANAGER',
+ MODERATOR = 'MODERATOR',
+ MEMBER = 'MEMBER',
+ GUEST = 'GUEST',
+ ORGANIZER = 'ORGANIZER',
+ OBSERVER = 'OBSERVER',
+ IT_SUPPORT = 'IT_SUPPORT',
+ HR_MANAGER = 'HR_MANAGER',
+ FINANCE_MANAGER = 'FINANCE_MANAGER'
+}

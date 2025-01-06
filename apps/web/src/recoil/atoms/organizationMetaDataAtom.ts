@@ -1,5 +1,5 @@
 import { atom } from "recoil";
-import { ChannelType, EventChannelType } from "types";
+import { ChannelType, EventChannelType, WelcomeChannel } from "types";
 
 export const organizationEventChannels = atom<EventChannelType[] | []>({
     key: 'organizationEventChannels',
@@ -9,5 +9,10 @@ export const organizationEventChannels = atom<EventChannelType[] | []>({
 export const organizationChannels = atom<ChannelType[] | []>({
     key: 'organizationChannels',
     default: []
+})
+
+export const organizationWelcomeChannel = atom<WelcomeChannel>({
+    key: 'organizationWelcomeChannel',
+    default: {} as WelcomeChannel
 })
 

@@ -14,8 +14,8 @@ export async function getOrganizationsMetaDeta(req: Request, res: Response) {
     }
 
     try {
-        const [eventRooms, rooms, organizationUsers] = await Promise.all([
-            prisma.eventRoom.findMany({
+        const [eventChannel, channels, organizationUsers, welcomeChannel] = await Promise.all([
+            prisma.eventChannel.findMany({
                 where: { organization_id: organizationId },
             }),
             prisma.channel.findMany({
@@ -24,12 +24,18 @@ export async function getOrganizationsMetaDeta(req: Request, res: Response) {
             prisma.organizationUsers.findMany({
                 where: { organization_id: organizationId },
             }),
+            prisma.welcomeChannel.findFirst({
+                where: { organization_id: organizationId }
+            })
         ]);
 
+        console.log("welcomechannel is : ", welcomeChannel);
+
         const data = {
-            eventRooms,
-            rooms,
+            eventChannel,
+            channels,
             organizationUsers,
+            welcomeChannel
         };
 
         return res.status(200).json({

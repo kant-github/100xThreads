@@ -6,12 +6,6 @@ import { X } from "lucide-react";
 
 export const presetChannels = [
     {
-        id: 'events',
-        name: 'Events',
-        description: 'Channel for organizing and announcing events',
-        defaultEnabled: true,
-    },
-    {
         id: 'announcements',
         name: 'Announcements',
         description: 'Official announcements and important updates',
@@ -24,24 +18,31 @@ export const presetChannels = [
         defaultEnabled: true,
     },
     {
-        id: 'admin',
-        name: 'Admin',
-        description: 'Private channel for administrators',
+        id: 'resources',
+        name: 'Resources',
+        description: 'Knowledge sharing and resources',
+        defaultEnabled: true,
+    },
+    {
+        id: 'help-desk',
+        name: 'Help Desk',
+        description: 'Support and assistance',
         defaultEnabled: true,
     },
     {
         id: 'projects',
         name: 'Projects',
-        description: 'Private channel for administrators',
+        description: 'Project management and updates',
         defaultEnabled: true,
     },
     {
-        id: 'help desk',
-        name: 'Help Desk',
-        description: 'Private channel for administrators',
+        id: 'learning',
+        name: 'Learning',
+        description: 'Educational content and resources',
         defaultEnabled: true,
     }
 ];
+
 
 interface OrganizationDetailsSectionProps {
     control: Control<FormValues>;
@@ -86,7 +87,7 @@ export default function ({
                     render={({ field: { onChange, value = [] } }) => (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {presetChannels.map((channel) => (
-                                <label key={channel.id} className="flex items-start space-x-3 cursor-pointer group dark:bg-zinc-900/80 py-3 px-4 rounded-[8px] select-none hover:bg-zinc-50 dark:hover:bg-zinc-700/90 transition-colors duration-200 h-full" >
+                                <label key={channel.id} className="flex items-start space-x-3 cursor-pointer group dark:bg-zinc-900/80 py-3 px-4 rounded-[8px] select-none hover:bg-zinc-50 dark:hover:bg-zinc-700/90 transition-colors duration-200 h-full">
                                     <div className="flex items-center h-5 flex-shrink-0">
                                         <input
                                             type="checkbox"
@@ -105,14 +106,15 @@ export default function ({
                                         <span className="text-sm font-medium text-gray-700 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white">
                                             {channel.name}
                                         </span>
-
+                                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                                            {channel.description}
+                                        </span>
                                     </div>
                                 </label>
                             ))}
                         </div>
                     )}
                 />
-
             </div>
             <div className="mt-6">
                 <div className="relative">

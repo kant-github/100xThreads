@@ -1,18 +1,17 @@
 "use client"
-import OrgNavBar from '@/components/organization/OrgNavBar';
 import OrgDashboard from '@/components/organization/OrgDashboard';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { ORGANIZATION } from '@/lib/apiAuthRoutes';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { userSessionAtom } from '@/recoil/atoms/atom';
-import { organizationChannels, organizationEventChannels } from '@/recoil/atoms/organizationMetaDataAtom';
+import { organizationChannels, organizationEventChannels, organizationWelcomeChannel } from '@/recoil/atoms/organizationMetaDataAtom';
 
 export default function OrgPage({ params }: { params: { id: string } }) {
     const session = useRecoilValue(userSessionAtom);
-    const setEventChannels = useSetRecoilState(organizationEventChannels);
+    const setEventChannel = useSetRecoilState(organizationEventChannels);
     const setChannels = useSetRecoilState(organizationChannels);
-
+    const setWelcomeChannel = useSetRecoilState(organizationWelcomeChannel)
     useEffect(() => {
         const fetchOrganizationMetaData = async () => {
             try {
@@ -23,8 +22,9 @@ export default function OrgPage({ params }: { params: { id: string } }) {
                 });
 
                 if (response.status === 200) {
-                    setEventChannels(response.data.data.eventRooms);
-                    setChannels(response.data.data.rooms);
+                    setEventChannel(response.data.data.eventChannel);
+                    setChannels(response.data.data.channels);
+                    setWelcomeChannel(response.data.data.welcomeChannel)
                 }
             } catch (error) {
                 console.error('Error fetching organization metadata:', error);
@@ -33,7 +33,7 @@ export default function OrgPage({ params }: { params: { id: string } }) {
         if (session.user?.token && params.id) {
             fetchOrganizationMetaData();
         }
-    }, [session.user?.token, params.id, setEventChannels]);
+    }, [session.user?.token, params.id, setEventChannel]);
 
     return (
         <div className="h-[100dvh] w-full flex flex-col overflow-hidden">
