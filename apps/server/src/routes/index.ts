@@ -33,7 +33,6 @@ router.put("/user", authmiddleware, updateUserDetails);
 // organizations controller
 router.get("/organizations", authmiddleware, getOrganizations);
 router.get("/organizations/join/:id", authmiddleware, alreadyUserMiddleware, caseJoinOrganization);
-// router.get("/organizations/join/:id", authmiddleware, getOrganizationsMetaDeta);
 router.post("/organizations", authmiddleware, storeOrganization);
 router.delete("/organizations/:id", authmiddleware, deleteOrganizations);
 router.get("/organizations-by-search", authmiddleware, getOrganizationBySearch);

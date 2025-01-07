@@ -18,6 +18,17 @@ export async function caseJoinOrganization(req: Request, res: Response) {
         const organization = await prisma.organization.findUnique({
             where: {
                 id: organizationId
+            },
+            select: {
+                name: true,
+                description: true,
+                owner: true,
+                tags: true,
+                access_type: true,
+                image: true,
+                organizationColor: true,
+                organization_type: true,
+                created_at: true
             }
         })
 
@@ -30,6 +41,7 @@ export async function caseJoinOrganization(req: Request, res: Response) {
         } else {
             return res.status(201).json({
                 flag: 'PROTECTED',
+                data: organization
             })
         }
 

@@ -1,53 +1,85 @@
 "use client"
-import OrgDashboard from '@/components/organization/OrgDashboard';
-import { useEffect } from 'react';
-import axios from 'axios';
-import { ORGANIZATION } from '@/lib/apiAuthRoutes';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { userSessionAtom } from '@/recoil/atoms/atom';
-import { organizationChannels, organizationEventChannels, organizationWelcomeChannel } from '@/recoil/atoms/organizationMetaDataAtom';
-import OrgNavBar from '@/components/organization/OrgNavBar';
+
+import { useEffect, useState } from 'react'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
+import axios from 'axios'
+import OrgDashboard from '@/components/organization/OrgDashboard'
+import { userSessionAtom } from '@/recoil/atoms/atom'
+import { organizationChannels, organizationEventChannels, organizationWelcomeChannel } from '@/recoil/atoms/organizationMetaDataAtom'
+import { ORGANIZATION } from '@/lib/apiAuthRoutes'
+import ProtectedOrganizationComponent from '@/components/organization/ProtectedOrganizationComponent'
+import { UserType } from 'types'
+
+export type protectedOrganizationMetadata = {
+    name: string,
+    description: string,
+    owner: UserType,
+    tags: string[],
+    access_type: string,
+    image: string,
+    organizationColor: string,
+    organization_type: string,
+    created_at: string
+}
 
 export default function OrgPage({ params }: { params: { id: string } }) {
-    const session = useRecoilValue(userSessionAtom);
-    const setEventChannel = useSetRecoilState(organizationEventChannels);
-    const setChannels = useSetRecoilState(organizationChannels);
+    const session = useRecoilValue(userSessionAtom)
+    const setEventChannel = useSetRecoilState(organizationEventChannels)
+    const setChannels = useSetRecoilState(organizationChannels)
     const setWelcomeChannel = useSetRecoilState(organizationWelcomeChannel)
-    useEffect(() => {
-        const fetchOrganizationMetaData = async () => {
-            try {
-                const response = await axios.get(`${ORGANIZATION}/join/${params.id}`, {
+    const [flag, setFlag] = useState<'PROTECTED' | 'ALLOWED' | 'INIT'>('INIT')
+    const [data, setData] = useState<protectedOrganizationMetadata>({} as protectedOrganizationMetadata);
+    console.log("state is : ", flag);
+
+    const fetchOrgMetadata = async (password?: string) => {
+        if (!session.user?.token || !params.id) return
+
+        try {
+            const response = await axios.get(
+                `${ORGANIZATION}/join/${params.id}`,
+                {
                     headers: {
-                        authorization: `Bearer ${session.user?.token}`,
+                        authorization: `Bearer ${session.user.token}`,
                     },
-                });
-
-                console.log("data is : ",response.data);
-
-
-                if (response.status === 200) {
-                    setEventChannel(response.data.data.eventChannel);
-                    setChannels(response.data.data.channels);
-                    setWelcomeChannel(response.data.data.welcomeChannel)
+                    params: password ? { password } : undefined
                 }
-            } catch (error) {
-                console.error('Error fetching organization metadata:', error);
+            )
+
+            if (response.data.flag === 'ALLOWED') {
+                setFlag('ALLOWED');
+                const { eventChannel, channels, welcomeChannel } = response.data.data
+                setEventChannel(eventChannel)
+                setChannels(channels)
+                setWelcomeChannel(welcomeChannel)
+            } else {
+                setFlag('PROTECTED')
+                setData(response.data.data);
             }
-        };
-        if (session.user?.token && params.id) {
-            fetchOrganizationMetaData();
+        } catch (error) {
+            console.log("some error occured");
         }
-    }, [session.user?.token, params.id, setEventChannel]);
+    }
+
+    useEffect(() => {
+        fetchOrgMetadata()
+    }, [session.user?.token, params.id])
 
     return (
-        <div className="h-[100dvh] w-full flex flex-col overflow-hidden">
-            <div className="min-h-[60px] sm:min-h-[70px] md:min-h-20">
-                <OrgNavBar />
-            </div>
-            <div className="flex-1 overflow-auto">
-                {/* <OrgDashboard /> */}
-                hi
-            </div>
-        </div>
-    );
+        <>
+            {
+                flag !== 'INIT' && (
+                    <div className="h-[100dvh] w-full flex flex-col overflow-hidden">
+                        {flag === 'PROTECTED' && (
+                            <ProtectedOrganizationComponent metaData={data} />
+                        )}
+                        {flag === 'ALLOWED' && (
+                            <div className="flex-1 overflow-auto">
+                                <OrgDashboard />
+                            </div>
+                        )}
+                    </div>
+                )
+            }
+        </>
+    )
 }
