@@ -8,15 +8,15 @@ datasource db {
 }
 
 model Users {
-  id                   Int                    @id @default(autoincrement())
+  id                   Int                       @id @default(autoincrement())
   name                 String
-  email                String                 @unique
-  bio                  String                 @default("")
+  email                String                    @unique
+  bio                  String                    @default("")
   provider             String
   oauth_id             String
   image                String?
-  created_at           DateTime               @default(now())
-  isOnline             Boolean                @default(false)
+  created_at           DateTime                  @default(now())
+  isOnline             Boolean                   @default(false)
   lastSeen             DateTime?
   Organizations        OrganizationUsers[]
   OwnedOrganizations   Organization[]
@@ -27,31 +27,69 @@ model Users {
   Channel              Channel[]
   WelcomedChannels     WelcomedUser[]
   EventChannel         EventChannel[]
+  JoinRequests         OrganizationJoinRequest[]
+  CreatedInvites       OrganizationInvite[]      @relation("InviteCreator")
+  UsedInvites          OrganizationInvite[]      @relation("InviteUser")
 
   @@map("users")
 }
 
 model Organization {
-  id                String              @id @default(uuid()) @db.Uuid
-  name              String              @db.VarChar(191)
-  description       String              @default("")
-  owner             Users               @relation(fields: [owner_id], references: [id], onDelete: Cascade)
+  id                String                    @id @default(uuid()) @db.Uuid
+  name              String                    @db.VarChar(191)
+  description       String                    @default("")
+  owner             Users                     @relation(fields: [owner_id], references: [id], onDelete: Cascade)
   owner_id          Int
-  privateFlag       Boolean             @default(false)
-  hasPassword       Boolean             @default(false)
-  password          String?             @db.VarChar(191)
-  image             String?             @db.VarChar(191)
-  organizationColor String?             @db.VarChar(7)
+  access_type       OrganizationAccessType    @default(PRIVATE)
+  privateFlag       Boolean                   @default(false)
+  password          String?                   @db.VarChar(191)
+  image             String?                   @db.VarChar(191)
+  organizationColor String?                   @db.VarChar(7)
   organization_type OrganizationType
-  created_at        DateTime            @default(now())
-  tags              String[]            @default([]) @db.VarChar(50)
+  created_at        DateTime                  @default(now())
+  tags              String[]                  @default([]) @db.VarChar(50)
   Channels          Channel[]
   EventChannel      EventChannel[]
   OrganizationUsers OrganizationUsers[]
   WelcomeChannel    WelcomeChannel?
+  JoinRequests      OrganizationJoinRequest[]
+  Invites           OrganizationInvite[]
 
   @@unique([name, owner_id])
   @@map("organizations")
+}
+
+model OrganizationJoinRequest {
+  id              Int           @id @default(autoincrement())
+  organization    Organization  @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  organization_id String        @db.Uuid
+  user            Users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id         Int
+  status          RequestStatus @default(PENDING)
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
+  response_note   String?
+
+  @@unique([organization_id, user_id])
+  @@map("organization_join_requests")
+}
+
+model OrganizationInvite {
+  id              Int          @id @default(autoincrement())
+  organization    Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  organization_id String       @db.Uuid
+  code            String       @unique
+  created_by      Users        @relation("InviteCreator", fields: [created_by_id], references: [id])
+  created_by_id   Int
+  used_by         Users?       @relation("InviteUser", fields: [used_by_id], references: [id])
+  used_by_id      Int?
+  expires_at      DateTime
+  max_uses        Int          @default(1)
+  used_count      Int          @default(0)
+  created_at      DateTime     @default(now())
+
+  @@index([code])
+  @@map("organization_invites")
 }
 
 model OrganizationUsers {
@@ -303,4 +341,10 @@ enum ChannelType {
   MENTORSHIP // Mentoring programs
   SOCIAL // Community engagement
   CAREER // Job opportunities
+}
+
+enum OrganizationAccessType {
+  PRIVATE                 // DONE
+  PUBLIC                  // DONE
+  INVITE_ONLY             // DONE
 }

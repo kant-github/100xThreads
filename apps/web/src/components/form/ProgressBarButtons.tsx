@@ -37,7 +37,7 @@ export default function ProgressNavigation() {
 
     return (
         <div className="flex justify-center items-center gap-4 absolute bottom-6 right-8">
-            <button
+            <button aria-label="left"
                 type="button"
                 onClick={handleBack}
                 disabled={currentLevel === 1}
@@ -52,7 +52,7 @@ export default function ProgressNavigation() {
             {currentLevel === totalLevels ? (
                 <BlackBtn type="submit">Submit</BlackBtn>
             ) : (
-                <button
+                <button aria-label="right"
                     type="button"
                     onClick={handleNext}
                     className="px-4 py-2 rounded-md bg-zinc-900 text-white hover:bg-black transition-colors"

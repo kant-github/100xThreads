@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import React, { useRef } from "react";
+import React, { Dispatch, SetStateAction, useRef } from "react";
 import { motion } from "framer-motion";
 import { IconUpload } from "@tabler/icons-react";
 import { useDropzone } from "react-dropzone";
@@ -15,7 +15,7 @@ const secondaryVariant = {
 };
 
 interface FileUploadProps {
-  onChange: (files: FileList | null) => void;
+  onChange: Dispatch<SetStateAction<FileList>>;
   value?: FileList;
   error?: string;
 }
@@ -121,7 +121,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onChange, value, error }
 
                   <motion.div
                     variants={secondaryVariant}
-                    className="absolute opacity-0 border border-dashed border-blue-400 inset-0 z-30 bg-transparent flex items-center justify-center mt-4 w-20 h-20 rounded-md"
+                    className="absolute opacity-0 border border-dashed border-sky-500 inset-0 z-30 bg-transparent flex items-center justify-center mt-4 w-20 h-20 rounded-md"
                   ></motion.div>
                 </>
               )}

@@ -11,7 +11,7 @@ import SecondComponent from "../form/SecondComponent";
 import ThirdComponent from "../form/ThirdComponent";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { progressBarAtom } from "@/recoil/atoms/progressBarAtom";
-import { formSchema } from "@/validations/createOrganizationFormSchema";
+import { formSchema, hashPassword } from "@/validations/createOrganizationFormSchema";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import axios from "axios";
 import { ORGANIZATION } from "@/lib/apiAuthRoutes";
@@ -68,9 +68,15 @@ export default function ({ open, setOpen }: CreateRoomProps) {
                 throw new Error("No authentication token found");
             }
 
+            const processedData = { ...data };
+
+            if ('password' in processedData) {
+                processedData.password = hashPassword(processedData.password!);
+            }
+
             const formData = new FormData();
 
-            Object.entries(data).forEach(([key, value]) => {
+            Object.entries(processedData).forEach(([key, value]) => {
 
                 if (key === 'image' && value instanceof FileList) {
                     const file = value.item(0);

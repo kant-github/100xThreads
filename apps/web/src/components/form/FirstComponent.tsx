@@ -26,27 +26,27 @@ export default function OrganizationDetailsSection({
     control,
     errors,
 }: OrganizationDetailsSectionProps) {
-    const [currentLevel, setCurrentLevel] = useRecoilState(progressBarAtom);
+    // const [currentLevel, setCurrentLevel] = useRecoilState(progressBarAtom);
 
-    const image = useWatch({ control, name: 'image' });
-    const ownerName = useWatch({ control, name: 'ownerName' });
-    const organizationName = useWatch({ control, name: 'organizationName' });
-    const organizationColor = useWatch({ control, name: 'organizationColor' });
+    // const image = useWatch({ control, name: 'image' });
+    // const ownerName = useWatch({ control, name: 'ownerName' });
+    // const organizationName = useWatch({ control, name: 'organizationName' });
+    // const organizationColor = useWatch({ control, name: 'organizationColor' });
 
-    useEffect(() => {
-        // Check if all required fields are filled and valid
-        const isImageValid = !errors.image;  // Changed this since image is optional
-        const allFieldsFilled = ownerName && organizationName && organizationColor;
-        const noErrors =
-            isImageValid &&
-            !errors.ownerName &&
-            !errors.organizationName &&
-            !errors.organizationColor;
+    // useEffect(() => {
 
-        if (allFieldsFilled && noErrors && currentLevel === 1) {
-            setCurrentLevel(2);
-        }
-    }, [image, ownerName, organizationName, organizationColor, errors, setCurrentLevel, currentLevel]);
+    //     const isImageValid = !errors.image;
+    //     const allFieldsFilled = ownerName && organizationName && organizationColor;
+    //     const noErrors =
+    //         isImageValid &&
+    //         !errors.ownerName &&
+    //         !errors.organizationName &&
+    //         !errors.organizationColor;
+
+    //     if (allFieldsFilled && noErrors && currentLevel === 1) {
+    //         setCurrentLevel(2);
+    //     }
+    // }, [image, ownerName, organizationName, organizationColor, errors, setCurrentLevel, currentLevel]);
 
     return (
         <div className="space-y-6">
@@ -78,7 +78,7 @@ export default function OrganizationDetailsSection({
             </div>
 
             <div className="flex flex-row items-center justify-start gap-x-2">
-                <span className="px-3 py-2 border-zinc-600 bg-white dark:bg-zinc-900/80 text-xs text-zinc-400">
+                <span className="px-3 py-2 mt-4 border-zinc-600 bg-white dark:bg-zinc-900/80 text-xs text-zinc-400">
                     /orgs/
                 </span>
                 <Controller

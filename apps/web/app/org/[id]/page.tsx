@@ -16,12 +16,14 @@ export default function OrgPage({ params }: { params: { id: string } }) {
     useEffect(() => {
         const fetchOrganizationMetaData = async () => {
             try {
-                const response = await axios.get(`${ORGANIZATION}/${params.id}`, {
+                const response = await axios.get(`${ORGANIZATION}/join/${params.id}`, {
                     headers: {
                         authorization: `Bearer ${session.user?.token}`,
                     },
                 });
-                console.log("data is : ", response.data.data);
+
+                console.log("data is : ",response.data);
+
 
                 if (response.status === 200) {
                     setEventChannel(response.data.data.eventChannel);
@@ -39,11 +41,12 @@ export default function OrgPage({ params }: { params: { id: string } }) {
 
     return (
         <div className="h-[100dvh] w-full flex flex-col overflow-hidden">
-            {/* <div className="min-h-[60px] sm:min-h-[70px] md:min-h-20">
+            <div className="min-h-[60px] sm:min-h-[70px] md:min-h-20">
                 <OrgNavBar />
-            </div> */}
+            </div>
             <div className="flex-1 overflow-auto">
-                <OrgDashboard />
+                {/* <OrgDashboard /> */}
+                hi
             </div>
         </div>
     );

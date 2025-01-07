@@ -1,12 +1,12 @@
 import { progressBarAtom, progressBarTotalLevelAtom } from '@/recoil/atoms/progressBarAtom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 interface FormProgressBarProps {
   className?: string;
 }
 
 export default function ({ className }: FormProgressBarProps) {
-  const currentLevel = useRecoilValue(progressBarAtom);
+  const [currentLevel, setCurrentLevel] = useRecoilState(progressBarAtom);
   const totalLevels = useRecoilValue(progressBarTotalLevelAtom);
 
   return (
@@ -20,16 +20,18 @@ export default function ({ className }: FormProgressBarProps) {
         </div>
         <div className="absolute top-0 left-0 w-full flex justify-between -mt-2">
           {[1, 2, 3].map((level) => (
-            <div
+            <button
+              type='button'
+              onClick={() => setCurrentLevel(level)}
               key={level}
-              className={`w-6 h-6 rounded-full flex items-center justify-center text-sm
+              className={`cursor-pointer w-6 h-6 rounded-full flex items-center justify-center text-sm
                 transition-colors duration-300 border-2
                 ${level <= currentLevel
                   ? 'bg-[#f5a331] border-[#f5a331] text-white'
                   : 'bg-zinc-700 border-zinc-600 text-zinc-300'}`}
             >
               {level}
-            </div>
+            </button>
           ))}
         </div>
       </div>

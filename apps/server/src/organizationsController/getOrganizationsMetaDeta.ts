@@ -1,20 +1,13 @@
 import prisma from "@repo/db/client";
-import { Request, Response } from "express";
 
-export async function getOrganizationsMetaDeta(req: Request, res: Response) {
-    const { id: organizationId } = req.params;
-    const userId = req.user?.id;
+export async function getOrganizationsMetaDeta(organizationId: string) {
 
-    if (!userId) {
-        return res.status(401).json({ message: "Unauthorized: User not authenticated." });
-    }
-
-    if (!organizationId) {
-        return res.status(400).json({ message: "Bad Request: Organization ID is required." });
-    }
 
     try {
-        const [eventChannel, channels, organizationUsers, welcomeChannel] = await Promise.all([
+        const [organization, eventChannel, channels, organizationUsers, welcomeChannel] = await Promise.all([
+            prisma.organization.findFirst({
+                where: { id: organizationId }
+            }),
             prisma.eventChannel.findMany({
                 where: { organization_id: organizationId },
             }),
@@ -29,24 +22,20 @@ export async function getOrganizationsMetaDeta(req: Request, res: Response) {
             })
         ]);
 
-        console.log("welcomechannel is : ", welcomeChannel);
+
 
         const data = {
+            organization,
             eventChannel,
             channels,
             organizationUsers,
             welcomeChannel
         };
 
-        console.log("data finally is : ", data);
+        return data;
 
-        return res.status(200).json({
-            data,
-            message: "Successfully retrieved data.",
-        });
+
     } catch (error) {
-        return res.status(500).json({
-            message: "Internal Server Error: Unable to process the request.",
-        });
+
     }
 }

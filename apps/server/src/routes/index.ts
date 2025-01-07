@@ -19,7 +19,9 @@ import { deleteOrganizations } from "../organizationsController/deleteOrganizati
 import getOrganizationBySearch from "../organizationsController/getOrganizationBysearch";
 import { getAllOrganizations } from "../organizationsController/getAllOrganizations";
 import { getOrganizationsMetaDeta } from "../organizationsController/getOrganizationsMetaDeta";
-import validUserForOrganization from "../middleware/validUserForOrganization";
+// import validUserForOrganization from "../middleware/validUserForOrganization";
+import { alreadyUserMiddleware } from "../middleware/alreadyUserMiddleware";
+import { caseJoinOrganization } from "../organizationsController/caseJoinOrganization";
 const router = Router();
 
 // user_controller
@@ -30,7 +32,8 @@ router.put("/user", authmiddleware, updateUserDetails);
 
 // organizations controller
 router.get("/organizations", authmiddleware, getOrganizations);
-router.get("/organizations/:id", authmiddleware, validUserForOrganization, getOrganizationsMetaDeta);
+router.get("/organizations/join/:id", authmiddleware, alreadyUserMiddleware, caseJoinOrganization);
+// router.get("/organizations/join/:id", authmiddleware, getOrganizationsMetaDeta);
 router.post("/organizations", authmiddleware, storeOrganization);
 router.delete("/organizations/:id", authmiddleware, deleteOrganizations);
 router.get("/organizations-by-search", authmiddleware, getOrganizationBySearch);
