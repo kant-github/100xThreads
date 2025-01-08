@@ -3,8 +3,8 @@ import { Dispatch, SetStateAction, useRef } from "react";
 interface UtilityCardProps {
     children: React.ReactNode;
     className?: string;
-    open: boolean;
-    setOpen: Dispatch<SetStateAction<boolean>>;
+    open?: boolean;
+    setOpen?: Dispatch<SetStateAction<boolean>>;
 }
 
 export default function UtilityCard({ children, className, open }: UtilityCardProps) {

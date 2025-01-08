@@ -5,19 +5,20 @@ import ErrorMessage from './ErrorMessage';
 interface TextInputProps {
     label?: string;
 
-    onChange: (value: string) => void;
+    onChange: Dispatch<SetStateAction<string>>;
     error?: string;
     type?: string;
     value?: string;
     placeholder?: string;
-    disable?: boolean
+    disable?: boolean;
+    className?: string
 }
 
-export default function ({ label, onChange, type, value, placeholder, error, disable }: TextInputProps) {
+export default function ({ label, onChange, type, value, placeholder, error, disable, className }: TextInputProps) {
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
     return (
-        <div className="flex flex-col space-y-[4px] w-full relative">
+        <div className={`flex flex-col space-y-[4px] w-full relative ${className}`}>
             <label htmlFor="input" className="text-xs font-light tracking-wider text-gray-700 dark:text-gray-200">
                 {label}
             </label>

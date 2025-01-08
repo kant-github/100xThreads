@@ -1,5 +1,4 @@
 "use client"
-
 import { useEffect, useState } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 import axios from 'axios'
@@ -29,9 +28,8 @@ export default function OrgPage({ params }: { params: { id: string } }) {
     const setWelcomeChannel = useSetRecoilState(organizationWelcomeChannel)
     const [flag, setFlag] = useState<'PROTECTED' | 'ALLOWED' | 'INIT'>('INIT')
     const [data, setData] = useState<protectedOrganizationMetadata>({} as protectedOrganizationMetadata);
-    console.log("state is : ", flag);
 
-    const fetchOrgMetadata = async (password?: string) => {
+    const fetchOrgMetadata = async () => {
         if (!session.user?.token || !params.id) return
 
         try {
@@ -41,7 +39,6 @@ export default function OrgPage({ params }: { params: { id: string } }) {
                     headers: {
                         authorization: `Bearer ${session.user.token}`,
                     },
-                    params: password ? { password } : undefined
                 }
             )
 
