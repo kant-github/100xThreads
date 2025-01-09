@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 import axios from 'axios'
 import OrgDashboard from '@/components/organization/OrgDashboard'
@@ -15,6 +15,7 @@ export type protectedOrganizationMetadata = {
     owner: UserType,
     tags: string[],
     access_type: string,
+    passwordSalt: string,
     image: string,
     organizationColor: string,
     organization_type: string,
@@ -27,9 +28,16 @@ export default function OrgPage({ params }: { params: { id: string } }) {
     const setChannels = useSetRecoilState(organizationChannels)
     const setWelcomeChannel = useSetRecoilState(organizationWelcomeChannel)
     const [flag, setFlag] = useState<'PROTECTED' | 'ALLOWED' | 'INIT'>('INIT')
-    const [data, setData] = useState<protectedOrganizationMetadata>({} as protectedOrganizationMetadata);
+    const [data, setData] = useState<protectedOrganizationMetadata>({} as protectedOrganizationMetadata)
 
-    const fetchOrgMetadata = async () => {
+    const updateChannels = useCallback((channelData: any) => {
+        const { eventChannel, channels, welcomeChannel } = channelData
+        setEventChannel(eventChannel)
+        setChannels(channels)
+        setWelcomeChannel(welcomeChannel)
+    }, [setEventChannel, setChannels, setWelcomeChannel])
+
+    const fetchOrgMetadata = useCallback(async () => {
         if (!session.user?.token || !params.id) return
 
         try {
@@ -43,40 +51,39 @@ export default function OrgPage({ params }: { params: { id: string } }) {
             )
 
             if (response.data.flag === 'ALLOWED') {
-                setFlag('ALLOWED');
-                const { eventChannel, channels, welcomeChannel } = response.data.data
-                setEventChannel(eventChannel)
-                setChannels(channels)
-                setWelcomeChannel(welcomeChannel)
+                setFlag('ALLOWED')
+                updateChannels(response.data.data)
             } else {
                 setFlag('PROTECTED')
-                setData(response.data.data);
+                setData(response.data.data)
             }
         } catch (error) {
-            console.log("some error occured");
+            console.log("some error occured")
         }
-    }
+    }, [session.user?.token, params.id, updateChannels])
 
     useEffect(() => {
         fetchOrgMetadata()
-    }, [session.user?.token, params.id])
+    }, [fetchOrgMetadata])
+
+    const protectedComponent = useMemo(() => (
+        <ProtectedOrganizationComponent
+            setFlag={setFlag}
+            organizationId={params.id}
+            metaData={data}
+        />
+    ), [data, params.id])
+
+    if (flag === 'INIT') return null
 
     return (
-        <>
-            {
-                flag !== 'INIT' && (
-                    <div className="h-[100dvh] w-full flex flex-col overflow-hidden">
-                        {flag === 'PROTECTED' && (
-                            <ProtectedOrganizationComponent metaData={data} />
-                        )}
-                        {flag === 'ALLOWED' && (
-                            <div className="flex-1 overflow-auto">
-                                <OrgDashboard />
-                            </div>
-                        )}
-                    </div>
-                )
-            }
-        </>
+        <div className="h-[100dvh] w-full flex flex-col overflow-hidden">
+            {flag === 'PROTECTED' && protectedComponent}
+            {flag === 'ALLOWED' && (
+                <div className="flex-1 overflow-auto">
+                    <OrgDashboard />
+                </div>
+            )}
+        </div>
     )
 }

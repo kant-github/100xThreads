@@ -1,11 +1,6 @@
 import { GiJigsawPiece } from "react-icons/gi";
 import { useRouter } from "next/navigation";
-// import { Afacad } from "next/font/google"
-// const font = Afacad({
-//     subsets: ['latin'],
-//     weight: '700',
-//     display: 'swap',
-// });
+
 
 type props = {
     className?: string | null

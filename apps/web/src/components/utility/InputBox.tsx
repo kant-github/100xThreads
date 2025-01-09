@@ -19,7 +19,7 @@ export default function ({ label, onChange, type, value, placeholder, error, dis
 
     return (
         <div className={`flex flex-col space-y-[4px] w-full relative ${className}`}>
-            <label htmlFor="input" className="text-xs font-light tracking-wider text-gray-700 dark:text-gray-200">
+            <label htmlFor="input" className="text-[12px] ml-1 font-light tracking-wider text-gray-700 dark:text-gray-200">
                 {label}
             </label>
             <ErrorMessage error={error} />

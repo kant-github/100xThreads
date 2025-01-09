@@ -2,7 +2,7 @@ import { z } from "zod";
 import { presetColors } from "@/components/form/FirstComponent";
 import crypto from 'crypto-js';
 
-// Password validation schema with stronger requirements
+
 const passwordValidation = z.string()
     .min(8, "Password must be at least 8 characters")
     .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
@@ -48,16 +48,7 @@ export const formSchema = z.object({
 
 
 
-export const hashPassword = (password: string): string => {
-    // First, create a salt
-    const salt = crypto.lib.WordArray.random(16).toString();
-    // Combine password and salt
-    const combinedPass = password + salt;
-    // Hash the combination
-    const hashedPassword = crypto.SHA256(combinedPass).toString();
-    // Return both salt and hash, separated by a delimiter
-    return `${salt}:${hashedPassword}`;
-};
+
 
 
 

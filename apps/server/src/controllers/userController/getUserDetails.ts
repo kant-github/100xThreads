@@ -5,9 +5,10 @@ export async function getUserDetails(req: Request, res: Response) {
     try {
         const id = req.params.id;
         if (!id) {
-            return res.status(400).json({
+            res.status(400).json({
                 message: "User ID is required",
             });
+            return;
         }
 
 
@@ -15,16 +16,14 @@ export async function getUserDetails(req: Request, res: Response) {
             where: {
                 id: Number(id)
             },
-            include: {
-                ChatGroup: true
-            }
         });
 
 
         if (!user) {
-            return res.status(404).json({
+            res.status(404).json({
                 message: "No user exists with this user ID",
             });
+            return;
         }
 
         res.status(200).json({

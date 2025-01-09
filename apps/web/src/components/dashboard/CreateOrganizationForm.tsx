@@ -11,7 +11,7 @@ import SecondComponent from "../form/SecondComponent";
 import ThirdComponent from "../form/ThirdComponent";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { progressBarAtom } from "@/recoil/atoms/progressBarAtom";
-import { formSchema, hashPassword } from "@/validations/createOrganizationFormSchema";
+import { formSchema } from "@/validations/createOrganizationFormSchema";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import axios from "axios";
 import { ORGANIZATION } from "@/lib/apiAuthRoutes";
@@ -19,6 +19,7 @@ import { userSessionAtom } from "@/recoil/atoms/atom";
 import moment from "moment";
 import { toast } from "sonner";
 import { userCreatedOrganizationAtom } from "@/recoil/atoms/organizationsAtom";
+import { hashPassword } from "@/authentication/organizationAuthentication";
 
 interface CreateRoomProps {
     open: boolean;
@@ -78,13 +79,8 @@ export default function ({ open, setOpen }: CreateRoomProps) {
 
             Object.entries(processedData).forEach(([key, value]) => {
 
-                if (key === 'image' && value instanceof FileList) {
-                    const file = value.item(0);
-                    if (file) {
-                        formData.append('image', file);
-                    }
-                }
-                else if (Array.isArray(value)) {
+
+                if (Array.isArray(value)) {
                     value.forEach((item) => {
                         formData.append(key, item);
                     });

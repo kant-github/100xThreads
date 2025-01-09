@@ -37,12 +37,13 @@ model Users {
 model Organization {
   id                String                    @id @default(uuid()) @db.Uuid
   name              String                    @db.VarChar(191)
-  description       String                    @default("")
+  description       String?                   @default("This is the default description for your organization 🌻")
   owner             Users                     @relation(fields: [owner_id], references: [id], onDelete: Cascade)
   owner_id          Int
   access_type       OrganizationAccessType    @default(PRIVATE)
   privateFlag       Boolean                   @default(false)
-  password          String?                   @db.VarChar(191)
+  passwordHash      String?                   @db.VarChar(191)
+  passwordSalt      String?     
   image             String?                   @db.VarChar(191)
   organizationColor String?                   @db.VarChar(7)
   organization_type OrganizationType
@@ -344,7 +345,7 @@ enum ChannelType {
 }
 
 enum OrganizationAccessType {
-  PRIVATE                 // DONE
-  PUBLIC                  // DONE
-  INVITE_ONLY             // DONE
+  PRIVATE // DONE
+  PUBLIC // DONE
+  INVITE_ONLY // DONE
 }

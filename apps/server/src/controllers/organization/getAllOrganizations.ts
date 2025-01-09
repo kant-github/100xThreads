@@ -4,7 +4,8 @@ import { Request, Response } from "express";
 export async function getAllOrganizations(req: Request, res: Response) {
 
     if (!req.user?.id) {
-        return res.send("returned");
+        res.send("returned");
+        return;
     }
 
     try {
@@ -13,7 +14,7 @@ export async function getAllOrganizations(req: Request, res: Response) {
             where: {
                 OrganizationUsers: {
                     some: {
-
+                        user_id: Number(req.user?.id)
                     }
                 }
             },
@@ -30,6 +31,7 @@ export async function getAllOrganizations(req: Request, res: Response) {
             message: "Data is fetched successfully",
             data: data,
         });
+        return;
 
     } catch (error) {
         console.error(error);

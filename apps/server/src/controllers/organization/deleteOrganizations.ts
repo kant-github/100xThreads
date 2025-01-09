@@ -4,9 +4,10 @@ import { Request, Response } from "express";
 export async function deleteOrganizations(req: Request, res: Response) {
     const { id: organizationId } = req.params;
     if (!organizationId) {
-        return res.status(404).json({
+        res.status(404).json({
             message: "Organization not found"
         })
+        return;
     }
 
     try {
@@ -17,15 +18,17 @@ export async function deleteOrganizations(req: Request, res: Response) {
         })
 
         if (!organization) {
-            return res.status(404).json({
+            res.status(404).json({
                 message: "Organization not found"
             })
+            return;
         }
 
         if (organization.owner_id !== req.user?.id) {
-            return res.status(403).json({
+            res.status(403).json({
                 message: "You are not authorized to delete this organization"
             })
+            return;
         }
 
         const data = await prisma.organization.delete({
@@ -34,13 +37,15 @@ export async function deleteOrganizations(req: Request, res: Response) {
             }
         })
 
-        return res.status(200).json({
+        res.status(200).json({
             message: "Organization deleted successfully",
             data: data
         })
+        return;
     } catch (err) {
-        return res.status(500).json({
+        res.status(500).json({
             message: "Internal server error",
         });
+        return;
     }
 }

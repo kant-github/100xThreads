@@ -17,20 +17,23 @@ export default async function getOrganizationBySearch(req: Request, res: Respons
         });
 
         if (existingOrg) {
-            return res.status(200).json({
+            res.status(200).json({
                 message: "An organization with this name already exists.",
                 exists: true,
             });
+            return;
         }
 
-        return res.status(200).json({
+        res.status(200).json({
             message: "No organization found with this name.",
             exists: false,
         });
+        return;
     } catch (err) {
-        return res.status(500).json({
+        res.status(500).json({
             message: "Error in searching for the organization.",
             exists: false,
         });
+        return;
     }
 }

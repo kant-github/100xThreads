@@ -1,17 +1,20 @@
 import prisma from "@repo/db/client";
 import { NextFunction, Request, Response } from "express";
-import { getOrganizationsMetaDeta } from "../organizationsController/getOrganizationsMetaDeta";
+import { getOrganizationsMetaDeta } from "../controllers/organization/getOrganizationsMetaDeta";
 
-export async function alreadyUserMiddleware(req: Request, res: Response, next: NextFunction) {
+
+export default async function alreadyUserMiddleware(req: Request, res: Response, next: NextFunction) {
     const user = req.user;
     const { id: organizationId } = req.params;
 
     if (!user?.id) {
-        return res.status(401).json({ message: "Unauthorized: User not authenticated." });
+        res.status(401).json({ message: "Unauthorized: User not authenticated." });
+        return;
     }
 
     if (!organizationId) {
-        return res.status(400).json({ message: "Bad Request: Organization ID is required." });
+        res.status(400).json({ message: "Bad Request: Organization ID is required." });
+        return;
     }
 
     try {
@@ -26,10 +29,11 @@ export async function alreadyUserMiddleware(req: Request, res: Response, next: N
 
         if (alreadyUser) {
             const data = await getOrganizationsMetaDeta(organizationId);
-            return res.status(200).json({
+            res.status(200).json({
                 flag: 'ALLOWED',
                 data: data
             })
+            return;
         }
         return next();
     } catch (err) {
