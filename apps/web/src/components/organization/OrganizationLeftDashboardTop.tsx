@@ -1,18 +1,20 @@
 import { organizationChannelOptionAtom } from "@/recoil/atoms/organizationChannelOptionAtom";
-import { organizationChannels, organizationEventChannels, organizationWelcomeChannel } from "@/recoil/atoms/organizationMetaDataAtom"
+
 import { useRecoilState, useRecoilValue } from "recoil"
 import WhiteText from "../heading/WhiteText";
 import { MdEvent, MdMeetingRoom } from "react-icons/md";
 import { BiSolidParty } from "react-icons/bi";
+import { organizationChannelsAtom, organizationEventChannelsAtom, organizationWelcomeChannelAtom, selectedChannelIdAtom } from "@/recoil/atoms/organizationAtoms/organizationDashboardManagement";
 
 export const baseDivStyles = "flex items-center justify-start gap-x-2 sm:gap-x-3 py-1.5 sm:py-2 px-2 sm:px-3 rounded-[8px] cursor-pointer select-none";
 const textStyles = "text-[12px] sm:text-[13px] text-gray-100 dark:text-[#d6d6d6] font-normal mt-0.5 tracking-wide hidden sm:block";
 
 export default function () {
-    const eventRooms = useRecoilValue(organizationEventChannels);
-    const channels = useRecoilValue(organizationChannels);
-    const welcomeChannel = useRecoilValue(organizationWelcomeChannel);
-    const [organizationChannelOption, setOrganizationChannelOption] = useRecoilState(organizationChannelOptionAtom);
+    const eventRooms = useRecoilValue(organizationEventChannelsAtom);
+    const channels = useRecoilValue(organizationChannelsAtom);
+    const welcomeChannel = useRecoilValue(organizationWelcomeChannelAtom);
+    const [selectedChannelId, setSelectedChannelId] = useRecoilState(selectedChannelIdAtom);
+
 
     return (
         <div className="h-auto sm:h-24 py-1 sm:py-2 rounded-[8px]">
@@ -21,7 +23,7 @@ export default function () {
                 <BiSolidParty />
             </WhiteText>
             <div className="mt-1">
-                <Option onClick={() => setOrganizationChannelOption(welcomeChannel.id)} isSelected={organizationChannelOption === welcomeChannel.id} key={welcomeChannel.id} label={"Welcome"} />
+                <Option onClick={() => setSelectedChannelId(welcomeChannel?.id!)} isSelected={selectedChannelId === welcomeChannel?.id} key={welcomeChannel?.id} label={"Welcome"} />
             </div>
             <div className="border-b-[0.5px] border-zinc-600 my-2" />
             <WhiteText className="ml-3 text-sm flex items-center justify-between mx-2 select-none">
@@ -31,7 +33,7 @@ export default function () {
             <div className="mt-1">
                 {
                     channels.map((channel) => (
-                        <Option onClick={() => setOrganizationChannelOption(channel.id)} isSelected={organizationChannelOption === channel.id} key={channel.id} label={channel.title} />
+                        <Option onClick={() => setSelectedChannelId(channel.id)} isSelected={selectedChannelId === channel.id} key={channel.id} label={channel.title} />
                     ))
                 }
             </div>
@@ -43,7 +45,7 @@ export default function () {
             <div className="mt-1">
                 {
                     eventRooms.map((eventChannel) => (
-                        <Option onClick={() => setOrganizationChannelOption(eventChannel.id)} isSelected={organizationChannelOption === eventChannel.id} key={eventChannel.id} label={eventChannel.title} />
+                        <Option onClick={() => setSelectedChannelId(eventChannel.id)} isSelected={selectedChannelId === eventChannel.id} key={eventChannel.id} label={eventChannel.title} />
                     ))
                 }
             </div>

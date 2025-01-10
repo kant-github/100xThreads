@@ -1,11 +1,20 @@
 export type ChannelType = {
-  id: string;
-  organization_id: string;
-  title: string;
-  passcode?: string;
-  groupImage?: string;
-  created_at: string;
-  Chats: MessageType[];
+  id: string
+  organization: OrganizationType
+  organization_id: string
+  title: string
+  type: ChannelType
+  passcode: string
+  groupImage?: string
+  created_at: Date
+  created_by: number
+  creator: UserType
+  is_archived: boolean
+  allowed_roles: UserRole
+  description?: string
+  // Chats: 
+  // Announcements        Announcement[]
+  // RecentlyJoinedGroups RecentlyJoinedGroups[]
 };
 
 export type GroupChatUserType = {
@@ -74,50 +83,50 @@ export type EventChannelType = {
 }
 
 export type WelcomeChannel = {
- id: string
- organizationId: string
- welcomeMessage: string | null
- welcomedUsers: WelcomedUser[]
- roleRequests: RoleRequest[]
- createdAt: Date
+  id: string
+  organizationId: string
+  welcomeMessage: string | null
+  welcomedUsers: WelcomedUser[]
+  roleRequests: RoleRequest[]
+  createdAt: Date
 }
 
 export type WelcomedUser = {
- id: string
- welcomeChannelId: string
- userId: number
- user: UserType
- message: string | null
- welcomedAt: Date
+  id: string
+  welcomeChannelId: string
+  userId: number
+  user: UserType
+  message: string | null
+  welcomedAt: Date
 }
 
 export type RoleRequest = {
- id: string
- welcomeChannelId: string
- userId: number
- requestedRole: UserRole
- status: RequestStatus
- createdAt: Date
- updatedAt: Date
+  id: string
+  welcomeChannelId: string
+  userId: number
+  requestedRole: UserRole
+  status: RequestStatus
+  createdAt: Date
+  updatedAt: Date
 }
 
 export enum RequestStatus {
- PENDING = 'PENDING',
- APPROVED = 'APPROVED', 
- REJECTED = 'REJECTED'
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED'
 }
 
 export enum UserRole {
- ADMIN = 'ADMIN',
- EVENT_MANAGER = 'EVENT_MANAGER',
- MODERATOR = 'MODERATOR',
- MEMBER = 'MEMBER',
- GUEST = 'GUEST',
- ORGANIZER = 'ORGANIZER',
- OBSERVER = 'OBSERVER',
- IT_SUPPORT = 'IT_SUPPORT',
- HR_MANAGER = 'HR_MANAGER',
- FINANCE_MANAGER = 'FINANCE_MANAGER'
+  ADMIN = 'ADMIN',
+  EVENT_MANAGER = 'EVENT_MANAGER',
+  MODERATOR = 'MODERATOR',
+  MEMBER = 'MEMBER',
+  GUEST = 'GUEST',
+  ORGANIZER = 'ORGANIZER',
+  OBSERVER = 'OBSERVER',
+  IT_SUPPORT = 'IT_SUPPORT',
+  HR_MANAGER = 'HR_MANAGER',
+  FINANCE_MANAGER = 'FINANCE_MANAGER'
 }
 
 

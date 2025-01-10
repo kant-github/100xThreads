@@ -14,11 +14,6 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
 });
 
-// export const metadata: Metadata = {
-//   title: "Banter",
-//   description: "Send chats fast and foremost",
-// };
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -49,7 +44,7 @@ export default function RootLayout({
           <RecoilRoot>
             {children}
           </RecoilRoot>
-          <Toaster position="bottom-right" closeButton duration={2300} />
+          <Toaster position="bottom-center" closeButton duration={2300} />
         </body>
       </SessionProvider>
     </html>

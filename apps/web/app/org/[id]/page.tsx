@@ -4,10 +4,10 @@ import { useRecoilValue, useSetRecoilState } from 'recoil'
 import axios from 'axios'
 import OrgDashboard from '@/components/organization/OrgDashboard'
 import { userSessionAtom } from '@/recoil/atoms/atom'
-import { organizationChannels, organizationEventChannels, organizationWelcomeChannel } from '@/recoil/atoms/organizationMetaDataAtom'
 import { ORGANIZATION } from '@/lib/apiAuthRoutes'
 import ProtectedOrganizationComponent from '@/components/organization/ProtectedOrganizationComponent'
 import { UserType } from 'types'
+import { organizationChannelsAtom, organizationEventChannelsAtom, organizationWelcomeChannelAtom } from '@/recoil/atoms/organizationAtoms/organizationDashboardManagement'
 
 export type protectedOrganizationMetadata = {
     name: string,
@@ -24,9 +24,9 @@ export type protectedOrganizationMetadata = {
 
 export default function OrgPage({ params }: { params: { id: string } }) {
     const session = useRecoilValue(userSessionAtom)
-    const setEventChannel = useSetRecoilState(organizationEventChannels)
-    const setChannels = useSetRecoilState(organizationChannels)
-    const setWelcomeChannel = useSetRecoilState(organizationWelcomeChannel)
+    const setEventChannel = useSetRecoilState(organizationEventChannelsAtom)
+    const setChannels = useSetRecoilState(organizationChannelsAtom)
+    const setWelcomeChannel = useSetRecoilState(organizationWelcomeChannelAtom)
     const [flag, setFlag] = useState<'PROTECTED' | 'ALLOWED' | 'INIT'>('INIT')
     const [data, setData] = useState<protectedOrganizationMetadata>({} as protectedOrganizationMetadata)
 
