@@ -19,21 +19,6 @@ export default function () {
   const session = useRecoilValue(userSessionAtom);
   const ref = useRef<HTMLDivElement | null>(null);
 
-  // useEffect(() => {
-  //   const handleClick = (event: MouseEvent) => {
-  //     handleClickOutside(event, ref, setOpen);
-  //   }
-
-  //   if (open) {
-  //     document.addEventListener("mousedown", handleClick);
-  //   } else {
-  //     document.removeEventListener("mousedown", handleClick)
-  //   }
-
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClick);
-  //   }
-  // }, [open, setOpen]);
 
   return (
     <div ref={ref} className={`px-2 py-1.5 bg-zinc-800 rounded-[8px] cursor-pointer select-none`} onClick={() => setOpen(prev => !prev)}>
@@ -54,7 +39,7 @@ export default function () {
           </span>
         </div>
         <span className="cursor p-1">
-          <MdOutlineKeyboardArrowDown size={18} />
+          <MdOutlineKeyboardArrowDown className="text-zinc-100" size={18} />
         </span>
       </div>
       {
@@ -63,7 +48,6 @@ export default function () {
 
             <div onClick={() => {
               console.log(settingsAtom);
-              window.location.hash = "Settings";
               setDashboardAtom(RendererOption.Settings);
               setSettingsAtom(settingsOptionEnum.Profile)
             }} className="flex gap-x-3 py-2 px-3 rounded-[8px] cursor-pointer hover:bg-zinc-700 text-[13px] text-gray-100 dark:text-[#d6d6d6] font-normal mt-0.5 tracking-wide select-none">

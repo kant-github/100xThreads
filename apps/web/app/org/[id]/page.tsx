@@ -7,7 +7,8 @@ import { userSessionAtom } from '@/recoil/atoms/atom'
 import { ORGANIZATION } from '@/lib/apiAuthRoutes'
 import ProtectedOrganizationComponent from '@/components/organization/ProtectedOrganizationComponent'
 import { UserType } from 'types'
-import { organizationChannelsAtom, organizationEventChannelsAtom, organizationWelcomeChannelAtom } from '@/recoil/atoms/organizationAtoms/organizationDashboardManagement'
+import { organizationChannelsAtom, organizationEventChannelsAtom, organizationWelcomeChannelAtom } from '@/recoil/atoms/organizationAtoms/organizationChannelAtoms'
+import { organizationUsersAtom } from '@/recoil/atoms/organizationAtoms/organizationUsersAtom'
 
 export type protectedOrganizationMetadata = {
     name: string,
@@ -27,15 +28,17 @@ export default function OrgPage({ params }: { params: { id: string } }) {
     const setEventChannel = useSetRecoilState(organizationEventChannelsAtom)
     const setChannels = useSetRecoilState(organizationChannelsAtom)
     const setWelcomeChannel = useSetRecoilState(organizationWelcomeChannelAtom)
+    const setOrganizationUsers = useSetRecoilState(organizationUsersAtom);
     const [flag, setFlag] = useState<'PROTECTED' | 'ALLOWED' | 'INIT'>('INIT')
     const [data, setData] = useState<protectedOrganizationMetadata>({} as protectedOrganizationMetadata)
 
     const updateChannels = useCallback((channelData: any) => {
-        const { eventChannel, channels, welcomeChannel } = channelData
-        setEventChannel(eventChannel)
-        setChannels(channels)
-        setWelcomeChannel(welcomeChannel)
-    }, [setEventChannel, setChannels, setWelcomeChannel])
+        const { eventChannel, channels, welcomeChannel, organizationUsers } = channelData
+        setEventChannel(eventChannel);
+        setChannels(channels);
+        setWelcomeChannel(welcomeChannel);
+        setOrganizationUsers(organizationUsers)
+    }, [setEventChannel, setChannels, setWelcomeChannel, setOrganizationUsers])
 
     const fetchOrgMetadata = useCallback(async () => {
         if (!session.user?.token || !params.id) return
@@ -49,6 +52,7 @@ export default function OrgPage({ params }: { params: { id: string } }) {
                     },
                 }
             )
+            console.log("response is : ", response.data);
 
             if (response.data.flag === 'ALLOWED') {
                 setFlag('ALLOWED')

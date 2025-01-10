@@ -15,8 +15,8 @@ import { ORGANIZATION } from "@/lib/apiAuthRoutes";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import Spinner from "../loaders/Spinner";
-import { organizationChannels, organizationEventChannels, organizationWelcomeChannel } from "@/recoil/atoms/organizationMetaDataAtom";
 import { toast } from "sonner";
+import { organizationChannelsAtom, organizationEventChannelsAtom, organizationWelcomeChannelAtom } from "@/recoil/atoms/organizationAtoms/organizationChannelAtoms";
 
 interface props {
     metaData: protectedOrganizationMetadata,
@@ -29,9 +29,9 @@ export default function ({ metaData, organizationId, setFlag }: props) {
     const session = useRecoilValue(userSessionAtom);
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string>('');
-    const setEventChannel = useSetRecoilState(organizationEventChannels)
-    const setChannels = useSetRecoilState(organizationChannels)
-    const setWelcomeChannel = useSetRecoilState(organizationWelcomeChannel)
+    const setEventChannel = useSetRecoilState(organizationEventChannelsAtom)
+    const setChannels = useSetRecoilState(organizationChannelsAtom)
+    const setWelcomeChannel = useSetRecoilState(organizationWelcomeChannelAtom)
     const date = metaData.created_at ? format(new Date(metaData.created_at), 'MMMM dd, yyyy') : null;
 
     const clickHandler = async () => {

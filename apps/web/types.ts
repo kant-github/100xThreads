@@ -72,6 +72,16 @@ export type OrganizationType = {
   tags: string[];
 };
 
+export type OrganizationUsersType = {
+  id: number;
+  organization: OrganizationType
+  organization_id: string
+  user: UserType
+  user_id: number
+  role: UserRole
+  joined_at: Date
+}
+
 
 export type EventChannelType = {
   id: string;
@@ -85,7 +95,7 @@ export type EventChannelType = {
 export type WelcomeChannel = {
   id: string
   organizationId: string
-  welcomeMessage: string | null
+  welcome_message: string | null
   welcomedUsers: WelcomedUser[]
   roleRequests: RoleRequest[]
   createdAt: Date

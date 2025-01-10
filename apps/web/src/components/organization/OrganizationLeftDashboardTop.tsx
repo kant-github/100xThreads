@@ -1,10 +1,9 @@
-import { organizationChannelOptionAtom } from "@/recoil/atoms/organizationChannelOptionAtom";
-
 import { useRecoilState, useRecoilValue } from "recoil"
 import WhiteText from "../heading/WhiteText";
 import { MdEvent, MdMeetingRoom } from "react-icons/md";
 import { BiSolidParty } from "react-icons/bi";
-import { organizationChannelsAtom, organizationEventChannelsAtom, organizationWelcomeChannelAtom, selectedChannelIdAtom } from "@/recoil/atoms/organizationAtoms/organizationDashboardManagement";
+import { organizationChannelsAtom, organizationEventChannelsAtom, organizationWelcomeChannelAtom } from '@/recoil/atoms/organizationAtoms/organizationChannelAtoms'
+import { selectedChannelIdAtom } from "@/recoil/atoms/organizationAtoms/organizationDashboardManagement";
 
 export const baseDivStyles = "flex items-center justify-start gap-x-2 sm:gap-x-3 py-1.5 sm:py-2 px-2 sm:px-3 rounded-[8px] cursor-pointer select-none";
 const textStyles = "text-[12px] sm:text-[13px] text-gray-100 dark:text-[#d6d6d6] font-normal mt-0.5 tracking-wide hidden sm:block";

@@ -16,6 +16,7 @@ export async function getOrganizationsMetaDeta(organizationId: string) {
             }),
             prisma.organizationUsers.findMany({
                 where: { organization_id: organizationId },
+                include: { user: true }
             }),
             prisma.welcomeChannel.findFirst({
                 where: { organization_id: organizationId }

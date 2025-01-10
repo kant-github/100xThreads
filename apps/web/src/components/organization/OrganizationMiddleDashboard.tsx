@@ -1,9 +1,9 @@
-// components/ChannelContent.tsx
 import { selectedChannelSelector } from '@/recoil/atoms/organizationAtoms/organizationDashboardManagement';
 import React from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { ChannelType, EventChannelType, WelcomeChannel } from 'types';
+import DashboardComponentHeading from '../dashboard/DashboardComponentHeading';
 
 export default function ChannelContent() {
     const selectedChannel = useRecoilValue(selectedChannelSelector);
@@ -25,7 +25,6 @@ export default function ChannelContent() {
     }
 }
 
-// components/RegularChannelView.tsx
 interface RegularChannelViewProps {
     channel: ChannelType;
 }
@@ -34,17 +33,11 @@ function RegularChannelView({ channel }: RegularChannelViewProps) {
     console.log(channel);
     return (
         <div className="bg-[#171717] w-full p-4">
-            <h2 className="text-xl font-semibold text-white mb-4">{channel.title}</h2>
-            <div className="space-y-4">
-                {/* {channel.Chats.map(message => (
-          <MessageComponent key={message.id} message={message} />
-        ))} */}
-            </div>
+            <DashboardComponentHeading description={channel.description!}>{channel.title}</DashboardComponentHeading>
         </div>
     );
 }
 
-// components/EventChannelView.tsx
 interface EventChannelViewProps {
     channel: EventChannelType;
 }
@@ -53,13 +46,11 @@ function EventChannelView({ channel }: EventChannelViewProps) {
     console.log(channel);
     return (
         <div className="bg-[#171717] w-full p-4">
-            <h2 className="text-xl font-semibold text-white mb-2">{channel.title}</h2>
-            <p className="text-gray-300 mb-4">{channel.description}</p>
+            <DashboardComponentHeading description={channel.description}>{channel.title}</DashboardComponentHeading>
         </div>
     );
 }
 
-// components/WelcomeChannelView.tsx
 interface WelcomeChannelViewProps {
     channel: WelcomeChannel;
 }
@@ -68,12 +59,7 @@ function WelcomeChannelView({ channel }: WelcomeChannelViewProps) {
     console.log(channel);
     return (
         <div className="bg-[#171717] w-full p-4">
-            <h2 className="text-xl font-semibold text-white mb-4">Welcome</h2>
-            <div className="text-gray-300 mb-4">{channel.welcomeMessage}</div>
-            <div className="space-y-4">
-                {/* <RecentJoinees users={channel.welcomedUsers} />
-        <RoleRequests requests={channel.roleRequests} /> */}
-            </div>
+            <DashboardComponentHeading description={channel.welcome_message!}>{"Welcome"}</DashboardComponentHeading>
         </div >
     );
 }
