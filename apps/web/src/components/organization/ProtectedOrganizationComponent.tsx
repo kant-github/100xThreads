@@ -17,6 +17,7 @@ import { userSessionAtom } from "@/recoil/atoms/atom";
 import Spinner from "../loaders/Spinner";
 import { toast } from "sonner";
 import { organizationChannelsAtom, organizationEventChannelsAtom, organizationWelcomeChannelAtom } from "@/recoil/atoms/organizationAtoms/organizationChannelAtoms";
+import { organizationUsersAtom } from "@/recoil/atoms/organizationAtoms/organizationUsersAtom";
 
 interface props {
     metaData: protectedOrganizationMetadata,
@@ -32,10 +33,10 @@ export default function ({ metaData, organizationId, setFlag }: props) {
     const setEventChannel = useSetRecoilState(organizationEventChannelsAtom)
     const setChannels = useSetRecoilState(organizationChannelsAtom)
     const setWelcomeChannel = useSetRecoilState(organizationWelcomeChannelAtom)
+    const setOrganizationUsers = useSetRecoilState(organizationUsersAtom);
     const date = metaData.created_at ? format(new Date(metaData.created_at), 'MMMM dd, yyyy') : null;
 
     const clickHandler = async () => {
-        toast.success(`Welcome ${session.user?.name}`);
         setLoading(true);
         const salt = metaData.passwordSalt;
         const combinedPass = password + salt;
@@ -53,12 +54,13 @@ export default function ({ metaData, organizationId, setFlag }: props) {
                 }
             });
             if (data.flag === 'ALLOWED') {
-                
+                toast.success(`Welcome ${session.user?.name}`);
                 setFlag('ALLOWED')
-                const { eventChannel, channels, welcomeChannel } = data.data
+                const { eventChannel, channels, welcomeChannel, organizationUsers } = data.data
                 setEventChannel(eventChannel)
                 setChannels(channels)
-                setWelcomeChannel(welcomeChannel)
+                setWelcomeChannel(welcomeChannel);
+                setOrganizationUsers(organizationUsers)
             } else {
                 setError('wrong password');
                 setFlag('PROTECTED');

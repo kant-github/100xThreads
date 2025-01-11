@@ -17,6 +17,7 @@ export default function () {
     const [ownedOrganizations, setOwnedOrganizations] = useRecoilState<OrganizationType[]>(userCreatedOrganizationAtom);
     const displayType = useRecoilValue<DisplayType>(allOrganizationDisplaytype);
     const [loading, setLoading] = useState<boolean>(false);
+
     useEffect(() => {
         async function fetchUserCreatedOrganization() {
             setLoading(true);
@@ -24,7 +25,6 @@ export default function () {
             if (session.user?.token) {
                 const ownedOrganization = await fetchOrganization(session.user.token);
                 setOwnedOrganizations(ownedOrganization);
-
             }
             setLoading(false);
         }
@@ -36,12 +36,17 @@ export default function () {
             <OrganizationDisplayTypeToggleButton />
             <DashboardComponentHeading className="pt-4 pl-12" description="Browse through all the organizations owned by you">Owned by you</DashboardComponentHeading>
             <div className="bg-[#37474f] dark:bg-[#262629] my-8 mx-12 rounded-[8px] shadow-lg shadow-black/40 flex-grow overflow-hidden ">
-                {
-                    !ownedOrganizations || ownedOrganizations.length === 0 ? <EmptyOrganizationMessage /> : (
-                        displayType === DisplayType.list ? loading ? <ListTypeOrganizationSkeleton /> : <ListTypeOrganizations organizations={ownedOrganizations} /> :
-                            loading ? <HomeOrganizationsSkeleton /> : <CardHoverChatCards className="py-8" organizations={ownedOrganizations} />
-                    )
-                }
+                {loading ? (
+                    displayType === DisplayType.list ?
+                        <ListTypeOrganizationSkeleton /> :
+                        <HomeOrganizationsSkeleton />
+                ) : (
+                    (!ownedOrganizations || ownedOrganizations.length === 0) ?
+                        <EmptyOrganizationMessage /> :
+                        displayType === DisplayType.list ?
+                            <ListTypeOrganizations organizations={ownedOrganizations} /> :
+                            <CardHoverChatCards className="py-8" organizations={ownedOrganizations} />
+                )}
             </div>
         </div>
     )

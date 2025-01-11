@@ -40,12 +40,18 @@ export default function () {
       <OrganizationDisplayTypeToggleButton />
       <DashboardComponentHeading className="pt-4 pl-12" description="Browse through the organizations which previously joined">All organizations</DashboardComponentHeading>
       <div className="bg-[#37474f] dark:bg-[#262629] my-8 mx-12 rounded-[8px] shadow-lg shadow-black/40 flex-grow overflow-hidden ">
-        {
-          !organizations || organizations.length === 0 ? <EmptyOrganizationMessage /> : (
-            displayType === DisplayType.list ? loading ? <ListTypeOrganizationSkeleton /> : <ListTypeOrganizations organizations={organizations} /> :
-              loading ? <HomeOrganizationsSkeleton /> : <CardHoverChatCards className="py-8" organizations={organizations} />)
-        }
-      </div>
+                {loading ? (
+                    displayType === DisplayType.list ?
+                        <ListTypeOrganizationSkeleton /> :
+                        <HomeOrganizationsSkeleton />
+                ) : (
+                    (!organizations || organizations.length === 0) ?
+                        <EmptyOrganizationMessage /> :
+                        displayType === DisplayType.list ?
+                            <ListTypeOrganizations organizations={organizations} /> :
+                            <CardHoverChatCards className="py-8" organizations={organizations} />
+                )}
+            </div>
     </div>
   );
 }
