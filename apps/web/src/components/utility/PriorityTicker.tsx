@@ -20,32 +20,32 @@ export default function ({ tickerText, className }: PriorityTickerProps) {
 
 export function LowPriorityTicker({ className }: { className?: string }) {
     return (
-        <div className={`bg-green-500/20 text-green-500 px-2.5 py-1.5 rounded-[6px] text-[10px] font-semibold inline-block ${className}`}>
-            LOW PRIORITY
+        <div className={`bg-green-500/20 text-green-500 px-2 py-1 rounded-[6px] text-[10px] font-semibold inline-block select-none ${className}`}>
+            LOW
         </div>
     )
 }
 
 export function NormalPriorityTicker({ className }: { className?: string }) {
     return (
-        <div className={`bg-blue-600/20 text-blue-600 px-2.5 py-1.5 rounded-[6px] text-[10px] font-semibold inline-block ${className}`}>
-            NORMAL PRIORITY
+        <div className={`bg-blue-600/20 text-blue-600 px-2 py-1 rounded-[6px] text-[10px] font-semibold inline-block select-none ${className}`}>
+            NORMAL
         </div>
     )
 }
 
 export function HighPriorityTicker({ className }: { className?: string }) {
     return (
-        <div className={`bg-yellow-500/20 text-yellow-500 px-2.5 py-1.5 rounded-[6px] text-[10px] font-semibold inline-block ${className}`}>
-            HIGH PRIORITY
+        <div className={`bg-yellow-500/20 text-yellow-500 px-2 py-1 rounded-[6px] text-[10px] font-semibold inline-block select-none ${className}`}>
+            HIGH
         </div>
     )
 }
 
 export function UrgentPriorityTicker({ className }: { className?: string }) {
     return (
-        <div className={`bg-red-500/20 text-red-500 px-2.5 py-1.5 rounded-[6px] text-[10px] font-semibold inline-block ${className}`}>
-            URGENT PRIORITY
+        <div className={`bg-red-500/20 text-red-500 px-2 py-1 rounded-[6px] text-[10px] font-semibold inline-block select-none ${className}`}>
+            URGENT
         </div>
     )
 }

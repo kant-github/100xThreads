@@ -94,13 +94,14 @@ model OrganizationInvite {
 }
 
 model OrganizationUsers {
-  id              Int          @id @default(autoincrement())
-  organization    Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  organization_id String       @db.Uuid
-  user            Users        @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id         Int
-  role            UserRole     @default(MEMBER)
-  joined_at       DateTime     @default(now())
+  id                   Int            @id @default(autoincrement())
+  organization         Organization   @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  organization_id      String         @db.Uuid
+  user                 Users          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id              Int
+  role                 UserRole       @default(MEMBER)
+  joined_at            DateTime       @default(now())
+  CreatedAnnouncements Announcement[]
 
   @@unique([organization_id, user_id])
   @@map("organization_users")
@@ -188,19 +189,20 @@ enum RequestStatus {
 }
 
 model Announcement {
-  id           String            @id @default(uuid()) @db.Uuid
-  channel      Channel           @relation(fields: [channel_id], references: [id], onDelete: Cascade)
-  channel_id   String            @db.Uuid
-  title        String
-  content      String
-  priority     Priority          @default(NORMAL)
-  tags         String[]          @default([])
-  created_by   Int
-  created_at   DateTime          @default(now())
-  expires_at   DateTime?
-  is_pinned    Boolean           @default(false)
-  requires_ack Boolean           @default(false)
-  AckStatus    AnnouncementAck[]
+  id                  String            @id @default(uuid()) @db.Uuid
+  channel             Channel           @relation(fields: [channel_id], references: [id], onDelete: Cascade)
+  channel_id          String            @db.Uuid
+  title               String
+  content             String
+  priority            Priority          @default(NORMAL)
+  tags                String[]          @default([])
+  creator             OrganizationUsers @relation(fields: [creator_org_user_id], references: [id], onDelete: Cascade)
+  creator_org_user_id Int
+  created_at          DateTime          @default(now())
+  expires_at          DateTime?
+  is_pinned           Boolean           @default(false)
+  requires_ack        Boolean           @default(false)
+  AckStatus           AnnouncementAck[]
 
   @@index([channel_id, created_at])
   @@map("announcements")

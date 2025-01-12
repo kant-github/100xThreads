@@ -21,7 +21,7 @@ export default function () {
 
 
   return (
-    <div ref={ref} className={`px-2 py-1.5 bg-zinc-800 rounded-[8px] cursor-pointer select-none`} onClick={() => setOpen(prev => !prev)}>
+    <div ref={ref} className={`px-2 py-1 bg-zinc-800 rounded-[8px] cursor-pointer select-none`} onClick={() => setOpen(prev => !prev)}>
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-x-3">
           <span className="relative">
@@ -34,7 +34,7 @@ export default function () {
               className="rounded-full"
             />
           </span>
-          <span className="text-sm text-zinc-100 font-normal mt-0.5 tracking-wide">
+          <span className="text-[13px] text-zinc-100 font-normal mt-0.5 tracking-wide">
             {session.user?.name}
           </span>
         </div>
