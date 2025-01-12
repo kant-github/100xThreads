@@ -13,7 +13,7 @@ export type ChannelType = {
   allowed_roles: UserRole
   description?: string
   // Chats: 
-  // Announcements        Announcement[]
+  Announcements: AnnouncementType[]
   // RecentlyJoinedGroups RecentlyJoinedGroups[]
 };
 
@@ -82,6 +82,28 @@ export type OrganizationUsersType = {
   joined_at: Date
 }
 
+// Interface for Announcement
+export interface AnnouncementType {
+  id: string;
+  channel_id: string;
+  title: string;
+  content: string;
+  priority: Priority;
+  tags: string[];
+  created_by: number;
+  created_at: Date;
+  expires_at: Date | null;
+  is_pinned: boolean;
+  requires_ack: boolean;
+  AckStatus: AnnouncementAckType[];
+}
+
+export interface AnnouncementAckType {
+  id: number;
+  announcement_id: string;
+  user_id: number;
+  acked_at: Date;
+}
 
 export type EventChannelType = {
   id: string;
@@ -139,4 +161,10 @@ export enum UserRole {
   FINANCE_MANAGER = 'FINANCE_MANAGER'
 }
 
+export enum Priority {
+  URGENT = "URGENT",
+  HIGH = "HIGH",
+  NORMAL = "NORMAL",
+  LOW = "LOW"
+}
 

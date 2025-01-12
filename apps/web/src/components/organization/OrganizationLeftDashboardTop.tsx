@@ -21,7 +21,7 @@ export default function () {
                 <span className="text-[13px]">recent joinees</span>
                 <BiSolidParty />
             </WhiteText>
-            <div className="mt-1">
+            <div className="mt-2">
                 <Option onClick={() => setSelectedChannelId(welcomeChannel?.id!)} isSelected={selectedChannelId === welcomeChannel?.id} key={welcomeChannel?.id} label={"Welcome"} />
             </div>
             <div className="border-b-[0.5px] border-zinc-600 my-2" />
@@ -29,7 +29,7 @@ export default function () {
                 <span className="text-[13px]">general</span>
                 <MdMeetingRoom />
             </WhiteText>
-            <div className="mt-1">
+            <div className="mt-2">
                 {
                     channels.map((channel) => (
                         <Option onClick={() => setSelectedChannelId(channel.id)} isSelected={selectedChannelId === channel.id} key={channel.id} label={channel.title} />
@@ -41,7 +41,7 @@ export default function () {
                 <span className="text-[13px]">events</span>
                 <MdEvent />
             </WhiteText>
-            <div className="mt-1">
+            <div className="mt-2">
                 {
                     eventRooms.map((eventChannel) => (
                         <Option onClick={() => setSelectedChannelId(eventChannel.id)} isSelected={selectedChannelId === eventChannel.id} key={eventChannel.id} label={eventChannel.title} />

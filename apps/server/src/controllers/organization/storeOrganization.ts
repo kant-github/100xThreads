@@ -13,10 +13,12 @@ const channelTypeMap: Record<string, 'ANNOUNCEMENT' | 'GENERAL' | 'RESOURCE' | '
 };
 
 export async function storeOrganization(req: Request, res: Response) {
+
     if (!req.user) {
         res.status(401).json({ message: "You are not authorized" });
         return;
     }
+
     console.log(req.body);
 
     const {

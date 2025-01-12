@@ -9,6 +9,7 @@ import ProtectedOrganizationComponent from '@/components/organization/ProtectedO
 import { UserType } from 'types'
 import { organizationChannelsAtom, organizationEventChannelsAtom, organizationWelcomeChannelAtom } from '@/recoil/atoms/organizationAtoms/organizationChannelAtoms'
 import { organizationUsersAtom } from '@/recoil/atoms/organizationAtoms/organizationUsersAtom'
+import { organizationAtom } from '@/recoil/atoms/organizationAtoms/organizationAtom'
 
 export type protectedOrganizationMetadata = {
     name: string,
@@ -29,11 +30,13 @@ export default function OrgPage({ params }: { params: { id: string } }) {
     const setChannels = useSetRecoilState(organizationChannelsAtom)
     const setWelcomeChannel = useSetRecoilState(organizationWelcomeChannelAtom)
     const setOrganizationUsers = useSetRecoilState(organizationUsersAtom);
+    const setOrganization = useSetRecoilState(organizationAtom);
     const [flag, setFlag] = useState<'PROTECTED' | 'ALLOWED' | 'INIT'>('INIT')
     const [data, setData] = useState<protectedOrganizationMetadata>({} as protectedOrganizationMetadata)
 
     const updateChannels = useCallback((channelData: any) => {
-        const { eventChannel, channels, welcomeChannel, organizationUsers } = channelData
+        const { organization, eventChannel, channels, welcomeChannel, organizationUsers } = channelData
+        setOrganization(organization);
         setEventChannel(eventChannel);
         setChannels(channels);
         setWelcomeChannel(welcomeChannel);

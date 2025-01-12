@@ -1,9 +1,12 @@
 import { selectedChannelSelector } from '@/recoil/atoms/organizationAtoms/organizationDashboardManagement';
 import React from 'react';
 import { useRecoilValue } from 'recoil';
+import WelcomeChannelView from './channels/WelcomeChannelView';
+import EventChannelView from './channels/EventChannelView';
+import RegularChannelView from './channels/RegularChannelView';
 
-import { ChannelType, EventChannelType, WelcomeChannel } from 'types';
-import DashboardComponentHeading from '../dashboard/DashboardComponentHeading';
+
+
 
 export default function ChannelContent() {
     const selectedChannel = useRecoilValue(selectedChannelSelector);
@@ -25,41 +28,3 @@ export default function ChannelContent() {
     }
 }
 
-interface RegularChannelViewProps {
-    channel: ChannelType;
-}
-
-function RegularChannelView({ channel }: RegularChannelViewProps) {
-    console.log(channel);
-    return (
-        <div className="bg-[#171717] w-full p-4">
-            <DashboardComponentHeading description={channel.description!}>{channel.title}</DashboardComponentHeading>
-        </div>
-    );
-}
-
-interface EventChannelViewProps {
-    channel: EventChannelType;
-}
-
-function EventChannelView({ channel }: EventChannelViewProps) {
-    console.log(channel);
-    return (
-        <div className="bg-[#171717] w-full p-4">
-            <DashboardComponentHeading description={channel.description}>{channel.title}</DashboardComponentHeading>
-        </div>
-    );
-}
-
-interface WelcomeChannelViewProps {
-    channel: WelcomeChannel;
-}
-
-function WelcomeChannelView({ channel }: WelcomeChannelViewProps) {
-    console.log(channel);
-    return (
-        <div className="bg-[#171717] w-full p-4">
-            <DashboardComponentHeading description={channel.welcome_message!}>{"Welcome"}</DashboardComponentHeading>
-        </div >
-    );
-}

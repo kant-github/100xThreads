@@ -43,7 +43,7 @@ model Organization {
   access_type       OrganizationAccessType    @default(PRIVATE)
   privateFlag       Boolean                   @default(false)
   passwordHash      String?                   @db.VarChar(191)
-  passwordSalt      String?     
+  passwordSalt      String?
   image             String?                   @db.VarChar(191)
   organizationColor String?                   @db.VarChar(7)
   organization_type OrganizationType
@@ -194,6 +194,7 @@ model Announcement {
   title        String
   content      String
   priority     Priority          @default(NORMAL)
+  tags         String[]          @default([])
   created_by   Int
   created_at   DateTime          @default(now())
   expires_at   DateTime?

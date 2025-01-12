@@ -27,5 +27,4 @@ router.delete("/organizations/:id", authmiddleware, deleteOrganizations);
 router.get("/organizations-by-search", authmiddleware, getOrganizationBySearch);
 router.get("/organizations-all", authmiddleware, getAllOrganizations);
 
-
 export default router;

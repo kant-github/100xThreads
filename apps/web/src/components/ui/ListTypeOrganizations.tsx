@@ -19,7 +19,7 @@ export default function ({ organizations }: ListTypeOrganizations) {
                 const date = organization.created_at ? format(new Date(organization.created_at), 'MMMM dd, yyyy') : null;
                 return (
                     <Link href={`/org/${organization.id}`}
-                        className="w-full flex flex-col justify-between gap-y-4 md:gap-y-6 lg:gap-y-8 items-between px-4 md:px-6 lg:px-12 py-4 border-b-[0.5px] border-zinc-700 " key={index}>
+                        className="w-full flex flex-col justify-between gap-y-4 md:gap-y-6 lg:gap-y-8 items-between px-4 md:px-6 lg:px-12 py-4 border-b-[0.5px] border-zinc-700 h-36 hover:bg-zinc-800" key={index}>
                         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-y-3 sm:gap-y-0">
                             <div className="flex flex-row items-center gap-x-3 w-full sm:w-auto">
                                 <Image
@@ -30,8 +30,8 @@ export default function ({ organizations }: ListTypeOrganizations) {
                                     alt="logo"
                                 />
                                 <div className="flex-col flex-1">
-                                    <div className="text-md font-bold md:text-md dark:text-zinc-200">{organization.name}</div>
-                                    <div className="text-xs dark:text-zinc-400 line-clamp-2 sm:line-clamp-1">{organization.description}</div>
+                                    <div className="text-md font-bold md:text-lg dark:text-zinc-200">{organization.name}</div>
+                                    <div className="text-[13px] dark:text-zinc-400 line-clamp-2 sm:line-clamp-1">{organization.description}</div>
                                 </div>
                             </div>
                             <div className="flex flex-row items-center gap-x-4 w-full sm:w-auto justify-end">
@@ -43,11 +43,11 @@ export default function ({ organizations }: ListTypeOrganizations) {
                         </div>
                         <div className="flex flex-col sm:flex-row justify-between gap-y-3 sm:gap-y-0">
                             <div className="flex flex-row items-center gap-x-4 md:gap-x-6 text-xs flex-wrap">
-                                <span>
-                                    <span className="text-green-500 text-[10px]">{"10"}</span>
-                                    <span className="text-zinc-500 font-medium"> online users</span>
+                                <span className="text-[13px]">
+                                    <span className="text-green-500">{"10"} online</span>
+                                    {/* <span className="text-zinc-500 font-medium"> online</span> */}
                                 </span>
-                                <div className="flex flex-row items-center gap-x-2 text-zinc-300">
+                                <div className="flex flex-row items-center gap-x-2 text-zinc-300 text-[13px]">
                                     <MdDateRange />
                                     <span>created on : {date}</span>
                                 </div>
