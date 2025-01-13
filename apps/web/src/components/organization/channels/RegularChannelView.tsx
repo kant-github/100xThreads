@@ -1,5 +1,5 @@
 import { ChannelType, ChannelTypeType } from "types";
-import OrganizationRegularchannelRenderer from "../AnnouncementChannelUI";
+import AnnouncementChannelUI from "../AnnouncementChannelUI";
 
 interface RegularChannelViewProps {
     channel: ChannelType;
@@ -10,7 +10,7 @@ export default function ({ channel }: RegularChannelViewProps) {
     const type: ChannelTypeType = channel.type;
     switch (type) {
         case 'ANNOUNCEMENT':
-            return <OrganizationRegularchannelRenderer channel={channel} />
+            return <AnnouncementChannelUI channel={channel} />
         default:
             return null
     }

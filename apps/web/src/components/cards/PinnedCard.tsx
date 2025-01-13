@@ -45,12 +45,12 @@ export default function PinnedCard({ className, announcement }: PinnedCardProps)
             </WhiteText>
 
             <div className={`transition-all w-full duration-700 ease-in-out flex flex-col gap-y-4 items-start ${zoom ? 'opacity-100 max-h-20' : 'opacity-0 max-h-0 overflow-hidden'}`}>
-                <div className='flex flex-row gap-x-2 md:gap-x-3 text-xs flex-wrap '>
+                <div className='flex flex-row items-center justify-start gap-x-2 md:gap-x-3 text-xs flex-wrap '>
                     {announcement.tags.map((tag, tagIndex) => (
                         <CompanyTagTicker color={organization?.organizationColor} key={tagIndex}>{tag}</CompanyTagTicker>
                     ))}
                 </div>
-                <div className={`w-full flex flex-col gap-y-3 justify-center px-8` }>
+                <div className={`w-full flex flex-col gap-y-3 justify-start px-8` }>
                     <span className='text-xs flex justify-center font-medium text-zinc-300'>Acknowledge this announcement</span>
                     <WhiteBtn>Acknowledge</WhiteBtn>
                 </div>

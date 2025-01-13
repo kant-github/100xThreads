@@ -13,7 +13,7 @@ export default function UtilityCard({ children, className, open }: UtilityCardPr
     return (
         <div 
             ref={ref} 
-            className={`${className} bg-white dark:bg-zinc-800 dark:text-gray-200 rounded-[8px] z-50`}
+            className={`${className} bg-white dark:bg-[#2b2c2e] dark:text-gray-200 rounded-[8px] z-50`}
             onClick={(e) => e.stopPropagation()}
         >
             {children}

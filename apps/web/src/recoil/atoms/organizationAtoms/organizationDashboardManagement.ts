@@ -23,6 +23,6 @@ export const selectedChannelSelector = selector({
         if (welcomeChannel?.id === channelId) {
             return { type: 'welcome', data: welcomeChannel };
         }
-        return null;
+        return {type: 'default'};
     }
 });

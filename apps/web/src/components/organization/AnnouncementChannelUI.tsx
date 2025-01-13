@@ -91,7 +91,7 @@ export default function ({ channel }: RegularChannelViewProps) {
                 Create Announcement
             </TransparentButton>
             <DashboardComponentHeading description={channel.description!}> {channel.title} </DashboardComponentHeading>
-            <BlackboardBackground className='px-8 py-8 w-full'>
+            <BlackboardBackground className='p-8 w-full'>
                 <div className='w-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12 relative'>
                     {sampleAnnouncements.map((announcement) => (
                         <div key={announcement.id} className="relative">
