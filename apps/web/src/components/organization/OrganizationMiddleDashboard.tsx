@@ -4,13 +4,13 @@ import { useRecoilValue } from 'recoil';
 import WelcomeChannelView from './channels/WelcomeChannelView';
 import EventChannelView from './channels/EventChannelView';
 import RegularChannelView from './channels/RegularChannelView';
+import { ChannelType, EventChannelType, WelcomeChannel } from 'types';
 
 
 
 
 export default function ChannelContent() {
     const selectedChannel = useRecoilValue(selectedChannelSelector);
-    console.log("selected channel is : ", selectedChannel);
 
     if (!selectedChannel) {
         return <div className="bg-[#171717] w-full p-4">Select a channel</div>;
@@ -18,11 +18,11 @@ export default function ChannelContent() {
 
     switch (selectedChannel.type) {
         case 'regular':
-            return <RegularChannelView channel={selectedChannel.data} />;
+            return <RegularChannelView channel={selectedChannel.data as ChannelType} />;
         case 'event':
-            return <EventChannelView channel={selectedChannel.data} />;
+            return <EventChannelView channel={selectedChannel.data as EventChannelType} />;
         case 'welcome':
-            return <WelcomeChannelView channel={selectedChannel.data} />;
+            return <WelcomeChannelView channel={selectedChannel.data as WelcomeChannel} />;
         default:
             return <div className="bg-[#171717] w-full p-4">Unknown channel type</div>;
     }

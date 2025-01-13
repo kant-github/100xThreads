@@ -3,7 +3,7 @@ export type ChannelType = {
   organization: OrganizationType
   organization_id: string
   title: string
-  type: ChannelType
+  type: ChannelTypeType
   passcode: string
   groupImage?: string
   created_at: Date
@@ -168,3 +168,15 @@ export enum Priority {
   LOW = "LOW"
 }
 
+export enum ChannelTypeType {
+  WELCOME = 'WELCOME',
+  GENERAL = 'GENERAL',
+  ANNOUNCEMENT = 'ANNOUNCEMENT',
+  RESOURCE = 'RESOURCE',
+  HELP_DESK = 'HELP_DESK',
+  PROJECT = 'PROJECT',
+  LEARNING = 'LEARNING',
+  MENTORSHIP = 'MENTORSHIP',
+  SOCIAL = 'SOCIAL',
+  CAREER = 'CAREER'
+}
