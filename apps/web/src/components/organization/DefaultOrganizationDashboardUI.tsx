@@ -19,12 +19,12 @@ export default function () {
                 </div>
             </div>
             <DashboardsMetrics className="mt-8 w-full" />
-            <UnclickableTicker className="items-center mt-10 mb-1">
+            <AnimatedTooltipPreview className="mt-12" />
+            <UnclickableTicker className="items-center mb-1">
                 <ImFire />
                 Featured section
             </UnclickableTicker>
             <StickyScrollRevealDemo />
-            <AnimatedTooltipPreview className="mt-12" />
             
         </div>
     )

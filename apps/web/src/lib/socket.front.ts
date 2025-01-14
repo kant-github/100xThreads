@@ -1,7 +1,7 @@
 export type WebSocketMessage = {
     type: string;
     payload: any;
-    timestamp: any
+    timestamp: number
 }
 export type WebSocketStatus = 'connected' | 'connecting' | 'disconnected' | 'reconnecting';
 
@@ -35,9 +35,19 @@ export class WebSocketClient {
             this.ws.onerror = () => {
                 this.handleReconnect();
             }
+
+            this.ws.onmessage = (event) => {
+                try {
+                    const message = JSON.parse(event.data);
+                    this.handleMessage(message);
+                } catch (err) {
+                    console.error('Error parsing WebSocket message:', err);
+
+                }
+            }
         } catch (err) {
             console.error('Error connecting to WebSocket:', err);
-            this.handleReconnect()
+            this.handleReconnect();
         }
     }
 
@@ -48,11 +58,51 @@ export class WebSocketClient {
         }
         this.reconnectAttempts++;
 
+        // Calculate new timeout with exponential backoff
+        // Each retry waits longer than the previous one
         const timeout = this.reconnectTimeout * Math.pow(2, this.reconnectAttempts - 1);
 
         setTimeout(() => {
             this.connect();
-        }, timeout)
+        }, timeout);
+    }
 
+    public handleMessage(message: WebSocketMessage) {
+        const handlers = this.MessageHandlers.get(message.type) || [];
+
+        handlers.forEach(handler => {
+            try {
+                handler(message.payload);
+            } catch (err) {
+                console.error(`Error in message handler for type ${message.type}:`, err);
+            }
+        }
+        )
+
+    }
+
+    public subscribe(type: string, handler: (payload: any) => void) {
+        const handlers = this.MessageHandlers.get(type) || [];
+        this.MessageHandlers.set(type, [...handlers, handler]);
+
+        return () => {
+            const handlers = this.MessageHandlers.get(type) || [];
+            this.MessageHandlers.set(type,
+                handlers.filter(h => h !== handler)
+            )
+        }
+    }
+
+    public send(type: string, payload: any) {
+        if (this.ws?.readyState !== WebSocket.OPEN) {
+            throw new Error('WebSocket is not connected');
+
+        }
+        const message: WebSocketMessage = {
+            type,
+            payload,
+            timestamp: Date.now()
+        }
+        this.ws.send(JSON.stringify(message))
     }
 }
