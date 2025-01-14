@@ -4,7 +4,7 @@ import ChatSideBar from "../ChatSideBar";
 import { useEffect, useMemo, useState } from "react";
 import GlobalChatNavTitle from "./GlobalChatNavTitle";
 import { globalGroupId } from "@/components/dashboard/DashNav";
-import { getSocket } from "@/lib/socket.config";
+import { getSocket } from "@/lib/socket.front";
 
 interface Props {
     group: ChatGroupType;

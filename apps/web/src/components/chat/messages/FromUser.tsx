@@ -3,7 +3,7 @@ import { MessageType, UserType } from "types";
 import { formatDistanceToNowStrict } from "date-fns";
 import { useEffect, useState } from "react";
 import MessageOptionsMenu from "@/components/ui/MessageOptionsMenu";
-import { sendLikeEvent, sendUnlikeEvent } from "@/lib/socket.config";
+import { sendLikeEvent, sendUnlikeEvent } from "@/lib/socket.front";
 import LikedUsersDropdown from "../LikedUsersDropdown";
 import { AiFillLike } from "react-icons/ai";
 

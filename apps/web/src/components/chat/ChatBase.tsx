@@ -4,7 +4,7 @@ import ChatSideBar from "./ChatSideBar";
 import ChatNavTitle from "./ChatNavTitle";
 import Chat from "./Chat";
 import { ChatGroupType, GroupChatUserType, MessageType, UserType } from "types";
-import { getSocket } from "@/lib/socket.config";
+import { getSocket } from "@/lib/socket.front";
 
 interface Props {
   groupId: string;
