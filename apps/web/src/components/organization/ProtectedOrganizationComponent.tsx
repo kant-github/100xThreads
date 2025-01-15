@@ -18,6 +18,7 @@ import Spinner from "../loaders/Spinner";
 import { toast } from "sonner";
 import { organizationChannelsAtom, organizationEventChannelsAtom, organizationWelcomeChannelAtom } from "@/recoil/atoms/organizationAtoms/organizationChannelAtoms";
 import { organizationUsersAtom } from "@/recoil/atoms/organizationAtoms/organizationUsersAtom";
+import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 
 interface props {
     metaData: protectedOrganizationMetadata,
@@ -34,6 +35,7 @@ export default function ({ metaData, organizationId, setFlag }: props) {
     const setChannels = useSetRecoilState(organizationChannelsAtom)
     const setWelcomeChannel = useSetRecoilState(organizationWelcomeChannelAtom)
     const setOrganizationUsers = useSetRecoilState(organizationUsersAtom);
+    const setOrganization = useSetRecoilState(organizationAtom);
     const date = metaData.created_at ? format(new Date(metaData.created_at), 'MMMM dd, yyyy') : null;
 
     const clickHandler = async () => {
@@ -53,10 +55,12 @@ export default function ({ metaData, organizationId, setFlag }: props) {
                     Authorization: `Bearer ${session.user?.token}`
                 }
             });
+            console.log("data from protected component", data);
             if (data.flag === 'ALLOWED') {
                 toast.success(`Welcome ${session.user?.name}`);
                 setFlag('ALLOWED')
-                const { eventChannel, channels, welcomeChannel, organizationUsers } = data.data
+                const { organization, eventChannel, channels, welcomeChannel, organizationUsers } = data.data
+                setOrganization(organization);
                 setEventChannel(eventChannel)
                 setChannels(channels)
                 setWelcomeChannel(welcomeChannel);
@@ -74,7 +78,7 @@ export default function ({ metaData, organizationId, setFlag }: props) {
     }
 
     return (
-        <div className="h-[50rem] w-full bg-white dark:bg-[#171717] dark:bg-dot-white/[0.2] bg-dot-black/[0.2] relative flex items-center justify-center select-none">
+        <div className="h-[50rem] w-full bg-white dark:bg-neutral-900 dark:bg-dot-white/[0.2] bg-dot-black/[0.2] relative flex items-center justify-center select-none">
             <OpacityBackground>
                 <UtilityCard className="w-5/12 px-12 relative py-8 flex flex-col items-start justify-center">
                     <div className="rounded-[12px] mt-4 absolute top-0 right-4" style={{ backgroundColor: `${metaData.organizationColor}` }}>

@@ -26,13 +26,7 @@ export default function () {
         <div className="flex items-center gap-x-3">
           <span className="relative">
             <span className="bg-green-500 absolute bottom-1 right-1 transform translate-x-1/4 translate-y-1/4 rounded-full border-2 border-zinc-800 z-20 h-2.5 w-2.5"></span>
-            <Image
-              src={session.user?.image!}
-              alt="user-image"
-              width={32}
-              height={32}
-              className="rounded-full"
-            />
+            <Image src={session.user?.image!} alt="user-image" width={32} height={32} className="rounded-full" />
           </span>
           <span className="text-[13px] text-zinc-100 font-normal mt-0.5 tracking-wide">
             {session.user?.name}

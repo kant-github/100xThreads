@@ -14,6 +14,10 @@ export const selectedChannelSelector = selector({
         const eventChannels = get(organizationEventChannelsAtom);
         const welcomeChannel = get(organizationWelcomeChannelAtom);
 
+        if(channelId === 'default') {
+            return { type: 'default'}
+        }
+
         const regularChannel = channels.find(channel => channel.id === channelId);
         if (regularChannel) return { type: 'regular', data: regularChannel };
 

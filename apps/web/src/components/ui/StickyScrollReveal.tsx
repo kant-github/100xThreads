@@ -5,13 +5,12 @@ import Image from "next/image";
 
 const content = [
   {
-    title: "Collaborative Editing",
-    description:
-      "Work together in real time with your team, clients, and stakeholders. Collaborate on documents, share ideas, and make decisions quickly. With our platform, you can streamline your workflow and increase productivity.",
+    title: "Business Innovation Hub",
+    description: "Connect and collaborate with global teams, partners, and stakeholders across Amazon's vast ecosystem. Drive impactful decisions with real-time document sharing, project tracking, and integrated workflows. From retail to cloud services, streamline your operations and accelerate business growth with our enterprise collaboration tools.",
     content: (
       <div className="h-full w-full  flex items-center justify-center text-white">
         <Image
-          src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde"
+          src="/images/featured.avif"
           alt="Professional headshot 1"
           fill
           className="object-cover rounded-lg"

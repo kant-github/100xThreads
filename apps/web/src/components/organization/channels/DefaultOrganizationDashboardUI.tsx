@@ -1,14 +1,15 @@
 import Image from "next/image";
 import { useRecoilValue } from "recoil";
 import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
-import { AnimatedTooltipPreview } from "../utility/AnimatedTooltipPreview";
-import DashboardsMetrics from "../ui/DashboardsMetrics";
-import UnclickableTicker from "../ui/UnclickableTicker";
+import { AnimatedTooltipPreview } from "../../utility/AnimatedTooltipPreview";
+import DashboardsMetrics from "../../ui/DashboardsMetrics";
+import UnclickableTicker from "../../ui/UnclickableTicker";
 import { ImFire } from "react-icons/im";
-import { StickyScrollRevealDemo } from "../ui/StickyScrollReveal";
+import { StickyScrollRevealDemo } from "../../ui/StickyScrollReveal";
 
 export default function () {
     const organization = useRecoilValue(organizationAtom);
+    console.log("default comp org is : ", organization);
     return (
         <div className="h-full bg-neutral-900 flex flex-col items-start w-full p-8 relative">
             <div className="flex flex-row justify-start items-center gap-x-3 border-b-[0.5px] border-zinc-700 pb-6 w-full">
@@ -25,7 +26,7 @@ export default function () {
                 Featured section
             </UnclickableTicker>
             <StickyScrollRevealDemo />
-            
+
         </div>
     )
 }

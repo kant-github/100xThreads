@@ -5,7 +5,7 @@ import WelcomeChannelView from './channels/WelcomeChannelView';
 import EventChannelView from './channels/EventChannelView';
 import RegularChannelView from './channels/RegularChannelView';
 import { ChannelType, EventChannelType, WelcomeChannel } from 'types';
-import DefaultOrganizationDashboardUI from './DefaultOrganizationDashboardUI';
+import DefaultOrganizationDashboardUI from './channels/DefaultOrganizationDashboardUI';
 
 
 
