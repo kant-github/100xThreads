@@ -1,0 +1,256 @@
+import { Server } from 'ws';
+import Redis from 'ioredis';
+import { createServer } from 'http';
+import { parse as parseUrl } from 'url';
+import jwt from 'jsonwebtoken';
+
+interface WebSocketMessage {
+    type: string;
+    payload: any;
+    timestamp: number;
+}
+
+interface ChannelSubscription {
+    channelId: string;
+    organizationId: string;
+    type: 'messages' | 'events' | 'polls' | 'announcements';
+}
+
+class WebSocketServer {
+    private wss: Server;
+    private publisher: Redis;
+    private subscriber: Redis;
+    private clients: Map<string, Set<WebSocket>> = new Map();
+    private userSubscriptions: Map<WebSocket, Set<string>> = new Map();
+
+    constructor() {
+        const server = createServer();
+        this.wss = new Server({ server });
+        
+        // Redis clients for pub/sub
+        this.publisher = new Redis({
+            host: process.env.REDIS_HOST || 'localhost',
+            port: parseInt(process.env.REDIS_PORT || '6379'),
+            retryStrategy: (times) => {
+                const delay = Math.min(times * 50, 2000);
+                return delay;
+            }
+        });
+
+        this.subscriber = new Redis({
+            host: process.env.REDIS_HOST || 'localhost',
+            port: parseInt(process.env.REDIS_PORT || '6379'),
+            retryStrategy: (times) => {
+                const delay = Math.min(times * 50, 2000);
+                return delay;
+            }
+        });
+
+        this.initialize();
+        server.listen(process.env.WS_PORT || 8080);
+    }
+
+    private initialize() {
+        this.wss.on('connection', async (ws: WebSocket, req) => {
+            try {
+                // Authenticate user and get organization access
+                const token = this.extractToken(req);
+                const userData = await this.authenticateUser(token);
+                
+                if (!userData) {
+                    ws.close(4001, 'Authentication failed');
+                    return;
+                }
+
+                // Set up client tracking
+                this.setupClientTracking(ws, userData);
+
+                // Handle incoming messages
+                ws.on('message', (data: string) => {
+                    this.handleIncomingMessage(ws, data, userData);
+                });
+
+                // Handle client disconnect
+                ws.on('close', () => {
+                    this.handleClientDisconnect(ws);
+                });
+
+                // Send initial channel list
+                await this.sendInitialChannelData(ws, userData.organizationId);
+
+            } catch (error) {
+                console.error('Connection error:', error);
+                ws.close(4002, 'Connection setup failed');
+            }
+        });
+
+        // Set up Redis subscriber
+        this.subscriber.on('message', (channel: string, message: string) => {
+            this.handleRedisMessage(channel, message);
+        });
+    }
+
+    private async authenticateUser(token: string): Promise<any> {
+        try {
+            return jwt.verify(token, process.env.JWT_SECRET!);
+        } catch (error) {
+            console.error('Authentication error:', error);
+            return null;
+        }
+    }
+
+    private extractToken(req: any): string {
+        const url = parseUrl(req.url!, true);
+        return url.query.token as string;
+    }
+
+    private setupClientTracking(ws: WebSocket, userData: any) {
+        const organizationId = userData.organizationId;
+        if (!this.clients.has(organizationId)) {
+            this.clients.set(organizationId, new Set());
+        }
+        this.clients.get(organizationId)!.add(ws);
+        this.userSubscriptions.set(ws, new Set());
+    }
+
+    private async handleIncomingMessage(ws: WebSocket, data: string, userData: any) {
+        try {
+            const message: WebSocketMessage = JSON.parse(data);
+            
+            switch (message.type) {
+                case 'subscribe_channel':
+                    await this.handleChannelSubscription(ws, message.payload, userData);
+                    break;
+                case 'unsubscribe_channel':
+                    await this.handleChannelUnsubscription(ws, message.payload);
+                    break;
+                default:
+                    await this.publishToRedis(message, userData);
+            }
+        } catch (error) {
+            console.error('Message handling error:', error);
+            this.sendErrorToClient(ws, 'Message processing failed');
+        }
+    }
+
+    private async handleChannelSubscription(ws: WebSocket, subscription: ChannelSubscription, userData: any) {
+        const channelKey = this.getChannelKey(subscription);
+        this.userSubscriptions.get(ws)!.add(channelKey);
+        await this.subscriber.subscribe(channelKey);
+        
+        // Send confirmation to client
+        this.sendToClient(ws, {
+            type: 'subscription_confirmed',
+            payload: subscription,
+            timestamp: Date.now()
+        });
+    }
+
+    private async handleChannelUnsubscription(ws: WebSocket, subscription: ChannelSubscription) {
+        const channelKey = this.getChannelKey(subscription);
+        this.userSubscriptions.get(ws)!.delete(channelKey);
+        
+        // Only unsubscribe from Redis if no other clients are listening
+        let hasOtherSubscribers = false;
+        for (const subscriptions of this.userSubscriptions.values()) {
+            if (subscriptions.has(channelKey)) {
+                hasOtherSubscribers = true;
+                break;
+            }
+        }
+        
+        if (!hasOtherSubscribers) {
+            await this.subscriber.unsubscribe(channelKey);
+        }
+    }
+
+    private async publishToRedis(message: WebSocketMessage, userData: any) {
+        const channelKey = this.getChannelKey({
+            organizationId: userData.organizationId,
+            channelId: message.payload.channelId,
+            type: message.payload.type
+        });
+        
+        await this.publisher.publish(channelKey, JSON.stringify({
+            ...message,
+            userId: userData.userId,
+            timestamp: Date.now()
+        }));
+    }
+
+    private handleRedisMessage(channel: string, message: string) {
+        const parsedMessage = JSON.parse(message);
+        const [organizationId] = channel.split(':');
+        
+        const orgClients = this.clients.get(organizationId);
+        if (!orgClients) return;
+
+        for (const client of orgClients) {
+            if (this.userSubscriptions.get(client)?.has(channel)) {
+                this.sendToClient(client, parsedMessage);
+            }
+        }
+    }
+
+    private handleClientDisconnect(ws: WebSocket) {
+        // Clean up subscriptions
+        const subscriptions = this.userSubscriptions.get(ws);
+        if (subscriptions) {
+            for (const channelKey of subscriptions) {
+                this.handleChannelUnsubscription(ws, this.parseChannelKey(channelKey));
+            }
+        }
+        
+        // Remove from tracking
+        this.userSubscriptions.delete(ws);
+        for (const clients of this.clients.values()) {
+            clients.delete(ws);
+        }
+    }
+
+    private getChannelKey(subscription: ChannelSubscription): string {
+        return `${subscription.organizationId}:${subscription.channelId}:${subscription.type}`;
+    }
+
+    private parseChannelKey(key: string): ChannelSubscription {
+        const [organizationId, channelId, type] = key.split(':');
+        return {
+            organizationId,
+            channelId,
+            type: type as any
+        };
+    }
+
+    private sendToClient(ws: WebSocket, message: WebSocketMessage) {
+        if (ws.readyState === ws.OPEN) {
+            ws.send(JSON.stringify(message));
+        }
+    }
+
+    private sendErrorToClient(ws: WebSocket, error: string) {
+        this.sendToClient(ws, {
+            type: 'error',
+            payload: { message: error },
+            timestamp: Date.now()
+        });
+    }
+
+    private async sendInitialChannelData(ws: WebSocket, organizationId: string) {
+        // Fetch channels from your database
+        const channels = await this.fetchOrganizationChannels(organizationId);
+        
+        this.sendToClient(ws, {
+            type: 'initial_channels',
+            payload: channels,
+            timestamp: Date.now()
+        });
+    }
+
+    private async fetchOrganizationChannels(organizationId: string) {
+        // Implement your database query here
+        // This is just a placeholder
+        return [];
+    }
+}
+
+export default WebSocketServer;
