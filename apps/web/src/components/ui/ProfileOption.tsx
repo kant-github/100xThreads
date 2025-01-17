@@ -21,7 +21,7 @@ export default function () {
 
 
   return (
-    <div ref={ref} className={`px-2 py-1 bg-zinc-800 rounded-[8px] cursor-pointer select-none`} onClick={() => setOpen(prev => !prev)}>
+    <div ref={ref} className={`px-2 py-1 bg-neutral-800 rounded-[8px] cursor-pointer select-none`} onClick={() => setOpen(prev => !prev)}>
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-x-3">
           <span className="relative">

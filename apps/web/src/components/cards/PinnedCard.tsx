@@ -10,7 +10,6 @@ import { RiExpandUpDownFill } from "react-icons/ri";
 import WhiteText from '../heading/WhiteText';
 import CompanyTagTicker from '../utility/CompanyTagTicker';
 import { WhiteBtn } from '../buttons/WhiteBtn';
-import BlackBtn from '../buttons/BlackBtn';
 
 interface PinnedCardProps {
     className?: string;
@@ -22,8 +21,8 @@ export default function PinnedCard({ className, announcement }: PinnedCardProps)
     const [zoom, setZoom] = useState<boolean>(false);
 
     return (
-        <div onClick={() => setZoom(prev => !prev)} className={`relative flex flex-col items-start gap-y-4 select-none bg-[#171717] rounded-[6px] shadow-lg w-full pt-8 px-5 pb-4 transition-all duration-300 ease-in-out hover:scale-[1.01] ${zoom ? 'md:row-span-2 h-72' : 'h-40'} ${className} `}>
-            <span className='flex items-center gap-x-1 absolute bottom-2 right-3 text-zinc-500'>
+        <div onClick={() => setZoom(prev => !prev)} className={`relative flex flex-col items-start gap-y-4 select-none bg-neutral-900 rounded-[6px] shadow-lg w-full pt-8 px-5 pb-4 transition-all duration-300 ease-in-out hover:scale-[1.01] ${zoom ? 'md:row-span-2 h-72' : 'h-40'} ${className} `}>
+            <span className='flex items-center gap-x-1 absolute bottom-2 right-3 text-neutral-500'>
                 <FaEye className='' size={12} />
                 <span className='text-[8px]'>12</span>
             </span>
@@ -32,14 +31,14 @@ export default function PinnedCard({ className, announcement }: PinnedCardProps)
                 <RiExpandUpDownFill className={`text-green-500 hover:text-green-900  bg-green-500 rounded-full  transform transition-all duration-300 ease-in-out cursor-pointer ${zoom ? 'rotate-0' : '-rotate-45'} `} size={8} />
             </div>
             <PriorityTicker className='absolute top-2 right-2' tickerText={announcement.priority} />
-            <div className='flex flex-col items-start gap-y-1 text-zinc-300'>
+            <div className='flex flex-col items-start gap-y-1 text-neutral-300'>
                 <span className='text-md font-bold'>{announcement.title}</span>
                 <span className='text-[11px] transition-all duration-500 ease-in-out'>
                     {announcement.content.slice(0, 120)}
                 </span>
             </div>
 
-            <WhiteText className="text-[10px] font-medium px-3 py-1 rounded-[4px] border-[1px] border-zinc-600 flex flex-row justify-start items-center gap-x-2 cursor-pointer hover:bg-zinc-800 transition-colors duration-200">
+            <WhiteText className="text-[10px] font-medium px-3 py-1 rounded-[4px] border-[1px] border-neutral-600 flex flex-row justify-start items-center gap-x-2 cursor-pointer hover:bg-neutral-800 transition-colors duration-200">
                 <ImBullhorn />
                 {"Rishi Kant"}
             </WhiteText>
@@ -51,7 +50,7 @@ export default function PinnedCard({ className, announcement }: PinnedCardProps)
                     ))}
                 </div>
                 <div className={`w-full flex flex-col gap-y-3 justify-start px-8` }>
-                    <span className='text-xs flex justify-center font-medium text-zinc-300'>Acknowledge this announcement</span>
+                    <span className='text-xs flex justify-center font-medium text-neutral-300'>Acknowledge this announcement</span>
                     <WhiteBtn>Acknowledge</WhiteBtn>
                 </div>
             </div>

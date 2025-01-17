@@ -11,7 +11,6 @@ interface RegularChannelViewProps {
 }
 
 export default function ({ channel }: RegularChannelViewProps) {
-    console.log("channel type is : ", channel.type);
     const type: ChannelTypeType = channel.type;
     switch (type) {
         case 'ANNOUNCEMENT':

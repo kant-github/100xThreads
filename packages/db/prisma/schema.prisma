@@ -228,8 +228,8 @@ enum Priority {
 
 model Chats {
   id         String      @id @default(uuid()) @db.Uuid
-  group      Channel     @relation(fields: [group_id], references: [id], onDelete: Cascade)
-  group_id   String      @db.Uuid
+  channel    Channel     @relation(fields: [channel_id], references: [id], onDelete: Cascade)
+  channel_id String      @db.Uuid
   user       Users       @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id    Int
   message    String?

@@ -8,9 +8,10 @@ export default function authmiddleware(
 ) {
     try {
         const authHeader = req.headers.authorization;
+        console.log("hit middleware");
         if (!authHeader) {
             res.status(401).json({
-                message: "Unauthorized 1"
+                message: "Unauthorized request"
             });
             return;
         }

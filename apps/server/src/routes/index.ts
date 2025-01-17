@@ -6,10 +6,11 @@ import { storeOrganization } from "../controllers/organization/storeOrganization
 import { deleteOrganizations } from "../controllers/organization/deleteOrganizations";
 import getOrganizationBySearch from "../controllers/organization/getOrganizationBysearch";
 import alreadyUserMiddleware from "../middlewares/alreadyUserMiddleware copy";
-import { getUserDetails } from "../controllers/userController/getUserDetails";
-import { updateUserDetails } from "../controllers/userController/updateUserDetails";
+import { getUserDetails } from "../controllers/user/getUserDetails";
+import { updateUserDetails } from "../controllers/user/updateUserDetails";
 import authmiddleware from "../middlewares/authMiddleware";
 import joinOrganizationWithPassword from "../controllers/organization/joinOrganizationWithPassword";
+import getChats from "../controllers/chats/getChats";
 
 const router = Router();
 
@@ -26,5 +27,10 @@ router.post("/organizations", authmiddleware, storeOrganization);
 router.delete("/organizations/:id", authmiddleware, deleteOrganizations);
 router.get("/organizations-by-search", authmiddleware, getOrganizationBySearch);
 router.get("/organizations-all", authmiddleware, getAllOrganizations);
+
+
+// chats-controller
+router.get("/organizations/:organizationId/channels/:channelId/chats", authmiddleware, getChats);
+
 
 export default router;

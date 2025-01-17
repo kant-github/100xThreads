@@ -32,10 +32,10 @@ export default function () {
     }, [session.user?.token])
 
     return (
-        <div className="h-full bg-[#141313] relative flex flex-col">
+        <div className="bg-[#37474f] dark:bg-neutral-900 h-full relative flex flex-col">
             <OrganizationDisplayTypeToggleButton />
             <DashboardComponentHeading className="pt-4 pl-12" description="Browse through all the organizations owned by you">Owned by you</DashboardComponentHeading>
-            <div className="bg-[#37474f] dark:bg-[#262629] my-8 mx-12 rounded-[8px] shadow-lg shadow-black/40 flex-grow overflow-hidden ">
+            <div className="bg-[#37474f] dark:bg-neutral-800 my-8 mx-12 rounded-[8px] shadow-lg shadow-black/40 flex-grow overflow-hidden ">
                 {loading ? (
                     displayType === DisplayType.list ?
                         <ListTypeOrganizationSkeleton /> :

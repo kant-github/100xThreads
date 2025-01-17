@@ -21,13 +21,13 @@ export default function () {
 
     return (
         <div className="h-auto sm:h-24 py-1 sm:py-2 rounded-[8px]">
-            <div onClick={() => setSelectedChannelId('default')} className={`px-2 py-1.5 bg-zinc-800 rounded-[8px] cursor-pointer select-none`}>
+            <div onClick={() => setSelectedChannelId('default')} className={`px-2 py-1.5 bg-neutral-800 rounded-[8px] cursor-pointer select-none`}>
                 <div className="flex justify-between items-center">
                     <div className="flex items-center gap-x-3">
                         <span className="relative">
                             <Image src={"/images/amazonlogo.png"} alt="user-image" width={30} height={32} className="rounded-full" />
                         </span>
-                        <span className="text-[14px] text-zinc-100 font-medium mt-0.5 tracking-wide">
+                        <span className="text-[14px] text-neutral-100 font-medium mt-0.5 tracking-wide">
                             {organization?.name}
                         </span>
                     </div>
@@ -40,7 +40,7 @@ export default function () {
             <div className="mt-1">
                 <Option onClick={() => setSelectedChannelId(welcomeChannel?.id!)} isSelected={selectedChannelId === welcomeChannel?.id} key={welcomeChannel?.id} label={"Welcome"} />
             </div>
-            <div className="border-b-[0.5px] border-zinc-600 my-2" />
+            <div className="border-b-[0.5px] border-neutral-600 my-2" />
             <WhiteText className="ml-3 text-sm flex items-center justify-between mx-2 select-none">
                 <span className="text-[13px]">general</span>
                 <MdMeetingRoom />
@@ -52,7 +52,7 @@ export default function () {
                     ))
                 }
             </div>
-            <div className="border-b-[0.5px] border-zinc-600 my-2" />
+            <div className="border-b-[0.5px] border-neutral-600 my-2" />
             <WhiteText className="ml-3 text-sm flex items-center justify-between mx-2 select-none">
                 <span className="text-[13px]">events</span>
                 <MdEvent />
@@ -74,7 +74,7 @@ function Option({ isSelected, onClick, label }: {
     label: string;
 }) {
     return (
-        <div onClick={onClick} className={`${baseDivStyles} ${isSelected ? "bg-zinc-700 text-white" : "hover:bg-zinc-800"}`}>
+        <div onClick={onClick} className={`${baseDivStyles} ${isSelected ? "bg-neutral-700 text-white" : "hover:bg-neutral-800"}`}>
             <span className={`${textStyles}`}>{label}</span>
         </div>
     );

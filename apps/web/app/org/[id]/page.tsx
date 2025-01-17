@@ -55,7 +55,6 @@ export default function OrgPage({ params }: { params: { id: string } }) {
                     },
                 }
             )
-            console.log("response is : ", response.data);
 
             if (response.data.flag === 'ALLOWED') {
                 setFlag('ALLOWED')
