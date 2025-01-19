@@ -102,6 +102,7 @@ model OrganizationUsers {
   role                 UserRole       @default(MEMBER)
   joined_at            DateTime       @default(now())
   CreatedAnnouncements Announcement[]
+  Chats                Chats[]
 
   @@unique([organization_id, user_id])
   @@map("organization_users")
@@ -227,17 +228,20 @@ enum Priority {
 }
 
 model Chats {
-  id         String      @id @default(uuid()) @db.Uuid
-  channel    Channel     @relation(fields: [channel_id], references: [id], onDelete: Cascade)
-  channel_id String      @db.Uuid
-  user       Users       @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id    Int
-  message    String?
-  name       String
-  created_at DateTime    @default(now())
-  LikedUsers LikedUser[]
+  id                String            @id @default(uuid()) @db.Uuid
+  channel           Channel           @relation(fields: [channel_id], references: [id], onDelete: Cascade)
+  channel_id        String            @db.Uuid
+  organization_user OrganizationUsers @relation(fields: [org_user_id], references: [id], onDelete: Cascade)
+  org_user_id       Int
+  message           String?
+  name              String
+  created_at        DateTime          @default(now())
+  LikedUsers        LikedUser[]
+  Users             Users?            @relation(fields: [usersId], references: [id])
+  usersId           Int?
 
   @@index([created_at])
+  @@index([channel_id])
   @@map("chats")
 }
 

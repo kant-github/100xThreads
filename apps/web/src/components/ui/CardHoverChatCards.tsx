@@ -2,16 +2,13 @@
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import DeleteDialogBox from "../utility/DeleteDialogBox";
-import EditDialogBox from "../utility/EditDialogBox";
 import { useRouter } from "next/navigation";
 import { FRONTEND_BASE_URL } from "@/lib/apiAuthRoutes";
-import { OptionsMenu } from "./OptionsMenu";
 import { IoEye } from "react-icons/io5";
 import { IoEyeOff } from "react-icons/io5";
 import { IoIosCopy } from "react-icons/io";
 import { toast } from "sonner";
-import { OrganizationType, UserType } from "types";
+import { OrganizationType } from "types";
 import GroupImage from "./GroupImage";
 
 
@@ -31,7 +28,7 @@ export default function ({ organizations, className }: CardHoverChatCardsProps) 
   return (
     <>
       <div className={cn("flex flex-wrap gap-x-8 justify-center", className)}>
-        
+
         {organizations.map((orgs, idx) => (
           <div
             onDoubleClick={() => {
@@ -62,33 +59,12 @@ export default function ({ organizations, className }: CardHoverChatCardsProps) 
             <Card>
               <div className="flex justify-between items-start">
                 <CardTitle>{orgs.name}</CardTitle>
-                <OptionsMenu
-                  setDeleteDialogBox={setDeleteDialogBox}
-                  setEditDialogBox={setEditDialogBox}
-                  setSelectedItem={setSelectedItem}
-                  orgs={orgs}
-                />
               </div>
-              {/* <CardDescription>{orgs.passcode}</CardDescription> */}
               <CardDate>{orgs.created_at}</CardDate>
             </Card>
           </div>
         ))}
       </div>
-      {deleteDialogBox && selectedItem && (
-        <DeleteDialogBox
-          orgs={selectedItem}
-          deleteDialogBox={deleteDialogBox}
-          setDeleteDialogBox={setDeleteDialogBox}
-        />
-      )}
-      {editDialogBox && selectedItem && (
-        <EditDialogBox
-          orgs={selectedItem}
-          editDialogBox={editDialogBox}
-          setEditDialogBox={setEditDialogBox}
-        />
-      )}
     </>
   );
 }

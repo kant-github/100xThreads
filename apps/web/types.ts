@@ -38,14 +38,15 @@ export type UserType = {
 
 export type MessageType = {
   id: string;
-  group_id: string;
-  user_id: number;
-  message: string;
+  message: string | null;
   name: string;
-  created_at: string;
-  user?: UserType;
+  created_at: Date;
+  channel_id: string;
+  org_user_id: number;
+  organization_user: OrganizationUsersType;
+  channel: ChannelType;
   LikedUsers: LikedUser[];
-};
+}
 
 export type LikedUser = {
   id?: number;

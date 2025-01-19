@@ -26,7 +26,6 @@ export default function ChatInterface({ channel }: OrganizationMessageComponentP
 
     async function loadMoreChats() {
         if (isLoading) return;
-
         setLoading(true);
         try {
             const url = lastCursor
@@ -50,8 +49,25 @@ export default function ChatInterface({ channel }: OrganizationMessageComponentP
         loadMoreChats();
     }, [session.user])
 
+    const handleSendMessage = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!message.trim()) return;
+        const newMessage: MessageType = {
+            id: Date.now().toString(),
+            group_id: channel.id,
+            user_id: Number(session.user?.id) || 0,
+            message: message,
+            name: session.user?.name || "User",
+            created_at: new Date().toISOString(),
+            LikedUsers: []
+        };
+
+        setChats(prevChats => [...prevChats, newMessage]);
+        setMessage("");
+    };
+
     return (
-        <div className="w-full h-full flex flex-col relative px-4"> 
+        <div className="w-full h-full flex flex-col relative px-4">
             {/* Messages container with proper overflow handling */}
             <div className='flex-1 w-full overflow-y-auto'>
                 <div className='flex flex-col space-y-6'>
@@ -63,13 +79,14 @@ export default function ChatInterface({ channel }: OrganizationMessageComponentP
             </div>
 
             {/* Fixed input container at bottom */}
-            <div className='w-full py-4'>
+            <form className='w-full py-4' onSubmit={handleSendMessage}>
                 <ChatMessageInput
                     className="w-full mx-auto"
                     message={message}
                     setMessage={setMessage}
                 />
-            </div>
+                
+            </form>
         </div>
     );
 }

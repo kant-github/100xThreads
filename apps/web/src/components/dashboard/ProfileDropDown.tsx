@@ -3,7 +3,6 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import LogOutDialogBox from "../utility/LogOutDialogBox";
-import MyRooms from "./MyRooms";
 import { ChatGroupType } from "types";
 import { FaGithub } from "react-icons/fa";
 import { IoLogOutOutline } from "react-icons/io5";
@@ -22,7 +21,6 @@ interface props {
 export default function UserMenu({ groups }: props) {
     const [dropDown, setDropDown] = useState<boolean>(false);
     const [logoutDropdown, setLogoutDropDown] = useState<boolean>(false);
-    const [myRoomDropdown, setMyRoomDropDown] = useState<boolean>(false);
     const [accountInfoDropDown, setAccountInfoDropDown] = useState(false);
     const { data: session } = useSession();
     const router = useRouter();
@@ -83,15 +81,6 @@ export default function UserMenu({ groups }: props) {
             {dropDown && (
                 <div className="absolute border-[1px] dark:border-zinc-800 cursor-pointer right-8 mt-2 w-36 font-light dark:bg-[#1c1c1c] bg-white rounded-[4] shadow-lg ring-1 ring-black ring-opacity-5 select-none z-50">
                     <div className="">
-                        <div
-                            onClick={() => {
-                                setDropDown(false);
-                                setMyRoomDropDown(true);
-                            }}
-                            className="px-4 py-2 text-xs font-extralight text-gray-700 dark:hover:bg-[#262629] hover:bg-gray-200 dark:text-gray-200"
-                        >
-                            My rooms
-                        </div>
                         <div className="px-4 py-2 text-xs font-extralight text-gray-700 dark:hover:bg-[#262629] hover:bg-gray-200 dark:text-gray-200">Docs</div>
                         <div onClick={accountInfoHandler} className="px-4 py-2 text-xs font-extralight text-gray-700 dark:hover:bg-[#262629] hover:bg-gray-200 dark:text-gray-200">Accounts Info</div>
                         <div onClick={globalRoomButtonHandler} className="px-4 py-2 text-xs font-extralight text-gray-700 dark:hover:bg-[#262629] hover:bg-gray-200 dark:text-gray-200">Global Room</div>
@@ -114,11 +103,6 @@ export default function UserMenu({ groups }: props) {
                     </div>
                 </div>
             )}
-            <MyRooms
-                myRoomDropdown={myRoomDropdown}
-                setMyRoomDropDown={setMyRoomDropDown}
-                groups={groups!}
-            />
             {logoutDropdown && (
                 <LogOutDialogBox
                     logoutDropdown={logoutDropdown}
