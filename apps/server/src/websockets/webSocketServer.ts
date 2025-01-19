@@ -48,6 +48,7 @@ export class WebSocketserver {
     }
 
     private initialize() {
+
         this.wss.on('connection', (ws: WebSocket, req) => {
             const token = this.extractToken(req);
             const userData = this.authenticateUser(token);
@@ -64,8 +65,8 @@ export class WebSocketserver {
             })
         })
 
-        this.subscriber.on('message', () => {
-            
+        this.subscriber.on('message', (channelKey, message) => {
+            this.handleRedisMessage(channelKey, message);
         })
     }
 
@@ -118,6 +119,19 @@ export class WebSocketserver {
             payload: subscription,
             timestamp: Date.now()
         })
+    }
+
+    private handleRedisMessage(channelKey: string, message: string) {
+        const parsedMessage = JSON.parse(message);
+        const [organizationId] = channelKey.split(':');
+
+        const clients = this.clients.get(organizationId!);
+        if (!clients) return;
+        for (const client of clients) {
+            if (this.userSubscriptions.get(client)?.has(channelKey)) {
+                this.sendToClient(client, parsedMessage);
+            }
+        }
     }
 
     private async handleChannelUnsubscription(ws: WebSocket, subscription: ChannelSubscription) {
