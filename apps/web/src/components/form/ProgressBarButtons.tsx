@@ -41,7 +41,7 @@ export default function ProgressNavigation() {
                 type="button"
                 onClick={handleBack}
                 disabled={currentLevel === 1}
-                className={`px-4 py-2 rounded-md transition-colors ${currentLevel === 1
+                className={`px-4 py-2 rounded-[6px] transition-colors ${currentLevel === 1
                     ? 'bg-zinc-700 cursor-not-allowed'
                     : 'bg-zinc-900 text-white hover:bg-black'
                     }`}
@@ -55,7 +55,7 @@ export default function ProgressNavigation() {
                 <button aria-label="right"
                     type="button"
                     onClick={handleNext}
-                    className="px-4 py-2 rounded-md bg-zinc-900 text-white hover:bg-black transition-colors"
+                    className="px-4 py-2 rounded-[6px] bg-zinc-900 text-white hover:bg-black transition-colors"
                 >
                     <MdChevronRight />
                 </button>

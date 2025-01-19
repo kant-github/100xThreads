@@ -194,7 +194,6 @@ class WebSocketServer {
     }
 
     private handleClientDisconnect(ws: WebSocket) {
-        // Clean up subscriptions
         const subscriptions = this.userSubscriptions.get(ws);
         if (subscriptions) {
             for (const channelKey of subscriptions) {

@@ -17,7 +17,7 @@ interface ChannelSubscription {
 }
 
 
-export class WebSocketserver {
+export default class WebSocketserver {
 
     private wss: WSServer;
     private publisher: Redis;
@@ -50,19 +50,29 @@ export class WebSocketserver {
     private initialize() {
 
         this.wss.on('connection', (ws: WebSocket, req) => {
-            const token = this.extractToken(req);
-            const userData = this.authenticateUser(token);
+            try {
+                const token = this.extractToken(req);
+                const userData = this.authenticateUser(token);
 
-            if (!userData) {
-                ws.close(4001, 'Unauthenticated user');
-                return;
+                if (!userData) {
+                    ws.close(4001, 'Unauthenticated user');
+                    return;
+                }
+
+                this.setupClientTracking(ws, userData);
+
+                ws.on('message', (data: string) => {
+                    this.handleIncomingMessage(ws, data, userData);
+                })
+
+                ws.on('close', () => {
+                    this.handleClientDisconnect(ws);
+                });
+
+            } catch (err) {
+                console.error('Connection error:', err);
+                ws.close(4002, 'Connection setup failed');
             }
-
-            this.setupClientTracking(ws, userData);
-
-            ws.on('message', (data: string) => {
-                this.handleIncomingMessage(ws, data, userData);
-            })
         })
 
         this.subscriber.on('message', (channelKey, message) => {
@@ -135,12 +145,11 @@ export class WebSocketserver {
     }
 
     private async handleChannelUnsubscription(ws: WebSocket, subscription: ChannelSubscription) {
-        const channelKey: string = this.getChannelKey(subscription);
+        const channelKey = this.getChannelKey(subscription);
         this.userSubscriptions.get(ws)!.delete(channelKey);
 
         let hasOtherSubscribers = false;
-
-        for (let subscribers of this.userSubscriptions.values()) {
+        for (const subscribers of this.userSubscriptions.values()) {
             if (subscribers.has(channelKey)) {
                 hasOtherSubscribers = true;
                 break;
@@ -170,6 +179,35 @@ export class WebSocketserver {
 
     private getChannelKey(subscription: ChannelSubscription): string {
         return `${subscription.organizationId}:${subscription.channelId}:${subscription.type}`
+    }
+
+    private parseChannelKey(key: string): ChannelSubscription {
+
+        const [organizationId, channelId, type] = key.split(':');
+
+        if (!organizationId || !channelId || !type) {
+            throw new Error('Invalid channel key format');
+        }
+
+        return {
+            organizationId,
+            channelId,
+            type: type as any
+        };
+    }
+
+    private handleClientDisconnect(ws: WebSocket) {
+        const subscriptions = this.userSubscriptions.get(ws);
+        if (subscriptions) {
+            for (const channelKey of subscriptions) {
+                this.handleChannelUnsubscription(ws, this.parseChannelKey(channelKey));
+            }
+        }
+
+        this.userSubscriptions.delete(ws);
+        for (const clients of this.clients.values()) {
+            clients.delete(ws);
+        }
     }
 
     private sendToClient(ws: WebSocket, message: WebSocketMessage) {
