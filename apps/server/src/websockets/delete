@@ -51,6 +51,7 @@ class WebSocketServer {
     }
 
     private initialize() {
+        
         this.wss.on('connection', async (ws: WebSocket, req) => {
             try {
                 // Authenticate user and get organization access

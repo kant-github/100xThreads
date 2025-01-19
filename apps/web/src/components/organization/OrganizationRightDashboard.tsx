@@ -13,7 +13,7 @@ export default function () {
     return (
         <div className="w-[30%] px-4 pt-4 bg-white dark:bg-[#171717] border-b-[1px] md:border-b-0 md:border-l-[1px] dark:border-zinc-800">
             <ProfileOption />
-            <div className="flex flex-row sm:flex-col justify-around sm:justify-start sm:mt-3 gap-x-1 py-1 rounded-[8px] bg-neutral-800">
+            <div className="flex flex-row sm:flex-col justify-around sm:justify-start sm:mt-3 gap-x-1 py-1 rounded-[14px] bg-neutral-800">
                 {
                     organizationUsers.map((user) => (
                         <Option user={user.user} />
