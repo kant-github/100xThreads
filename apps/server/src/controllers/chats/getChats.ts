@@ -26,31 +26,78 @@ export default async function getChats(req: Request, res: Response) {
     try {
         const chats = await prisma.chats.findMany({
             where: {
-                channel: {
-                    organization_id: organizationId
-                },
-                channel_id: channelId
+                AND: [
+                    {
+                        channel: {
+                            organization_id: organizationId
+                        }
+                    },
+                    {
+                        channel_id: channelId
+                    }
+                ]
             },
             take: page_size + 1,
-            ...(cursor && {
+            ...(cursor ? {
                 cursor: {
                     id: cursor.toString()
                 },
                 skip: 1
-            }),
+            } : {}),
             orderBy: {
                 created_at: 'desc'
             },
             include: {
-
-                user: {
+                organization_user: {
                     select: {
                         id: true,
-                        name: true,
+                        role: true,
+                        user: {
+                            select: {
+                                id: true,
+                                name: true,
+                                email: true,
+                                image: true,
+                                bio: true,
+                                isOnline: true,
+                                lastSeen: true
+                            }
+                        }
+                    }
+                },
+                channel: {
+                    select: {
+                        id: true,
+                        title: true,
+                        type: true,
+                        description: true,
+                        is_archived: true,
+                        allowed_roles: true,
+                        organization: {
+                            select: {
+                                id: true,
+                                name: true,
+                                image: true,
+                                organizationColor: true,
+                                organization_type: true
+                            }
+                        }
+                    }
+                },
+                LikedUsers: {
+                    include: {
+                        user: {
+                            select: {
+                                id: true,
+                                name: true,
+                                image: true
+                            }
+                        }
                     }
                 }
             }
-        })
+        });
+
 
         const hasMore = chats.length > page_size;
         if (hasMore) {

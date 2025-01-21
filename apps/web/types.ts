@@ -43,8 +43,8 @@ export type MessageType = {
   created_at: Date;
   channel_id: string;
   org_user_id: number;
-  organization_user: OrganizationUsersType;
-  channel: ChannelType;
+  organization_user?: OrganizationUsersType;
+  channel?: ChannelType;
   LikedUsers: LikedUser[];
 }
 

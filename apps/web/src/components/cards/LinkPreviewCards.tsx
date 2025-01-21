@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { LinkPreviewType, PreviewProps, MessageContentProps, MessagesProps } from '@/types';
+
+export interface LinkPreviewType {
+    title: string;
+    description: string;
+    image: string;
+    url: string;
+}
 
 const extractUrls = (text: string): string[] => {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     return text.match(urlRegex) || [];
 };
 
-const LinkPreview: React.FC<PreviewProps> = ({ url }) => {
+export default function ({ url }: { url: string }) {
     const [preview, setPreview] = useState<LinkPreviewType | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
@@ -19,7 +25,6 @@ const LinkPreview: React.FC<PreviewProps> = ({ url }) => {
                 const response = await fetch(`/api/link-preview?url=${encodeURIComponent(url)}`);
                 if (!response.ok) throw new Error('Failed to fetch preview');
                 const data: LinkPreviewType = await response.json();
-                console.log("metadata feched finally is : ", data);
                 setPreview(data);
             } catch (err) {
                 setError(err instanceof Error ? err : new Error('Unknown error'));
@@ -27,7 +32,7 @@ const LinkPreview: React.FC<PreviewProps> = ({ url }) => {
                 setLoading(false);
             }
         };
-        console.log("hi");
+
         fetchPreview();
     }, [url]);
 
@@ -75,38 +80,3 @@ const LinkPreview: React.FC<PreviewProps> = ({ url }) => {
         </a>
     );
 };
-
-const MessageContent: React.FC<MessageContentProps> = ({ message }) => {
-    const urls = extractUrls(message.message);
-    console.log("urls are : ", urls);
-    const messageText = message.message;
-
-    return (
-        <div className="flex-shrink-0 space-y-2">
-            <p className="text-[13px] whitespace-pre-wrap break-words">
-                {messageText}
-            </p>
-            {urls.map((url, index) => (
-                <LinkPreview key={`${url}-${index}`} url={url} />
-            ))}
-        </div>
-    );
-};
-
-const Messages: React.FC<MessagesProps> = ({ message, chatUser }) => {
-    return (
-        <div key={message.id} className="flex gap-x-2">
-            <div className="flex-shrink-0 gap-x-1">
-                <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium">
-                    {message.name[0]}
-                </div>
-            </div>
-            <div className="flex flex-col max-w-[70%]">
-                <span className="text-sm font-semibold">{message.name}</span>
-                <MessageContent message={message} />
-            </div>
-        </div>
-    );
-};
-
-export default Messages;

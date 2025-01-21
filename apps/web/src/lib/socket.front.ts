@@ -12,7 +12,6 @@ export class WebSocketClient {
     private reconnectTimeout = 1000;
 
     private MessageHandlers: Map<string, ((payload: any) => void)[]> = new Map();
-    private statusHandlers: ((status: WebSocketStatus) => void)[] = [];
 
 
     constructor(private URL: string) {

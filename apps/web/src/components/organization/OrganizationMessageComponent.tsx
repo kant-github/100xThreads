@@ -1,91 +1,57 @@
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import { ChannelType, MessageType } from "types";
 import Messages from '../chat/messages/Messages';
 import ChatMessageInput from '../chat/ChatMessageInput';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { generalChatsAtom } from '@/recoil/atoms/chats/generalChatsAtom';
+import { useRecoilValue } from 'recoil';
 import { userSessionAtom } from '@/recoil/atoms/atom';
 import { organizationAtom } from '@/recoil/atoms/organizationAtoms/organizationAtom';
-import axios from 'axios';
-import { API_URL, BASE_URL } from '@/lib/apiAuthRoutes';
 
 interface OrganizationMessageComponentProps {
-    channel: ChannelType
+    channel: ChannelType;
+    initialChats: MessageType[]
 }
 
 
-export default function ChatInterface({ channel }: OrganizationMessageComponentProps) {
-    const [loading, setLoading] = useState<boolean>(false);
-    const [chats, setChats] = useRecoilState(generalChatsAtom);
+export default function ChatInterface({ channel, initialChats }: OrganizationMessageComponentProps) {
+    const [messages, setMessages] = useState<MessageType[]>(initialChats);
     const session = useRecoilValue(userSessionAtom);
     const [message, setMessage] = useState<string>("");
     const organization = useRecoilValue(organizationAtom);
     const channelId = channel.id;
-    let lastCursor: string | null = null;
-    let isLoading = false;
-
-    async function loadMoreChats() {
-        if (isLoading) return;
-        setLoading(true);
-        try {
-            const url = lastCursor
-                ? `${API_URL}/organizations/${organization?.id}/channels/${channelId}/chats?cursor=${lastCursor}&pageSize=50`
-                : `${API_URL}/organizations/${organization?.id}/channels/${channelId}/chats?pageSize=50`;
-
-            const { data } = await axios.get(url, {
-                headers: {
-                    authorization: `Bearer ${session.user?.token}`,
-                }
-            })
-            console.log("data is : ", data.hasMore);
-
-            setChats(prevChats => [...prevChats, ...data.data]);
-        } finally {
-            isLoading = false;
-        }
-    }
-
-    useEffect(() => {
-        loadMoreChats();
-    }, [session.user])
 
     const handleSendMessage = (e: React.FormEvent) => {
         e.preventDefault();
         if (!message.trim()) return;
         const newMessage: MessageType = {
             id: Date.now().toString(),
-            group_id: channel.id,
-            user_id: Number(session.user?.id) || 0,
+            channel_id: channel.id,
+            org_user_id: Number(session.user?.id) || 0,
             message: message,
             name: session.user?.name || "User",
-            created_at: new Date().toISOString(),
+            created_at: new Date(Date.now()),
             LikedUsers: []
         };
 
-        setChats(prevChats => [...prevChats, newMessage]);
+        setMessages(prevChats => [...prevChats, newMessage]);
         setMessage("");
     };
 
     return (
         <div className="w-full h-full flex flex-col relative px-4">
-            {/* Messages container with proper overflow handling */}
             <div className='flex-1 w-full overflow-y-auto'>
                 <div className='flex flex-col space-y-6'>
-                    {chats.map((message) => (
+                    {messages.map((message) => (
                         <Messages message={message} />
                     ))}
                 </div>
 
             </div>
-
-            {/* Fixed input container at bottom */}
             <form className='w-full py-4' onSubmit={handleSendMessage}>
                 <ChatMessageInput
                     className="w-full mx-auto"
                     message={message}
                     setMessage={setMessage}
-                />
-                
+                />               
             </form>
         </div>
     );

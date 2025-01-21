@@ -1,12 +1,9 @@
 import { createServer } from "http";
 import express from "express";
-import { WebSocketServer } from "ws";
 import cors from "cors";
 import fileUpload from "express-fileupload";
-
-
-// import { setupWebSocket } from "./socket";
 import Routes from "./routes";
+import WebSocketServerManager from "./websockets/webSocketServer";
 
 const app = express();
 
@@ -19,16 +16,10 @@ app.use(
     tempFileDir: '/tmp',
   })
 );
-
-
 const PORT = process.env.PORT || 7001;
 const server = createServer(app);
+const wsManager = new WebSocketServerManager(server);
 
-
-const wss = new WebSocketServer({ server });
-
-
-// setupWebSocket(wss);
 
 app.get("/health-check", (req, res) => {
   res.send("Server started");

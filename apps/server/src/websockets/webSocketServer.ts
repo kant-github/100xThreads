@@ -16,8 +16,7 @@ interface ChannelSubscription {
     type: 'messages'
 }
 
-
-export default class WebSocketserver {
+export default class WebSocketServerManager {
 
     private wss: WSServer;
     private publisher: Redis;
@@ -25,8 +24,7 @@ export default class WebSocketserver {
     private clients: Map<String, Set<WebSocket>> = new Map();
     private userSubscriptions: Map<WebSocket, Set<string>> = new Map();
 
-    constructor() {
-        const server = createServer();
+    constructor(server: ReturnType<typeof createServer>) {
         this.wss = new WSServer({ server });
 
         // redis publisher initialization
@@ -42,9 +40,6 @@ export default class WebSocketserver {
         })
 
         this.initialize();
-        server.listen(7001, () => {
-            console.log(`App is listening at : ${7001}`)
-        });
     }
 
     private initialize() {
