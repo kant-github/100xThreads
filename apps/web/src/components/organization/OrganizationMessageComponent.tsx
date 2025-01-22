@@ -1,10 +1,11 @@
-import React, {  useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ChannelType, MessageType } from "types";
 import Messages from '../chat/messages/Messages';
 import ChatMessageInput from '../chat/ChatMessageInput';
 import { useRecoilValue } from 'recoil';
 import { userSessionAtom } from '@/recoil/atoms/atom';
 import { organizationAtom } from '@/recoil/atoms/organizationAtoms/organizationAtom';
+import { useWebSocket } from '@/hooks/useWebsocket';
 
 interface OrganizationMessageComponentProps {
     channel: ChannelType;
@@ -17,7 +18,25 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
     const session = useRecoilValue(userSessionAtom);
     const [message, setMessage] = useState<string>("");
     const organization = useRecoilValue(organizationAtom);
-    const channelId = channel.id;
+
+    const { subscribeToChannel, unsubscribeChannel, sendMessage } = useWebSocket(
+        (newMessage: MessageType) => {
+            console.log("message came :)");
+            setMessages(prevChats => [...prevChats, newMessage]);
+        }
+    )
+
+    useEffect(() => {
+        if (channel.id && organization?.id) {
+            console.log("sending subscribe message");
+            subscribeToChannel(channel.id, organization.id);
+            return () => {
+                console.log("sending unsubscribe message");
+                unsubscribeChannel(channel.id, organization.id);
+            }
+        }
+    }, [channel.id, organization?.id])
+
 
     const handleSendMessage = (e: React.FormEvent) => {
         e.preventDefault();
@@ -31,7 +50,7 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
             created_at: new Date(Date.now()),
             LikedUsers: []
         };
-
+        sendMessage(newMessage, channel.id)
         setMessages(prevChats => [...prevChats, newMessage]);
         setMessage("");
     };
@@ -41,7 +60,7 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
             <div className='flex-1 w-full overflow-y-auto'>
                 <div className='flex flex-col space-y-6'>
                     {messages.map((message) => (
-                        <Messages message={message} />
+                        <Messages key={message.id} message={message} />
                     ))}
                 </div>
 
@@ -51,7 +70,7 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
                     className="w-full mx-auto"
                     message={message}
                     setMessage={setMessage}
-                />               
+                />
             </form>
         </div>
     );

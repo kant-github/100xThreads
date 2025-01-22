@@ -78,7 +78,6 @@ const LinkPreview: React.FC<PreviewProps> = ({ url }) => {
 
 const MessageContent: React.FC<MessageContentProps> = ({ message }) => {
     const urls = extractUrls(message.message);
-    console.log("urls are : ", urls);
     const messageText = message.message;
 
     return (
