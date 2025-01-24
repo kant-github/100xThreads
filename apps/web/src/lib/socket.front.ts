@@ -66,7 +66,7 @@ export class WebSocketClient {
         }, timeout);
     }
 
-    public handleMessage(message: WebSocketMessage) {
+    public handleMessage(message: any) {
         const handlers = this.MessageHandlers.get(message.type) || [];
         handlers.forEach(handler => {
             try {

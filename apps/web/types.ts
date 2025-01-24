@@ -74,13 +74,13 @@ export type OrganizationType = {
 };
 
 export type OrganizationUsersType = {
-  id: number;
-  organization: OrganizationType
+  id?: number;
+  organization?: OrganizationType
   organization_id: string
   user: UserType
   user_id: number
   role: UserRole
-  joined_at: Date
+  joined_at?: Date
 }
 
 // Interface for Announcement

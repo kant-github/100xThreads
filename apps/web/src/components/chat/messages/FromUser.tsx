@@ -21,33 +21,11 @@ export default function Message({ msg, chatUser }: Props) {
     addSuffix: true,
   });
 
-  useEffect(() => {
-    setLikeCount(msg.LikedUsers.length);
-  }, [msg.LikedUsers.length])
-
-  const likeHandler = () => {
-    if (!chatUser) return;
-
-    const currentUserLiked = msg.LikedUsers.some((user) => user.user_id === chatUser.id);
-
-    if (currentUserLiked) {
-      sendUnlikeEvent(msg.id, chatUser.id, chatUser.name);
-      msg.LikedUsers = msg.LikedUsers.filter((user) => user.user_id !== chatUser.id);
-      setLikeCount((prev) => Math.max(0, prev - 1));
-      setLike(false);
-    } else {
-      sendLikeEvent(msg.id, chatUser.id, chatUser.name);
-      msg.LikedUsers.push({ user_id: chatUser.id, username: chatUser.name, message_id: msg.id });
-      setLikeCount((prev) => prev + 1);
-      setLike(true);
-    }
-  };
 
   return (
     <div className="flex items-start gap-2 max-w-sm self-end mb-4">
       <div className="flex items-end gap-x-2">
         <div
-          onDoubleClick={likeHandler}
           className="relative text-sm font-light bg-gradient-to-r from-zinc-900 to-black text-white rounded-bl-[9px] rounded-tl-[9px] rounded-tr-[9px] py-1.5 px-4 select-none cursor-pointer"
         >
           {likeCount > 0 &&
@@ -56,10 +34,7 @@ export default function Message({ msg, chatUser }: Props) {
               {<span className="text-red-500 text-[10px]">{likeCount}</span>}
             </div>
           }
-          <div className="absolute bottom-1 left-1">
-            <MessageOptionsMenu like={like} setLike={setLike} likeHandler={likeHandler} msg={msg} isOpen={messageOptionDialogbox} setIsOpen={setMessageOptionDialogbox}
-            />
-          </div>
+
           <div className="ml-2">
             <span className="text-green-600 flex justify-end text-xs font-medium">
               You

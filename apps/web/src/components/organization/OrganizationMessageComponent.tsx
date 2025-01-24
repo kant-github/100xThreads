@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { ChannelType, MessageType } from "types";
+import React, { useEffect, useRef, useState } from 'react';
+import { ChannelType, MessageType, UserRole, UserType } from "types";
 import Messages from '../chat/messages/Messages';
 import ChatMessageInput from '../chat/ChatMessageInput';
 import { useRecoilValue } from 'recoil';
@@ -18,20 +18,26 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
     const session = useRecoilValue(userSessionAtom);
     const [message, setMessage] = useState<string>("");
     const organization = useRecoilValue(organizationAtom);
+    const messagesEndRef = useRef<HTMLDivElement | null>(null);
+    function scrollToBottom() {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+    const { subscribeToChannel, unsubscribeChannel, sendMessage } = useWebSocket();
 
-    const { subscribeToChannel, unsubscribeChannel, sendMessage } = useWebSocket(
-        (newMessage: MessageType) => {
-            console.log("message came :)");
-            setMessages(prevChats => [...prevChats, newMessage]);
-        }
-    )
+    function handleIncomingMessage(newMessage: MessageType) {
+        setMessages(prev => [...prev, newMessage]);
+    }
+
 
     useEffect(() => {
         if (channel.id && organization?.id) {
-            console.log("sending subscribe message");
-            subscribeToChannel(channel.id, organization.id, 'insert-general-channel-message');
+            const unsubscribe = subscribeToChannel(channel.id, organization.id, 'insert-general-channel-message', handleIncomingMessage);
+
             return () => {
-                console.log("sending unsubscribe message");
+                unsubscribe();
                 unsubscribeChannel(channel.id, organization.id, 'insert-general-channel-message');
             }
         }
@@ -45,6 +51,12 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
             id: Date.now().toString(),
             channel_id: channel.id,
             org_user_id: Number(session.user?.id) || 0,
+            organization_user: {
+                organization_id: organization?.id!,
+                role: UserRole.MEMBER,
+                user: session.user as any,
+                user_id: Number(session.user?.id) || 0,
+            },
             message: message,
             name: session.user?.name || "User",
             created_at: new Date(Date.now()),
@@ -57,13 +69,13 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
 
     return (
         <div className="w-full h-full flex flex-col relative px-4">
-            <div className='flex-1 w-full overflow-y-auto'>
+            <div className='flex-1 w-full overflow-y-auto scrollbar-hide'>
                 <div className='flex flex-col space-y-6'>
                     {messages.map((message) => (
                         <Messages key={message.id} message={message} />
                     ))}
                 </div>
-
+                <div ref={messagesEndRef} />
             </div>
             <form className='w-full py-4' onSubmit={handleSendMessage}>
                 <ChatMessageInput
