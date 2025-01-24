@@ -5,7 +5,8 @@ const nextConfig = {
       "res.cloudinary.com",
       "lh3.googleusercontent.com",
       "picsum.photos",
-      "images.unsplash.com"  // Changed from "images.unsplash" to "images.unsplash.com"
+      "images.unsplash.com",
+      "aceternity.com"
     ],
   },
   reactStrictMode: false,

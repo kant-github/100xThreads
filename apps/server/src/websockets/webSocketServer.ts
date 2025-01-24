@@ -2,23 +2,26 @@ import { createServer } from "http";
 import { WebSocket, WebSocketServer as WSServer } from "ws";
 import { parse as parseUrl } from 'url';
 import Redis from "ioredis";
+import WebSocketDatabaseManager from "./WebSocketDatabaseManager";
+import prisma from "@repo/db/client";
 
-interface WebSocketMessage {
+export interface WebSocketMessage {
     type: string;
     payload: any;
     timestamp: number;
     senderId?: string;
 }
 
-interface ChannelSubscription {
+export interface ChannelSubscription {
     channelId: string;
     organizationId: string;
-    type: 'messages'
+    type: string;
 }
 
 export default class WebSocketServerManager {
 
     private wss: WSServer;
+    private databaseManager: WebSocketDatabaseManager;
     private publisher: Redis;
     private subscriber: Redis;
     private clients: Map<String, Set<WebSocket>> = new Map();
@@ -27,18 +30,17 @@ export default class WebSocketServerManager {
     constructor(server: ReturnType<typeof createServer>) {
         this.wss = new WSServer({ server });
 
-        // redis publisher initialization
         this.publisher = new Redis({
             port: 6379,
             host: 'localhost'
         })
 
-        // redis subscriber initialization
         this.subscriber = new Redis({
             port: 6379,
             host: 'localhost'
         })
 
+        this.databaseManager = new WebSocketDatabaseManager(prisma, this.publisher);
         this.initialize();
     }
 
@@ -74,6 +76,8 @@ export default class WebSocketServerManager {
             this.handleRedisMessage(channelKey, message);
         })
     }
+
+
     private setupClientTracking(ws: WebSocket, userData: any) {
         const organizationId = userData.organizationId
 
@@ -86,29 +90,6 @@ export default class WebSocketServerManager {
         this.userSubscriptions.set(ws, new Set());
     }
 
-    private extractToken(req: any) {
-        const url = parseUrl(req.url!, true);
-        const token = url.query.token;
-        return token as string;
-    }
-
-    private async authenticateUser(token: string) {
-        try {
-            // Decode the base64 token
-            const decodedString = Buffer.from(token, 'base64').toString();
-            const userData = JSON.parse(decodedString);
-
-            // Validate the required fields are present
-            if (!userData.userId || !userData.organizationId) {
-                throw new Error('Invalid token structure');
-            }
-
-            return userData;
-        } catch (err) {
-            console.error('Authentication error:', err);
-            return null;
-        }
-    }
 
     private async handleIncomingMessage(ws: WebSocket, data: string, userData: any) {
         const message: WebSocketMessage = JSON.parse(data);
@@ -121,12 +102,17 @@ export default class WebSocketServerManager {
                 await this.handleChannelUnsubscription(ws, message.payload);
                 break;
             default:
-                this.publishToredis(message, userData);
+                try {
+                    await this.databaseManager.handleIncomingMessage(message, userData);
+                } catch (error) {
+                    console.error('Message processing error:', error);
+                }
         }
     }
 
     private async handleChannelSubscription(ws: WebSocket, subscription: ChannelSubscription) {
         const channelKey: string = this.getChannelKey(subscription);
+        console.log("channelkey is : ", channelKey);
         this.userSubscriptions.get(ws)!.add(channelKey);
         await this.subscriber.subscribe(channelKey);
 
@@ -148,9 +134,7 @@ export default class WebSocketServerManager {
         for (const client of clients) {
             if (this.userSubscriptions.get(client)?.has(channelKey)) {
                 const clientData = (client as any).userData;
-                console.log("client data is : ", clientData);
                 if (clientData && clientData.userId !== parsedMessage.userId) {
-                    console.log("client data is : ", clientData)
                     this.sendToClient(client, parsedMessage);
                 }
             }
@@ -226,4 +210,30 @@ export default class WebSocketServerManager {
             ws.send(JSON.stringify(message))
         }
     }
+
+    private async authenticateUser(token: string) {
+        try {
+            // Decode the base64 token
+            const decodedString = Buffer.from(token, 'base64').toString();
+            const userData = JSON.parse(decodedString);
+
+            // Validate the required fields are present
+            if (!userData.userId || !userData.organizationId) {
+                throw new Error('Invalid token structure');
+            }
+
+            return userData;
+        } catch (err) {
+            console.error('Authentication error:', err);
+            return null;
+        }
+    }
+
+
+    private extractToken(req: any) {
+        const url = parseUrl(req.url!, true);
+        const token = url.query.token;
+        return token as string;
+    }
+
 }

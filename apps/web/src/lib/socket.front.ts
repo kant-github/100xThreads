@@ -13,9 +13,7 @@ export class WebSocketClient {
 
     private connect() {
         try {
-            console.log("connecting started");
             this.ws = new WebSocket(this.URL);
-            console.log("ws is : ", this.ws);
 
             this.ws.onopen = () => {
                 console.log("connection onopen");
@@ -23,7 +21,6 @@ export class WebSocketClient {
                 this.reconnectAttempts = 0;
                 this.reconnectTimeout = 1000;
 
-                // Process any queued messages
                 while (this.messageQueue.length > 0) {
                     const { type, payload } = this.messageQueue.shift()!;
                     this.send(type, payload);

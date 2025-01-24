@@ -29,10 +29,10 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
     useEffect(() => {
         if (channel.id && organization?.id) {
             console.log("sending subscribe message");
-            subscribeToChannel(channel.id, organization.id);
+            subscribeToChannel(channel.id, organization.id, 'insert-general-channel-message');
             return () => {
                 console.log("sending unsubscribe message");
-                unsubscribeChannel(channel.id, organization.id);
+                unsubscribeChannel(channel.id, organization.id, 'insert-general-channel-message');
             }
         }
     }, [channel.id, organization?.id])
@@ -50,7 +50,7 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
             created_at: new Date(Date.now()),
             LikedUsers: []
         };
-        sendMessage(newMessage, channel.id)
+        sendMessage(newMessage, channel.id, 'insert-general-channel-message')
         setMessages(prevChats => [...prevChats, newMessage]);
         setMessage("");
     };

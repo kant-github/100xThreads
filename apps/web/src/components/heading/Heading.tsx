@@ -7,6 +7,6 @@ const poppins = Poppins({
 
 export default function ({children}: {children: React.ReactNode}) {
     return (
-        <div className={`${poppins.className} text-3xl w-full`}>{children}</div>
+        <div className={`${poppins.className} text-5xl w-full`}>{children}</div>
     )
 }

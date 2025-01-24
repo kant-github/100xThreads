@@ -1,7 +1,6 @@
 import { WebSocketClient } from "@/lib/socket.front";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
-import jwt from 'jsonwebtoken'
 import { useEffect, useRef } from "react"
 import { useRecoilValue } from "recoil";
 import { MessageType } from "types"
@@ -24,33 +23,39 @@ export const useWebSocket = (
         const ws = new WebSocketClient(
             `ws://localhost:7001?token=${wsToken}`
         )
-        webSocketRef.current = ws
+
+        const unsubscribe = ws.subscribe('message', onMessageReceived);
+        webSocketRef.current = ws;
+
+        return () => {
+            unsubscribe();
+        };
 
     }, [session.user?.token])
 
-    function subscribeToChannel(channelId: string, organizationId: string) {
+    function subscribeToChannel(channelId: string, organizationId: string, type: string) {
         if (!webSocketRef.current) return;
         webSocketRef.current.send('subscribe-channel', {
             channelId,
             organizationId,
-            type: 'message'
+            type
         })
     }
 
-    function unsubscribeChannel(channelId: string, organizationId: string) {
+    function unsubscribeChannel(channelId: string, organizationId: string, type: string) {
         if (!webSocketRef.current) return;
         webSocketRef.current.send('unsubscribe-channel', {
             channelId,
             organizationId,
-            type: 'message'
+            type
         })
     }
 
-    function sendMessage(payload: any, channelId: string) {
+    function sendMessage(payload: any, channelId: string, type: string) {
         if (!webSocketRef.current) return;
-        webSocketRef.current.send('message', {
+        webSocketRef.current.send(type, {
             channelId,
-            type: 'message',
+            type,
             ...payload
         })
     }

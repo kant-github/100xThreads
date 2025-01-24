@@ -98,13 +98,13 @@ model OrganizationUsers {
   organization         Organization   @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   organization_id      String         @db.Uuid
   user                 Users          @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id              Int
+  user_id              Int            @unique
   role                 UserRole       @default(MEMBER)
   joined_at            DateTime       @default(now())
   CreatedAnnouncements Announcement[]
   Chats                Chats[]
 
-  @@unique([organization_id, user_id])
+  @@unique([organization_id, user_id]) // Add this unique constraint
   @@map("organization_users")
 }
 
@@ -231,7 +231,7 @@ model Chats {
   id                String            @id @default(uuid()) @db.Uuid
   channel           Channel           @relation(fields: [channel_id], references: [id], onDelete: Cascade)
   channel_id        String            @db.Uuid
-  organization_user OrganizationUsers @relation(fields: [org_user_id], references: [id], onDelete: Cascade)
+  organization_user OrganizationUsers @relation(fields: [org_user_id], references: [user_id], onDelete: Cascade)
   org_user_id       Int
   message           String?
   name              String
