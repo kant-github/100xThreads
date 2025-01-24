@@ -22,7 +22,6 @@ export default async function getChats(req: Request, res: Response) {
         return;
     }
 
-
     try {
         const chats = await prisma.chats.findMany({
             where: {
@@ -45,7 +44,7 @@ export default async function getChats(req: Request, res: Response) {
                 skip: 1
             } : {}),
             orderBy: {
-                created_at: 'desc'
+                created_at: 'asc'
             },
             include: {
                 organization_user: {
@@ -98,6 +97,7 @@ export default async function getChats(req: Request, res: Response) {
             }
         });
 
+        console.log("chats are : ", chats);
 
         const hasMore = chats.length > page_size;
         if (hasMore) {

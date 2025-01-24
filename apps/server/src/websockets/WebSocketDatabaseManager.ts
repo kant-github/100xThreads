@@ -33,14 +33,13 @@ export default class WebSocketDatabaseManager {
             organizationId: userData.organizationId
         });
 
-        const orgUser = await this.prisma.organizationUsers.findUnique({
+        await this.prisma.organizationUsers.findUnique({
             where: {
-              id: 1,
-              organization_id: '8c73db2c-b25f-4e6c-831c-653804c7b077'
+                id: 1,
+                organization_id: '8c73db2c-b25f-4e6c-831c-653804c7b077'
             }
-          });
-          
-          console.log('Org User:', orgUser);
+        });
+
 
         const chat = await this.prisma.chats.create({
             data: {
