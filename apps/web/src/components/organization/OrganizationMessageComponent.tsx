@@ -119,7 +119,7 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
     }
 
     return (
-        <div className="w-full h-full flex flex-col relative px-4">
+        <div className="w-full h-full flex flex-col relative px-4 py-2">
             <div className='flex-1 w-full overflow-y-auto scrollbar-hide'>
                 <div className='flex flex-col space-y-5 w-full'>
                     <EmptyConversation className="mt-4 w-full" show={messages.length === 0} />
@@ -127,7 +127,7 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
                     <div ref={messagesEndRef} />
                 </div>
             </div>
-            <form className='w-full py-4' onSubmit={handleSendMessage}>
+            <form className='w-full pt-4 pb-1' onSubmit={handleSendMessage}>
                 <ChatMessageInput
                     className="w-full mx-auto"
                     message={message}
