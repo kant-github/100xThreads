@@ -93,7 +93,9 @@ export default class WebSocketServerManager {
 
     private async handleIncomingMessage(ws: WebSocket, data: string, userData: any) {
         const message: WebSocketMessage = JSON.parse(data);
-
+        if (message.type === 'typing-event') {
+            console.log(message);
+        }
         switch (message.type) {
             case 'subscribe-channel':
                 await this.handleChannelSubscription(ws, message.payload);
@@ -112,7 +114,7 @@ export default class WebSocketServerManager {
 
     private async handleChannelSubscription(ws: WebSocket, subscription: ChannelSubscription) {
         const channelKey: string = this.getChannelKey(subscription);
-        console.log("channelkey is : ", channelKey);
+        console.log("channel key is : ", channelKey);
         this.userSubscriptions.get(ws)!.add(channelKey);
         await this.subscriber.subscribe(channelKey);
 

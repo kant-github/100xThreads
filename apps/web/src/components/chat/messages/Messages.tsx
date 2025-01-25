@@ -6,6 +6,7 @@ import { userSessionAtom } from '@/recoil/atoms/atom';
 import { MdEmojiEmotions } from "react-icons/md";
 import { useState } from "react";
 import EmojiPicker from 'emoji-picker-react';
+import { MouseDownEvent } from "emoji-picker-react/dist/config/config";
 
 interface ReactionPayload {
     message_id: string;
@@ -37,10 +38,11 @@ export default function Message({ message }: MessagesProps) {
         setShowEmojiPicker(!showEmojiPicker);
     };
 
-    const onEmojiClick = (emoji) => {
+    const onEmojiClick = (emoji: MouseDownEvent) => {
         console.log(emoji);
         setShowEmojiPicker(false);
     };
+
     return (
         <div className={`flex gap-x-2 relative group ${isCurrentUser ? 'flex-row-reverse' : 'flex-row'} w-full`}>
             <div className="flex-shrink-0 gap-x-1">

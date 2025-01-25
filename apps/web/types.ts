@@ -41,7 +41,7 @@ export type MessageType = {
   message: string | null;
   name: string;
   created_at: Date;
-  channel_id: string;
+  channel_id?: string;
   org_user_id: number;
   organization_user?: OrganizationUsersType;
   channel?: ChannelType;

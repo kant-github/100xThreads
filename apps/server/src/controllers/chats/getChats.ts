@@ -97,7 +97,7 @@ export default async function getChats(req: Request, res: Response) {
             }
         });
 
-        console.log("chats are : ", chats[0].);
+
 
         const hasMore = chats.length > page_size;
         if (hasMore) {
