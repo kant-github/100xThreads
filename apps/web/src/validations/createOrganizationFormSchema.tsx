@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { presetColors } from "@/components/form/FirstComponent";
-import crypto from 'crypto-js';
 
 
 const passwordValidation = z.string()

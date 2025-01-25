@@ -9,6 +9,7 @@ import { userSessionAtom } from '@/recoil/atoms/atom';
 import { organizationAtom } from '@/recoil/atoms/organizationAtoms/organizationAtom';
 import axios from 'axios';
 import { API_URL } from '@/lib/apiAuthRoutes';
+import ChatSkeleton from '@/components/skeletons/ChatSkeleton';
 
 interface WelcomeChannelViewProps {
     channel: ChannelType;
@@ -24,6 +25,7 @@ export default function WelcomeChannelView({ channel }: WelcomeChannelViewProps)
     useEffect(() => {
         const fetchInitialChats = async () => {
             setLoading(true);
+            await new Promise(t => setTimeout(t, 1000));
             try {
                 const url = lastCursor ? `${API_URL}/organizations/${organization?.id}/channels/${channel.id}/chats?cursor=${lastCursor}&pageSize=50` : `${API_URL}/organizations/${organization?.id}/channels/${channel.id}/chats?pageSize=50`;
                 const { data } = await axios.get(url,
@@ -55,8 +57,8 @@ export default function WelcomeChannelView({ channel }: WelcomeChannelViewProps)
             </DashboardComponentHeading>
             <UtilityCard className="w-full flex-grow mt-4 overflow-hidden">
                 {loading ? (
-                    <div className="p-4 space-y-4">
-                        loading
+                    <div className="space-y-4 h-full">
+                        <ChatSkeleton />
                     </div>
                 ) : (
                     <OrganizationMessageComponent

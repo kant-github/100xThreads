@@ -30,6 +30,7 @@ model Users {
   JoinRequests         OrganizationJoinRequest[]
   CreatedInvites       OrganizationInvite[]      @relation("InviteCreator")
   UsedInvites          OrganizationInvite[]      @relation("InviteUser")
+  ChatReaction         ChatReaction[]
 
   @@map("users")
 }
@@ -239,10 +240,22 @@ model Chats {
   LikedUsers        LikedUser[]
   Users             Users?            @relation(fields: [usersId], references: [id])
   usersId           Int?
+  ChatReaction      ChatReaction[]
 
   @@index([created_at])
   @@index([channel_id])
   @@map("chats")
+}
+
+model ChatReaction {
+  id         String   @id @default(uuid()) @db.Uuid
+  chat       Chats    @relation(fields: [chat_id], references: [id], onDelete: Cascade)
+  chat_id    String   @db.Uuid
+  emoji      String
+  count      Int      @default(1)
+  Users      Users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id    Int
+  created_at DateTime @default(now())
 }
 
 model LikedUser {

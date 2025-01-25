@@ -1,39 +1,158 @@
-export default function SkeletonLoader() {
+import { Box } from '@mui/material';
+import Skeleton from '@mui/material/Skeleton';
+
+export default function ChatSkeleton() {
     return (
-        <div className="animate-pulseCustom w-screen h-screen">
-            <div className="h-16 bg-gray-50 dark:bg-zinc-900 rounded-md w-full flex items-center justify-between">
-                <div className="h-8 w-48 ml-12 dark:bg-zinc-800 bg-gray-200"></div>
-                <div className="flex items-center justify-center gap-x-4 mr-8">
-                    <div className="w-72 h-8 bg-gray-200 dark:bg-zinc-800 rounded-full"></div>
-                    <div className="h-8 w-8 rounded-full dark:bg-zinc-800 bg-gray-200"></div>
-                </div>
-            </div>
+        <Box className="flex flex-col gap-6 px-4 pt-12 h-full relative" sx={{ bgcolor: '#262626', borderRadius: 2 }}>
+            <Box className="flex items-start gap-3">
+                <Skeleton
+                    animation="wave"
+                    variant="circular"
+                    width={45}
+                    height={40}
+                    sx={{ bgcolor: '#3a3a3a' }}
+                />
+                <Box className="flex flex-col gap-1 w-full">
+                    <Skeleton
+                        animation="wave"
+                        variant="text"
+                        width={100}
+                        height={20}
+                        sx={{ bgcolor: '#3a3a3a', borderRadius: '5px' }}
+                    />
+                    <Skeleton
+                        animation="wave"
+                        variant="rounded"
+                        width="90%"
+                        height={60}
+                        sx={{ bgcolor: '#3a3a3a' }}
+                    />
+                </Box>
+            </Box>
 
-            <div className="flex flex-row w-full h-full dark:bg-zinc-800">
-                <div className="w-2/12 h-full bg-gray-100 rounded-md flex flex-col items-center mt-24 gap-y-4 dark:bg-zinc-800">
-                    <div className="h-24 w-48 bg-gray-200 dark:bg-zinc-900"></div>
-                    <div className="h-24 w-48 bg-gray-200 dark:bg-zinc-900"></div>
-                    <div className="h-24 w-48 bg-gray-200 dark:bg-zinc-900"></div>
-                    <div className="h-24 w-48 bg-gray-200 dark:bg-zinc-900"></div>
-                    <div className="h-24 w-48 bg-gray-200 dark:bg-zinc-900"></div>
-                </div>
+            {/* Chat Bubble 2 */}
+            <Box className="flex items-start gap-3">
+                <Skeleton
+                    animation="wave"
+                    variant="circular"
+                    width={45}
+                    height={40}
+                    sx={{ bgcolor: '#3a3a3a' }}
+                />
+                <Box className="flex flex-col gap-1 w-full">
+                    <Skeleton
+                        animation="wave"
+                        variant="text"
+                        width={120}
+                        height={20}
+                        sx={{ bgcolor: '#3a3a3a', borderRadius: '5px' }}
+                    />
+                    <Skeleton
+                        animation="wave"
+                        variant="rounded"
+                        width="30%"
+                        height={50}
+                        sx={{ bgcolor: '#3a3a3a' }}
+                    />
+                </Box>
+            </Box>
 
-                <div className="flex-grow">
-                    <div className="h-20 bg-gray-100 dark:bg-zinc-800 rounded-md mb-4 flex items-center justify-end">
-                        <div className="flex items-center justify-center gap-x-4 mr-8">
-                            <div className="w-32 h-8 bg-gray-200 dark:bg-zinc-900"></div>
-                            <div className=" w-32 h-8 bg-gray-200 dark:bg-zinc-900"></div>
-                        </div>
-                    </div>
-                    <div className="h-[79vh] bg-gray-100 dark:bg-zinc-900">
-                    </div>
+            {/* Chat Bubble 3 */}
+            <Box className="flex items-start gap-3">
+                <Skeleton
+                    animation="wave"
+                    variant="circular"
+                    width={45}
+                    height={40}
+                    sx={{ bgcolor: '#3a3a3a' }}
+                />
+                <Box className="flex flex-col gap-1 w-full">
+                    <Skeleton
+                        animation="wave"
+                        variant="text"
+                        width={90}
+                        height={20}
+                        sx={{ bgcolor: '#3a3a3a', borderRadius: '5px' }}
+                    />
+                    <Skeleton
+                        animation="wave"
+                        variant="rounded"
+                        width="80%"
+                        height={70}
+                        sx={{ bgcolor: '#3a3a3a' }}
+                    />
+                </Box>
+            </Box>
 
-                    <div className="fixed top-1/2 left-1/2 h-60 w-[400px] bg-gray-50 dark:bg-zinc-900 rounded-md z-50 transform -translate-x-1/2 -translate-y-1/2">
-                    </div>
-                </div>
-            </div>
-        </div>
+            {/* Chat Bubble 4 */}
+            <Box className="flex items-start gap-3">
+                <Skeleton
+                    animation="wave"
+                    variant="circular"
+                    width={45}
+                    height={40}
+                    sx={{ bgcolor: '#3a3a3a' }}
+                />
+                <Box className="flex flex-col gap-1 w-full">
+                    <Skeleton
+                        animation="wave"
+                        variant="text"
+                        width={110}
+                        height={20}
+                        sx={{ bgcolor: '#3a3a3a', borderRadius: '5px' }}
+                    />
+                    <Skeleton
+                        animation="wave"
+                        variant="rounded"
+                        width="65%"
+                        height={60}
+                        sx={{ bgcolor: '#3a3a3a' }}
+                    />
+                </Box>
+            </Box>
+
+            {/* Chat Bubble 5 */}
+            <Box className="flex items-start gap-3">
+                <Skeleton
+                    animation="wave"
+                    variant="circular"
+                    width={45}
+                    height={40}
+                    sx={{ bgcolor: '#3a3a3a' }}
+                />
+                <Box className="flex flex-col gap-1 w-full">
+                    <Skeleton
+                        animation="wave"
+                        variant="text"
+                        width={130}
+                        height={20}
+                        sx={{ bgcolor: '#3a3a3a', borderRadius: '5px' }}
+                    />
+                    <Skeleton
+                        animation="wave"
+                        variant="rounded"
+                        width="45%"
+                        height={70}
+                        sx={{ bgcolor: '#3a3a3a' }}
+                    />
+                </Box>
+            </Box>
+            {/* <Box
+                className="absolute bottom-4"
+                sx={{
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: 'calc(100% - 32px)', // Adjust based on the padding
+                    px: 0.5,
+                }}
+            >
+                <Skeleton
+                    variant="rounded"
+                    width="100%"
+                    height={40}
+                    sx={{ bgcolor: '#3a3a3a' }}
+                />
+            </Box> */}
+        </Box>
     );
 }
-
-
