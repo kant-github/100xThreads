@@ -4,6 +4,8 @@ import { format } from 'date-fns'
 import { useRecoilValue } from 'recoil';
 import { userSessionAtom } from '@/recoil/atoms/atom';
 import { MdEmojiEmotions } from "react-icons/md";
+import { useState } from "react";
+import EmojiPicker from 'emoji-picker-react';
 
 interface ReactionPayload {
     message_id: string;
@@ -27,9 +29,18 @@ function MessageContent({ message }: MessagesProps) {
 }
 
 export default function Message({ message }: MessagesProps) {
+    const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
     const session = useRecoilValue(userSessionAtom);
     const isCurrentUser = Number(session.user?.id) === Number(message.org_user_id);
 
+    const handleEmojiClick = () => {
+        setShowEmojiPicker(!showEmojiPicker);
+    };
+
+    const onEmojiClick = (emoji) => {
+        console.log(emoji);
+        setShowEmojiPicker(false);
+    };
     return (
         <div className={`flex gap-x-2 relative group ${isCurrentUser ? 'flex-row-reverse' : 'flex-row'} w-full`}>
             <div className="flex-shrink-0 gap-x-1">
@@ -39,8 +50,13 @@ export default function Message({ message }: MessagesProps) {
                 <div className={`flex items-center justify-start gap-x-2 ${isCurrentUser ? 'flex-row-reverse' : 'flex-row'}`}>
                     <span className="text-[13px] font-semibold flex">{message.name}</span>
                     <span className="text-[11px] tracking-wide font-extralight"> {format(new Date(message.created_at), "h:mm a")}</span>
-                    <MdEmojiEmotions size={18} className={`text-neutral-900 bg-neutral-600 rounded-[6px] p-[2px]`} />
+                    <MdEmojiEmotions onClick={handleEmojiClick} size={18} className={`text-neutral-900 bg-neutral-600 rounded-[6px] p-[2px]`} />
                 </div>
+                {showEmojiPicker && (
+                    <div className="absolute bottom-full right-0 z-10">
+                        <EmojiPicker height={200} width={200} onEmojiClick={onEmojiClick} />
+                    </div>
+                )}
                 <MessageContent message={message} />
             </div>
         </div>
