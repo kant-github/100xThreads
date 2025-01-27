@@ -31,6 +31,8 @@ model Users {
   CreatedInvites       OrganizationInvite[]      @relation("InviteCreator")
   UsedInvites          OrganizationInvite[]      @relation("InviteUser")
   ChatReaction         ChatReaction[]
+  PollVote             PollVote[]
+  Poll                 Poll[]
 
   @@map("users")
 }
@@ -126,6 +128,7 @@ model Channel {
   Chats                Chats[]
   Announcements        Announcement[]
   RecentlyJoinedGroups RecentlyJoinedGroups[]
+  Poll                 Poll[]
 
   @@index([organization_id, created_at])
   @@map("chat_groups")
@@ -188,6 +191,56 @@ enum RequestStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+model Poll {
+  id              String       @id @default(uuid()) @db.Uuid
+  channel         Channel      @relation(fields: [channel_id], references: [id], onDelete: Cascade)
+  channel_id      String       @db.Uuid
+  question        String
+  options         PollOption[]
+  creator         Users        @relation(fields: [creator_id], references: [id], onDelete: Cascade)
+  creator_id      Int
+  created_at      DateTime     @default(now())
+  expires_at      DateTime?
+  is_anonymous    Boolean      @default(false)
+  multiple_choice Boolean      @default(false)
+  status          PollStatus   @default(ACTIVE)
+  votes           PollVote[]
+
+  @@index([channel_id, created_at])
+  @@map("polls")
+}
+
+model PollOption {
+  id         String     @id @default(uuid()) @db.Uuid
+  poll       Poll       @relation(fields: [poll_id], references: [id], onDelete: Cascade)
+  poll_id    String     @db.Uuid
+  text       String
+  votes      PollVote[]
+  created_at DateTime   @default(now())
+
+  @@map("poll_options")
+}
+
+model PollVote {
+  id         Int        @id @default(autoincrement())
+  poll       Poll       @relation(fields: [poll_id], references: [id], onDelete: Cascade)
+  poll_id    String     @db.Uuid
+  option     PollOption @relation(fields: [option_id], references: [id], onDelete: Cascade)
+  option_id  String     @db.Uuid
+  user       Users      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id    Int
+  created_at DateTime   @default(now())
+
+  @@unique([poll_id, user_id])
+  @@map("poll_votes")
+}
+
+enum PollStatus {
+  ACTIVE
+  ENDED
+  CANCELLED
 }
 
 model Announcement {

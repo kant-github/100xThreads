@@ -41,7 +41,6 @@ export class WebSocketClient {
             this.ws.onmessage = (event) => {
                 try {
                     const message = JSON.parse(event.data);
-                    console.log("message recieved in frontend from backend : ", message);
                     this.handleMessage(message);
                 } catch (err) {
                     console.error('Error parsing WebSocket message:', err);
@@ -68,6 +67,7 @@ export class WebSocketClient {
 
     public handleMessage(message: any) {
         const handlers = this.MessageHandlers.get(message.type) || [];
+
         handlers.forEach(handler => {
             try {
                 handler(message.payload);

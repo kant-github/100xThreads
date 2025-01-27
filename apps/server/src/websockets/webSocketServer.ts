@@ -93,9 +93,7 @@ export default class WebSocketServerManager {
 
     private async handleIncomingMessage(ws: WebSocket, data: string, userData: any) {
         const message: WebSocketMessage = JSON.parse(data);
-        if (message.type === 'typing-event') {
-            console.log(message);
-        }
+
         switch (message.type) {
             case 'subscribe-channel':
                 await this.handleChannelSubscription(ws, message.payload);
@@ -158,20 +156,6 @@ export default class WebSocketServerManager {
         if (!hasOtherSubscribers) {
             await this.subscriber.unsubscribe(channelKey);
         }
-    }
-
-    private async publishToredis(message: WebSocketMessage, userData: any) {
-        const channelKey = this.getChannelKey({
-            organizationId: userData.organizationId,
-            channelId: message.payload.channelId,
-            type: message.payload.type
-        })
-
-        await this.publisher.publish(channelKey, JSON.stringify({
-            ...message,
-            userId: userData.userId,
-            timeStamp: Date.now()
-        }));
     }
 
     private getChannelKey(subscription: ChannelSubscription): string {

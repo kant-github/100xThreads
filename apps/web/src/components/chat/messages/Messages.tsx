@@ -7,6 +7,7 @@ import { MdEmojiEmotions } from "react-icons/md";
 import { useState } from "react";
 import EmojiPicker from 'emoji-picker-react';
 import { MouseDownEvent } from "emoji-picker-react/dist/config/config";
+import { HiOutlineDotsVertical } from "react-icons/hi";
 
 interface ReactionPayload {
     message_id: string;
@@ -17,16 +18,22 @@ interface ReactionPayload {
 
 interface MessagesProps {
     message: MessageType;
+    className?: string;
 }
 
-function MessageContent({ message }: MessagesProps) {
+function MessageContent({ message, className }: MessagesProps) {
     const session = useRecoilValue(userSessionAtom);
     const isCurrentUser = Number(session.user?.id) === Number(message.org_user_id);
     return (
-        <div className={`flex-shrink-0 space-y-2 mt-1 py-1.5 px-4 rounded-bl-[8px] rounded-br-[8px] ${isCurrentUser ? "bg-neutral-900 rounded-tl-[8px] text-neutral-300" : "bg-neutral-700 rounded-tr-[8px]"}`}>
-            <p className="text-[12px] font-light tracking-wider whitespace-pre-wrap break-words">
-                {message.message}
-            </p>
+        <div className={`flex-shrink-0 flex items-start gap-x-1 group ${isCurrentUser ? "flex-row-reverse" : "flex-row"}`}>
+            <div className={`space-y-2 mt-1 py-1.5 px-4 z-10 rounded-bl-[8px] rounded-br-[8px] ${isCurrentUser ? "bg-neutral-900 rounded-tl-[8px] text-neutral-300" : "bg-neutral-700 rounded-tr-[8px]"} ${className}`}>
+                <p className="text-[12px] font-light tracking-wider whitespace-pre-wrap break-words">
+                    {message.message}
+                </p>
+            </div>
+            <div>
+                <HiOutlineDotsVertical size={14} className={`transition-all duration-300 ease-out cursor-pointer opacity-0 group-hover:opacity-100 mt-[10px]`} />
+            </div>
         </div>
     );
 }
@@ -46,7 +53,7 @@ export default function Message({ message }: MessagesProps) {
     };
 
     return (
-        <div className={`flex gap-x-2 relative group ${isCurrentUser ? 'flex-row-reverse' : 'flex-row'} w-full`}>
+        <div className={`flex gap-x-2 relative ${isCurrentUser ? 'flex-row-reverse' : 'flex-row'} w-full`}>
             <div className="flex-shrink-0 gap-x-1">
                 <Image src={message.organization_user?.user.image!} width={36} height={36} className="rounded-full" alt="user-image" />
             </div>

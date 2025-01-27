@@ -21,7 +21,7 @@ export const useWebSocket = () => {
     webSocketRef.current = ws;
 
     return () => {
-      // Cleanup if needed
+      console.log("web socket cleaned");
     };
   }, [session.user?.token]);
 

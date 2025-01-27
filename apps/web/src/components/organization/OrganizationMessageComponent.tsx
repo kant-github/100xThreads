@@ -7,6 +7,10 @@ import { organizationAtom } from '@/recoil/atoms/organizationAtoms/organizationA
 import { useWebSocket } from '@/hooks/useWebsocket';
 import EmptyConversation from '../chat/EmptyConversation';
 import GroupedByDateMessages from '../chat/messages/GroupedByDateMessages';
+import UserTyping from '../utility/UserTyping';
+import PollCard from '../chat/polls/PollCard';
+import { GoPaperclip } from "react-icons/go";
+import PollCreationCard from '../chat/polls/PollCreationCard';
 
 interface OrganizationMessageComponentProps {
     channel: ChannelType;
@@ -20,7 +24,9 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
     const organization = useRecoilValue(organizationAtom);
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
     const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
-    
+    const [usersTyping, setUsersTyping] = useState<string[]>([]);
+    const [pollCreationCard, setPollCreationCard] = useState<boolean>(false);
+
 
     const groupedMessages = useMemo(() => {
         const grouped: { [key: string]: MessageType[] } = {};
@@ -53,7 +59,18 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
     }
 
     function handleIncomingTypingEvents(newMessage: any) {
-        console.log("new typing event is : ", newMessage);
+        const { userName, typingEventType } = newMessage;
+
+        setUsersTyping(prevUsers => {
+            if (typingEventType && !prevUsers.includes(userName)) {
+                return [...prevUsers, userName];
+            } else if (!typingEventType) {
+                return prevUsers.filter(user => user !== userName);
+            }
+            return prevUsers;
+        });
+
+        console.log(usersTyping);
     }
 
     useEffect(() => {
@@ -74,8 +91,11 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
         }
     }, [channel.id, organization?.id])
 
-    function handleSendMessage(e: React.FormEvent) {
-        e.preventDefault();
+    function handleSendMessage(e?: React.FormEvent) {
+        if (e) {
+            e.preventDefault();
+        }
+
         if (!message.trim()) return;
 
         const newMessage: MessageType = {
@@ -96,12 +116,12 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
         sendMessage(newMessage, channel.id, 'insert-general-channel-message');
         setMessages(prevChats => [...prevChats, newMessage]);
         setMessage("");
-    };
+    }
 
     function sendTypingEvent(type: boolean) {
         const newTypingdata = {
             user_id: session.user?.id,
-            username: session.user?.name,
+            userName: session.user?.name,
             channel_id: channel.id,
             typingEventType: type,
         }
@@ -109,13 +129,18 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
     }
 
     function handleTyping() {
-        console.log("typing started");
-        sendTypingEvent(true);
+        if (!typingTimeout) {
+            sendTypingEvent(true);
+        }
+
         if (typingTimeout) clearTimeout(typingTimeout);
+
         const timeOut = setTimeout(() => {
             sendTypingEvent(false);
-            setTypingTimeout(timeOut)
-        }, 2000)
+            setTypingTimeout(null);
+        }, 1500);
+
+        setTypingTimeout(timeOut);
     }
 
     return (
@@ -125,15 +150,23 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
                     <EmptyConversation className="mt-4 w-full" show={messages.length === 0} />
                     <GroupedByDateMessages groupedMessages={groupedMessages} />
                     <div ref={messagesEndRef} />
+                    <PollCard channel={channel} pollCreationCard={pollCreationCard} setPollCreationCard={setPollCreationCard} />
                 </div>
             </div>
             <form className='w-full pt-4 pb-1' onSubmit={handleSendMessage}>
-                <ChatMessageInput
-                    className="w-full mx-auto"
-                    message={message}
-                    setMessage={setMessage}
-                    handleTyping={handleTyping}
-                />
+                <UserTyping usersTyping={usersTyping} />
+                <div className='flex items-center gap-x-2'>
+                    <button onClick={() => setPollCreationCard(prev => !prev)} type='button' aria-label='options' className='p-3 dark:bg-neutral-900 rounded-[8px]'>
+                        <GoPaperclip size={17} className='text-neutral-400' />
+                    </button>
+                    <ChatMessageInput
+                        className="w-full mx-auto"
+                        message={message}
+                        setMessage={setMessage}
+                        handleTyping={handleTyping}
+                        onSendMessage={handleSendMessage}
+                    />
+                </div>
             </form>
         </div>
     );
