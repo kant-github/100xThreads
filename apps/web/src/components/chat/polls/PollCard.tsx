@@ -15,7 +15,7 @@ interface Props {
 }
 
 export default function PollCreation({ pollCreationCard, setPollCreationCard, channel }: Props) {
-    const [pollOptioncCard, setPollOptionCard] = useState<boolean>(false);
+    const [pollOptioncCard, setPollOptionCard] = useState<boolean>(true);
     const [poll, setPoll] = useState<PollTypes>({} as PollTypes);
     const { subscribeToChannel, unsubscribeChannel, sendMessage } = useWebSocket();
     const organization = useRecoilValue(organizationAtom);
