@@ -139,7 +139,7 @@ export default function ({
                                     placeholder={`Option ${index + 1}`}
                                     value={option}
                                     onChange={handleOptionChange(index)}
-                                    className="flex-1 px-3 py-2 bg-transparent border rounded-[8px] dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 placeholder:text-xs text-[13px]"
+                                    className="flex-1 px-3 py-2 bg-transparent border rounded-[8px] dark:border-neutral-700 dark:bg-[#1f1f1f] focus:outline-none focus:ring-2 focus:ring-yellow-500 placeholder:text-xs text-[13px]"
                                 />
                                 {options.length > 2 && (
                                     <button

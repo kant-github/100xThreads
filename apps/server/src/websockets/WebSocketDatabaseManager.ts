@@ -21,6 +21,8 @@ export default class WebSocketDatabaseManager {
                     return this.typingEvent(message, userData)
                 case 'new-poll':
                     return this.newPollHandler(message, userData)
+                case 'active-poll-handler':
+                    return this.activePollHandler(message, userData);
             }
         }
         catch (err) {
@@ -82,15 +84,25 @@ export default class WebSocketDatabaseManager {
                 creator_id: Number(message.payload.userId)
             },
             include: {
-                options: true,
-                creator: true
+                options: {
+                    select: {
+                        votes: true,
+                        text: true
+                    }
+                },
+                creator: true,
+                votes: true
             }
         })
         await this.publisher.publish(channelKey, JSON.stringify({
-            payload:poll,
+            payload: poll,
             type: message.type
             // userId: userData.userId
         }))
+    }
+
+    private activePollHandler(message: WebSocketMessage, userData: any) {
+        console.log(message);
     }
 
     private getChannelKey(subscription: ChannelSubscription): string {

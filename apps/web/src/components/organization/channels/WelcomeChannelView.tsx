@@ -16,7 +16,7 @@ export default function ({ channel }: WelcomeChannelViewProps) {
         <div className="dark:bg-neutral-900 h-full flex flex-col items-start w-full p-6 relative">
             <DashboardComponentHeading description={channel.welcome_message!}>{"Welcome"}</DashboardComponentHeading>
             <UtilityCard className=" w-full flex-grow mt-4">
-                <div className="relative">
+                <div className="relative rounded-[16px]">
                     <Image
                         height={20}
                         width={1400}
@@ -25,7 +25,7 @@ export default function ({ channel }: WelcomeChannelViewProps) {
                         className="rounded-[16px]"
                     />
                     <div className="absolute inset-0 bg-black/40 rounded-[16px]"></div>
-                        <div className={`text-6xl w-full mx-auto flex justify-center font-black tracking-widest leading-[24px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-yellow-500 z-20 ${font.className}`}>
+                        <div className={`text-6xl w-full mx-auto flex justify-center font-black tracking-widest leading-[24px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-yellow-500 z-20 select-none ${font.className}`}>
                             WELCOME CHANNEL
                         </div>
                 </div>

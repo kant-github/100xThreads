@@ -1,92 +1,78 @@
 import UtilityCard from "@/components/utility/UtilityCard";
-import { Dispatch, SetStateAction, useRef, useState } from "react";
-import { PollStatus, PollTypes } from "types";
+import { useWebSocket } from "@/hooks/useWebsocket";
+import { userSessionAtom } from "@/recoil/atoms/atom";
+import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { useRecoilValue } from "recoil";
+import { ChannelType, PollTypes } from "types";
 
-export const dummyPoll: PollTypes = {
-    id: "b5e8a755-77e7-4a8e-99d2-9e6342d68e5b",
-    channelId: "3b12a855-88f1-4bca-92dd-fd6b3332f88c",
-    question: "What's your favorite programming language?",
-    options: [
-        {
-            id: "e91e63b1-9e78-4cb3-a2f6-9d9a64b9c1dc",
-            pollId: "b5e8a755-77e7-4a8e-99d2-9e6342d68e5b",
-            text: "JavaScript",
-            votes: [
-                { id: 1, pollId: "b5e8a755-77e7-4a8e-99d2-9e6342d68e5b", optionId: "e91e63b1-9e78-4cb3-a2f6-9d9a64b9c1dc", userId: 101, createdAt: "2025-01-27T14:00:00.000Z" },
-                { id: 2, pollId: "b5e8a755-77e7-4a8e-99d2-9e6342d68e5b", optionId: "e91e63b1-9e78-4cb3-a2f6-9d9a64b9c1dc", userId: 102, createdAt: "2025-01-27T14:10:00.000Z" },
-            ],
-            createdAt: "2025-01-27T12:00:00.000Z",
-        },
-        {
-            id: "6b27f21e-a79a-47ab-8c69-c64e7dfc2459",
-            pollId: "b5e8a755-77e7-4a8e-99d2-9e6342d68e5b",
-            text: "Python",
-            votes: [
-                { id: 3, pollId: "b5e8a755-77e7-4a8e-99d2-9e6342d68e5b", optionId: "6b27f21e-a79a-47ab-8c69-c64e7dfc2459", userId: 103, createdAt: "2025-01-27T14:15:00.000Z" },
-            ],
-            createdAt: "2025-01-27T12:05:00.000Z",
-        },
-        {
-            id: "caa8b60e-15d6-4b3b-98f7-2c931c9f7e65",
-            pollId: "b5e8a755-77e7-4a8e-99d2-9e6342d68e5b",
-            text: "TypeScript",
-            votes: [],
-            createdAt: "2025-01-27T12:10:00.000Z",
-        },
-    ],
-    creatorId: 100,
-    createdAt: "2025-01-27T12:00:00.000Z",
-    expiresAt: "2025-01-29T12:00:00.000Z",
-    isAnonymous: false,
-    multipleChoice: false,
-    status: PollStatus.ACTIVE,
-    votes: [
-        { id: 1, pollId: "b5e8a755-77e7-4a8e-99d2-9e6342d68e5b", optionId: "e91e63b1-9e78-4cb3-a2f6-9d9a64b9c1dc", userId: 101, createdAt: "2025-01-27T14:00:00.000Z" },
-        { id: 2, pollId: "b5e8a755-77e7-4a8e-99d2-9e6342d68e5b", optionId: "e91e63b1-9e78-4cb3-a2f6-9d9a64b9c1dc", userId: 102, createdAt: "2025-01-27T14:10:00.000Z" },
-        { id: 3, pollId: "b5e8a755-77e7-4a8e-99d2-9e6342d68e5b", optionId: "6b27f21e-a79a-47ab-8c69-c64e7dfc2459", userId: 103, createdAt: "2025-01-27T14:15:00.000Z" },
-    ],
-};
 
 interface PollOptionsAndResultsProps {
     pollOptionCard: boolean;
     setPollOptionCard: Dispatch<SetStateAction<boolean>>;
     poll: PollTypes;
+    channel: ChannelType;
 }
 
 export default function PollOptionsAndResults({
     pollOptionCard,
     setPollOptionCard,
-    poll
+    poll,
+    channel
 }: PollOptionsAndResultsProps) {
+    const organization = useRecoilValue(organizationAtom);
+    const session = useRecoilValue(userSessionAtom);
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+    const { subscribeToChannel, unsubscribeChannel, sendMessage } = useWebSocket();
 
-    // Calculate total votes for percentage
-    const totalVotes = dummyPoll.votes.length;
+    function activePollHandler(newMessages: any) {
+        console.log("active poll handler recieved : ", newMessages);
+    }
 
-    // Calculate percentage for each option
-    const getVotePercentage = (optionId: string) => {
-        const optionVotes = dummyPoll.options.find(opt => opt.id === optionId)?.votes.length || 0;
+    useEffect(() => {
+        if (organization?.id && channel.id) {
+            const unsubscribeActivePoll = subscribeToChannel(organization.id, channel.id, 'active-poll-handler', activePollHandler);
+
+            return () => {
+                unsubscribeChannel(organization.id, channel.id, 'active-poll-handler');
+                unsubscribeActivePoll();
+            }
+        }
+    }, [])
+
+    const totalVotes = poll.votes.length;
+
+    function getVotePercentage(optionId: string) {
+        const optionVotes = poll.options.find(opt => opt.id === optionId)?.votes.length || 0;
         if (totalVotes === 0) return 0;
         return Math.round((optionVotes / totalVotes) * 100);
     };
 
-    // Handle vote selection
-    const handleVoteSelect = (optionId: string) => {
-        if (!dummyPoll.multipleChoice) {
-            setSelectedOption(optionId);
+
+    function handleVoteSelect(optionId: string) {
+        setSelectedOption(optionId);
+        const newMessage = {
+            optionId: optionId,
+            pollId: poll.id,
+            userId: session.user?.id
         }
+        sendMessage(newMessage, channel.id, 'active-poll-handler');
     };
 
+    function handlePollDismissal() {
+        setPollOptionCard(false);
+    }
+
     return (
-        <div ref={containerRef} className="sticky bottom-0 right-0 ml-40 z-[100] flex">
+        <div ref={containerRef} className="sticky bottom-0 right-0 z-[100] flex">
             <UtilityCard className="w-80 bg-white dark:bg-neutral-900 p-4 border border-neutral-200 dark:border-neutral-700">
                 <h3 className="text-sm font-medium text-neutral-900 dark:text-neutral-100 mb-4">
-                    {dummyPoll.question}
+                    {poll.question}
                 </h3>
 
                 <div className="flex flex-col gap-3">
-                    {dummyPoll.options.map((option) => {
+                    {poll.options.map((option) => {
                         const percentage = getVotePercentage(option.id);
                         const isSelected = selectedOption === option.id;
 
@@ -100,7 +86,7 @@ export default function PollOptionsAndResults({
                                 <button
                                     type="button"
                                     onClick={() => handleVoteSelect(option.id)}
-                                    className={`relative w-full py-2.5 px-3 rounded-[8px] border text-[10px] font-normal ${isSelected
+                                    className={`relative w-full py-2.5 px-3 rounded-[8px] border font-normal ${isSelected
                                         ? 'border-yellow-500 dark:border-yellow-600'
                                         : 'border-neutral-200 dark:border-neutral-700'
                                         } hover:border-yellow-500 dark:hover:border-yellow-400 transition-colors`}
@@ -109,7 +95,7 @@ export default function PollOptionsAndResults({
                                         <div className="flex items-center gap-3">
                                             <input
                                                 id="check"
-                                                type={dummyPoll.multipleChoice ? "checkbox" : "radio"}
+                                                type={poll.multipleChoice ? "checkbox" : "radio"}
                                                 checked={isSelected}
                                                 onChange={() => handleVoteSelect(option.id)}
                                                 className="h-4 w-4 accent-yellow-500"
@@ -128,15 +114,23 @@ export default function PollOptionsAndResults({
                     })}
                 </div>
 
-                {/* Footer */}
                 <div className="mt-4 text-xs text-neutral-500 dark:text-neutral-400 flex justify-between items-center">
                     <span>{totalVotes} votes</span>
-                    {dummyPoll.expiresAt && (
+                    {poll.expiresAt && (
                         <span>
-                            Expires {new Date(dummyPoll.expiresAt).toLocaleDateString()}
+                            Expires {new Date(poll.expiresAt).toLocaleDateString()}
                         </span>
                     )}
                 </div>
+                <button
+                    type='button'
+                    onClick={handlePollDismissal}
+                    // disabled={!question.trim() || options.some(opt => !opt.trim()) || isSubmitting}
+                    className="flex items-center justify-center gap-2 bg-red-600/10 border-red-600 border-[1px] hover:bg-red-600/90 disabled:bg-red-600/90 disabled:cursor-not-allowed text-red-900 font-medium px-4 py-2.5 rounded-[8px] mx-auto w-full text-center text-xs mt-2"
+                >
+
+                    Dismiss
+                </button>
             </UtilityCard>
         </div>
     );
