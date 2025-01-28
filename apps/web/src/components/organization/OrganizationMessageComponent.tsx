@@ -153,7 +153,7 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
                     <PollCard channel={channel} pollCreationCard={pollCreationCard} setPollCreationCard={setPollCreationCard} />
                 </div>
             </div>
-            <form className='w-full pt-4 pb-1' onSubmit={handleSendMessage}>
+            <form className='w-full pb-1' onSubmit={handleSendMessage}>
                 <UserTyping usersTyping={usersTyping} />
                 <div className='flex items-center gap-x-2'>
                     <button onClick={() => setPollCreationCard(prev => !prev)} type='button' aria-label='options' className='p-3 dark:bg-neutral-900 rounded-[8px]'>

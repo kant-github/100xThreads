@@ -120,13 +120,14 @@ export default function ({
         <div ref={pollOptionCardRef} className={`sticky bottom-0 z-[100] max-w-[40%]`}>
             <UtilityCard className={`bg-white dark:bg-neutral-900 px-4 py-3  border-[0.5px] border-neutral-700 `}>
                 <div className="space-y-4">
+                    <span className='mx-1.5 font-medium dark:text-neutral-300'>Ask a poll</span>
                     <div>
                         <input
                             type="text"
                             placeholder="Ask a question..."
                             value={question}
                             onChange={handleQuestionChange}
-                            className="w-full px-3 py-2 bg-transparent border rounded-[8px] dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-xs text-[13px]"
+                            className="w-full px-3 py-2 bg-transparent border rounded-[8px] dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 placeholder:text-xs text-[13px]"
                         />
                     </div>
 
@@ -138,7 +139,7 @@ export default function ({
                                     placeholder={`Option ${index + 1}`}
                                     value={option}
                                     onChange={handleOptionChange(index)}
-                                    className="flex-1 px-3 py-2 bg-transparent border rounded-[8px] dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-xs text-[13px]"
+                                    className="flex-1 px-3 py-2 bg-transparent border rounded-[8px] dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 placeholder:text-xs text-[13px]"
                                 />
                                 {options.length > 2 && (
                                     <button
@@ -159,7 +160,7 @@ export default function ({
                             <button
                                 onClick={addOption}
                                 type="button"
-                                className="flex items-center gap-2 text-neutral-300 text-xs hover:bg-blue-600 bg-blue-600/50 border-[1px] border-blue-600 transition-all duration-100 px-3 py-2 rounded-[8px]"
+                                className="flex items-center gap-2 text-neutral-300 text-xs hover:bg-yellow-600/30 bg-yellow-600/20 border-[1px] border-yellow-600/40 transition-all duration-100 px-3 py-2 rounded-[8px]"
                             >
                                 <Plus size={18} />
                                 Add Option
@@ -183,7 +184,7 @@ export default function ({
                         type='button'
                         onClick={handleSubmit}
                         disabled={!question.trim() || options.some(opt => !opt.trim()) || isSubmitting}
-                        className="flex items-center justify-center gap-2 bg-blue-600/80 hover:bg-blue-600 disabled:bg-blue-600/90 disabled:cursor-not-allowed text-neutral-300 px-4 py-2.5 rounded-[8px] mx-auto w-full text-center text-xs"
+                        className="flex items-center justify-center gap-2 bg-yellow-600 hover:bg-yellow-600/90 disabled:bg-yellow-600/90 disabled:cursor-not-allowed text-neutral-900 font-medium px-4 py-2.5 rounded-[8px] mx-auto w-full text-center text-xs"
                     >
                         {isSubmitting ? 'Creating...' : 'Create Poll'}
                     </button>

@@ -133,6 +133,36 @@ export type WelcomedUser = {
   welcomedAt: Date
 }
 
+export interface PollTypes {
+  id: string;
+  channelId: string;
+  question: string;
+  options: PollOptionTypes[];
+  creatorId: number;
+  createdAt: string; // ISO string format
+  expiresAt?: string; // Optional, ISO string format
+  isAnonymous: boolean;
+  multipleChoice: boolean;
+  status: PollStatus;
+  votes: PollVoteTypes[];
+}
+
+export interface PollOptionTypes {
+  id: string;
+  pollId: string;
+  text: string;
+  votes: PollVoteTypes[];
+  createdAt: string; // ISO string format
+}
+
+export interface PollVoteTypes {
+  id: number;
+  pollId: string;
+  optionId: string;
+  userId: number;
+  createdAt: string; // ISO string format
+}
+
 export type RoleRequest = {
   id: string
   welcomeChannelId: string
@@ -180,4 +210,10 @@ export enum ChannelTypeType {
   MENTORSHIP = 'MENTORSHIP',
   SOCIAL = 'SOCIAL',
   CAREER = 'CAREER'
+}
+
+export enum PollStatus {
+  ACTIVE = "ACTIVE",
+  ENDED = "ENDED",
+  CANCELLED = "CANCELLED",
 }
