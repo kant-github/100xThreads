@@ -5,7 +5,34 @@ import { ChannelSubscription, WebSocketMessage } from "./webSocketServer";
 export default class WebSocketDatabaseManager {
 
     private prisma: PrismaClient;
-    private publisher: Redis
+    private publisher: Redis;
+    private static readonly pollInclude = {
+        options: {
+            include: {
+                votes: {
+                    select: {
+                        id: true,
+                        user_id: true,
+                        created_at: true
+                    }
+                }
+            }
+        },
+        creator: {
+            select: {
+                id: true,
+                name: true,
+            }
+        },
+        votes: {
+            select: {
+                id: true,
+                user_id: true,
+                option_id: true,
+                created_at: true
+            }
+        }
+    } as const;
 
     constructor(prisma: PrismaClient, publisher: Redis) {
         this.prisma = prisma;
@@ -21,7 +48,7 @@ export default class WebSocketDatabaseManager {
                     return this.typingEvent(message, userData)
                 case 'new-poll':
                     return this.newPollHandler(message, userData)
-                case 'active-poll-handler':
+                case 'active-poll':
                     return this.activePollHandler(message, userData);
             }
         }
@@ -83,16 +110,7 @@ export default class WebSocketDatabaseManager {
                 },
                 creator_id: Number(message.payload.userId)
             },
-            include: {
-                options: {
-                    select: {
-                        votes: true,
-                        text: true
-                    }
-                },
-                creator: true,
-                votes: true
-            }
+            include: WebSocketDatabaseManager.pollInclude
         })
         await this.publisher.publish(channelKey, JSON.stringify({
             payload: poll,
@@ -101,8 +119,60 @@ export default class WebSocketDatabaseManager {
         }))
     }
 
-    private activePollHandler(message: WebSocketMessage, userData: any) {
-        console.log(message);
+    private async activePollHandler(message: WebSocketMessage, userData: any) {
+        const channelKey = this.getChannelKey({
+            organizationId: userData.organizationId,
+            channelId: message.payload.channelId,
+            type: message.payload.type
+        })
+
+        console.log("active poll message is : ", message);
+
+        try {
+            const existingVote = await this.prisma.pollVote.findUnique({
+                where: {
+                    poll_id_user_id: {
+                        poll_id: message.payload.pollId,
+                        user_id: Number(message.payload.userId)
+                    }
+                }
+            })
+
+            if (existingVote) {
+                await this.prisma.pollVote.update({
+                    where: {
+                        id: existingVote.id
+                    },
+                    data: {
+                        option_id: message.payload.optionId
+                    }
+                })
+            } else {
+                await this.prisma.pollVote.create({
+                    data: {
+                        poll_id: message.payload.pollId,
+                        option_id: message.payload.optionId,
+                        user_id: Number(message.payload.userId)
+                    }
+                })
+            }
+
+            const updatedPoll = await this.prisma.poll.findUnique({
+                where: {
+                    id: message.payload.pollId
+                },
+                include: WebSocketDatabaseManager.pollInclude
+            });
+
+            await this.publisher.publish(channelKey, JSON.stringify({
+                payload: updatedPoll,
+                type: message.type
+            }));
+
+        } catch (err) {
+            console.log("Error while voting ", err);
+        }
+
     }
 
     private getChannelKey(subscription: ChannelSubscription): string {

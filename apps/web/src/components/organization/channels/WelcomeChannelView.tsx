@@ -25,9 +25,9 @@ export default function ({ channel }: WelcomeChannelViewProps) {
                         className="rounded-[16px]"
                     />
                     <div className="absolute inset-0 bg-black/40 rounded-[16px]"></div>
-                        <div className={`text-6xl w-full mx-auto flex justify-center font-black tracking-widest leading-[24px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-yellow-500 z-20 select-none ${font.className}`}>
-                            WELCOME CHANNEL
-                        </div>
+                    <div className={`text-6xl w-full mx-auto flex justify-center font-black tracking-widest leading-[24px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-yellow-500 z-20 select-none ${font.className}`}>
+                        WELOME CHANNEL
+                    </div>
                 </div>
             </UtilityCard>
         </div>

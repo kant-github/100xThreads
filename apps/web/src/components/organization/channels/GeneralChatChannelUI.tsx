@@ -25,7 +25,7 @@ export default function WelcomeChannelView({ channel }: WelcomeChannelViewProps)
     useEffect(() => {
         const fetchInitialChats = async () => {
             setLoading(true);
-            await new Promise(t => setTimeout(t, 1000));
+            // await new Promise(t => setTimeout(t, 1000));
             try {
                 const url = lastCursor ? `${API_URL}/organizations/${organization?.id}/channels/${channel.id}/chats?cursor=${lastCursor}&pageSize=50` : `${API_URL}/organizations/${organization?.id}/channels/${channel.id}/chats?pageSize=50`;
                 const { data } = await axios.get(url,

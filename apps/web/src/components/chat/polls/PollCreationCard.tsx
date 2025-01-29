@@ -5,15 +5,6 @@ import { ChannelType } from 'types';
 import { useRecoilValue } from 'recoil';
 import { userSessionAtom } from '@/recoil/atoms/atom';
 
-export interface PollData {
-    question: string;
-    options: string[];
-    expiresIn: string;
-    isAnonymous: boolean;
-    multipleChoice: boolean;
-    channelId: string
-    userId: string
-}
 
 type ExpirationOption = '1h' | '6h' | '12h' | '24h' | '48h' | '1w';
 
