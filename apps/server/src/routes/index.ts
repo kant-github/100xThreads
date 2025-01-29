@@ -11,6 +11,7 @@ import { updateUserDetails } from "../controllers/user/updateUserDetails";
 import authmiddleware from "../middlewares/authMiddleware";
 import joinOrganizationWithPassword from "../controllers/organization/joinOrganizationWithPassword";
 import getChats from "../controllers/chats/getChats";
+import { getPoll } from "../controllers/polls/getPoll";
 
 const router = Router();
 
@@ -31,6 +32,9 @@ router.get("/organizations-all", authmiddleware, getAllOrganizations);
 
 // chats-controller
 router.get("/organizations/:organizationId/channels/:channelId/chats", authmiddleware, getChats);
+
+//polls-controller
+router.get("/polls/:id/:channelId", authmiddleware, getPoll);
 
 
 export default router;

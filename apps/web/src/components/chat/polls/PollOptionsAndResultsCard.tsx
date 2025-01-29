@@ -11,7 +11,6 @@ interface PollOptionsAndResultsProps {
     poll: PollTypes;
     channel: ChannelType;
     sendMessage: (pollData: any, channelId: string, type: string) => void;
-    onDismiss: () => void;  // Add this new prop
 }
 
 export default function PollOptionsAndResults({
@@ -20,7 +19,6 @@ export default function PollOptionsAndResults({
     poll,
     channel,
     sendMessage,
-    onDismiss
 }: PollOptionsAndResultsProps) {
     const session = useRecoilValue(userSessionAtom);
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -39,9 +37,6 @@ export default function PollOptionsAndResults({
         sendMessage(newMessage, channel.id, 'active-poll');
     };
 
-    function handlePollDismissal() {
-        onDismiss();
-    }
 
     return (
         <div ref={containerRef} className="sticky bottom-0 right-0 z-[100] flex">
@@ -99,7 +94,7 @@ export default function PollOptionsAndResults({
                         </span>
                     )}
                 </div>
-                <button onClick={handlePollDismissal} aria-label="cut" type="button" className="bg-red-600/10 border-red-600 border-[1px] hover:bg-red-600/20 disabled:bg-red-600/90 disabled:cursor-not-allowed text-red-600 p-0.5 rounded-[6px] absolute top-3 right-3 transition-all ease-in">
+                <button onClick={() => setPollOptionCard(false)} aria-label="cut" type="button" className="bg-red-600/10 border-red-600 border-[1px] hover:bg-red-600/20 disabled:bg-red-600/90 disabled:cursor-not-allowed text-red-600 p-0.5 rounded-[6px] absolute top-3 right-3 transition-all ease-in">
                     <RxCross2 size={14} className="text-red-600" />
                 </button>
             </UtilityCard>

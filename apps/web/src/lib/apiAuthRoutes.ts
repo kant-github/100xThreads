@@ -11,5 +11,6 @@ export const ORGANIZATION = API_URL + "/organizations";
 export const RECENT_CHAT_GROUP = API_URL + "/recent-chat-group-join"
 export const CHAT_GROUP_USERS = API_URL + "/chat-group-user";
 export const CHATS_URL = API_URL + "/chats";
+export const POLL_URL = API_URL + "/polls"
 
 export const FRONTEND_BASE_URL = Env.APP_URL;
