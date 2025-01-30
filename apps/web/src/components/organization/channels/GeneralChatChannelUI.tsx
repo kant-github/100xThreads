@@ -16,7 +16,8 @@ interface WelcomeChannelViewProps {
 }
 
 export default function WelcomeChannelView({ channel }: WelcomeChannelViewProps) {
-    const [loading, setLoading] = useState(true);
+
+    const [loading, setLoading] = useState(false);
     const [chats, setChats] = useRecoilState<MessageType[]>(generalChatsAtom);
     const session = useRecoilValue(userSessionAtom);
     const organization = useRecoilValue(organizationAtom);

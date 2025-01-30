@@ -69,10 +69,7 @@ export default function () {
                 open={open}
                 setOpen={setOpen}
                 content={
-                    <DashboardComponentHeading
-                        className="pt-4 sm:pt-6 pl-4 sm:pl-8"
-                        description="check list of friends you made"
-                    >
+                    <DashboardComponentHeading className="pt-4 sm:pt-6 pl-4 sm:pl-8" description="check list of friends you made" >
                         Friends
                     </DashboardComponentHeading>
                 }

@@ -150,8 +150,8 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
                     <EmptyConversation className="mt-4 w-full" show={messages.length === 0} />
                     <GroupedByDateMessages groupedMessages={groupedMessages} />
                     <div ref={messagesEndRef} />
-                    <PollCard channel={channel} pollCreationCard={pollCreationCard} setPollCreationCard={setPollCreationCard} />
                 </div>
+                <PollCard channel={channel} pollCreationCard={pollCreationCard} setPollCreationCard={setPollCreationCard} />
             </div>
             <form className='w-full pb-1' onSubmit={handleSendMessage}>
                 <UserTyping usersTyping={usersTyping} />

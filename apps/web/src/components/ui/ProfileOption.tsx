@@ -44,12 +44,12 @@ export default function () {
               console.log(settingsAtom);
               setDashboardAtom(RendererOption.Settings);
               setSettingsAtom(settingsOptionEnum.Profile)
-            }} className="flex gap-x-3 py-2 px-3 rounded-[8px] cursor-pointer hover:bg-zinc-700 text-[13px] text-gray-100 dark:text-[#d6d6d6] font-normal mt-0.5 tracking-wide select-none">
+            }} className="flex gap-x-3 py-2 px-3 rounded-[8px] cursor-pointer hover:bg-neutral-700 text-[13px] text-neutral-300 dark:text-neutral-300 font-normal mt-0.5 tracking-wide select-none">
               <TiUser size={18} />
               <span>Profile</span>
             </div>
 
-            <div onClick={() => setLogoutDropdown(true)} className="flex gap-x-3 py-2 px-3 rounded-[8px] cursor-pointer hover:bg-red-600 text-[13px] text-gray-100 dark:text-[#d6d6d6] font-normal mt-0.5 tracking-wide select-none">
+            <div onClick={() => setLogoutDropdown(true)} className="flex gap-x-3 py-2 px-3 rounded-[8px] cursor-pointer hover:bg-red-600 text-[13px] text-neutral-300 dark:text-neutral-300 font-normal mt-0.5 tracking-wide select-none">
               <PiSignOut size={18} />
               <span>Sign Out</span>
             </div>

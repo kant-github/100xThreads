@@ -124,7 +124,7 @@ export default function ({ open, setOpen }: CreateRoomProps) {
 
     return open ? (
         <OpacityBackground onBackgroundClick={() => setOpen(false)} >
-            <UtilityCard open={open} setOpen={setOpen} className="w-5/12 px-12 relative pb-20 pt-8" >
+            <UtilityCard open={open} setOpen={setOpen} className="w-5/12 px-12 relative pb-20 pt-8 dark:bg-neutral-800" >
                 <DashboardComponentHeading description="start creating organization with your preferred choice" >
                     Create Organization
                 </DashboardComponentHeading>

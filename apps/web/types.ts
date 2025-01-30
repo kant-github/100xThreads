@@ -139,6 +139,7 @@ export interface PollTypes {
   question: string;
   options: PollOptionTypes[];
   creatorId: number;
+  creator: UserType;
   createdAt: string; // ISO string format
   expiresAt?: string; // Optional, ISO string format
   isAnonymous: boolean;

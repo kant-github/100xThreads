@@ -26,7 +26,8 @@ export async function getPoll(req: Request, res: Response) {
                     select: {
                         option_id: true
                     }
-                }
+                },
+                creator: true
             }
         })
 
