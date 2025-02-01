@@ -6,6 +6,7 @@ export class WebSocketClient {
     private messageQueue: { type: string; payload: any }[] = []; // Queue for messages
     private isConnected = false;
     private MessageHandlers: Map<string, ((payload: any) => void)[]> = new Map();
+    private subscribedChannels: Set<string> = new Set(); // Track subscribed channels
 
     constructor(private URL: string) {
         this.connect();
@@ -63,6 +64,30 @@ export class WebSocketClient {
         setTimeout(() => {
             this.connect();
         }, timeout);
+    }
+
+    public subscribeToBackendWSS(channelId: string, organizationId: string, type: string) {
+        const channelKey = `${channelId}:${organizationId}:${type}`;
+        if (!this.subscribedChannels.has(channelKey)) {
+            this.send('subscribe-channel', {
+                channelId,
+                organizationId,
+                type
+            })
+            this.subscribedChannels.add(channelKey);
+        }
+    }
+
+    public unSubscribeToBackendWSS(channelId: string, organizationId: string, type: string) {
+        const channelKey = `${channelId}:${organizationId}:${type}`;
+        if (!this.subscribedChannels.has(channelKey)) {
+            this.send('unsubscribe-channel', {
+                channelId,
+                organizationId,
+                type
+            })
+            this.subscribedChannels.delete(channelKey);
+        }
     }
 
     public handleMessage(message: any) {

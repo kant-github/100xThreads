@@ -49,17 +49,16 @@ export default class WebSocketServerManager {
         this.wss.on('connection', async (ws: WebSocket, req) => {
             try {
                 const token = this.extractToken(req);
-                const userData = await this.authenticateUser(token);
-
-                if (!userData) {
+                const tokenData = await this.authenticateUser(token);
+                if (!tokenData) {
                     ws.close(4001, 'Unauthenticated user');
                     return;
                 }
 
-                this.setupClientTracking(ws, userData);
+                this.setupClientTracking(ws, tokenData);
 
                 ws.on('message', (data: string) => {
-                    this.handleIncomingMessage(ws, data, userData);
+                    this.handleIncomingMessage(ws, data, tokenData);
                 })
 
                 ws.on('close', () => {
@@ -78,22 +77,22 @@ export default class WebSocketServerManager {
     }
 
 
-    private setupClientTracking(ws: WebSocket, userData: any) {
-        const organizationId = userData.organizationId
-
+    private setupClientTracking(ws: WebSocket, tokenData: any) {
+        const organizationId = tokenData.organizationId
+        console.log("organization id is : ", organizationId);
         if (!this.clients.has(organizationId)) {
             this.clients.set(organizationId, new Set());
         }
-        (ws as any).userData = userData;
+        (ws as any).tokenData = tokenData;
 
         this.clients.get(organizationId)!.add(ws);
         this.userSubscriptions.set(ws, new Set());
     }
 
 
-    private async handleIncomingMessage(ws: WebSocket, data: string, userData: any) {
+    private async handleIncomingMessage(ws: WebSocket, data: string, tokenData: any) {
         const message: WebSocketMessage = JSON.parse(data);
-
+        console.log("message came is : ", message);
         switch (message.type) {
             case 'subscribe-channel':
                 await this.handleChannelSubscription(ws, message.payload);
@@ -103,7 +102,7 @@ export default class WebSocketServerManager {
                 break;
             default:
                 try {
-                    await this.databaseManager.handleIncomingMessage(message, userData);
+                    await this.databaseManager.handleIncomingMessage(message, tokenData);
                 } catch (error) {
                     console.error('Message processing error:', error);
                 }
@@ -112,7 +111,7 @@ export default class WebSocketServerManager {
 
     private async handleChannelSubscription(ws: WebSocket, subscription: ChannelSubscription) {
         const channelKey: string = this.getChannelKey(subscription);
-        console.log("channel key is : ", channelKey);
+        console.log("channel subscription key : ", channelKey);
         this.userSubscriptions.get(ws)!.add(channelKey);
         await this.subscriber.subscribe(channelKey);
 
@@ -125,7 +124,6 @@ export default class WebSocketServerManager {
 
     private handleRedisMessage(channelKey: string, message: string) {
         const parsedMessage = JSON.parse(message);
-        console.log("message came form subscriber is : ", parsedMessage);
         const [organizationId] = channelKey.split(':');
 
         const clients = this.clients.get(organizationId!);
@@ -133,7 +131,7 @@ export default class WebSocketServerManager {
 
         for (const client of clients) {
             if (this.userSubscriptions.get(client)?.has(channelKey)) {
-                const clientData = (client as any).userData;
+                const clientData = (client as any).tokenData;
                 if (clientData && clientData.userId !== parsedMessage.userId) {
                     this.sendToClient(client, parsedMessage);
                 }
@@ -201,14 +199,14 @@ export default class WebSocketServerManager {
         try {
             // Decode the base64 token
             const decodedString = Buffer.from(token, 'base64').toString();
-            const userData = JSON.parse(decodedString);
+            const tokenData = JSON.parse(decodedString);
 
             // Validate the required fields are present
-            if (!userData.userId || !userData.organizationId) {
+            if (!tokenData.userId || !tokenData.organizationId) {
                 throw new Error('Invalid token structure');
             }
 
-            return userData;
+            return tokenData;
         } catch (err) {
             console.error('Authentication error:', err);
             return null;

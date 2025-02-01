@@ -6,10 +6,11 @@ import OrgDashboard from '@/components/organization/OrgDashboard'
 import { userSessionAtom } from '@/recoil/atoms/atom'
 import { ORGANIZATION } from '@/lib/apiAuthRoutes'
 import ProtectedOrganizationComponent from '@/components/organization/ProtectedOrganizationComponent'
-import { UserType } from 'types'
+import { UserType, WelcomeChannel } from 'types'
 import { organizationChannelsAtom, organizationEventChannelsAtom, organizationWelcomeChannelAtom } from '@/recoil/atoms/organizationAtoms/organizationChannelAtoms'
 import { organizationUsersAtom } from '@/recoil/atoms/organizationAtoms/organizationUsersAtom'
 import { organizationAtom } from '@/recoil/atoms/organizationAtoms/organizationAtom'
+import { useWebSocket } from '@/hooks/useWebsocket'
 
 export type protectedOrganizationMetadata = {
     name: string,
@@ -21,10 +22,11 @@ export type protectedOrganizationMetadata = {
     image: string,
     organizationColor: string,
     organization_type: string,
-    created_at: string
+    created_at: string,
+    WelcomeChannel: WelcomeChannel
 }
 
-export default function OrgPage({ params }: { params: { id: string } }) {
+export default function ({ params }: { params: { id: string } }) {
     const session = useRecoilValue(userSessionAtom)
     const setEventChannel = useSetRecoilState(organizationEventChannelsAtom)
     const setChannels = useSetRecoilState(organizationChannelsAtom)
@@ -40,8 +42,9 @@ export default function OrgPage({ params }: { params: { id: string } }) {
         setEventChannel(eventChannel);
         setChannels(channels);
         setWelcomeChannel(welcomeChannel);
-        setOrganizationUsers(organizationUsers)
-    }, [setEventChannel, setChannels, setWelcomeChannel, setOrganizationUsers])
+        setOrganizationUsers(organizationUsers);
+        useWebSocket();
+    }, [setEventChannel, setChannels, setWelcomeChannel, setOrganizationUsers, params.id, useWebSocket])
 
     const fetchOrgMetadata = useCallback(async () => {
         if (!session.user?.token || !params.id) return
@@ -85,10 +88,9 @@ export default function OrgPage({ params }: { params: { id: string } }) {
     return (
         <div className="h-[100dvh] w-full flex flex-col overflow-hidden">
             {flag === 'PROTECTED' && protectedComponent}
-            {flag === 'ALLOWED' && (
-                <div className="flex-1 overflow-auto">
-                    <OrgDashboard />
-                </div>
+            {flag === 'ALLOWED' && (<div className="flex-1 overflow-auto">
+                <OrgDashboard />
+            </div>
             )}
         </div>
     )

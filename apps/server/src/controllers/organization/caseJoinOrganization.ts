@@ -31,8 +31,16 @@ export async function caseJoinOrganization(req: Request, res: Response) {
                 image: true,
                 organizationColor: true,
                 organization_type: true,
-                created_at: true
-            }
+                created_at: true,
+                WelcomeChannel: {
+                    select: {
+                        id: true,
+                        welcome_message: true,
+                        created_at: true
+                    }
+                }
+            },
+
         })
 
         if (organization?.access_type === 'PUBLIC') {

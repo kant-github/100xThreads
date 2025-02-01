@@ -20,7 +20,7 @@ interface Props {
 export default function PollCreation({ pollCreationCard, setPollCreationCard, channel }: Props) {
     const [pollOptionCard, setPollOptionCard] = useState<boolean>(false);
     const [poll, setPoll] = useState<PollTypes>({} as PollTypes);
-    const { subscribeToChannel, unsubscribeChannel, sendMessage } = useWebSocket();
+    const { subscribeToBackend, unsubscribeFromBackend, subscribeToHandler, sendMessage } = useWebSocket();
     const organization = useRecoilValue(organizationAtom);
     const session = useRecoilValue(userSessionAtom);
 
@@ -63,14 +63,16 @@ export default function PollCreation({ pollCreationCard, setPollCreationCard, ch
 
     useEffect(() => {
         if (organization?.id && channel.id) {
-            const unSubscribeNewPoll = subscribeToChannel(channel.id, organization?.id, 'new-poll', newPollHandler);
-            const unsubscribeActivePoll = subscribeToChannel(channel.id, organization?.id, 'active-poll', pollVoteHandler);
+            subscribeToBackend(channel.id, organization?.id, 'new-poll');
+            subscribeToBackend(channel.id, organization?.id, 'active-poll');
+            const unSubscribeNewPoll = subscribeToHandler('new-poll', newPollHandler);
+            const unsubscribeActivePoll = subscribeToHandler('active-poll', pollVoteHandler);
 
             return () => {
                 unSubscribeNewPoll();
                 unsubscribeActivePoll();
-                unsubscribeChannel(channel.id, organization?.id, 'new-poll');
-                unsubscribeChannel(channel.id, organization?.id, 'active-poll');
+                unsubscribeFromBackend(channel.id, organization?.id, 'new-poll');
+                unsubscribeFromBackend(channel.id, organization?.id, 'active-poll');
             };
         }
     }, [channel.id, organization?.id]);

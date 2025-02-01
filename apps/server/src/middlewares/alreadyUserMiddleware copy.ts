@@ -35,7 +35,8 @@ export default async function alreadyUserMiddleware(req: Request, res: Response,
             })
             return;
         }
-        return next();
+        next();
+        return 
     } catch (err) {
         console.log("error in catch block");
     }

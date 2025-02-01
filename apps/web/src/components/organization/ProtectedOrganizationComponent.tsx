@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react"
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import OpacityBackground from "../ui/OpacityBackground";
 import UtilityCard from "../utility/UtilityCard";
 import DashboardComponentHeading from "../dashboard/DashboardComponentHeading";
@@ -12,13 +12,14 @@ import AppLogo from "../heading/AppLogo";
 import { MdOutlineArrowRight } from "react-icons/md";
 import axios from "axios";
 import { ORGANIZATION } from "@/lib/apiAuthRoutes";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import Spinner from "../loaders/Spinner";
 import { toast } from "sonner";
 import { organizationChannelsAtom, organizationEventChannelsAtom, organizationWelcomeChannelAtom } from "@/recoil/atoms/organizationAtoms/organizationChannelAtoms";
 import { organizationUsersAtom } from "@/recoil/atoms/organizationAtoms/organizationUsersAtom";
 import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
+import { useWebSocket } from "@/hooks/useWebsocket";
 
 interface props {
     metaData: protectedOrganizationMetadata,
@@ -33,10 +34,19 @@ export default function ({ metaData, organizationId, setFlag }: props) {
     const [error, setError] = useState<string>('');
     const setEventChannel = useSetRecoilState(organizationEventChannelsAtom)
     const setChannels = useSetRecoilState(organizationChannelsAtom)
-    const setWelcomeChannel = useSetRecoilState(organizationWelcomeChannelAtom)
+    const [welcomeChannel, setWelcomeChannel] = useRecoilState(organizationWelcomeChannelAtom)
     const setOrganizationUsers = useSetRecoilState(organizationUsersAtom);
     const setOrganization = useSetRecoilState(organizationAtom);
     const date = metaData.created_at ? format(new Date(metaData.created_at), 'MMMM dd, yyyy') : null;
+
+    const { subscribeToBackend, sendMessage } = useWebSocket();
+
+    useEffect(() => {
+        if (metaData.WelcomeChannel.id) {
+            subscribeToBackend(metaData.WelcomeChannel.id, organizationId, 'welcome-user');
+        }
+    }, [])
+
 
     const clickHandler = async () => {
         setLoading(true);
@@ -55,16 +65,22 @@ export default function ({ metaData, organizationId, setFlag }: props) {
                     Authorization: `Bearer ${session.user?.token}`
                 }
             });
-            console.log("data from protected component", data);
             if (data.flag === 'ALLOWED') {
-                toast.success(`Welcome ${session.user?.name}`);
-                setFlag('ALLOWED')
+                const newMessage = {
+                    userId: session.user.id,
+                    organizationId
+                }
+                sendMessage(newMessage, metaData.WelcomeChannel.id, 'welcome-user');
                 const { organization, eventChannel, channels, welcomeChannel, organizationUsers } = data.data
+                console.log("Setting welcome channel in clickHandler:", welcomeChannel);
                 setOrganization(organization);
-                setEventChannel(eventChannel)
-                setChannels(channels)
+                setEventChannel(eventChannel);
+                setChannels(channels);
+                setOrganizationUsers(organizationUsers);
                 setWelcomeChannel(welcomeChannel);
-                setOrganizationUsers(organizationUsers)
+
+                setFlag('ALLOWED')
+                toast.success(`Welcome ${session.user?.name}`);
             } else {
                 setError('wrong password');
                 setFlag('PROTECTED');
@@ -80,12 +96,12 @@ export default function ({ metaData, organizationId, setFlag }: props) {
     return (
         <div className="h-[50rem] w-full bg-white dark:bg-neutral-900 dark:bg-dot-white/[0.2] bg-dot-black/[0.2] relative flex items-center justify-center select-none">
             <OpacityBackground>
-                <UtilityCard className="w-5/12 px-12 relative py-8 flex flex-col items-start justify-center">
+                <UtilityCard className="w-5/12 px-12 relative py-8 flex flex-col items-start justify-center dark:bg-neutral-900">
                     <div className="rounded-[12px] mt-4 absolute top-0 right-4" style={{ backgroundColor: `${metaData.organizationColor}` }}>
                         <Image src="/images/protected.png" width={80} height={40} alt="empty" className="p-3" />
                     </div>
                     <DashboardComponentHeading description={metaData.description}>
-                        {metaData.name}
+                        <h1 className="text-2xl">{metaData.name}</h1>
                     </DashboardComponentHeading>
                     <div className="flex flex-col justify-start gap-y-3 mt-4 w-full">
                         <div className="flex items-center gap-x-2">

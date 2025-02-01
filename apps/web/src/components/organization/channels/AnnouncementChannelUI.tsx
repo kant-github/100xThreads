@@ -1,12 +1,12 @@
 import PinnedCard from "@/components/cards/PinnedCard";
 import DashboardComponentHeading from "@/components/dashboard/DashboardComponentHeading";
-import BlackboardBackground from "@/components/ui/BlackboardBackground";
 import { useState } from "react";
 import { ChannelType } from "types";
 import TransparentButton from "../../buttons/TransparentButton";
 import { CgMathPlus } from "react-icons/cg";
 import { useRecoilValue } from "recoil";
 import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
+import UtilityCard from "@/components/utility/UtilityCard";
 
 const sampleAnnouncements = [
     {
@@ -91,7 +91,7 @@ export default function ({ channel }: RegularChannelViewProps) {
                 Create Announcement
             </TransparentButton>
             <DashboardComponentHeading description={channel.description!}> {channel.title} </DashboardComponentHeading>
-            <BlackboardBackground className='p-8 w-full mt-4'>
+            <UtilityCard className='p-8 w-full flex-grow mt-4 dark:bg-neutral-800'>
                 <div className='w-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12 relative'>
                     {sampleAnnouncements.map((announcement) => (
                         <div key={announcement.id} className="relative">
@@ -99,7 +99,7 @@ export default function ({ channel }: RegularChannelViewProps) {
                         </div>
                     ))}
                 </div>
-            </BlackboardBackground>
+            </UtilityCard>
         </div >
     );
 }

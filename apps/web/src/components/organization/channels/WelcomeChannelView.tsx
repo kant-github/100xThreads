@@ -3,7 +3,7 @@ import UtilityCard from "@/components/utility/UtilityCard";
 import Image from "next/image";
 import { WelcomeChannel } from "types";
 import { Barriecito } from "next/font/google";
-import MagneticWrapper from "@/components/ui/MagneticWrapper";
+import WelcomeChannelMessages from "../welcome-channel/WelcomeChannelMessages";
 
 const font = Barriecito({ weight: "400", subsets: ["latin"] })
 
@@ -12,10 +12,13 @@ interface WelcomeChannelViewProps {
 }
 
 export default function ({ channel }: WelcomeChannelViewProps) {
+
+    
+
     return (
         <div className="dark:bg-neutral-900 h-full flex flex-col items-start w-full p-6 relative">
             <DashboardComponentHeading description={channel.welcome_message!}>{"Welcome"}</DashboardComponentHeading>
-            <UtilityCard className=" w-full flex-grow mt-4">
+            <UtilityCard className="w-full flex-grow mt-4 flex flex-col h-full">
                 <div className="relative rounded-[16px]">
                     <Image
                         height={20}
@@ -26,9 +29,10 @@ export default function ({ channel }: WelcomeChannelViewProps) {
                     />
                     <div className="absolute inset-0 bg-black/40 rounded-[16px]"></div>
                     <div className={`text-6xl w-full mx-auto flex justify-center font-black tracking-widest leading-[24px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-yellow-500 z-20 select-none ${font.className}`}>
-                        WELOME CHANNEL
+                        WELCOME CHANNEL
                     </div>
                 </div>
+                <WelcomeChannelMessages className="flex-grow"/>
             </UtilityCard>
         </div>
     );

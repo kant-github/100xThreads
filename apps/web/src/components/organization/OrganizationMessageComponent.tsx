@@ -52,7 +52,7 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
         scrollToBottom();
     }, [messages]);
 
-    const { subscribeToChannel, unsubscribeChannel, sendMessage } = useWebSocket();
+    const { subscribeToBackend, unsubscribeFromBackend, subscribeToHandler, sendMessage } = useWebSocket();
 
     function handleIncomingMessage(newMessage: MessageType) {
         setMessages(prev => [...prev, newMessage]);
@@ -60,7 +60,6 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
 
     function handleIncomingTypingEvents(newMessage: any) {
         const { userName, typingEventType } = newMessage;
-
         setUsersTyping(prevUsers => {
             if (typingEventType && !prevUsers.includes(userName)) {
                 return [...prevUsers, userName];
@@ -69,23 +68,23 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
             }
             return prevUsers;
         });
-
-        console.log(usersTyping);
     }
 
     useEffect(() => {
 
         if (channel.id && organization?.id) {
+            console.log("subscribing");
 
-            const ubsubscribeTypingEvent = subscribeToChannel(channel.id, organization.id, 'typing-event', handleIncomingTypingEvents)
-
-            const unsubscribeMessageTransmission = subscribeToChannel(channel.id, organization.id, 'insert-general-channel-message', handleIncomingMessage);
+            subscribeToBackend(channel.id, organization.id, 'typing-event');
+            subscribeToBackend(channel.id, organization.id, 'insert-general-channel-message')
+            const unsubscribeTypingEventHandler = subscribeToHandler('typing-event', handleIncomingTypingEvents);
+            const unsubscribeMessageHandler = subscribeToHandler('insert-general-channel-message', handleIncomingMessage);
 
             return () => {
-                unsubscribeMessageTransmission();
-                ubsubscribeTypingEvent();
-                unsubscribeChannel(channel.id, organization.id, 'insert-general-channel-message');
-                unsubscribeChannel(channel.id, organization.id, 'typing-event');
+                unsubscribeTypingEventHandler();
+                unsubscribeMessageHandler();
+                unsubscribeFromBackend(channel.id, organization.id, 'insert-general-channel-message');
+                unsubscribeFromBackend(channel.id, organization.id, 'typing-event');
             }
 
         }
@@ -151,7 +150,7 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
                     <GroupedByDateMessages groupedMessages={groupedMessages} />
                     <div ref={messagesEndRef} />
                 </div>
-                <PollCard channel={channel} pollCreationCard={pollCreationCard} setPollCreationCard={setPollCreationCard} />
+                {/* <PollCard channel={channel} pollCreationCard={pollCreationCard} setPollCreationCard={setPollCreationCard} /> */}
             </div>
             <form className='w-full pb-1' onSubmit={handleSendMessage}>
                 <UserTyping usersTyping={usersTyping} />

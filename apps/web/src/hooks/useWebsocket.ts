@@ -1,55 +1,56 @@
 import { WebSocketClient } from "@/lib/socket.front";
 import { userSessionAtom } from "@/recoil/atoms/atom";
-import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
-import { useEffect, useRef } from "react"
+import { organizationAtom, organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
+import { useCallback, useEffect, useRef } from "react"
 import { useRecoilValue } from "recoil";
-import { MessageType } from "types"
 
 export const useWebSocket = () => {
   const webSocketRef = useRef<WebSocketClient | null>(null);
   const session = useRecoilValue(userSessionAtom);
-  const organization = useRecoilValue(organizationAtom);
+  const organizationIdd = useRecoilValue(organizationIdAtom);
+
+  const initializeWebSocket = useCallback((orgId?: string) => {
+    const organizationId = orgId || organizationIdd;
+    console.log("initializing web socket with : ", organizationId);
+
+    if (session.user?.id && (organizationId || orgId)) {
+      const wsToken = btoa(JSON.stringify({
+        userId: session.user.id,
+        organizationId: organizationId,
+        userName: session.user.name
+      }));
+
+      console.log(session.user);
+      console.log(orgId);
+      console.log(organizationId);
+
+      console.log("WebSocket Token Generated:", wsToken);
+
+      const ws = new WebSocketClient(`ws://localhost:7001?token=${wsToken}`);
+      webSocketRef.current = ws;
+    }
+  }, [session.user?.id, session.user?.name, organizationIdd]);
 
   useEffect(() => {
-    const wsToken = btoa(JSON.stringify({
-      userId: session.user?.id,
-      organizationId: organization?.id,
-      userName: session.user?.name
-    }));
-
-    const ws = new WebSocketClient(`ws://localhost:7001?token=${wsToken}`);
-    webSocketRef.current = ws;
-
+    initializeWebSocket();
     return () => {
       console.log("web socket cleaned");
     };
-  }, [session.user?.token]);
+  }, [initializeWebSocket]);
 
-  function subscribeToChannel(channelId: string, organizationId: string, type: string, handler: (payload: any) => void) {
-    if (!webSocketRef.current) return () => { };
-
-    webSocketRef.current.send('subscribe-channel', {
-      channelId,
-      organizationId,
-      type
-    });
-
-    // Subscribe handler for the specific message type
-    return webSocketRef.current.subscribe(type, handler);
+  function subscribeToBackend(channelId: string, organizationId: string, type: string) {
+    if (!webSocketRef.current) return;
+    webSocketRef.current.subscribeToBackendWSS(channelId, organizationId, type);
   }
 
-  function unsubscribeChannel(
-    channelId: string,
-    organizationId: string,
-    type: string
-  ) {
+  function unsubscribeFromBackend(channelId: string, organizationId: string, type: string) {
     if (!webSocketRef.current) return;
+    webSocketRef.current.unSubscribeToBackendWSS(channelId, organizationId, type);
+  }
 
-    webSocketRef.current.send('unsubscribe-channel', {
-      channelId,
-      organizationId,
-      type
-    });
+  function subscribeToHandler(type: string, handler: (payload: any) => void) {
+    if (!webSocketRef.current) return () => { };
+    return webSocketRef.current.subscribe(type, handler);
   }
 
   function sendMessage(payload: any, channelId: string, type: string) {
@@ -62,8 +63,9 @@ export const useWebSocket = () => {
   }
 
   return {
-    subscribeToChannel,
-    unsubscribeChannel,
+    subscribeToBackend,
+    unsubscribeFromBackend,
+    subscribeToHandler,
     sendMessage
   };
 };

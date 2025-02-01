@@ -18,7 +18,7 @@ export default function () {
                 <div className="flex flex-row sm:flex-col justify-around sm:justify-start sm:mt-3 gap-x-1 py-1 rounded-[14px] bg-neutral-800">
                     {
                         organizationUsers.map((user) => (
-                            <Option user={user.user} />
+                            <Option key={user.id} user={user.user} />
                         ))
                     }
                 </div>

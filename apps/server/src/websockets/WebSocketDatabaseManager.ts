@@ -39,17 +39,19 @@ export default class WebSocketDatabaseManager {
         this.publisher = publisher;
     }
 
-    async handleIncomingMessage(message: WebSocketMessage, userData: any) {
+    async handleIncomingMessage(message: WebSocketMessage, tokenData: any) {
         try {
             switch (message.type) {
                 case 'insert-general-channel-message':
-                    return this.insertGeneralChannelMessage(message, userData);
+                    return this.insertGeneralChannelMessage(message, tokenData);
                 case 'typing-event':
-                    return this.typingEvent(message, userData)
+                    return this.typingEvent(message, tokenData)
                 case 'new-poll':
-                    return this.newPollHandler(message, userData)
+                    return this.newPollHandler(message, tokenData)
                 case 'active-poll':
-                    return this.activePollHandler(message, userData);
+                    return this.activePollHandler(message, tokenData);
+                case 'welcome-user':
+                    return this.welcomeUserHandler(message, tokenData);
             }
         }
         catch (err) {
@@ -57,11 +59,14 @@ export default class WebSocketDatabaseManager {
         }
     }
 
-    private async insertGeneralChannelMessage(message: WebSocketMessage, userData: any) {
+    private async insertGeneralChannelMessage(message: WebSocketMessage, tokenData: any) {
+
+        console.log("chat message is : ", message);
 
         await this.prisma.chats.create({
             data: {
                 channel_id: message.payload.channelId,
+                organization_id: message.payload.organization_user.organization_id,
                 org_user_id: Number(message.payload.org_user_id),
                 message: message.payload.message,
                 name: message.payload.name,
@@ -69,33 +74,33 @@ export default class WebSocketDatabaseManager {
         })
 
         const channelKey = this.getChannelKey({
-            organizationId: userData.organizationId,
+            organizationId: tokenData.organizationId,
             channelId: message.payload.channelId,
             type: message.payload.type
         })
 
         await this.publisher.publish(channelKey, JSON.stringify({
             ...message,
-            userId: userData.userId,
+            userId: tokenData.userId,
             timeStamp: Date.now()
         }))
     }
 
-    private async typingEvent(message: WebSocketMessage, userData: any) {
+    private async typingEvent(message: WebSocketMessage, tokenData: any) {
         const channelKey = this.getChannelKey({
-            organizationId: userData.organizationId,
+            organizationId: tokenData.organizationId,
             channelId: message.payload.channelId,
             type: message.payload.type
         })
         await this.publisher.publish(channelKey, JSON.stringify({
             ...message,
-            userId: userData.userId,
+            userId: tokenData.userId,
         }))
     }
 
-    private async newPollHandler(message: WebSocketMessage, userData: any) {
+    private async newPollHandler(message: WebSocketMessage, tokenData: any) {
         const channelKey = this.getChannelKey({
-            organizationId: userData.organizationId,
+            organizationId: tokenData.organizationId,
             channelId: message.payload.channelId,
             type: message.payload.type
         })
@@ -115,13 +120,13 @@ export default class WebSocketDatabaseManager {
         await this.publisher.publish(channelKey, JSON.stringify({
             payload: poll,
             type: message.type
-            // userId: userData.userId
+            // userId: tokenData.userId
         }))
     }
 
-    private async activePollHandler(message: WebSocketMessage, userData: any) {
+    private async activePollHandler(message: WebSocketMessage, tokenData: any) {
         const channelKey = this.getChannelKey({
-            organizationId: userData.organizationId,
+            organizationId: tokenData.organizationId,
             channelId: message.payload.channelId,
             type: message.payload.type
         })
@@ -171,6 +176,53 @@ export default class WebSocketDatabaseManager {
 
         } catch (err) {
             console.log("Error while voting ", err);
+        }
+
+    }
+
+    private async welcomeUserHandler(message: WebSocketMessage, tokenData: any) {
+        const channelKey = this.getChannelKey({
+            organizationId: tokenData.organizationId,
+            channelId: message.payload.channelId,
+            type: message.payload.type
+        })
+
+        console.log("channel key is : ", channelKey);
+
+        try {
+
+            const user = await this.prisma.users.findUnique({
+                where: { id: Number(message.payload.userId) }
+            })
+
+            const welcomeChannel = await this.prisma.welcomeChannel.findUnique({
+                where: {
+                    organization_id: message.payload.organizationId
+                }
+            })
+
+            if (!welcomeChannel) {
+                throw new Error('Welcome channel not found');
+            }
+
+            const welcomeUser = await this.prisma.welcomedUser.create({
+                data: {
+                    welcome_channel_id: welcomeChannel.id,
+                    user_id: Number(message.payload.userId),
+                    message: `Welcome ${user?.name}! We're delighted to have you as part of our organization.`
+                },
+                include: {
+                    user: true
+                }
+            })
+
+            await this.publisher.publish(channelKey, JSON.stringify({
+                payload: welcomeUser,
+                type: message.type
+            }));
+
+        } catch (err) {
+            console.log("Error while welcoming user ", err);
         }
 
     }

@@ -1,8 +1,6 @@
 import prisma from "@repo/db/client";
 
 export async function getOrganizationsMetaDeta(organizationId: string) {
-
-
     try {
         const [organization, eventChannel, channels, organizationUsers, welcomeChannel] = await Promise.all([
             prisma.organization.findFirst({
@@ -36,8 +34,6 @@ export async function getOrganizationsMetaDeta(organizationId: string) {
             })
         ]);
 
-
-
         const data = {
             organization,
             eventChannel,
@@ -45,11 +41,10 @@ export async function getOrganizationsMetaDeta(organizationId: string) {
             organizationUsers,
             welcomeChannel
         };
-
+  
         return data;
 
-
     } catch (error) {
-
+        console.log("error in catching metadata");
     }
 }
