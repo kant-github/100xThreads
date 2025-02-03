@@ -10,7 +10,7 @@ export default function ({
     params
 }: Readonly<{
     children: React.ReactNode;
-    params: { id: string };  // Add params to the interface
+    params: { id: string };
 }>) {
     const { data: session, status } = useSession();
     const setUserSession = useSetRecoilState(userSessionAtom);

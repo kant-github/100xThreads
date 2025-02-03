@@ -4,6 +4,13 @@ import Image from "next/image";
 import { WelcomeChannel } from "types";
 import { Barriecito } from "next/font/google";
 import WelcomeChannelMessages from "../welcome-channel/WelcomeChannelMessages";
+import axios from "axios";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
+import { API_URL } from "@/lib/apiAuthRoutes";
+import { useEffect } from "react";
+import { userSessionAtom } from "@/recoil/atoms/atom";
+import { welcomeChannelMessagesAtom } from "@/recoil/atoms/organizationAtoms/welcomeChannelMessagesAtom";
 
 const font = Barriecito({ weight: "400", subsets: ["latin"] })
 
@@ -12,8 +19,29 @@ interface WelcomeChannelViewProps {
 }
 
 export default function ({ channel }: WelcomeChannelViewProps) {
+    const organizationId = useRecoilValue(organizationIdAtom);
+    const session = useRecoilValue(userSessionAtom);
+    const setWelcomeChannelMessages = useSetRecoilState(welcomeChannelMessagesAtom);
 
-    
+    async function getWelcomeMessages() {
+        try {
+            const data = await axios.get(`${API_URL}/organizations/${organizationId}/channels/${channel.id}/welcome-channel`, {
+                headers: {
+                    authorization: `Bearer ${session.user?.token}`,
+                }
+            })
+            if (data.data.data) {
+                setWelcomeChannelMessages(data.data.data)
+            }
+        } catch (err) {
+            console.log("Error in fetching the welcome channel messages");
+        }
+
+    }
+
+    useEffect(() => {
+        getWelcomeMessages();
+    }, [])
 
     return (
         <div className="dark:bg-neutral-900 h-full flex flex-col items-start w-full p-6 relative">
@@ -32,7 +60,7 @@ export default function ({ channel }: WelcomeChannelViewProps) {
                         WELCOME CHANNEL
                     </div>
                 </div>
-                <WelcomeChannelMessages className="flex-grow"/>
+                <WelcomeChannelMessages className="flex-grow" />
             </UtilityCard>
         </div>
     );

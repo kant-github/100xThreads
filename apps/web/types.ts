@@ -119,12 +119,12 @@ export type WelcomeChannel = {
   id: string
   organizationId: string
   welcome_message: string | null
-  welcomedUsers: WelcomedUser[]
+  welcomedUsers: WelcomedUserTypes[]
   roleRequests: RoleRequest[]
   createdAt: Date
 }
 
-export type WelcomedUser = {
+export type WelcomedUserTypes = {
   id: string
   welcomeChannelId: string
   userId: number

@@ -12,6 +12,7 @@ import authmiddleware from "../middlewares/authMiddleware";
 import joinOrganizationWithPassword from "../controllers/organization/joinOrganizationWithPassword";
 import getChats from "../controllers/chats/getChats";
 import { getPoll } from "../controllers/polls/getPoll";
+import { getWelcomeChannelMessages } from "../controllers/welcome-channel/getWelcomeChannelMessages";
 
 const router = Router();
 
@@ -29,9 +30,11 @@ router.delete("/organizations/:id", authmiddleware, deleteOrganizations);
 router.get("/organizations-by-search", authmiddleware, getOrganizationBySearch);
 router.get("/organizations-all", authmiddleware, getAllOrganizations);
 
-
 // chats-controller
 router.get("/organizations/:organizationId/channels/:channelId/chats", authmiddleware, getChats);
+
+//welcome-channel-message-controller
+router.get("/organizations/:organizationId/channels/:channelId/welcome-channel", authmiddleware, getWelcomeChannelMessages);
 
 //polls-controller
 router.get("/polls/:id/:channelId", authmiddleware, getPoll);

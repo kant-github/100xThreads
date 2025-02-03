@@ -19,7 +19,7 @@ export const useWebSocket = () => {
         organizationId: organizationId,
         userName: session.user.name
       }));
-
+      
       console.log(session.user);
       console.log(orgId);
       console.log(organizationId);
