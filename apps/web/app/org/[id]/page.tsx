@@ -37,7 +37,6 @@ export default function ({ params }: { params: { id: string } }) {
     const setOrganization = useSetRecoilState(organizationAtom);
     const [flag, setFlag] = useState<'PROTECTED' | 'ALLOWED' | 'INIT'>('INIT')
     const [data, setData] = useState<protectedOrganizationMetadata>({} as protectedOrganizationMetadata)
-    const { subscribeToBackend, unsubscribeFromBackend, subscribeToHandler } = useWebSocket();
 
     const updateChannels = useCallback((channelData: any) => {
         const { organization, eventChannel, channels, welcomeChannel, organizationUsers } = channelData
@@ -76,21 +75,6 @@ export default function ({ params }: { params: { id: string } }) {
     useEffect(() => {
         fetchOrgMetadata()
     }, [fetchOrgMetadata])
-
-    function handleIncomingWelcomeMessages(newMessage: any) {
-        setWelcomeChanelMessages(prev => [...prev, newMessage]);
-    }
-
-    useEffect(() => {
-        if (params.id && welcomeChannel?.id) {
-            subscribeToBackend(welcomeChannel.id, params.id, 'welcome-user');
-            const unsubscribeWelcomeMessageHandler = subscribeToHandler('welcome-user', handleIncomingWelcomeMessages);
-            return () => {
-                unsubscribeWelcomeMessageHandler();
-                unsubscribeFromBackend(welcomeChannel.id, params.id, 'welcome-user');
-            }
-        }
-    }, [welcomeChannel])
 
     const protectedComponent = useMemo(() => (
         <ProtectedOrganizationComponent

@@ -52,6 +52,8 @@ export default class WebSocketDatabaseManager {
                     return this.activePollHandler(message, tokenData);
                 case 'welcome-user':
                     return this.welcomeUserHandler(message, tokenData);
+                case 'new-announcement':
+                    return this.announcementHandler(message, tokenData);
             }
         }
         catch (err) {
@@ -60,9 +62,6 @@ export default class WebSocketDatabaseManager {
     }
 
     private async insertGeneralChannelMessage(message: WebSocketMessage, tokenData: any) {
-
-        console.log("chat message is : ", message);
-
         await this.prisma.chats.create({
             data: {
                 channel_id: message.payload.channelId,
@@ -225,6 +224,35 @@ export default class WebSocketDatabaseManager {
             console.log("Error while welcoming user ", err);
         }
 
+    }
+
+    private async announcementHandler(message: WebSocketMessage, tokenData: any) {
+        const channelKey = this.getChannelKey({
+            organizationId: tokenData.organizationId,
+            channelId: message.payload.channelId,
+            type: message.payload.type
+        })
+
+        try {
+            const announcement = await this.prisma.announcement.create({
+                data: {
+                    channel_id: message.payload.channelId,
+                    title: message.payload.title,
+                    content: message.payload.content,
+                    priority: message.payload.priority,
+                    tags: message.payload.tags,
+                    creator_org_user_id: message.payload.userId
+                }
+            })
+
+            await this.publisher.publish(channelKey, JSON.stringify({
+                payload: announcement,
+                type: message.payload.type
+            }))
+
+        } catch (err) {
+            console.log("Error in creating annoucement");
+        }
     }
 
     private getChannelKey(subscription: ChannelSubscription): string {

@@ -6,11 +6,12 @@ import { Barriecito } from "next/font/google";
 import WelcomeChannelMessages from "../welcome-channel/WelcomeChannelMessages";
 import axios from "axios";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
+import { organizationAtom, organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import { API_URL } from "@/lib/apiAuthRoutes";
 import { useEffect } from "react";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import { welcomeChannelMessagesAtom } from "@/recoil/atoms/organizationAtoms/welcomeChannelMessagesAtom";
+import { useWebSocket } from "@/hooks/useWebsocket";
 
 const font = Barriecito({ weight: "400", subsets: ["latin"] })
 
@@ -19,13 +20,30 @@ interface WelcomeChannelViewProps {
 }
 
 export default function ({ channel }: WelcomeChannelViewProps) {
-    const organizationId = useRecoilValue(organizationIdAtom);
+    const organization = useRecoilValue(organizationAtom);
     const session = useRecoilValue(userSessionAtom);
     const setWelcomeChannelMessages = useSetRecoilState(welcomeChannelMessagesAtom);
+    const { subscribeToBackend, unsubscribeFromBackend, subscribeToHandler } = useWebSocket();
+
+    useEffect(() => {
+        if (organization?.id && channel.id) {
+            subscribeToBackend(channel.id, organization.id, 'welcome-user');
+            const unsubscribeWelcomeMessageHandler = subscribeToHandler('welcome-user', handleIncomingWelcomeMessages);
+            return () => {
+                unsubscribeWelcomeMessageHandler();
+                unsubscribeFromBackend(channel.id, organization.id, 'welcome-user');
+            }
+        }
+    }, [channel.id, organization?.id]);
+
+    function handleIncomingWelcomeMessages(newMessage: any) {
+        console.log("message incoming");
+        setWelcomeChannelMessages(prev => [...prev, newMessage]);
+    }
 
     async function getWelcomeMessages() {
         try {
-            const data = await axios.get(`${API_URL}/organizations/${organizationId}/channels/${channel.id}/welcome-channel`, {
+            const data = await axios.get(`${API_URL}/organizations/${organization?.id}/channels/${channel.id}/welcome-channel`, {
                 headers: {
                     authorization: `Bearer ${session.user?.token}`,
                 }
@@ -45,7 +63,7 @@ export default function ({ channel }: WelcomeChannelViewProps) {
 
     return (
         <div className="dark:bg-neutral-900 h-full flex flex-col items-start w-full p-6 relative">
-            <DashboardComponentHeading description={channel.welcome_message!}>{"Welcome"}</DashboardComponentHeading>
+            <DashboardComponentHeading description={channel.welcome_message!}>{`${organization?.name}'s welcome channel`}</DashboardComponentHeading>
             <UtilityCard className="w-full flex-grow mt-4 flex flex-col h-full">
                 <div className="relative rounded-[16px]">
                     <Image
@@ -60,7 +78,7 @@ export default function ({ channel }: WelcomeChannelViewProps) {
                         WELCOME CHANNEL
                     </div>
                 </div>
-                <WelcomeChannelMessages className="flex-grow" />
+                <WelcomeChannelMessages className=""/>
             </UtilityCard>
         </div>
     );

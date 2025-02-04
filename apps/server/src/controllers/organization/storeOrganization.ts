@@ -19,8 +19,6 @@ export async function storeOrganization(req: Request, res: Response) {
         return;
     }
 
-    console.log(req.body);
-
     const {
         organizationName,
         image,
@@ -52,7 +50,6 @@ export async function storeOrganization(req: Request, res: Response) {
 
         finalSalt = clientSalt;
     }
-
 
     const validateHexColor = (color: string): boolean => /^#[0-9A-Fa-f]{6}$/.test(color);
     const resolvedOrganizationColor = validateHexColor(organizationColor) ? organizationColor : "#f7b602";

@@ -13,7 +13,7 @@ export async function getWelcomeChannelMessages(req: Request, res: Response) {
         const data = await prisma.welcomedUser.findMany({
             where: { welcome_channel_id: channelId },
             include: {
-                user: true
+                user: true,
             }
         })
 

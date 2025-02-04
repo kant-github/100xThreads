@@ -6,7 +6,7 @@ import ProfileOption from "../ui/ProfileOption";
 import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import AppLogo from "../heading/AppLogo";
 
-const baseDivStyles = "flex items-center justify-start gap-x-2 sm:gap-x-3 py-1.5 sm:py-2 px-2 sm:px-3 rounded-[8px] cursor-pointer select-none";
+const baseDivStyles = "flex items-center justify-start gap-x-2 sm:gap-x-3 py-1.5 sm:py-1.5 px-2 sm:px-3 rounded-[8px] cursor-pointer select-none";
 const textStyles = "text-[12px] sm:text-[12px] text-gray-100 dark:text-[#d6d6d6] font-semibold mt-0.5 tracking-wide hidden sm:block";
 
 export default function () {

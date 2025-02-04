@@ -130,7 +130,7 @@ export type WelcomedUserTypes = {
   userId: number
   user: UserType
   message: string | null
-  welcomedAt: Date
+  welcomed_at: Date
 }
 
 export interface PollTypes {

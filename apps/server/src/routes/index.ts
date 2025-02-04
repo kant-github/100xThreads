@@ -13,6 +13,7 @@ import joinOrganizationWithPassword from "../controllers/organization/joinOrgani
 import getChats from "../controllers/chats/getChats";
 import { getPoll } from "../controllers/polls/getPoll";
 import { getWelcomeChannelMessages } from "../controllers/welcome-channel/getWelcomeChannelMessages";
+import { getAnnouncementChannelMessages } from "../controllers/announcement-channel/getAnnouncementchannelMessages";
 
 const router = Router();
 
@@ -35,6 +36,9 @@ router.get("/organizations/:organizationId/channels/:channelId/chats", authmiddl
 
 //welcome-channel-message-controller
 router.get("/organizations/:organizationId/channels/:channelId/welcome-channel", authmiddleware, getWelcomeChannelMessages);
+
+//announcement-channel-controller
+router.get("/organizations/:organizationId/channels/:channelId/announcement-channel", authmiddleware, getAnnouncementChannelMessages);
 
 //polls-controller
 router.get("/polls/:id/:channelId", authmiddleware, getPoll);

@@ -22,7 +22,7 @@ new WebSocketServerManager(server);
 
 
 app.get("/health-check", (req, res) => {
-  res.send("Server started");
+  res.send("Server started Dipanshu gandu :)");
 });
 
 app.use("/api", Routes);
