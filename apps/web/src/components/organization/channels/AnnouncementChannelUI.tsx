@@ -6,6 +6,7 @@ import axios from "axios";
 import { API_URL } from "@/lib/apiAuthRoutes";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import AnnouncementChannelMessages from "../announcement-channel/AnnouncementChannelMessages";
+import CreateAnnouncementForm from "@/components/form/CreateAnnouncementForm";
 
 interface RegularChannelViewProps {
     channel: ChannelType;
@@ -13,7 +14,6 @@ interface RegularChannelViewProps {
 
 export default function ({ channel }: RegularChannelViewProps) {
     const session = useRecoilValue(userSessionAtom);
-    const [createAnnoucementModal, setCreateAnnouncementModal] = useState<boolean>(false);
     const [announcementData, setAnnouncementData] = useState<AnnouncementType[]>([]);
     const organization = useRecoilValue(organizationAtom);
     async function getWelcomeMessages() {
@@ -36,9 +36,9 @@ export default function ({ channel }: RegularChannelViewProps) {
         getWelcomeMessages();
     }, [])
     return (
-        <>
+        <div className="w-full">
             <AnnouncementChannelMessages channel={channel} announcementData={announcementData} />
-        </>
+        </div>
     );
 }
 

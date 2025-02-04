@@ -55,11 +55,7 @@ export default function ({
 }: OrganizationDetailsSectionProps) {
     const [tagInput, setTagInput] = useState<string>("");
 
-    const handleKeyDown = (
-        e: KeyboardEvent<HTMLInputElement>,
-        value: string[],
-        onChange: (value: string[]) => void
-    ) => {
+    function handleKeyDown(e: KeyboardEvent<HTMLInputElement>, value: string[], onChange: (value: string[]) => void) {
         if (e.key === 'Enter' || e.key === ',') {
             e.preventDefault();
             const newTag = tagInput.trim().toLowerCase();
