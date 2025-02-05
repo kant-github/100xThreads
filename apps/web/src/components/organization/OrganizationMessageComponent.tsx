@@ -150,7 +150,7 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
                     <GroupedByDateMessages groupedMessages={groupedMessages} />
                     <div ref={messagesEndRef} />
                 </div>
-                {/* <PollCard channel={channel} pollCreationCard={pollCreationCard} setPollCreationCard={setPollCreationCard} /> */}
+                <PollCard channel={channel} pollCreationCard={pollCreationCard} setPollCreationCard={setPollCreationCard} />
             </div>
             <form className='w-full pb-1' onSubmit={handleSendMessage}>
                 <UserTyping usersTyping={usersTyping} />

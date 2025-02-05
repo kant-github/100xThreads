@@ -91,7 +91,8 @@ export interface AnnouncementType {
   content: string;
   priority: Priority;
   tags: string[];
-  created_by: number;
+  creator_org_user_id: number; 
+  creator: OrganizationUsersType;
   created_at: Date;
   expires_at: Date | null;
   is_pinned: boolean;

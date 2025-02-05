@@ -2,7 +2,6 @@ import DashboardComponentHeading from "@/components/dashboard/DashboardComponent
 import UtilityCard from "@/components/utility/UtilityCard";
 import Image from "next/image";
 import { WelcomeChannel } from "types";
-import { Barriecito } from "next/font/google";
 import WelcomeChannelMessages from "../welcome-channel/WelcomeChannelMessages";
 import axios from "axios";
 import { useRecoilValue, useSetRecoilState } from "recoil";
@@ -12,6 +11,7 @@ import { useEffect } from "react";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import { welcomeChannelMessagesAtom } from "@/recoil/atoms/organizationAtoms/welcomeChannelMessagesAtom";
 import { useWebSocket } from "@/hooks/useWebsocket";
+import { Barriecito } from "next/font/google";
 
 const font = Barriecito({ weight: "400", subsets: ["latin"] })
 

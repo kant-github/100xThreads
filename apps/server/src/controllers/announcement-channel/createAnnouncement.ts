@@ -7,11 +7,22 @@ export async function createAnnouncement(req: Request, res: Response) {
         res.status(401).json({ message: "You are not authorized" });
         return;
     }
-
-    const { channelId } = req.params;
+    console.log(req.user);
+    console.log("announcmeent creation statrted");
+    console.log(req.body);
+    const { channelId, organizationId } = req.params;
     const { title, content, priority, tags } = req.body;
 
     try {
+
+        const orgUser = await prisma.organizationUsers.findUnique({
+            where: {
+                organization_id_user_id: {
+                    user_id: Number(req.user.id),
+                    organization_id: organizationId!
+                }
+            }
+        });
 
         const announcement = await prisma.announcement.create({
             data: {
@@ -20,7 +31,14 @@ export async function createAnnouncement(req: Request, res: Response) {
                 content: content,
                 priority: priority,
                 tags: tags,
-                creator_org_user_id: Number(req.user.id),
+                creator_org_user_id: Number(orgUser?.id),
+            },
+            include: {
+                creator: {
+                    select: {
+                        user: true
+                    }
+                }
             }
         })
 

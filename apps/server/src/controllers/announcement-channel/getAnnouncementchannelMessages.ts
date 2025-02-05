@@ -13,7 +13,9 @@ export async function getAnnouncementChannelMessages(req: Request, res: Response
         const data = await prisma.announcement.findMany({
             where: { channel_id: channelId },
             include: {
-                creator: true,
+                creator: {
+                    select: {user: true}
+                },
                 AckStatus: true
             }
         })

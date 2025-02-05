@@ -8,10 +8,11 @@ import { Dispatch, KeyboardEvent, SetStateAction, useEffect, useRef, useState } 
 import GreyButton from "../buttons/GreyButton";
 import axios from "axios";
 import { API_URL } from "@/lib/apiAuthRoutes";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import { ChannelType } from "types";
 import { userSessionAtom } from "@/recoil/atoms/atom";
+import { announcementChannelMessgaes } from "@/recoil/atoms/organizationAtoms/announcementChannelMessages";
 
 const PriorityEnum = z.enum(["LOW", "NORMAL", "HIGH", "URGENT"]);
 
@@ -19,7 +20,7 @@ const PriorityEnum = z.enum(["LOW", "NORMAL", "HIGH", "URGENT"]);
 const createAnnouncementFormSchema = z.object({
     title: z.string().min(1, "Title is required").max(255, "Title must be less than 255 characters"),
     content: z.string().min(1, "Content is required").max(10000, "Content must be less than 10000 characters"),
-    priority: PriorityEnum.default('NORMAL'),
+    priority: PriorityEnum.default('LOW'),
     tags: z.array(z.string()).default([]).transform(tags => tags.filter(tag => tag.length > 0))
 })
 
@@ -34,7 +35,9 @@ interface CreateAnnouncementFormProps {
 
 export default function ({ className, setCreateAnnouncementModal, createAnnoucementModal, channel }: CreateAnnouncementFormProps) {
     const [tagInput, setTagInput] = useState<string>("");
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const organization = useRecoilValue(organizationAtom);
+    const setAnnouncementChannelMessages = useSetRecoilState(announcementChannelMessgaes);
     const session = useRecoilValue(userSessionAtom);
     const ref = useRef<HTMLDivElement>(null);
     const { reset, handleSubmit, control, formState: { errors } } = useForm<AnnouncementFormSchema>({
@@ -69,13 +72,21 @@ export default function ({ className, setCreateAnnouncementModal, createAnnoucem
     };
 
     async function submitHandler(formData: AnnouncementFormSchema) {
-        console.log("data submitted is : ", formData);
-        const { data } = await axios.post(`{${API_URL}/organizations/${organization?.id}/channels/${channel.id}}`, formData, {
-            headers: {
-                authorization: `Bearer ${session.user?.token}`
-            }
-        })
-        console.log("Data came from backend is : ", data);
+        try {
+            setIsSubmitting(true);
+            const { data } = await axios.post(`${API_URL}/organizations/${organization?.id}/channels/${channel.id}`, formData, {
+                headers: {
+                    authorization: `Bearer ${session.user?.token}`
+                }
+            })
+            setAnnouncementChannelMessages(prev => [...prev, data.data]);
+
+        } catch (err) {
+            console.log("error in creation of anouncement in frontend ", err)
+        } finally {
+            setIsSubmitting(false);
+            setCreateAnnouncementModal(false);
+        }
     }
 
     return (
@@ -160,7 +171,12 @@ export default function ({ className, setCreateAnnouncementModal, createAnnoucem
                             )}
                         />
                     </div>
-                    <GreyButton className="w-full mt-2">Create announcment</GreyButton>
+                    <button
+                        type='submit'
+                        className="flex items-center justify-center gap-2 mt-3 bg-yellow-600 hover:bg-yellow-600/90 disabled:bg-yellow-600/90 disabled:cursor-not-allowed text-neutral-900 font-medium px-4 py-2.5 rounded-[8px] mx-auto w-full text-center text-xs"
+                    >
+                        {isSubmitting ? 'Creating...' : 'Create announcement'}
+                    </button>
                 </form>
             </UtilityCard>
         </div>
