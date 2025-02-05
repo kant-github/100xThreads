@@ -155,14 +155,7 @@ export default function ({ className, setCreateAnnouncementModal, createAnnoucem
                                                 </button>
                                             </span>
                                         ))}
-                                        <input
-                                            type="text"
-                                            value={tagInput}
-                                            onChange={(e) => setTagInput(e.target.value)}
-                                            onKeyDown={(e) => handleKeyDown(e, value, onChange)}
-                                            placeholder={value.length === 0 ? "Type tags and press Enter..." : "Add more tags..."}
-                                            className="flex-1 min-w-[120px] text-xs outline-none bg-transparent placeholder:text-[12px] placeholder:text-neutral-400"
-                                        />
+                                        <input type="text" value={tagInput} onChange={(e) => setTagInput(e.target.value)} onKeyDown={(e) => handleKeyDown(e, value, onChange)} placeholder={value.length === 0 ? "Type tags and press Enter..." : "Add more tags..."} className="flex-1 min-w-[120px] text-xs outline-none bg-transparent placeholder:text-[12px] placeholder:text-neutral-400" />
                                     </div>
                                     <p className="text-xs text-neutral-500 dark:text-neutralfinp-400">
                                         Press Enter or comma to add tags. Tags should be relevant to your organization's focus areas.
@@ -171,10 +164,7 @@ export default function ({ className, setCreateAnnouncementModal, createAnnoucem
                             )}
                         />
                     </div>
-                    <button
-                        type='submit'
-                        className="flex items-center justify-center gap-2 mt-3 bg-yellow-600 hover:bg-yellow-600/90 disabled:bg-yellow-600/90 disabled:cursor-not-allowed text-neutral-900 font-medium px-4 py-2.5 rounded-[8px] mx-auto w-full text-center text-xs"
-                    >
+                    <button type='submit' className="flex items-center justify-center gap-2 mt-3 bg-yellow-600 hover:bg-yellow-600/90 disabled:bg-yellow-600/90 disabled:cursor-not-allowed text-neutral-900 font-medium px-4 py-2.5 rounded-[8px] mx-auto w-full text-center text-xs" >
                         {isSubmitting ? 'Creating...' : 'Create announcement'}
                     </button>
                 </form>

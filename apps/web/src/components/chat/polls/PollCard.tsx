@@ -26,7 +26,6 @@ export default function PollCreation({ pollCreationCard, setPollCreationCard, ch
 
     const getPolls = useCallback(async () => {
         if (!organization?.id || !channel.id || !session?.user?.token) {
-            console.log("Missing required data for fetching polls");
             return;
         }
 

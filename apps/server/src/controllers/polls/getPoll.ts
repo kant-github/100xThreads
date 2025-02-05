@@ -10,6 +10,32 @@ export async function getPoll(req: Request, res: Response) {
     }
 
     try {
+
+        const creatorPoll = await prisma.poll.findFirst({
+            where: {
+                channel_id: channelId,
+                status: 'ACTIVE',
+                creator_id: Number(req.user.id)
+            },
+            include: {
+                options: true,
+                votes: {
+                    select: {
+                        option_id: true,
+                        user_id: true
+                    }
+                },
+                creator: true
+            }
+        })
+
+        if(creatorPoll) {
+            res.status(200).json({
+                message: "Poll fetched successfully (creator access)",
+                poll: creatorPoll
+            })
+        }
+
         const poll = await prisma.poll.findFirst({
             where: {
                 channel_id: channelId,

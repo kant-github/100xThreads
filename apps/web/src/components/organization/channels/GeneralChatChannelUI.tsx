@@ -61,12 +61,7 @@ export default function WelcomeChannelView({ channel }: WelcomeChannelViewProps)
                     <div className="space-y-4 h-full">
                         <ChatSkeleton />
                     </div>
-                ) : (
-                    <OrganizationMessageComponent
-                        channel={channel}
-                        initialChats={chats}
-                    />
-                )}
+                ) : (<OrganizationMessageComponent channel={channel} initialChats={chats} />)}
             </UtilityCard>
         </div>
     );
