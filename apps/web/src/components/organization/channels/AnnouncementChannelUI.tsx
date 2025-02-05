@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { AnnouncementType, ChannelType } from "types";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import axios from "axios";
 import { API_URL } from "@/lib/apiAuthRoutes";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import AnnouncementChannelMessages from "../announcement-channel/AnnouncementChannelMessages";
 import CreateAnnouncementForm from "@/components/form/CreateAnnouncementForm";
+import { announcementChannelMessgaes } from "@/recoil/atoms/organizationAtoms/announcementChannelMessages";
 
 interface RegularChannelViewProps {
     channel: ChannelType;
@@ -14,7 +15,7 @@ interface RegularChannelViewProps {
 
 export default function ({ channel }: RegularChannelViewProps) {
     const session = useRecoilValue(userSessionAtom);
-    const [announcementData, setAnnouncementData] = useState<AnnouncementType[]>([]);
+    const setAnnouncementChannelMessages = useSetRecoilState(announcementChannelMessgaes);
     const organization = useRecoilValue(organizationAtom);
     async function getWelcomeMessages() {
         try {
@@ -24,7 +25,7 @@ export default function ({ channel }: RegularChannelViewProps) {
                 }
             })
             if (data.data.data) {
-                setAnnouncementData(data.data.data)
+                setAnnouncementChannelMessages(data.data.data)
             }
         } catch (err) {
             console.log("Error in fetching the welcome channel messages");
@@ -37,7 +38,7 @@ export default function ({ channel }: RegularChannelViewProps) {
     }, [])
     return (
         <div className="w-full">
-            <AnnouncementChannelMessages channel={channel} announcementData={announcementData} />
+            <AnnouncementChannelMessages channel={channel} />
         </div>
     );
 }

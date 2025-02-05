@@ -5,6 +5,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import InputBox from "../utility/InputBox";
 import { X } from "lucide-react";
 import { Dispatch, KeyboardEvent, SetStateAction, useEffect, useRef, useState } from "react";
+import GreyButton from "../buttons/GreyButton";
+import axios from "axios";
+import { API_URL } from "@/lib/apiAuthRoutes";
+import { useRecoilValue } from "recoil";
+import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
+import { ChannelType } from "types";
+import { userSessionAtom } from "@/recoil/atoms/atom";
 
 const PriorityEnum = z.enum(["LOW", "NORMAL", "HIGH", "URGENT"]);
 
@@ -22,11 +29,17 @@ interface CreateAnnouncementFormProps {
     className?: string;
     createAnnoucementModal: boolean;
     setCreateAnnouncementModal: Dispatch<SetStateAction<boolean>>;
+    channel: ChannelType
 }
 
-export default function ({ className, setCreateAnnouncementModal, createAnnoucementModal }: CreateAnnouncementFormProps) {
+export default function ({ className, setCreateAnnouncementModal, createAnnoucementModal, channel }: CreateAnnouncementFormProps) {
     const [tagInput, setTagInput] = useState<string>("");
+    const organization = useRecoilValue(organizationAtom);
+    const session = useRecoilValue(userSessionAtom);
     const ref = useRef<HTMLDivElement>(null);
+    const { reset, handleSubmit, control, formState: { errors } } = useForm<AnnouncementFormSchema>({
+        resolver: zodResolver(createAnnouncementFormSchema)
+    })
 
     useEffect(() => {
         function handleClickOutside(e: MouseEvent) {
@@ -41,10 +54,6 @@ export default function ({ className, setCreateAnnouncementModal, createAnnoucem
         }
     }, [])
 
-    const { reset, control, formState: { errors } } = useForm<AnnouncementFormSchema>({
-        resolver: zodResolver(createAnnouncementFormSchema)
-    })
-
     function handleKeyDown(e: KeyboardEvent<HTMLInputElement>, value: string[], onChange: (value: string[]) => void) {
         if (e.key === 'Enter' || e.key === ',') {
             e.preventDefault();
@@ -58,25 +67,25 @@ export default function ({ className, setCreateAnnouncementModal, createAnnoucem
             onChange(value.slice(0, -1));
         }
     };
+
+    async function submitHandler(formData: AnnouncementFormSchema) {
+        console.log("data submitted is : ", formData);
+        const { data } = await axios.post(`{${API_URL}/organizations/${organization?.id}/channels/${channel.id}}`, formData, {
+            headers: {
+                authorization: `Bearer ${session.user?.token}`
+            }
+        })
+        console.log("Data came from backend is : ", data);
+    }
+
     return (
         <div ref={ref}>
             <UtilityCard className={`w-[28rem] dark:bg-neutral-900 border-[1px] dark:border-neutral-700 absolute right-0 top-10 z-[100] px-8 py-8  ${className}`}>
-                <form className="">
+                <form className="" onSubmit={handleSubmit(submitHandler)}>
                     <div className="w-full flex items-center justify-between gap-x-4">
-                        <Controller
-
-                            name="title"
-                            control={control}
-                            render={({ field }) => (
-                                <InputBox
-                                    className="w-[70%]"
-                                    onChange={field.onChange}
-                                    label="Title"
-                                    value={field.value}
-                                    error={errors.title?.message}
-                                    placeholder="Enter announcement title"
-                                />
-                            )}
+                        <Controller name="title" control={control} render={({ field }) => (
+                            <InputBox className="w-[70%]" onChange={field.onChange} label="Title" value={field.value} error={errors.title?.message} placeholder="Enter announcement title" />
+                        )}
                         />
                         <div className="">
                             <label className="block text-xs my-1 font-medium text-gray-700 dark:text-neutral-300">
@@ -86,10 +95,7 @@ export default function ({ className, setCreateAnnouncementModal, createAnnoucem
                                 name="priority"
                                 control={control}
                                 render={({ field }) => (
-                                    <select
-                                        {...field}
-                                        className="w-full rounded-[6px] px-2 text-sm dark:text-neutral-400 border border-neutral-300 dark:border-neutral-600 dark:bg-neutral-900 outline-none py-2.5"
-                                    >
+                                    <select {...field} className="w-full rounded-[6px] px-2 text-sm dark:text-neutral-400 border border-neutral-300 dark:border-neutral-600 dark:bg-neutral-900 outline-none py-2.5" >
                                         <option value="LOW">Low</option>
                                         <option value="NORMAL">Normal</option>
                                         <option value="HIGH">High</option>
@@ -106,13 +112,15 @@ export default function ({ className, setCreateAnnouncementModal, createAnnoucem
                         <Controller
                             name="content"
                             control={control}
-                            render={({ field }) => (
-                                <textarea
-                                    {...field}
-                                    className={`mt-2 px-3 py-2 placeholder:text-sm placeholder:text-neutral-400 w-full text-xs min-h-[120px] rounded-[6px] border border-gray-300 dark:border-neutral-600 
-                                dark:bg-neutral-900 dark:text-white outline-none ${errors.content ? 'border-red-500' : ''}`}
-                                    placeholder="Enter announcement content..."
-                                />
+                            render={({ field, fieldState: { error } }) => (
+                                <>
+                                    {error && (<p className="mt-1 text-xs text-red-500"> {error?.message} </p>)}
+                                    <textarea
+                                        {...field}
+                                        className={`mt-2 px-3 py-2 placeholder:text-sm placeholder:text-neutral-400 w-full text-xs min-h-[120px] rounded-[6px] border dark:bg-neutral-900 dark:text-white focus:outline-none ${error ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500' : 'border-gray-300 dark:border-neutral-600 focus:border-gray-300 focus:ring-1 focus:ring-gray-300'}`}
+                                        placeholder="Enter announcement content..."
+                                    />
+                                </>
                             )}
                         />
                     </div>
@@ -131,12 +139,7 @@ export default function ({ className, setCreateAnnouncementModal, createAnnoucem
                                         {value.map((tag: string) => (
                                             <span key={tag} className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-sm bg-yellow-100 text-yellow-800 dark:bg-yellow-500/20 dark:text-yellow-500">
                                                 {tag}
-                                                <button
-                                                    aria-label="Close"
-                                                    type="button"
-                                                    onClick={() => onChange(value.filter((t: string) => t !== tag))}
-                                                    className="hover:text-yellow-900 dark:hover:text-yellow-400"
-                                                >
+                                                <button aria-label="Close" type="button" onClick={() => onChange(value.filter((t: string) => t !== tag))} className="hover:text-yellow-900 dark:hover:text-yellow-400" >
                                                     <X size={14} />
                                                 </button>
                                             </span>
@@ -157,6 +160,7 @@ export default function ({ className, setCreateAnnouncementModal, createAnnoucem
                             )}
                         />
                     </div>
+                    <GreyButton className="w-full mt-2">Create announcment</GreyButton>
                 </form>
             </UtilityCard>
         </div>
