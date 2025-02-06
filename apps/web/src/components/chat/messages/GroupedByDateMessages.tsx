@@ -1,12 +1,13 @@
 import React from "react"
 import Messages from "./Messages"
-import { MessageType } from "types"
+import { ChannelType, MessageType } from "types"
 
 interface GroupedByDateMessagesProps {
-    groupedMessages: Array<[string, MessageType[]]>
+    groupedMessages: Array<[string, MessageType[]]>;
+    channel: ChannelType;
 }
 
-export default function ({ groupedMessages }: GroupedByDateMessagesProps) {
+export default function ({ groupedMessages, channel }: GroupedByDateMessagesProps) {
     return groupedMessages.map(([date, dayMessages]) => (
         <React.Fragment key={date}>
             <div className='w-full flex justify-center sticky top-0 z-[100] select-none'>
@@ -19,7 +20,7 @@ export default function ({ groupedMessages }: GroupedByDateMessagesProps) {
                 </span>
             </div>
             {dayMessages.map((message) => (
-                <Messages key={message.id} message={message} />
+                <Messages channel={channel} key={message.id} message={message} />
             ))}
         </React.Fragment>
     ))

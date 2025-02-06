@@ -59,7 +59,7 @@ export default function PollOptionsAndResults({
 
                                 <button
                                     type="button"
-                                    className={`relative w-full py-2.5 px-3 rounded-[8px] border font-normal ${isSelected
+                                    className={`relative w-full py-2.5 px-3 rounded-[8px] dark:bg-[#1f1f1f] border font-normal ${isSelected
                                         ? 'border-yellow-500 dark:border-yellow-600'
                                         : 'border-neutral-200 dark:border-neutral-700'
                                         } hover:border-yellow-500 dark:hover:border-yellow-400 transition-colors`}

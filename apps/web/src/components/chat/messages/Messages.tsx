@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { MessageType } from "types";
+import { ChannelType, MessageType } from "types";
 import { format } from 'date-fns'
 import { useRecoilValue } from 'recoil';
 import { userSessionAtom } from '@/recoil/atoms/atom';
@@ -8,20 +8,24 @@ import { useState } from "react";
 import EmojiPicker from 'emoji-picker-react';
 import { MouseDownEvent } from "emoji-picker-react/dist/config/config";
 import { HiOutlineDotsVertical } from "react-icons/hi";
+import MessageOptionsMenu from "@/components/ui/MessageOptionsMenu";
 
 interface ReactionPayload {
     message_id: string;
     emoji: string;
     user_id: number;
     org_id: number;
+    channel: ChannelType;
 }
 
 interface MessagesProps {
     message: MessageType;
     className?: string;
+    channel: ChannelType;
 }
 
-function MessageContent({ message, className }: MessagesProps) {
+function MessageContent({ message, className, channel }: MessagesProps) {
+    const [messageOptionMenu, setOptionMenu] = useState<boolean>(false);
     const session = useRecoilValue(userSessionAtom);
     const isCurrentUser = Number(session.user?.id) === Number(message.org_user_id);
     return (
@@ -32,13 +36,14 @@ function MessageContent({ message, className }: MessagesProps) {
                 </p>
             </div>
             <div>
-                <HiOutlineDotsVertical size={14} className={`transition-all duration-300 ease-out cursor-pointer opacity-0 group-hover:opacity-100 mt-[10px]`} />
+                <HiOutlineDotsVertical onClick={() => setOptionMenu(true)} size={14} className={`transition-all duration-300 ease-out cursor-pointer opacity-0 group-hover:opacity-100 mt-[10px]`} />
+                <MessageOptionsMenu channel={channel} isCurrentUser={isCurrentUser} open={messageOptionMenu} setOpen={setOptionMenu} message={message} />
             </div>
         </div>
     );
 }
 
-export default function Message({ message }: MessagesProps) {
+export default function Message({ message, channel }: MessagesProps) {
     const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
     const session = useRecoilValue(userSessionAtom);
     const isCurrentUser = Number(session.user?.id) === Number(message.org_user_id);
@@ -68,7 +73,7 @@ export default function Message({ message }: MessagesProps) {
                         <EmojiPicker height={200} width={200} onEmojiClick={onEmojiClick} />
                     </div>
                 )}
-                <MessageContent message={message} />
+                <MessageContent channel={channel} message={message} />
             </div>
         </div>
     );

@@ -147,7 +147,7 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
             <div className='flex-1 w-full overflow-y-auto scrollbar-hide'>
                 <div className='flex flex-col space-y-5 w-full'>
                     <EmptyConversation className="mt-4 w-full" show={messages.length === 0} />
-                    <GroupedByDateMessages groupedMessages={groupedMessages} />
+                    <GroupedByDateMessages channel={channel} groupedMessages={groupedMessages} />
                     <div ref={messagesEndRef} />
                 </div>
                 <PollCard channel={channel} pollCreationCard={pollCreationCard} setPollCreationCard={setPollCreationCard} />
