@@ -33,6 +33,7 @@ function MessageContent({ message, className, channel }: MessagesProps) {
             <div className={`space-y-2 mt-1 py-1.5 px-4 z-10 rounded-bl-[8px] rounded-br-[8px] ${isCurrentUser ? "bg-neutral-900 rounded-tl-[8px] text-neutral-300" : "bg-neutral-700 rounded-tr-[8px]"} ${className}`}>
                 <p className="text-[12px] font-light tracking-wider whitespace-pre-wrap break-words">
                     {message.message}
+                    {message.is_edited && <span>edited</span>}
                 </p>
             </div>
             <div>

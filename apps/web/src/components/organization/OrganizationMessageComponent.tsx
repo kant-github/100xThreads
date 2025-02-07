@@ -10,7 +10,7 @@ import GroupedByDateMessages from '../chat/messages/GroupedByDateMessages';
 import UserTyping from '../utility/UserTyping';
 import PollCard from '../chat/polls/PollCard';
 import { GoPaperclip } from "react-icons/go";
-import PollCreationCard from '../chat/polls/PollCreationCard';
+import { v4 as uuidv4 } from "uuid";
 
 interface OrganizationMessageComponentProps {
     channel: ChannelType;
@@ -70,21 +70,63 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
         });
     }
 
+    function handleIncomingDeleteMessage(newMessage: any) {
+        console.log("delete message is : ", newMessage);
+        setMessages((prevMessage) => {
+            return prevMessage.map((message) => {
+                if (message.id === newMessage.id) {
+                    console.log("message id is : ", message.id);
+                    console.log("new message id is : ", newMessage.id);
+                    return {
+                        ...message,
+                        message: newMessage.message,
+                        is_deleted: true,
+                        deleted_at: newMessage.deleted_at
+                    }
+                }
+                return message;
+            })
+        })
+    }
+
+    function handleIncomingEditMessage(newMessage: any) {
+        console.log("new edited message recieved is : ", newMessage);
+        setMessages((prevMessages) => {
+            return prevMessages.map((message) => {
+                if (message.id === newMessage.id) {
+                    return {
+                        ...message,
+                        message: newMessage.message,
+                        is_edited: true,
+                        edited_at: newMessage.edited_at
+                    }
+                }
+                return message
+            })
+        })
+    }
+
     useEffect(() => {
 
         if (channel.id && organization?.id) {
-            console.log("subscribing");
 
             subscribeToBackend(channel.id, organization.id, 'typing-event');
             subscribeToBackend(channel.id, organization.id, 'insert-general-channel-message')
+            subscribeToBackend(channel.id, organization.id, 'delete-message');
+            subscribeToBackend(channel.id, organization.id, 'edit-message');
             const unsubscribeTypingEventHandler = subscribeToHandler('typing-event', handleIncomingTypingEvents);
             const unsubscribeMessageHandler = subscribeToHandler('insert-general-channel-message', handleIncomingMessage);
-
+            const unsubscribeDeleteMessageHandler = subscribeToHandler('delete-message', handleIncomingDeleteMessage);
+            const unsubscribeEditMessageHandler = subscribeToHandler('edit-message', handleIncomingEditMessage);
             return () => {
                 unsubscribeTypingEventHandler();
                 unsubscribeMessageHandler();
+                unsubscribeDeleteMessageHandler();
+                unsubscribeEditMessageHandler();
                 unsubscribeFromBackend(channel.id, organization.id, 'insert-general-channel-message');
                 unsubscribeFromBackend(channel.id, organization.id, 'typing-event');
+                unsubscribeFromBackend(channel.id, organization.id, 'delete-message');
+                unsubscribeFromBackend(channel.id, organization.id, 'edit-message');
             }
 
         }
@@ -98,7 +140,7 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
         if (!message.trim()) return;
 
         const newMessage: MessageType = {
-            id: Date.now().toString(),
+            id: uuidv4(),
             org_user_id: Number(session.user?.id) || 0,
             organization_user: {
                 organization_id: organization?.id!,
@@ -108,6 +150,8 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
             },
             message: message,
             name: session.user?.name || "User",
+            is_deleted: false,
+            is_edited: false,
             created_at: new Date(Date.now()),
             LikedUsers: []
         };

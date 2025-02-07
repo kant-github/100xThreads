@@ -17,7 +17,6 @@ export class WebSocketClient {
             this.ws = new WebSocket(this.URL);
 
             this.ws.onopen = () => {
-                console.log("connection onopen");
                 this.isConnected = true;
                 this.reconnectAttempts = 0;
                 this.reconnectTimeout = 1000;
@@ -125,7 +124,6 @@ export class WebSocketClient {
             payload,
             timestamp: Date.now()
         };
-        console.log("sending message", message);
 
         try {
             this.ws!.send(JSON.stringify(message));

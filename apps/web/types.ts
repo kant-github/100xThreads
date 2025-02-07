@@ -42,6 +42,10 @@ export type MessageType = {
   name: string;
   created_at: Date;
   channel_id?: string;
+  is_deleted: boolean;
+  deleted_at?: Date | null;
+  is_edited: boolean;
+  edited_at?: Date | null
   org_user_id: number;
   organization_user?: OrganizationUsersType;
   channel?: ChannelType;
@@ -91,7 +95,7 @@ export interface AnnouncementType {
   content: string;
   priority: Priority;
   tags: string[];
-  creator_org_user_id: number; 
+  creator_org_user_id: number;
   creator: OrganizationUsersType;
   created_at: Date;
   expires_at: Date | null;

@@ -20,6 +20,7 @@ interface WelcomeChannelViewProps {
 }
 
 export default function ({ channel }: WelcomeChannelViewProps) {
+    console.log("channel currently is : ", channel);
     const organization = useRecoilValue(organizationAtom);
     const session = useRecoilValue(userSessionAtom);
     const setWelcomeChannelMessages = useSetRecoilState(welcomeChannelMessagesAtom);
@@ -59,7 +60,7 @@ export default function ({ channel }: WelcomeChannelViewProps) {
 
     useEffect(() => {
         getWelcomeMessages();
-    }, [])
+    }, [organization?.id])
 
     return (
         <div className="dark:bg-neutral-900 h-full flex flex-col items-start w-full p-6 relative">
@@ -78,7 +79,7 @@ export default function ({ channel }: WelcomeChannelViewProps) {
                         WELCOME CHANNEL
                     </div>
                 </div>
-                <WelcomeChannelMessages className=""/>
+                <WelcomeChannelMessages className="" />
             </UtilityCard>
         </div>
     );

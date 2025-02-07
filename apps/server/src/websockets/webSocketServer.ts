@@ -79,7 +79,6 @@ export default class WebSocketServerManager {
 
     private setupClientTracking(ws: WebSocket, tokenData: any) {
         const organizationId = tokenData.organizationId
-        console.log("organization id is : ", organizationId);
         if (!this.clients.has(organizationId)) {
             this.clients.set(organizationId, new Set());
         }
@@ -92,7 +91,6 @@ export default class WebSocketServerManager {
 
     private async handleIncomingMessage(ws: WebSocket, data: string, tokenData: any) {
         const message: WebSocketMessage = JSON.parse(data);
-        console.log("message came is : ", message);
         switch (message.type) {
             case 'subscribe-channel':
                 await this.handleChannelSubscription(ws, message.payload);
@@ -111,7 +109,6 @@ export default class WebSocketServerManager {
 
     private async handleChannelSubscription(ws: WebSocket, subscription: ChannelSubscription) {
         const channelKey: string = this.getChannelKey(subscription);
-        console.log("channel subscription key : ", channelKey);
         this.userSubscriptions.get(ws)!.add(channelKey);
         await this.subscriber.subscribe(channelKey);
 

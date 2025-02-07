@@ -50,7 +50,7 @@ export default function ({ channel }: AnnouncementChannelMessagesProps) {
 
             <UtilityCard className='p-8 w-full flex-1 mt-4 dark:bg-neutral-800 flex flex-col min-h-0'>
                 <div className='w-full h-full overflow-y-auto scrollbar-hide'>
-                    <div className='grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12'>
+                    <div className='grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12 mx-4'>
                         {announcementChannelMessages.map((announcement) => (
                             <div key={announcement.id} className="relative">
                                 <PinnedCard announcement={announcement} />

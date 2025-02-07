@@ -290,6 +290,10 @@ model Chats {
   org_user_id       Int
   message           String?
   name              String
+  is_deleted        Boolean           @default(false)
+  deleted_at        DateTime?
+  is_edited         Boolean           @default(false)
+  edited_at         DateTime?
   created_at        DateTime          @default(now())
   LikedUsers        LikedUser[]
   Users             Users?            @relation(fields: [usersId], references: [id])

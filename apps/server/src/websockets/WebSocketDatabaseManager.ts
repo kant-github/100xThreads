@@ -44,6 +44,10 @@ export default class WebSocketDatabaseManager {
             switch (message.type) {
                 case 'insert-general-channel-message':
                     return this.insertGeneralChannelMessage(message, tokenData);
+                case 'delete-message':
+                    return this.deleteMessageHandler(message, tokenData);
+                case 'edit-message':
+                    return this.editMessageHandler(message, tokenData);
                 case 'typing-event':
                     return this.typingEvent(message, tokenData)
                 case 'new-poll':
@@ -64,6 +68,7 @@ export default class WebSocketDatabaseManager {
     private async insertGeneralChannelMessage(message: WebSocketMessage, tokenData: any) {
         await this.prisma.chats.create({
             data: {
+                id: message.payload.id,
                 channel_id: message.payload.channelId,
                 organization_id: message.payload.organization_user.organization_id,
                 org_user_id: Number(message.payload.org_user_id),
@@ -252,6 +257,88 @@ export default class WebSocketDatabaseManager {
 
         } catch (err) {
             console.log("Error in creating annoucement");
+        }
+    }
+
+    private async deleteMessageHandler(message: WebSocketMessage, tokenData: any) {
+        const channelKey = this.getChannelKey({
+            organizationId: tokenData.organizationId,
+            channelId: message.payload.channelId,
+            type: message.payload.type
+        })
+
+        const currentUSerMEssageCheck = await this.prisma.chats.findUnique({
+            where: { id: message.payload.messageId },
+            include: {
+                organization_user: {
+                    include: {
+                        user: true
+                    }
+                }
+            }
+        })
+
+        if (Number(tokenData.userId) === Number(currentUSerMEssageCheck?.organization_user.user.id)) {
+
+            const updatedMessage = await this.prisma.chats.update({
+                where: { id: message.payload.messageId },
+                data: {
+                    is_deleted: true,
+                    deleted_at: new Date()
+                }
+            });
+
+            const broadcastMessage = {
+                ...updatedMessage,
+                message: "[ This message has been deleted ]"
+            };
+
+            this.publisher.publish(channelKey, JSON.stringify({
+                payload: broadcastMessage,
+                type: message.type
+            }))
+
+        }
+
+
+    }
+
+    private async editMessageHandler(message: WebSocketMessage, tokenData: any) {
+        const channelKey = this.getChannelKey({
+            organizationId: tokenData.organizationId,
+            channelId: message.payload.channelId,
+            type: message.payload.type
+        })
+
+        console.log("Edit message handler called with data : ", message);
+
+        const currentUSerMEssageCheck = await this.prisma.chats.findUnique({
+            where: { id: message.payload.messageId },
+            include: {
+                organization_user: {
+                    include: {
+                        user: true
+                    }
+                }
+            }
+        })
+
+        if (Number(currentUSerMEssageCheck?.organization_user.user.id) === Number(tokenData.userId)) {
+            const messageData = await this.prisma.chats.update({
+                where: { id: message.payload.messageId },
+                data: {
+                    is_edited: true,
+                    edited_at: new Date(),
+                    message: message.payload.message
+                }
+            })
+
+            console.log("message data is : ", messageData)
+
+            await this.publisher.publish(channelKey, JSON.stringify({
+                payload: messageData,
+                type: message.type
+            }))
         }
     }
 

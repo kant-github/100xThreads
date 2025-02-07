@@ -34,6 +34,7 @@ export async function getPoll(req: Request, res: Response) {
                 message: "Poll fetched successfully (creator access)",
                 poll: creatorPoll
             })
+            return;
         }
 
         const poll = await prisma.poll.findFirst({

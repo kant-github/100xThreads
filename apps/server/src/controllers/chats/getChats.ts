@@ -97,15 +97,18 @@ export default async function getChats(req: Request, res: Response) {
             }
         });
 
-
-
         const hasMore = chats.length > page_size;
         if (hasMore) {
             chats.pop();
         }
 
+        const transformedChats = chats.map(chat => ({
+            ...chat,
+            message: chat.is_deleted ? "[ This message has been deleted ]" : chat.message
+        }));
+
         res.status(200).json({
-            data: chats,
+            data: transformedChats,
             hasMore,
             nextCursor: hasMore ? chats[chats.length - 1]!.id : undefined
         })

@@ -1,6 +1,6 @@
 import { WebSocketClient } from "@/lib/socket.front";
 import { userSessionAtom } from "@/recoil/atoms/atom";
-import { organizationAtom, organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
+import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import { useCallback, useEffect, useRef } from "react"
 import { useRecoilValue } from "recoil";
 
@@ -11,7 +11,6 @@ export const useWebSocket = () => {
 
   const initializeWebSocket = useCallback((orgId?: string) => {
     const organizationId = orgId || organizationIdd;
-    console.log("initializing web socket with : ", organizationId);
 
     if (session.user?.id && (organizationId || orgId)) {
       const wsToken = btoa(JSON.stringify({
@@ -19,12 +18,6 @@ export const useWebSocket = () => {
         organizationId: organizationId,
         userName: session.user.name
       }));
-      
-      console.log(session.user);
-      console.log(orgId);
-      console.log(organizationId);
-
-      console.log("WebSocket Token Generated:", wsToken);
 
       const ws = new WebSocketClient(`ws://localhost:7001?token=${wsToken}`);
       webSocketRef.current = ws;

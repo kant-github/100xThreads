@@ -21,7 +21,9 @@ export default function PinnedCard({ className, announcement }: PinnedCardProps)
     const [zoom, setZoom] = useState<boolean>(false);
 
     return (
-        <div onClick={() => setZoom(prev => !prev)} className={`relative flex flex-col items-start gap-y-4 select-none bg-neutral-900 rounded-[14px] shadow-lg w-full pt-8 px-5 pb-4 transition-all duration-300 ease-in-out hover:scale-[1.01] ${zoom ? 'md:row-span-2 h-72' : 'h-40'} ${className} `}>
+        <div style={{
+             boxShadow: '4px 4px  rgb(179, 179, 179)'
+        }} onClick={() => setZoom(prev => !prev)} className={`relative flex flex-col items-start gap-y-4 select-none bg-neutral-900 rounded-[14px] w-full pt-8 px-5 pb-4 transition-all duration-300 ease-in-out hover:scale-[1.01] ${zoom ? 'md:row-span-2 h-72' : 'h-40'} ${className} `}>
             <span className='flex items-center gap-x-1 absolute bottom-2 right-3 text-neutral-500'>
                 <FaEye className='' size={12} />
                 <span className='text-[8px]'>12</span>
