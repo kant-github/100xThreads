@@ -106,6 +106,7 @@ model OrganizationUsers {
   joined_at            DateTime       @default(now())
   CreatedAnnouncements Announcement[]
   Chats                Chats[]
+  Issues               Issues[]
 
   @@unique([organization_id, user_id])
   @@map("organization_users")
@@ -129,6 +130,7 @@ model Channel {
   Announcements        Announcement[]
   RecentlyJoinedGroups RecentlyJoinedGroups[]
   Poll                 Poll[]
+  Issues               Issues[]
 
   @@index([organization_id, created_at])
   @@map("chat_groups")
@@ -317,6 +319,25 @@ model ChatReaction {
   created_at DateTime @default(now())
 }
 
+model Issues {
+  id                String            @id @default(uuid()) @db.Uuid
+  channel           Channel           @relation(fields: [channel_id], references: [id], onDelete: Cascade)
+  channel_id        String            @db.Uuid
+  organization_user OrganizationUsers @relation(fields: [organization_id, org_user_id], references: [organization_id, user_id], onDelete: Cascade)
+  organization_id   String            @db.Uuid
+  org_user_id       Int
+
+  title       String
+  description String
+  status      IssueStatus @default(OPEN)
+  priority    Priority    @default(NORMAL)
+
+  @@index([channel_id])
+  @@index([organization_id, org_user_id])
+  @@index([status])
+  @@map("issues")
+}
+
 model LikedUser {
   id         Int      @id @default(autoincrement())
   message    Chats    @relation(fields: [message_id], references: [id], onDelete: Cascade)
@@ -388,6 +409,16 @@ enum OrganizationType {
   EDUCATIONAL
   GOVERNMENT
   OTHER
+}
+
+enum IssueStatus {
+  OPEN
+  IN_PROGRESS
+  PENDING_INFO
+  PENDING_REVIEW
+  RESOLVED
+  CLOSED
+  REOPENED
 }
 
 enum EventStatus {

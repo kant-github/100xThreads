@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { ChannelType, MessageType, UserRole } from "types";
 import ChatMessageInput from '../chat/ChatMessageInput';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { userSessionAtom } from '@/recoil/atoms/atom';
 import { organizationAtom } from '@/recoil/atoms/organizationAtoms/organizationAtom';
 import { useWebSocket } from '@/hooks/useWebsocket';
@@ -11,6 +11,7 @@ import UserTyping from '../utility/UserTyping';
 import PollCard from '../chat/polls/PollCard';
 import { GoPaperclip } from "react-icons/go";
 import { v4 as uuidv4 } from "uuid";
+import { messageEditingState } from '@/recoil/atoms/chats/messageEditingStateAtom';
 
 interface OrganizationMessageComponentProps {
     channel: ChannelType;
@@ -26,7 +27,15 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
     const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
     const [usersTyping, setUsersTyping] = useState<string[]>([]);
     const [pollCreationCard, setPollCreationCard] = useState<boolean>(false);
+    const [editingState, setEditingState] = useRecoilState(messageEditingState);
 
+    useEffect(() => {
+        if (editingState) {
+            setMessage(editingState.originalMessage);
+        } else {
+            setMessage('');
+        }
+    }, [editingState])
 
     const groupedMessages = useMemo(() => {
         const grouped: { [key: string]: MessageType[] } = {};
@@ -139,25 +148,34 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
 
         if (!message.trim()) return;
 
-        const newMessage: MessageType = {
-            id: uuidv4(),
-            org_user_id: Number(session.user?.id) || 0,
-            organization_user: {
-                organization_id: organization?.id!,
-                role: UserRole.MEMBER,
-                user: session.user as any,
-                user_id: Number(session.user?.id) || 0,
-            },
-            message: message,
-            name: session.user?.name || "User",
-            is_deleted: false,
-            is_edited: false,
-            created_at: new Date(Date.now()),
-            LikedUsers: []
-        };
+        if (editingState) {
+            const editedMessage = {
+                messageId: editingState.messageId,
+                message: message.trim()
+            };
+            sendMessage(editedMessage, channel.id, 'edit-message');
+            setEditingState(null);
+        } else {
+            const newMessage: MessageType = {
+                id: uuidv4(),
+                org_user_id: Number(session.user?.id) || 0,
+                organization_user: {
+                    organization_id: organization?.id!,
+                    role: UserRole.MEMBER,
+                    user: session.user as any,
+                    user_id: Number(session.user?.id) || 0,
+                },
+                message: message,
+                name: session.user?.name || "User",
+                is_deleted: false,
+                is_edited: false,
+                created_at: new Date(Date.now()),
+                LikedUsers: []
+            };
 
-        sendMessage(newMessage, channel.id, 'insert-general-channel-message');
-        setMessages(prevChats => [...prevChats, newMessage]);
+            sendMessage(newMessage, channel.id, 'insert-general-channel-message');
+            setMessages(prevChats => [...prevChats, newMessage]);
+        }
         setMessage("");
     }
 

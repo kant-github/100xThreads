@@ -20,7 +20,7 @@ export default function ({ usersTyping }: UserTypingProps) {
                     </div>
                 )}
             </div>
-            <div className="text-[10px] text-yellow-500 bg-[#f5a331]/10 py-[1px] px-2 mb-1 rounded-[6px]">Press Shift + Enter to add a line break</div>
+            <div className="text-[10px] text-yellow-500 bg-[#f5a331]/10 py-[1px] px-2 mb-1 rounded-[6px] select-none">Press Shift + Enter to add a line break</div>
         </div>
     )
 }

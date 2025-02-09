@@ -66,6 +66,7 @@ export default class WebSocketDatabaseManager {
     }
 
     private async insertGeneralChannelMessage(message: WebSocketMessage, tokenData: any) {
+        console.log("message incoming : ", message);
         await this.prisma.chats.create({
             data: {
                 id: message.payload.id,
@@ -117,10 +118,13 @@ export default class WebSocketDatabaseManager {
                         text: optionText
                     }))
                 },
-                creator_id: Number(message.payload.userId)
+                creator_id: Number(message.payload.userId),
+                expires_at: this.calculateExpirationTime(message.payload.expiresIn)
             },
             include: WebSocketDatabaseManager.pollInclude
         })
+
+        console.log("new created poll is : ", poll);
         await this.publisher.publish(channelKey, JSON.stringify({
             payload: poll,
             type: message.type

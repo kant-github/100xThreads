@@ -2,6 +2,9 @@ import { useWebSocket } from "@/hooks/useWebsocket";
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { ChannelType, MessageType } from "types";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSetRecoilState } from "recoil";
+import { messageEditingState } from "@/recoil/atoms/chats/messageEditingStateAtom";
+import { toast } from "sonner";
 
 interface MessageOptionMenuProps {
   message: MessageType;
@@ -20,9 +23,12 @@ export default function ({
   className,
   channel,
 }: MessageOptionMenuProps) {
+  if (message.is_deleted) return null;
   const ref = useRef<HTMLDivElement>(null);
 
   const { sendMessage } = useWebSocket();
+  const setEditingState = useSetRecoilState(messageEditingState);
+
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -44,19 +50,23 @@ export default function ({
         messageId: message.id,
       };
       sendMessage(newMessage, channel.id, "delete-message");
+      toast.success('Message deleted')
     }
     setOpen(false);
   }
 
   function editHandler() {
-    console.log("sending edit message request");
     if (isCurrentUser) {
-      const newMessage = {
+      setEditingState({
         messageId: message.id,
-        message: "I have edited this message"
-      };
-      sendMessage(newMessage, channel.id, "edit-message");
+        originalMessage: message.message!
+      });
     }
+    setOpen(false);
+  }
+
+  function copyHandler() {
+    navigator.clipboard.writeText(message.message!)
     setOpen(false);
   }
 
@@ -73,29 +83,29 @@ export default function ({
         >
           <div
             className={`absolute z-[100] flex flex-col items-start w-20 ${isCurrentUser ? "right-0" : "left-0"
-              } rounded-[4px] text-[12px] overflow-hidden`}
+              } rounded-[6px] text-[12px] overflow-hidden p-1 dark:bg-neutral-800 border-[0.5px] border-neutral-500`}
           >
-            <button
-              onClick={() => navigator.clipboard.writeText(message.message!)}
-              type="button"
-              className="px-3 py-1 w-full dark:bg-neutral-700 dark:hover:bg-[#2e2e2e] flex items-start"
-            >
-              Copy
-            </button>
-            <button
-              onClick={editHandler}
-              type="button"
-              className="px-3 py-1 w-full dark:bg-neutral-700 dark:hover:bg-[#2e2e2e] flex items-start"
-            >
-              Edit
-            </button>
-            <button
-              onClick={deleteHandler}
-              type="button"
-              className="px-3 py-1 bg-red-700 hover:bg-red-600 w-full flex items-start"
-            >
-              Delete
-            </button>
+            {
+              !message.is_deleted && (
+                <button onClick={copyHandler} type="button" className="px-3 py-1 w-full dark:hover:bg-[#2e2e2e] flex items-start rounded-[4px]" >
+                  Copy
+                </button>
+              )
+            }
+            {
+              !message.is_deleted && !message.is_edited && (
+                <button onClick={editHandler} type="button" className="px-3 py-1 w-full dark:hover:bg-[#2e2e2e] flex items-start rounded-[4px]">
+                  Edit
+                </button>
+              )
+            }
+            {
+              !message.is_deleted && (
+                <button onClick={deleteHandler} type="button" className="px-3 py-1 hover:bg-red-600 w-full flex items-start rounded-[4px]" >
+                  Delete
+                </button>
+              )
+            }
           </div>
         </motion.div>
       )}

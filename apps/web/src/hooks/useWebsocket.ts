@@ -48,6 +48,8 @@ export const useWebSocket = () => {
 
   function sendMessage(payload: any, channelId: string, type: string) {
     if (!webSocketRef.current) return;
+    console.log("sending message", payload);
+    console.log("type is : ", type);
     webSocketRef.current.send(type, {
       channelId,
       type,
