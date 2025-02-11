@@ -18,7 +18,7 @@ export default function authmiddleware(
         const token = authHeader.split(" ")[1];
 
         // @ts-ignore
-        jwt.verify(token, "default_secret", (err, user) => {
+        jwt.verify(token, "default_secret", (err, decoded) => {
             if (err) {
                 res.status(401).json({
                     message: "Unauthorized 2",
@@ -26,7 +26,7 @@ export default function authmiddleware(
                 });
                 return;
             }
-            req.user = user as AuthUser;
+            req.user = decoded as AuthUser;
             next();
         });
     } catch (err) {

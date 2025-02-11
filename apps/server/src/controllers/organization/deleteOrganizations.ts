@@ -2,7 +2,7 @@ import prisma from "@repo/db/client";
 import { Request, Response } from "express";
 
 export async function deleteOrganizations(req: Request, res: Response) {
-    const { id: organizationId } = req.params;
+    const { organizationId } = req.params;
     if (!organizationId) {
         res.status(404).json({
             message: "Organization not found"

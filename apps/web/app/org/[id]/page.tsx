@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState, useCallback, useMemo } from 'react'
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import axios from 'axios'
 import OrgDashboard from '@/components/organization/OrgDashboard'
 import { userSessionAtom } from '@/recoil/atoms/atom'
@@ -11,7 +11,8 @@ import { organizationChannelsAtom, organizationEventChannelsAtom, organizationWe
 import { organizationUsersAtom } from '@/recoil/atoms/organizationAtoms/organizationUsersAtom'
 import { organizationAtom } from '@/recoil/atoms/organizationAtoms/organizationAtom'
 import { useWebSocket } from '@/hooks/useWebsocket'
-import { welcomeChannelMessagesAtom } from '@/recoil/atoms/organizationAtoms/welcomeChannelMessagesAtom'
+import { organizationUserAtom } from '@/recoil/atoms/organizationAtoms/organizationUserAtom'
+import OrgNavBar from '@/components/organization/OrgNavBar'
 
 export type protectedOrganizationMetadata = {
     name: string,
@@ -31,20 +32,21 @@ export default function ({ params }: { params: { id: string } }) {
     const session = useRecoilValue(userSessionAtom)
     const setEventChannel = useSetRecoilState(organizationEventChannelsAtom)
     const setChannels = useSetRecoilState(organizationChannelsAtom)
-    const [welcomeChannel, setWelcomeChannel] = useRecoilState(organizationWelcomeChannelAtom)
-    const setWelcomeChanelMessages = useSetRecoilState(welcomeChannelMessagesAtom);
+    const setWelcomeChannel = useSetRecoilState(organizationWelcomeChannelAtom)
     const setOrganizationUsers = useSetRecoilState(organizationUsersAtom);
     const setOrganization = useSetRecoilState(organizationAtom);
+    const setOrganizationUser = useSetRecoilState(organizationUserAtom);
     const [flag, setFlag] = useState<'PROTECTED' | 'ALLOWED' | 'INIT'>('INIT')
     const [data, setData] = useState<protectedOrganizationMetadata>({} as protectedOrganizationMetadata)
 
     const updateChannels = useCallback((channelData: any) => {
-        const { organization, eventChannel, channels, welcomeChannel, organizationUsers } = channelData
+        const { organization, eventChannel, channels, welcomeChannel, organizationUsers, organizationUser } = channelData
         setOrganization(organization);
         setEventChannel(eventChannel);
         setChannels(channels);
         setWelcomeChannel(welcomeChannel);
         setOrganizationUsers(organizationUsers);
+        setOrganizationUser(organizationUser);
     }, [setEventChannel, setChannels, setWelcomeChannel, setOrganizationUsers, params.id, useWebSocket])
 
     const fetchOrgMetadata = useCallback(async () => {
@@ -88,6 +90,7 @@ export default function ({ params }: { params: { id: string } }) {
 
     return (
         <div className="h-[100dvh] w-full flex flex-col overflow-hidden">
+            {/* <OrgNavBar /> */}
             {flag === 'PROTECTED' && protectedComponent}
             {flag === 'ALLOWED' && (<div className="flex-1 overflow-auto">
                 <OrgDashboard />

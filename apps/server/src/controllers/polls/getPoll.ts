@@ -3,11 +3,12 @@ import { Request, Response } from "express";
 
 export async function getPoll(req: Request, res: Response) {
     const { channelId } = req.params;
-    
+
     if (!req.user?.id) {
-        return res.status(401).json({ 
-            message: "Unauthorized: User not authenticated." 
+        res.status(401).json({
+            message: "Unauthorized: User not authenticated."
         });
+        return;
     }
 
     try {
@@ -52,15 +53,17 @@ export async function getPoll(req: Request, res: Response) {
             });
 
             if (!poll) {
-                return res.status(404).json({
+                res.status(404).json({
                     message: "No active polls found"
                 });
+                return;
             }
 
-            return res.status(200).json({
+            res.status(200).json({
                 poll,
                 message: "Poll fetched successfully"
             });
+            return;
         }
 
         const currentTime = new Date();
@@ -72,24 +75,27 @@ export async function getPoll(req: Request, res: Response) {
                 data: { status: 'ENDED' }
             });
 
-            return res.status(200).json({
+            res.status(200).json({
                 message: "Poll has ended",
                 poll: {
                     ...creatorPoll,
                     status: 'ENDED'
                 }
             });
+            return;
         }
 
-        return res.status(200).json({
+        res.status(200).json({
             message: "Poll fetched successfully (creator access)",
             poll: creatorPoll
         });
+        return;
 
     } catch (err) {
         console.error("Error while fetching polls:", err);
-        return res.status(500).json({
+        res.status(500).json({
             message: "Internal server error while fetching polls"
         });
+        return;
     }
 }

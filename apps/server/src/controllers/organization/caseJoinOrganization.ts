@@ -4,7 +4,7 @@ import prisma from "@repo/db/client";
 
 export async function caseJoinOrganization(req: Request, res: Response) {
     const user = req.user;
-    const { id: organizationId } = req.params;
+    const { organizationId } = req.params;
 
     if (!user?.id) {
         res.status(401).json({ message: "Unauthorized: User not authenticated." });
@@ -44,7 +44,7 @@ export async function caseJoinOrganization(req: Request, res: Response) {
         })
 
         if (organization?.access_type === 'PUBLIC') {
-            const data = await getOrganizationsMetaDeta(organizationId);
+            const data = await getOrganizationsMetaDeta(organizationId, user.id);
             res.status(200).json({
                 flag: 'ALLOWED',
                 data: data

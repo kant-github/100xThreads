@@ -1,8 +1,9 @@
 import prisma from "@repo/db/client";
 
-export async function getOrganizationsMetaDeta(organizationId: string) {
+export async function getOrganizationsMetaDeta(organizationId: string, userId: number) {
+    console.log("user id is : ", userId);
     try {
-        const [organization, eventChannel, channels, organizationUsers, welcomeChannel] = await Promise.all([
+        const [organization, eventChannel, channels, organizationUsers, welcomeChannel, organizationUser] = await Promise.all([
             prisma.organization.findFirst({
                 where: { id: organizationId },
                 select: {
@@ -31,6 +32,14 @@ export async function getOrganizationsMetaDeta(organizationId: string) {
             }),
             prisma.welcomeChannel.findFirst({
                 where: { organization_id: organizationId }
+            }),
+            prisma.organizationUsers.findUnique({
+                where: {
+                    organization_id_user_id: {
+                        user_id: Number(userId),
+                        organization_id: organizationId!
+                    }
+                }
             })
         ]);
 
@@ -39,9 +48,10 @@ export async function getOrganizationsMetaDeta(organizationId: string) {
             eventChannel,
             channels,
             organizationUsers,
-            welcomeChannel
+            welcomeChannel,
+            organizationUser
         };
-  
+
         return data;
 
     } catch (error) {

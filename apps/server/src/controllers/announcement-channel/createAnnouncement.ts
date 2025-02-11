@@ -7,9 +7,6 @@ export async function createAnnouncement(req: Request, res: Response) {
         res.status(401).json({ message: "You are not authorized" });
         return;
     }
-    console.log(req.user);
-    console.log("announcmeent creation statrted");
-    console.log(req.body);
     const { channelId, organizationId } = req.params;
     const { title, content, priority, tags } = req.body;
 

@@ -6,7 +6,7 @@ type props = {
     className?: string | null
 }
 
-export default function ({className}: props) {
+export default function ({ className }: props) {
     const router = useRouter();
     return (
         <div
@@ -20,7 +20,7 @@ export default function ({className}: props) {
             />
             <div
                 className={`text-xl md:text-2xl tracking-widest text-black dark:text-gray-300 flex items-center font-afacad`}>
-                100 <span className="text-red-500">x</span> Threads
+                Shelv<span className="text-red-500">R</span>
             </div>
         </div>
     );

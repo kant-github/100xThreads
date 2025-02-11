@@ -5,7 +5,9 @@ import { getOrganizationsMetaDeta } from "../controllers/organization/getOrganiz
 
 export default async function alreadyUserMiddleware(req: Request, res: Response, next: NextFunction) {
     const user = req.user;
-    const { id: organizationId } = req.params;
+    const { organizationId } = req.params;
+    console.log("organization id is : ", organizationId);
+    console.log("req user is : ", user?.id);
 
     if (!user?.id) {
         res.status(401).json({ message: "Unauthorized: User not authenticated." });
@@ -28,7 +30,7 @@ export default async function alreadyUserMiddleware(req: Request, res: Response,
         })
 
         if (alreadyUser) {
-            const data = await getOrganizationsMetaDeta(organizationId);
+            const data = await getOrganizationsMetaDeta(organizationId, user.id);
             res.status(200).json({
                 flag: 'ALLOWED',
                 data: data
@@ -36,7 +38,7 @@ export default async function alreadyUserMiddleware(req: Request, res: Response,
             return;
         }
         next();
-        return 
+        return
     } catch (err) {
         console.log("error in catch block");
     }

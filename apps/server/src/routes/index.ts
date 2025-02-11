@@ -25,10 +25,10 @@ router.put("/user", authmiddleware, updateUserDetails);
 
 // organizations controller
 router.get("/organizations", authmiddleware, getOrganizations);
-router.post("/organizations/join-by-passcode/:id", authmiddleware, joinOrganizationWithPassword);
-router.get("/organizations/join/:id", authmiddleware, alreadyUserMiddleware, caseJoinOrganization);
+router.post("/organizations/join-by-passcode/:organizationId", authmiddleware, joinOrganizationWithPassword);
+router.get("/organizations/join/:organizationId", authmiddleware, alreadyUserMiddleware, caseJoinOrganization);
 router.post("/organizations", authmiddleware, storeOrganization);
-router.delete("/organizations/:id", authmiddleware, deleteOrganizations);
+router.delete("/organizations/:organizationId", authmiddleware, deleteOrganizations);
 router.get("/organizations-by-search", authmiddleware, getOrganizationBySearch);
 router.get("/organizations-all", authmiddleware, getAllOrganizations);
 

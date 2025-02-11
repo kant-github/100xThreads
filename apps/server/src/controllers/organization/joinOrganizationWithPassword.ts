@@ -6,7 +6,7 @@ import { getOrganizationsMetaDeta } from "./getOrganizationsMetaDeta";
 export default async function (req: Request, res: Response) {
     console.log("hitted");
     const user = req.user;
-    const { id: organizationId } = req.params;
+    const { organizationId } = req.params;
     const { password } = req.body;
 
     if (!user?.id) {
@@ -48,7 +48,7 @@ export default async function (req: Request, res: Response) {
             }
         });
 
-        const data = await getOrganizationsMetaDeta(organizationId);
+        const data = await getOrganizationsMetaDeta(organizationId, user.id);
         res.status(200).json({
             flag: "ALLOWED",
             data: data

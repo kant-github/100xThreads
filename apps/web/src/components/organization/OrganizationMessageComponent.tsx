@@ -12,6 +12,7 @@ import PollCard from '../chat/polls/PollCard';
 import { GoPaperclip } from "react-icons/go";
 import { v4 as uuidv4 } from "uuid";
 import { messageEditingState } from '@/recoil/atoms/chats/messageEditingStateAtom';
+import { organizationUserAtom } from '@/recoil/atoms/organizationAtoms/organizationUserAtom';
 
 interface OrganizationMessageComponentProps {
     channel: ChannelType;
@@ -21,6 +22,7 @@ interface OrganizationMessageComponentProps {
 export default function ChatInterface({ channel, initialChats }: OrganizationMessageComponentProps) {
     const [messages, setMessages] = useState<MessageType[]>(initialChats);
     const session = useRecoilValue(userSessionAtom);
+    const organizationUser = useRecoilValue(organizationUserAtom);
     const [message, setMessage] = useState<string>("");
     const organization = useRecoilValue(organizationAtom);
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -161,7 +163,7 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
                 org_user_id: Number(session.user?.id) || 0,
                 organization_user: {
                     organization_id: organization?.id!,
-                    role: UserRole.MEMBER,
+                    role: organizationUser.role,
                     user: session.user as any,
                     user_id: Number(session.user?.id) || 0,
                 },
