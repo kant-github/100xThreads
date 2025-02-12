@@ -41,12 +41,12 @@ export function ModeratorTicker({ tickerText }: TickerProps) {
     return <div className="flex items-center gap-x-1 text-red-500 text-[10px] rounded-[6px] bg-red-500/10 border-[0.5px] border-red-600 px-2 py-0.5 select-none">{tickerText}</div>
 }
 
-export function MemberTicker({ tickerText }: TickerProps) {
+export function GuestTicker({ tickerText }: TickerProps) {
     return <div className="flex items-center gap-x-1 text-green-500 text-[10px] rounded-[6px] bg-green-500/10 border-[0.5px] border-green-600 px-2 py-0.5 select-none">{tickerText}</div>
 }
 
-export function GuestTicker({ tickerText }: TickerProps) {
-    return <div className="flex items-center gap-x-1 text-gray-500 text-[10px] rounded-[6px] bg-gray-500/10 border-[0.5px] border-gray-600 px-2 py-0.5 select-none">{tickerText}</div>
+export function MemberTicker({ tickerText }: TickerProps) {
+    return <div className="flex items-center gap-x-1 text-yellow-500 text-[10px] rounded-[6px] bg-yellow-500/10 border-[0.5px] border-yellow-600 px-2 py-0.5 select-none">{tickerText}</div>
 }
 
 export function OrganizerTicker({ tickerText }: TickerProps) {

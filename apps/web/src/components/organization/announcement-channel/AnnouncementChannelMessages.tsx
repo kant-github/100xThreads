@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { CgMathPlus } from "react-icons/cg";
 import { useRecoilValue } from "recoil";
 import { ChannelType } from "types";
+import EmptyAnnouncementChannelMessage from "./EmptyAnnouncementChannelMessage";
 
 interface AnnouncementChannelMessagesProps {
     channel: ChannelType;
@@ -43,20 +44,24 @@ export default function ({ channel }: AnnouncementChannelMessagesProps) {
                     />
                 )}
             </div>
-
             <DashboardComponentHeading description={channel.description!}>
                 {channel.title}
             </DashboardComponentHeading>
-
             <UtilityCard className='p-8 w-full flex-1 mt-4 dark:bg-neutral-800 flex flex-col min-h-0'>
                 <div className='w-full h-full overflow-y-auto scrollbar-hide'>
-                    <div className='grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12 mx-4'>
-                        {announcementChannelMessages.map((announcement) => (
-                            <div key={announcement.id} className="relative">
-                                <PinnedCard announcement={announcement} />
-                            </div>
-                        ))}
-                    </div>
+                    {!announcementChannelMessages.length ? (
+                        <div className="h-full flex items-center justify-center">
+                            <EmptyAnnouncementChannelMessage setCreateAnnouncementModal={setCreateAnnouncementModal} />
+                        </div>
+                    ) : (
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12 mx-4'>
+                            {announcementChannelMessages.map((announcement) => (
+                                <div key={announcement.id} className="relative">
+                                    <PinnedCard announcement={announcement} />
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </UtilityCard>
         </div>

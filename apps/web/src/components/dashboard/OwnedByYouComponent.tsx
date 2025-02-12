@@ -16,7 +16,7 @@ export default function () {
     const session = useRecoilValue(userSessionAtom);
     const [ownedOrganizations, setOwnedOrganizations] = useRecoilState<OrganizationType[]>(userCreatedOrganizationAtom);
     const displayType = useRecoilValue<DisplayType>(allOrganizationDisplaytype);
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         async function fetchUserCreatedOrganization() {

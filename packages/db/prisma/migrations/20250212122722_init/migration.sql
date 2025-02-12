@@ -2,6 +2,9 @@
 CREATE TYPE "RequestStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
 
 -- CreateEnum
+CREATE TYPE "PollStatus" AS ENUM ('ACTIVE', 'ENDED', 'CANCELLED');
+
+-- CreateEnum
 CREATE TYPE "Priority" AS ENUM ('LOW', 'NORMAL', 'HIGH', 'URGENT');
 
 -- CreateEnum
@@ -9,6 +12,9 @@ CREATE TYPE "RSVPStatus" AS ENUM ('GOING', 'MAYBE', 'NOT_GOING');
 
 -- CreateEnum
 CREATE TYPE "OrganizationType" AS ENUM ('COMMUNITY', 'STARTUP', 'CORPORATE', 'NON_PROFIT', 'EDUCATIONAL', 'GOVERNMENT', 'OTHER');
+
+-- CreateEnum
+CREATE TYPE "IssueStatus" AS ENUM ('OPEN', 'IN_PROGRESS', 'PENDING_INFO', 'PENDING_REVIEW', 'RESOLVED', 'CLOSED', 'REOPENED');
 
 -- CreateEnum
 CREATE TYPE "EventStatus" AS ENUM ('PENDING', 'LIVE', 'COMPLETED', 'CANCELED');
@@ -21,6 +27,9 @@ CREATE TYPE "ChannelType" AS ENUM ('WELCOME', 'GENERAL', 'ANNOUNCEMENT', 'RESOUR
 
 -- CreateEnum
 CREATE TYPE "OrganizationAccessType" AS ENUM ('PRIVATE', 'PUBLIC', 'INVITE_ONLY');
+
+-- CreateEnum
+CREATE TYPE "CardStatus" AS ENUM ('TODO', 'IN_PROGRESS', 'DONE');
 
 -- CreateTable
 CREATE TABLE "users" (
@@ -147,6 +156,31 @@ CREATE TABLE "welcomed_users" (
 );
 
 -- CreateTable
+CREATE TABLE "projects" (
+    "id" UUID NOT NULL,
+    "channel_id" UUID NOT NULL,
+    "title" VARCHAR(191) NOT NULL,
+    "description" TEXT,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "projects_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "kanban_cards" (
+    "id" UUID NOT NULL,
+    "project_id" UUID NOT NULL,
+    "title" VARCHAR(191) NOT NULL,
+    "description" TEXT,
+    "status" "CardStatus" NOT NULL DEFAULT 'TODO',
+    "priority" "Priority" NOT NULL DEFAULT 'NORMAL',
+    "due_date" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "kanban_cards_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "role_requests" (
     "id" UUID NOT NULL,
     "welcome_channel_id" UUID NOT NULL,
@@ -157,6 +191,42 @@ CREATE TABLE "role_requests" (
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "role_requests_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "polls" (
+    "id" UUID NOT NULL,
+    "channel_id" UUID NOT NULL,
+    "question" TEXT NOT NULL,
+    "creator_id" INTEGER NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "expires_at" TIMESTAMP(3),
+    "is_anonymous" BOOLEAN NOT NULL DEFAULT false,
+    "multiple_choice" BOOLEAN NOT NULL DEFAULT false,
+    "status" "PollStatus" NOT NULL DEFAULT 'ACTIVE',
+
+    CONSTRAINT "polls_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "poll_options" (
+    "id" UUID NOT NULL,
+    "poll_id" UUID NOT NULL,
+    "text" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "poll_options_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "poll_votes" (
+    "id" SERIAL NOT NULL,
+    "poll_id" UUID NOT NULL,
+    "option_id" UUID NOT NULL,
+    "user_id" INTEGER NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "poll_votes_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -190,9 +260,14 @@ CREATE TABLE "announcement_acknowledgments" (
 CREATE TABLE "chats" (
     "id" UUID NOT NULL,
     "channel_id" UUID NOT NULL,
+    "organization_id" UUID NOT NULL,
     "org_user_id" INTEGER NOT NULL,
     "message" TEXT,
     "name" TEXT NOT NULL,
+    "is_deleted" BOOLEAN NOT NULL DEFAULT false,
+    "deleted_at" TIMESTAMP(3),
+    "is_edited" BOOLEAN NOT NULL DEFAULT false,
+    "edited_at" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "usersId" INTEGER,
 
@@ -209,6 +284,20 @@ CREATE TABLE "ChatReaction" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "ChatReaction_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "issues" (
+    "id" UUID NOT NULL,
+    "channel_id" UUID NOT NULL,
+    "organization_id" UUID NOT NULL,
+    "org_user_id" INTEGER NOT NULL,
+    "title" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "status" "IssueStatus" NOT NULL DEFAULT 'OPEN',
+    "priority" "Priority" NOT NULL DEFAULT 'NORMAL',
+
+    CONSTRAINT "issues_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -275,9 +364,6 @@ CREATE UNIQUE INDEX "organization_invites_code_key" ON "organization_invites"("c
 CREATE INDEX "organization_invites_code_idx" ON "organization_invites"("code");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "organization_users_user_id_key" ON "organization_users"("user_id");
-
--- CreateIndex
 CREATE UNIQUE INDEX "organization_users_organization_id_user_id_key" ON "organization_users"("organization_id", "user_id");
 
 -- CreateIndex
@@ -293,6 +379,18 @@ CREATE UNIQUE INDEX "welcome_channels_organization_id_key" ON "welcome_channels"
 CREATE UNIQUE INDEX "welcomed_users_welcome_channel_id_user_id_key" ON "welcomed_users"("welcome_channel_id", "user_id");
 
 -- CreateIndex
+CREATE INDEX "projects_channel_id_idx" ON "projects"("channel_id");
+
+-- CreateIndex
+CREATE INDEX "kanban_cards_project_id_idx" ON "kanban_cards"("project_id");
+
+-- CreateIndex
+CREATE INDEX "polls_channel_id_created_at_idx" ON "polls"("channel_id", "created_at");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "poll_votes_poll_id_user_id_key" ON "poll_votes"("poll_id", "user_id");
+
+-- CreateIndex
 CREATE INDEX "announcements_channel_id_created_at_idx" ON "announcements"("channel_id", "created_at");
 
 -- CreateIndex
@@ -303,6 +401,18 @@ CREATE INDEX "chats_created_at_idx" ON "chats"("created_at");
 
 -- CreateIndex
 CREATE INDEX "chats_channel_id_idx" ON "chats"("channel_id");
+
+-- CreateIndex
+CREATE INDEX "chats_organization_id_org_user_id_idx" ON "chats"("organization_id", "org_user_id");
+
+-- CreateIndex
+CREATE INDEX "issues_channel_id_idx" ON "issues"("channel_id");
+
+-- CreateIndex
+CREATE INDEX "issues_organization_id_org_user_id_idx" ON "issues"("organization_id", "org_user_id");
+
+-- CreateIndex
+CREATE INDEX "issues_status_idx" ON "issues"("status");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "liked_users_message_id_user_id_key" ON "liked_users"("message_id", "user_id");
@@ -362,7 +472,31 @@ ALTER TABLE "welcomed_users" ADD CONSTRAINT "welcomed_users_welcome_channel_id_f
 ALTER TABLE "welcomed_users" ADD CONSTRAINT "welcomed_users_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "projects" ADD CONSTRAINT "projects_channel_id_fkey" FOREIGN KEY ("channel_id") REFERENCES "chat_groups"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "kanban_cards" ADD CONSTRAINT "kanban_cards_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "projects"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "role_requests" ADD CONSTRAINT "role_requests_welcome_channel_id_fkey" FOREIGN KEY ("welcome_channel_id") REFERENCES "welcome_channels"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "polls" ADD CONSTRAINT "polls_channel_id_fkey" FOREIGN KEY ("channel_id") REFERENCES "chat_groups"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "polls" ADD CONSTRAINT "polls_creator_id_fkey" FOREIGN KEY ("creator_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "poll_options" ADD CONSTRAINT "poll_options_poll_id_fkey" FOREIGN KEY ("poll_id") REFERENCES "polls"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "poll_votes" ADD CONSTRAINT "poll_votes_poll_id_fkey" FOREIGN KEY ("poll_id") REFERENCES "polls"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "poll_votes" ADD CONSTRAINT "poll_votes_option_id_fkey" FOREIGN KEY ("option_id") REFERENCES "poll_options"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "poll_votes" ADD CONSTRAINT "poll_votes_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "announcements" ADD CONSTRAINT "announcements_channel_id_fkey" FOREIGN KEY ("channel_id") REFERENCES "chat_groups"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -377,7 +511,7 @@ ALTER TABLE "announcement_acknowledgments" ADD CONSTRAINT "announcement_acknowle
 ALTER TABLE "chats" ADD CONSTRAINT "chats_channel_id_fkey" FOREIGN KEY ("channel_id") REFERENCES "chat_groups"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "chats" ADD CONSTRAINT "chats_org_user_id_fkey" FOREIGN KEY ("org_user_id") REFERENCES "organization_users"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "chats" ADD CONSTRAINT "chats_organization_id_org_user_id_fkey" FOREIGN KEY ("organization_id", "org_user_id") REFERENCES "organization_users"("organization_id", "user_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "chats" ADD CONSTRAINT "chats_usersId_fkey" FOREIGN KEY ("usersId") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -387,6 +521,12 @@ ALTER TABLE "ChatReaction" ADD CONSTRAINT "ChatReaction_chat_id_fkey" FOREIGN KE
 
 -- AddForeignKey
 ALTER TABLE "ChatReaction" ADD CONSTRAINT "ChatReaction_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "issues" ADD CONSTRAINT "issues_channel_id_fkey" FOREIGN KEY ("channel_id") REFERENCES "chat_groups"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "issues" ADD CONSTRAINT "issues_organization_id_org_user_id_fkey" FOREIGN KEY ("organization_id", "org_user_id") REFERENCES "organization_users"("organization_id", "user_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "liked_users" ADD CONSTRAINT "liked_users_message_id_fkey" FOREIGN KEY ("message_id") REFERENCES "chats"("id") ON DELETE CASCADE ON UPDATE CASCADE;

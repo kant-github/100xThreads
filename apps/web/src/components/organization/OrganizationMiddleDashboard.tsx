@@ -18,14 +18,14 @@ export default function ChannelContent() {
     }
 
     switch (selectedChannel.type) {
+        case 'default':
+            return <DefaultOrganizationDashboardUI />
         case 'regular':
             return <RegularChannelView channel={selectedChannel.data as ChannelType} />;
         case 'event':
             return <EventChannelView channel={selectedChannel.data as EventChannelType} />;
         case 'welcome':
             return <WelcomeChannelView channel={selectedChannel.data as WelcomeChannel} />;
-        case 'default':
-            return <DefaultOrganizationDashboardUI />
         default:
             return <div className="bg-[#171717] w-full p-4">Unknown channel type</div>;
     }

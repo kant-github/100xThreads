@@ -120,6 +120,35 @@ export type EventChannelType = {
   created_by: number;
 }
 
+export type Project = {
+  id: string;
+  channel_id: string;
+  title: string;
+  description?: string | null;
+  created_at: Date;
+  tasks?: Task[];
+}
+
+export interface Task {
+  id: string;
+  project_id: string;
+  title: string;
+  description?: string | null;
+  status: TaskStatus;
+  priority: Priority;
+  due_date?: Date | null;
+  created_at: Date;
+  assignees?: TaskAssigneeType[];
+}
+
+export interface TaskAssigneeType {
+  id: number;
+  task_id: string;
+  org_user_id: number;
+  assigned_at: Date;
+  organization_user: OrganizationUsersType;
+}
+
 export type WelcomeChannel = {
   id: string
   organizationId: string
@@ -222,4 +251,10 @@ export enum PollStatus {
   ACTIVE = "ACTIVE",
   ENDED = "ENDED",
   CANCELLED = "CANCELLED",
+}
+
+export enum TaskStatus {
+  TODO = 'TODO',
+  IN_PROGRESS = 'IN_PROGRESS',
+  DONE = 'DONE'
 }

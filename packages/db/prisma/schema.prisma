@@ -97,16 +97,17 @@ model OrganizationInvite {
 }
 
 model OrganizationUsers {
-  id                   Int            @id @default(autoincrement())
-  organization         Organization   @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  organization_id      String         @db.Uuid
-  user                 Users          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  id                   Int             @id @default(autoincrement())
+  organization         Organization    @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  organization_id      String          @db.Uuid
+  user                 Users           @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id              Int
-  role                 UserRole       @default(MEMBER)
-  joined_at            DateTime       @default(now())
+  role                 UserRole        @default(MEMBER)
+  joined_at            DateTime        @default(now())
   CreatedAnnouncements Announcement[]
   Chats                Chats[]
   Issues               Issues[]
+  TaskAssignees        TaskAssignees[]
 
   @@unique([organization_id, user_id])
   @@map("organization_users")
@@ -131,6 +132,7 @@ model Channel {
   RecentlyJoinedGroups RecentlyJoinedGroups[]
   Poll                 Poll[]
   Issues               Issues[]
+  Project              Project[]
 
   @@index([organization_id, created_at])
   @@map("chat_groups")
@@ -174,6 +176,47 @@ model WelcomedUser {
 
   @@unique([welcome_channel_id, user_id])
   @@map("welcomed_users")
+}
+
+model Project {
+  id          String   @id @default(uuid()) @db.Uuid
+  channel     Channel  @relation(fields: [channel_id], references: [id], onDelete: Cascade)
+  channel_id  String   @db.Uuid
+  title       String   @db.VarChar(191)
+  description String?
+  created_at  DateTime @default(now())
+  tasks       Tasks[]
+
+  @@index([channel_id])
+  @@map("projects")
+}
+
+model Tasks {
+  id          String          @id @default(uuid()) @db.Uuid
+  project     Project         @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  project_id  String          @db.Uuid
+  title       String          @db.VarChar(191)
+  description String?
+  status      CardStatus      @default(TODO)
+  priority    Priority        @default(NORMAL)
+  due_date    DateTime?
+  created_at  DateTime        @default(now())
+  assignees   TaskAssignees[]
+
+  @@index([project_id])
+  @@map("tasks")
+}
+
+model TaskAssignees {
+  id                Int               @id @default(autoincrement())
+  task              Tasks             @relation(fields: [task_id], references: [id], onDelete: Cascade)
+  task_id           String            @db.Uuid
+  organization_user OrganizationUsers @relation(fields: [org_user_id], references: [id], onDelete: Cascade)
+  org_user_id       Int
+  assigned_at       DateTime          @default(now())
+
+  @@unique([task_id, org_user_id])
+  @@map("task_assignees")
 }
 
 model RoleRequest {
@@ -458,4 +501,10 @@ enum OrganizationAccessType {
   PRIVATE // DONE
   PUBLIC // DONE
   INVITE_ONLY // DONE
+}
+
+enum CardStatus {
+  TODO
+  IN_PROGRESS
+  DONE
 }

@@ -24,7 +24,7 @@ export default function ({ channel }: RegularChannelViewProps) {
         case 'PROJECT':
             return <ProjectsChannelUI channel={channel} />
         case 'LEARNING':
-            return <LearningChannelUI channel={channel} />
+            return <GeneralChatChannelUI channel={channel} />
         default:
             return null
     }
