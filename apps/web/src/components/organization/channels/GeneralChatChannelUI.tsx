@@ -54,7 +54,7 @@ export default function WelcomeChannelView({ channel }: WelcomeChannelViewProps)
     return (
         <div className="dark:bg-neutral-900 h-full flex flex-col items-start w-full p-6 relative">
             <DashboardComponentHeading description={channel.description!}>
-                {channel.title} / Water cooler
+                {channel.title} / Water coolerz
             </DashboardComponentHeading>
             <UtilityCard className="w-full flex-grow mt-4 overflow-hidden bg-white dark:bg-neutral-800">
                 {loading ? (

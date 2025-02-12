@@ -51,14 +51,14 @@ export default function () {
     const [createProjectsModal, setCreateProjectsModal] = useState<boolean>(false);
 
     return (
-        <>
+        <div className='w-full'>
+            {createProjectsModal && <CreateProjectsForm className='w-[50%]' open={createProjectsModal} setOpen={setCreateProjectsModal} />}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {dummyProjects.map((project) => (
                     <div
                         key={project.id}
                         onClick={() => setSelectedProject(project)}
-                        className="bg-white dark:bg-neutral-700 rounded-lg p-4 cursor-pointer hover:shadow-lg transition-shadow"
-                    >
+                        className="bg-white dark:bg-neutral-700 rounded-[14px] p-4 cursor-pointer hover:shadow-lg transition-shadow">
                         <h3 className="text-lg font-semibold mb-2">{project.title}</h3>
                         <p className="text-sm text-gray-600 dark:text-gray-300">{project.description}</p>
                         <div className="mt-4 flex justify-between items-center">
@@ -72,12 +72,11 @@ export default function () {
                     </div>
                 ))}
 
-                <button type='button' onClick={() => setCreateProjectsModal(true)} className="bg-gray-50 dark:bg-neutral-700 rounded-lg p-4 flex items-center justify-center cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-600">
+                <button type='button' onClick={() => setCreateProjectsModal(true)} className="bg-gray-50 dark:bg-neutral-700 rounded-[14px] p-4 flex items-center justify-center cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-600">
                     <Plus className="w-6 h-6 text-gray-400" />
                     <span className="ml-2 text-gray-600 dark:text-gray-300">New Project</span>
                 </button>
             </div>
-            {createProjectsModal && <CreateProjectsForm open={createProjectsModal} setOpen={setCreateProjectsModal} />}
-        </>
+        </div>
     );
 }
