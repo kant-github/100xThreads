@@ -6,11 +6,19 @@ import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
 import InputBox from "../utility/InputBox";
+import axios from "axios";
+import { API_URL } from "@/lib/apiAuthRoutes";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
+import { userSessionAtom } from "@/recoil/atoms/atom";
+import { ChannelType } from "types";
+import { projectChannelMessageAtom } from "@/recoil/atoms/organizationAtoms/projectChannelMessageAtom";
 
 interface CreateProjectsFormProps {
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
     className?: string
+    channel: ChannelType;
 }
 
 const createProjectSchema = z.object({
@@ -20,9 +28,12 @@ const createProjectSchema = z.object({
 
 type ProjectSchema = z.infer<typeof createProjectSchema>;
 
-export default function ({ open, setOpen, className }: CreateProjectsFormProps) {
+export default function ({ open, setOpen, className, channel }: CreateProjectsFormProps) {
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const organization = useRecoilValue(organizationAtom);
+    const session = useRecoilValue(userSessionAtom);
     const ref = useRef<HTMLDivElement>(null);
+    const setProjectChannelMessagesAtom = useSetRecoilState(projectChannelMessageAtom);
     const { handleSubmit, control, formState: { errors } } = useForm<ProjectSchema>({
         resolver: zodResolver(createProjectSchema)
     })
@@ -41,8 +52,23 @@ export default function ({ open, setOpen, className }: CreateProjectsFormProps) 
 
     }, [open])
 
-    function submitHandler(data: any) {
-        console.log(data);
+    async function submitHandler(formData: ProjectSchema) {
+        try {
+            setIsSubmitting(true);
+            const { data } = await axios.post(`${API_URL}/organizations/${organization?.id}/channels/${channel.id}/project-channel`, formData, {
+                headers: {
+                    authorization: `Bearer ${session.user?.token}`
+                }
+            })
+            setProjectChannelMessagesAtom(prev => [...prev, data.data]);
+            console.log("project data is : ", data);
+
+        } catch (err) {
+            console.log("error in creation of anouncement in frontend ", err)
+        } finally {
+            setIsSubmitting(false);
+            setOpen(false);
+        }
     }
     return (
         <div className={`${className} absolute right-8`} ref={ref}>

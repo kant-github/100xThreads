@@ -15,6 +15,8 @@ import { getPoll } from "../controllers/polls/getPoll";
 import { getWelcomeChannelMessages } from "../controllers/welcome-channel/getWelcomeChannelMessages";
 import { getAnnouncementChannelMessages } from "../controllers/announcement-channel/getAnnouncementchannelMessages";
 import { createAnnouncement } from "../controllers/announcement-channel/createAnnouncement";
+import { createProjectHandler } from "../controllers/projects-channel/createProject";
+import { getProjectChannelMessages } from "../controllers/projects-channel/getProjectChannelMessages";
 
 const router = Router();
 
@@ -40,7 +42,11 @@ router.get("/organizations/:organizationId/channels/:channelId/welcome-channel",
 
 //announcement-channel-controller
 router.get("/organizations/:organizationId/channels/:channelId/announcement-channel", authmiddleware, getAnnouncementChannelMessages);
-router.post("/organizations/:organizationId/channels/:channelId", authmiddleware, createAnnouncement);
+router.post("/organizations/:organizationId/channels/:channelId/announcement-channel", authmiddleware, createAnnouncement);
+
+//project-channel-controller
+router.get("/organizations/:organizationId/channels/:channelId/project-channel", authmiddleware, getProjectChannelMessages);
+router.post("/organizations/:organizationId/channels/:channelId/project-channel", authmiddleware, createProjectHandler);
 
 //polls-controller
 router.get("/polls/:id/:channelId", authmiddleware, getPoll);

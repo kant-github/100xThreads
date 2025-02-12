@@ -74,7 +74,7 @@ export default function ({ className, setCreateAnnouncementModal, createAnnoucem
     async function submitHandler(formData: AnnouncementFormSchema) {
         try {
             setIsSubmitting(true);
-            const { data } = await axios.post(`${API_URL}/organizations/${organization?.id}/channels/${channel.id}`, formData, {
+            const { data } = await axios.post(`${API_URL}/organizations/${organization?.id}/channels/${channel.id}/announcement-channel`, formData, {
                 headers: {
                     authorization: `Bearer ${session.user?.token}`
                 }

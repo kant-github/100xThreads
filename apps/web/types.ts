@@ -120,16 +120,16 @@ export type EventChannelType = {
   created_by: number;
 }
 
-export type Project = {
+export type ProjectTypes = {
   id: string;
   channel_id: string;
   title: string;
   description?: string | null;
   created_at: Date;
-  tasks?: Task[];
+  tasks?: TaskTypes[];
 }
 
-export interface Task {
+export interface TaskTypes {
   id: string;
   project_id: string;
   title: string;
