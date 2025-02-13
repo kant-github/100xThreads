@@ -13,7 +13,19 @@ export async function getProjectChannelMessages(req: Request, res: Response) {
         const data = await prisma.project.findMany({
             where: { channel_id: channelId },
             include: {
-                tasks: true
+                tasks: {
+                    include: {
+                        assignees: {
+                            include: {
+                                organization_user: {
+                                    include: {
+                                        user: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
             }
         })
 

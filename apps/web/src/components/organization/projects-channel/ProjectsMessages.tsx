@@ -5,35 +5,36 @@ import { ChannelType, ProjectTypes } from 'types';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { projectChannelMessageAtom } from '@/recoil/atoms/organizationAtoms/projectChannelMessageAtom';
 import Project from './Project';
+import KanbanTaskCard from './KanBanTaskCard';
+import KanBanBoard from './KanBanBoard';
+import { projectSelectedAtom } from '@/recoil/atoms/projects/projectSelectedAtom';
 
 interface ProjectsProps {
     channel: ChannelType;
 }
 
 export default function ({ channel }: ProjectsProps) {
-    const [selectedProject, setSelectedProject] = useState<ProjectTypes | null>(null);
+    const [selectedProject, setSelectedProject] = useRecoilState(projectSelectedAtom);
     const [createProjectsModal, setCreateProjectsModal] = useState<boolean>(false);
     const projectsChannelMessages = useRecoilValue(projectChannelMessageAtom);
 
     return (
-        <div className='w-full'>
+        <div className='w-full px-2'>
+            <div className="border-b-[0.5px] border-neutral-600 my-6" />
             {
                 !selectedProject ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {projectsChannelMessages.map((project) => (
-                            <Project project={project} setSelectedProject={setSelectedProject} />
-                        ))}
-
-                        <button type='button' onClick={() => setCreateProjectsModal(true)} className="bg-gray-50 dark:bg-neutral-700 rounded-[14px] p-4 flex items-center justify-center cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-600 relative">
-                            <Plus className="w-6 h-6 text-gray-400" />
-                            <span className="ml-2 text-gray-600 dark:text-gray-300">New Project</span>
+                        <button type='button' onClick={() => setCreateProjectsModal(true)} className="bg-gray-50 dark:bg-neutral-800 rounded-[14px] p-4 flex items-center justify-center cursor-pointer hover:bg-gray-100 hover:dark:bg-neutral-800/80 border dark:border-neutral-700 relative">
+                            <Plus className="w-5 h-5 text-neutral-200" />
+                            <span className="ml-2 text-gray-600 dark:text-neutral-200 mb-[0.5px] text-sm">New Project</span>
                         </button>
-                        {createProjectsModal && <CreateProjectsForm channel={channel} className='w-[50%]' open={createProjectsModal} setOpen={setCreateProjectsModal} />}
+                        {projectsChannelMessages.map((project) => (
+                            <Project key={project.id} project={project} setSelectedProject={setSelectedProject} />
+                        ))}
+                        {createProjectsModal && <CreateProjectsForm channel={channel} className='w-[30%]' open={createProjectsModal} setOpen={setCreateProjectsModal} />}
                     </div>
                 ) : (
-                    selectedProject.tasks?.map((task) => (
-                        <div>{task.title}</div>
-                    ))
+                    <KanBanBoard tasks={selectedProject.tasks!} />
                 )
             }
         </div>

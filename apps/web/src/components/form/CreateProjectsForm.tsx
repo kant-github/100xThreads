@@ -72,9 +72,9 @@ export default function ({ open, setOpen, className, channel }: CreateProjectsFo
     }
     return (
         <div className={`${className} absolute right-8`} ref={ref}>
-            <UtilityCard open={open} setOpen={setOpen} className=" px-10 py-6 dark:bg-neutral-900 dark:border-neutral-600 border" >
-                <DashboardComponentHeading description="start creating the project">Create project</DashboardComponentHeading>
-                <form className="flex flex-col items-center justify-between gap-y-4 mt-4" onSubmit={handleSubmit(submitHandler)}>
+            <UtilityCard open={open} setOpen={setOpen} className="px-[20px] py-4 dark:bg-neutral-900 dark:border-neutral-600 border" >
+                {/* <DashboardComponentHeading description="start creating the project">Create project</DashboardComponentHeading> */}
+                <form className="flex flex-col items-center justify-between gap-y-4" onSubmit={handleSubmit(submitHandler)}>
                     <Controller
                         name="title"
                         control={control}
@@ -85,16 +85,9 @@ export default function ({ open, setOpen, className, channel }: CreateProjectsFo
                     <Controller
                         name="description"
                         control={control}
-                        render={({ field, fieldState: { error } }) => (
-                            <>
-                                {error && (<p className="mt-1 text-xs text-red-500"> {error?.message} </p>)}
-                                <textarea
-                                    {...field}
-                                    className={`mt-2 px-3 py-2 placeholder:text-sm placeholder:text-neutral-400 w-full text-xs min-h-[120px] rounded-[6px] border dark:bg-neutral-900 dark:text-white focus:outline-none ${error ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500' : 'border-gray-300 dark:border-neutral-600 focus:border-gray-300 focus:ring-1 focus:ring-gray-300'}`}
-                                    placeholder="Enter announcement content..."
-                                />
-                            </>
-                        )}
+                        render={({ field }) => {
+                            return <InputBox placeholder="Choose project description" onChange={field.onChange} value={field.value} label="Description" error={errors.description?.message} />
+                        }}
                     />
                     <button type='submit' className="flex items-center justify-center gap-2 mt-3 bg-yellow-600 hover:bg-yellow-600/90 disabled:bg-yellow-600/90 disabled:cursor-not-allowed text-neutral-900 font-medium px-4 py-3 rounded-[8px] mx-auto w-full text-center text-xs" >
                         {isSubmitting ? 'Creating...' : 'Create Project'}

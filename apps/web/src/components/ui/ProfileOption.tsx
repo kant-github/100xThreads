@@ -10,7 +10,6 @@ import LogOutDialogBox from "../utility/LogOutDialogBox";
 import { settingsOptionAtom, settingsOptionEnum } from "@/recoil/atoms/SettingsOptionAtom";
 import { dashboardOptionsAtom, RendererOption } from "@/recoil/atoms/DashboardOptionsAtom";
 
-
 export default function () {
   const [open, setOpen] = useState<boolean>(false);
   const [logoutDropdown, setLogoutDropdown] = useState<boolean>(false);
@@ -19,10 +18,9 @@ export default function () {
   const session = useRecoilValue(userSessionAtom);
   const ref = useRef<HTMLDivElement | null>(null);
 
-
   return (
-    <div ref={ref} className={`px-2 py-1 bg-neutral-800 rounded-[8px] cursor-pointer select-none`} onClick={() => setOpen(prev => !prev)}>
-      <div className="flex justify-between items-center">
+    <div ref={ref} className="px-2 py-1 bg-neutral-800 rounded-[8px] cursor-pointer select-none">
+      <div onClick={() => setOpen(prev => !prev)} className="flex justify-between items-center">
         <div className="flex items-center gap-x-3">
           <span className="relative">
             <span className="bg-green-500 absolute bottom-1 right-1 transform translate-x-1/4 translate-y-1/4 rounded-full border-2 border-zinc-800 z-20 h-2.5 w-2.5"></span>
@@ -33,32 +31,40 @@ export default function () {
           </span>
         </div>
         <span className="cursor p-1">
-          <MdOutlineKeyboardArrowDown className="text-zinc-100" size={18} />
+          <MdOutlineKeyboardArrowDown
+            className={`text-zinc-100 transform transition-transform duration-200 ${open ? 'rotate-180' : 'rotate-0'}`}
+            size={18}
+          />
         </span>
       </div>
-      {
-        open && (
-          <div className="flex flex-col mt-2">
 
-            <div onClick={() => {
-              console.log(settingsAtom);
+      <div className={`overflow-hidden transition-all duration-200 ease-in-out ${open ? 'max-h-[100px] opacity-100 mt-2' : 'max-h-0 opacity-0'}`}>
+        <div className="flex flex-col">
+          <div
+            onClick={() => {
               setDashboardAtom(RendererOption.Settings);
               setSettingsAtom(settingsOptionEnum.Profile)
-            }} className="flex gap-x-3 py-2 px-3 rounded-[8px] cursor-pointer hover:bg-neutral-700 text-[13px] text-neutral-300 dark:text-neutral-300 font-normal mt-0.5 tracking-wide select-none">
-              <TiUser size={18} />
-              <span>Profile</span>
-            </div>
-
-            <div onClick={() => setLogoutDropdown(true)} className="flex gap-x-3 py-2 px-3 rounded-[8px] cursor-pointer hover:bg-red-600 text-[13px] text-neutral-300 dark:text-neutral-300 font-normal mt-0.5 tracking-wide select-none">
-              <PiSignOut size={18} />
-              <span>Sign Out</span>
-            </div>
-
+            }}
+            className="flex gap-x-3 py-2 px-3 rounded-[8px] cursor-pointer hover:bg-neutral-700 text-[13px] text-neutral-300 dark:text-neutral-300 font-normal mt-0.5 tracking-wide select-none transition-colors duration-200"
+          >
+            <TiUser size={18} />
+            <span>Profile</span>
           </div>
-        )
-      }
-      {
-        logoutDropdown && <LogOutDialogBox logoutDropdown={logoutDropdown} setLogoutDropDown={setLogoutDropdown} />
+          <div
+            onClick={() => setLogoutDropdown(true)}
+            className="flex gap-x-3 py-2 px-3 rounded-[8px] cursor-pointer hover:bg-red-600 text-[13px] text-neutral-300 dark:text-neutral-300 font-normal mt-0.5 tracking-wide select-none transition-colors duration-200"
+          >
+            <PiSignOut size={18} />
+            <span>Sign Out</span>
+          </div>
+        </div>
+      </div>
+
+      {logoutDropdown &&
+        <LogOutDialogBox
+          logoutDropdown={logoutDropdown}
+          setLogoutDropDown={setLogoutDropdown}
+        />
       }
     </div>
   );
