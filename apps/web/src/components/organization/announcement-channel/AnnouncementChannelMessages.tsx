@@ -10,6 +10,7 @@ import { CgMathPlus } from "react-icons/cg";
 import { useRecoilValue } from "recoil";
 import { ChannelType } from "types";
 import EmptyAnnouncementChannelMessage from "./EmptyAnnouncementChannelMessage";
+import DesignButton from "@/components/buttons/DesignButton";
 
 interface AnnouncementChannelMessagesProps {
     channel: ChannelType;
@@ -27,14 +28,14 @@ export default function ({ channel }: AnnouncementChannelMessagesProps) {
     return (
         <div className="dark:bg-neutral-900 h-full flex flex-col items-start w-full p-6 relative">
             <div className="mr-4 absolute top-6 right-3">
-                <TransparentButton
+                <DesignButton
                     onClick={() => setCreateAnnouncementModal(prev => !prev)}
                     className="group"
-                    color={organization?.organizationColor}
+                    // color={organization?.organizationColor}
                 >
                     <CgMathPlus size={16} />
                     Create Announcement
-                </TransparentButton>
+                </DesignButton>
                 {createAnnoucementModal && (
                     <CreateAnnouncementForm
                         channel={channel}
@@ -47,7 +48,7 @@ export default function ({ channel }: AnnouncementChannelMessagesProps) {
             <DashboardComponentHeading description={channel.description!}>
                 {channel.title}
             </DashboardComponentHeading>
-            <UtilityCard className='p-8 w-full flex-1 mt-4 dark:bg-neutral-800 flex flex-col min-h-0'>
+            <UtilityCard className='p-8 w-full flex-1 mt-4 dark:bg-neutral-800 flex flex-col min-h-0 shadow-lg shadow-black/20'>
                 <div className='w-full h-full overflow-y-auto scrollbar-hide'>
                     {!announcementChannelMessages.length ? (
                         <div className="h-full flex items-center justify-center">

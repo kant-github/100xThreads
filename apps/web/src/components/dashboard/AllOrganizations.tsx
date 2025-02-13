@@ -24,7 +24,7 @@ export default function () {
   useEffect(() => {
     const fetchCall = async () => {
       setLoading(true);
-      await new Promise(t => setTimeout(t, 1000));
+      // await new Promise(t => setTimeout(t, 1000));
       if (session.user?.token) {
         const data = await fetchAllOrganization(session.user.token);
         setOrganizations(data);

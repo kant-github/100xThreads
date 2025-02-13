@@ -13,7 +13,7 @@ interface WelcomeChannelMessagesProps {
 export default function WelcomeChannelMessages({ className }: WelcomeChannelMessagesProps) {
     const welcomeChannelMessages = useRecoilValue(welcomeChannelMessagesAtom);
     return (
-        <UtilityCard className={`mt-4 overflow-hidden bg-white dark:bg-neutral-800 w-full ${className}`}>
+        <UtilityCard className={`mt-4 overflow-hidden bg-white dark:bg-neutral-800 w-full shadow-lg shadow-black/20 ${className}`}>
             <div className="flex flex-col overflow-y-auto max-h-[22rem] scrollbar-hide">
                 {welcomeChannelMessages.map((message) => {
                     const welcomedAtDate = typeof message.welcomed_at === "string" ? parseISO(message.welcomed_at) : message.welcomed_at;

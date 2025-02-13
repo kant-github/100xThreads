@@ -56,7 +56,7 @@ export default function WelcomeChannelView({ channel }: WelcomeChannelViewProps)
             <DashboardComponentHeading description={channel.description!}>
                 {channel.title} / Water coolerz
             </DashboardComponentHeading>
-            <UtilityCard className="w-full flex-grow mt-4 overflow-hidden bg-white dark:bg-neutral-800">
+            <UtilityCard className="w-full flex-grow mt-4 overflow-hidden bg-white dark:bg-neutral-800 shadow-lg shadow-black/30">
                 {loading ? (
                     <div className="space-y-4 h-full">
                         <ChatSkeleton />

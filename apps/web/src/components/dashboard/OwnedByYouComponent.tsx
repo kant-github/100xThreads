@@ -21,7 +21,7 @@ export default function () {
     useEffect(() => {
         async function fetchUserCreatedOrganization() {
             setLoading(true);
-            await new Promise(t => setTimeout(t, 1000));
+            // await new Promise(t => setTimeout(t, 1000));
             if (session.user?.token) {
                 const ownedOrganization = await fetchOrganization(session.user.token);
                 setOwnedOrganizations(ownedOrganization);

@@ -22,8 +22,8 @@ interface CreateProjectsFormProps {
 }
 
 const createProjectSchema = z.object({
-    title: z.string().min(1, "Title is required").max(255, "Title must be less than 255 characters"),
-    description: z.string().min(1, "Content is required").max(10000, "Content must be less than 10000 characters"),
+    title: z.string().min(1, "Title is required").max(20, "Title must be less than 255 characters"),
+    description: z.string().min(1, "Content is required").max(32, "Content must be less than 30 characters"),
 })
 
 type ProjectSchema = z.infer<typeof createProjectSchema>;

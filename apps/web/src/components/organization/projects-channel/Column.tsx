@@ -9,7 +9,7 @@ interface ColumnProps {
 
 export default function ({ col }: ColumnProps) {
     return (
-        <div className="dark:bg-neutral-800 rounded-[6px] p-2">
+        <div className=" p-2">
             <h1 className="capitalize dark:text-neutral-200">{col.status}</h1>
             <div className="flex flex-col">
                 {/* {

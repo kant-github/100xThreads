@@ -19,7 +19,7 @@ export default function ({ channel }: ProjectsProps) {
     const projectsChannelMessages = useRecoilValue(projectChannelMessageAtom);
 
     return (
-        <div className='w-full px-2'>
+        <div className='w-full px-2 flex flex-col flex-1 min-h-0'>
             <div className="border-b-[0.5px] border-neutral-600 my-6" />
             {
                 !selectedProject ? (

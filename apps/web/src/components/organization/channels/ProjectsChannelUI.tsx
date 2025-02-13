@@ -59,8 +59,8 @@ export default function ({ channel }: WelcomeChannelViewProps) {
                 {
                     selectedProject && (
                         <div className="flex items-center justify-center gap-x-3">
-                            <DesignButton onClick={backHandler} className={"flex items-center gap-x-3"}><IoChevronBackOutline />Back</DesignButton>
-                            <DesignButton>Create Task</DesignButton>
+                            <DesignButton onClick={backHandler} ><IoChevronBackOutline />Back</DesignButton>
+                            <DesignButton>Add Task</DesignButton>
                         </div>
                     )
                 }

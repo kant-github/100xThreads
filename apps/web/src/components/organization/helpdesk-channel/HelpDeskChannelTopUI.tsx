@@ -5,11 +5,7 @@ const font = Barriecito({ weight: "400", subsets: ["latin"] })
 export default function () {
     return (
         <div className="h-[30%] w-full mt-auto flex flex-row gap-x-7 p-4">
-            <button
-                aria-label="issue-button"
-                type="button"
-                className="border-2 border-dashed border-neutral-500/50 text-neutral-400 rounded-[14px] flex-1 flex items-center justify-center text-md gap-2 py-8 hover:border-neutral-400 hover:text-neutral-300 hover:bg-neutral-800/30 transition-all duration-300 group font-light"
-            >
+            <button aria-label="issue-button" type="button" className="border-2 border-dashed border-neutral-500/50 text-neutral-400 rounded-[14px] flex-1 flex items-center justify-center text-md gap-2 py-8 hover:border-neutral-400 hover:text-neutral-300 hover:bg-neutral-800/30 transition-all duration-300 group font-light">
                 <span className="text-xl font-light group-hover:scale-110 transition-transform duration-300">+</span>
                 raise an issue
             </button>
