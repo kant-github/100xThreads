@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import AppLogo from "../heading/AppLogo";
 import { useRouter } from "next/navigation";
 import { WhiteBtn } from "../buttons/WhiteBtn";
+import Version from "../buttons/Version";
 
 export default function () {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -22,8 +23,11 @@ export default function () {
 
   return (
     <>
-      <div className="flex justify-between w-full px-16 py-4 bg-white dark:bg-[#171717] border-b dark:border-zinc-700 dark:shadow-[40px]">
-        <AppLogo />
+      <div className="flex justify-between w-full px-16 py-4 bg-white dark:bg-[#131212] border-b dark:border-zinc-700 dark:shadow-[40px]">
+        <div className="flex items-center gap-x-2">
+          <AppLogo />
+          <Version />
+        </div>
         <div className="flex items-center gap-x-12">
           <div className="flex flex-row items-center justify-center gap-x-6">
             {

@@ -15,7 +15,7 @@ export default function ({ project, setSelectedProject }: ProjectProps) {
             <p className="text-[12px] text-gray-600 dark:text-neutral-200 font-light tracking-wider mt-2">{project.description}</p>
             <ProjectTimespan project={project} />
             <div className="flex flex-row w-full justify-between items-center mt-5">
-                <span className="text-xs text-amber-500 tracking-wider flex items-center gap-x-1">
+                <span className="text-xs text-amber-400 tracking-wider flex items-center gap-x-1">
                     <LiaTasksSolid size={18} />
                     {project?.tasks?.length} tasks
                 </span>

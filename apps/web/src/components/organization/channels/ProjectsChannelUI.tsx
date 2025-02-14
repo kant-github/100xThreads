@@ -23,7 +23,7 @@ export default function ({ channel }: WelcomeChannelViewProps) {
     const session = useRecoilValue(userSessionAtom);
     const setProjectChannelMessages = useSetRecoilState(projectChannelMessageAtom);
     const [selectedProject, setSelectedProject] = useRecoilState(projectSelectedAtom);
-    const [createTaskModal, setCreateTaskModal] = useState<boolean>(true);
+    const [createTaskModal, setCreateTaskModal] = useState<boolean>(false);
 
     async function getWelcomeMessages() {
         try {
@@ -47,7 +47,7 @@ export default function ({ channel }: WelcomeChannelViewProps) {
     }
 
     function createTaskHandler() {
-
+        setCreateTaskModal(prev => !prev);
     }
 
     useEffect(() => {
@@ -63,7 +63,7 @@ export default function ({ channel }: WelcomeChannelViewProps) {
                         <div className="flex items-center justify-center gap-x-3 relative">
                             <DesignButton onClick={backHandler} ><IoChevronBackOutline />Back</DesignButton>
                             <DesignButton onClick={createTaskHandler}>Add Task</DesignButton>
-                            {createTaskModal && <CreateTaskForm />}
+                            {createTaskModal && <CreateTaskForm open={createTaskModal} setOpen={setCreateTaskModal} />}
                         </div>
                     )
                 }

@@ -41,7 +41,7 @@ export default function CreateTaskFormThree({ control, errors }: CreateTaskFormT
                         </label>
                         <div className="max-h-[200px] overflow-y-auto space-y-2 pr-2">
                             {filteredUsers.map((orgUser) => (
-                                <div key={orgUser.id} className="flex items-center space-x-3 p-2 border dark:border-neutral-700 rounded-[10px] hover:bg-gray-50 dark:hover:bg-neutral-800" >
+                                <div key={orgUser.id} className="flex items-center space-x-3 p-2 px-3 border dark:border-neutral-700 rounded-[10px] hover:bg-gray-50 dark:hover:bg-neutral-800" >
                                     <input
                                         type="checkbox"
                                         id={`user-${orgUser.id}`}
@@ -52,7 +52,7 @@ export default function CreateTaskFormThree({ control, errors }: CreateTaskFormT
                                                 : (field.value || []).filter(id => id !== orgUser.id);
                                             field.onChange(updatedAssignees);
                                         }}
-                                        className="h-4 w-4 text-amber-500 rounded border-gray-300 focus:ring-amber-500"
+                                        className="appearance-none h-4 w-4 rounded-md bg-gray-200 border border-gray-300 checked:bg-yellow-500 checked:border-yellow-500 checked:before:content-['✔'] checked:before:text-white checked:before:text-[10px] checked:before:font-bold checked:before:flex checked:before:justify-center checked:before:items-center transition-colors duration-200"
                                     />
                                     <label htmlFor={`user-${orgUser.id}`} className="flex items-center space-x-3 cursor-pointer" >
                                         {orgUser.user.image && (
