@@ -8,14 +8,16 @@ export async function createProjectHandler(req: Request, res: Response) {
     }
 
     const { channelId } = req.params;
-    const { title, description } = req.body
+    const { title, description, dueDate } = req.body;
+    console.log("in the backend is : ", dueDate);
 
     try {
         const project = await prisma.project.create({
             data: {
                 channel_id: channelId!,
                 title: title,
-                description: description
+                description: description,
+                due_date: new Date(dueDate)
             },
             include: {
                 tasks: true

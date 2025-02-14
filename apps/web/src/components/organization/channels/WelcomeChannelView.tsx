@@ -66,16 +66,16 @@ export default function ({ channel }: WelcomeChannelViewProps) {
         <div className="dark:bg-neutral-900 h-full flex flex-col items-start w-full p-6 relative">
             <DashboardComponentHeading description={channel.welcome_message!}>{`${organization?.name}'s welcome channel`}</DashboardComponentHeading>
             <UtilityCard className="w-full flex-grow mt-4 flex flex-col h-full">
-                <div className="relative rounded-[16px]">
+                <div className="relative rounded-[16px] h-[30%] w-full">
                     <Image
                         height={20}
                         width={1400}
-                        alt="sdf"
+                        alt="help desk banner"
                         src={"/images/welcomeChannelDashboardImage.jpeg"}
-                        className="rounded-[16px]"
+                        className="rounded-[16px] object-cover h-full w-full"
                     />
                     <div className="absolute inset-0 bg-black/40 rounded-[16px]"></div>
-                    <div className={`text-6xl w-full mx-auto flex justify-center font-black tracking-widest leading-[24px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-yellow-500 z-20 select-none ${font.className}`}>
+                    <div className={`text-5xl w-full mx-auto flex justify-center font-black tracking-widest leading-[24px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-yellow-500 z-20 select-none ${font.className}`}>
                         WELCOME CHANNEL
                     </div>
                 </div>

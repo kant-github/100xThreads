@@ -185,6 +185,7 @@ model Project {
   title       String   @db.VarChar(191)
   description String?
   created_at  DateTime @default(now())
+  due_date    DateTime @default(now())
   tasks       Tasks[]
 
   @@index([channel_id])

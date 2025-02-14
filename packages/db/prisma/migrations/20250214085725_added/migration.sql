@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "organizations" ALTER COLUMN "tags" SET DEFAULT ARRAY[]::VARCHAR(50)[];
+
+-- AlterTable
+ALTER TABLE "projects" ADD COLUMN     "due_date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

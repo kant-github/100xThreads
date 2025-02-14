@@ -126,6 +126,7 @@ export type ProjectTypes = {
   title: string;
   description?: string | null;
   created_at: Date;
+  due_date: Date
   tasks?: TaskTypes[];
 }
 
