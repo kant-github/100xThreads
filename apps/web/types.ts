@@ -78,7 +78,7 @@ export type OrganizationType = {
 };
 
 export type OrganizationUsersType = {
-  id?: number;
+  id: number;
   organization?: OrganizationType
   organization_id: string
   user: UserType

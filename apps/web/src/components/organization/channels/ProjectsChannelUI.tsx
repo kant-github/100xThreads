@@ -6,11 +6,12 @@ import { API_URL } from "@/lib/apiAuthRoutes";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import { userSessionAtom } from "@/recoil/atoms/atom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { projectChannelMessageAtom } from "@/recoil/atoms/organizationAtoms/projectChannelMessageAtom";
 import { projectSelectedAtom } from "@/recoil/atoms/projects/projectSelectedAtom";
 import DesignButton from "@/components/buttons/DesignButton";
 import { IoChevronBackOutline } from "react-icons/io5";
+import CreateTaskForm from "@/components/form/CreateTaskForm";
 
 
 interface WelcomeChannelViewProps {
@@ -22,6 +23,7 @@ export default function ({ channel }: WelcomeChannelViewProps) {
     const session = useRecoilValue(userSessionAtom);
     const setProjectChannelMessages = useSetRecoilState(projectChannelMessageAtom);
     const [selectedProject, setSelectedProject] = useRecoilState(projectSelectedAtom);
+    const [createTaskModal, setCreateTaskModal] = useState<boolean>(true);
 
     async function getWelcomeMessages() {
         try {
@@ -58,9 +60,10 @@ export default function ({ channel }: WelcomeChannelViewProps) {
                 <DashboardComponentHeading description={channel.description!}>{channel.title}</DashboardComponentHeading>
                 {
                     selectedProject && (
-                        <div className="flex items-center justify-center gap-x-3">
+                        <div className="flex items-center justify-center gap-x-3 relative">
                             <DesignButton onClick={backHandler} ><IoChevronBackOutline />Back</DesignButton>
-                            <DesignButton>Add Task</DesignButton>
+                            <DesignButton onClick={createTaskHandler}>Add Task</DesignButton>
+                            {createTaskModal && <CreateTaskForm />}
                         </div>
                     )
                 }

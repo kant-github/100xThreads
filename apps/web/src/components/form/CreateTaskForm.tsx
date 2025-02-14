@@ -1,0 +1,67 @@
+import { useForm } from "react-hook-form";
+import UtilityCard from "../utility/UtilityCard";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { projectSelectedAtom } from "@/recoil/atoms/projects/projectSelectedAtom";
+import { z } from 'zod';
+import { Priority, TaskStatus } from "types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import FormProgressBar from "./FormProgressBar";
+import ProgressBarButtons from "./ProgressBarButtons";
+import { progressBarAtom } from "@/recoil/atoms/progressBarAtom";
+import CreateTaskFormOne from "./CreateTaskFormOne";
+import CreateTaskFormTwo from "./CreateTaskFormTwo";
+import CreateTaskFormThree from "./CreateTaskFormThree";
+
+const createTaskFormSchema = z.object({
+    title: z.string().min(1, 'Title is missing').max(28, 'Max 28 characters'),
+    description: z.string().min(1, 'DEscription is missing').max(35, 'Max 35 characters'),
+    priority: z.enum([Priority.LOW, Priority.NORMAL, Priority.HIGH, Priority.URGENT]),
+    dueDate: z.string().optional(),
+    status: z.enum([TaskStatus.TODO, TaskStatus.IN_PROGRESS, TaskStatus.DONE]).default(TaskStatus.TODO),
+    assignees: z.array(z.number()).min(1, "At least one assignee is required")
+
+})
+
+export type CreateTaskFormType = z.infer<typeof createTaskFormSchema>
+
+export default function () {
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [currentStep, setCurrentStep] = useRecoilState(progressBarAtom);
+    const { control, handleSubmit, formState: { errors } } = useForm<CreateTaskFormType>({
+        resolver: zodResolver(createTaskFormSchema),
+        defaultValues: {
+            priority: Priority.NORMAL,
+            status: TaskStatus.TODO
+        }
+    });
+    const selectedProject = useRecoilValue(projectSelectedAtom);
+
+    async function submitHandler(data: CreateTaskFormType) {
+        console.log(data);
+    }
+
+    function renderComponent() {
+        switch (currentStep) {
+            case 1:
+                return <CreateTaskFormOne control={control} errors={errors} />;
+            case 2:
+                return <CreateTaskFormTwo control={control} errors={errors} />;
+            case 3:
+                return <CreateTaskFormThree control={control} errors={errors} />;
+            default:
+                return null;
+        }
+    }
+
+    return (
+        <UtilityCard className="absolute top-[4rem] right-0 w-[24rem] bg-white dark:bg-neutral-900 rounded-[14px] px-6 py-4 cursor-pointer border dark:border-neutral-700">
+            <div className="text-sm dark:text-neutral-200 font-semibold tracking-wider">Add task to <span className="text-amber-500 font-light">`{selectedProject?.title}`</span>...</div>
+            <form className="w-full flex flex-col gap-y-2" onSubmit={handleSubmit(submitHandler)} >
+                <FormProgressBar className="mt-6 w-full" />
+                {renderComponent()}
+                <ProgressBarButtons className="flex flex-row w-full justify-end" />
+            </form>
+        </UtilityCard>
+    )
+}

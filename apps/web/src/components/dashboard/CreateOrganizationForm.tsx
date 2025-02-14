@@ -48,7 +48,7 @@ export default function ({ open, setOpen }: CreateRoomProps) {
         }
     }, [session.user?.name, reset]);
 
-    const renderComponent = () => {
+    function renderComponent() {
         switch (currentStep) {
             case 1:
                 return <FirstComponent control={control} errors={errors} />;
@@ -129,7 +129,7 @@ export default function ({ open, setOpen }: CreateRoomProps) {
                     Create Organization
                 </DashboardComponentHeading>
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <ProgressBarButtons />
+                    <ProgressBarButtons className="absolute bottom-6 right-8 flex justify-center items-center" />
                     <FormProgressBar className="mt-8" />
                     {renderComponent()}
                 </form>

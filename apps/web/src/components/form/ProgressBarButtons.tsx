@@ -4,7 +4,11 @@ import { MdChevronRight, MdChevronLeft } from "react-icons/md";
 import { useRecoilState, useRecoilValue } from "recoil";
 import BlackBtn from "../buttons/BlackBtn";
 
-export default function ProgressNavigation() {
+interface ProgressBarButtonsProps {
+    className?: string
+}
+
+export default function ({ className }: ProgressBarButtonsProps) {
     const totalLevels = useRecoilValue(progressBarTotalLevelAtom);
     const [currentLevel, setCurrentLevel] = useRecoilState(progressBarAtom);
 
@@ -36,14 +40,14 @@ export default function ProgressNavigation() {
     };
 
     return (
-        <div className="flex justify-center items-center gap-4 absolute bottom-6 right-8">
+        <div className={`gap-4 ${className}`}>
             <button aria-label="left"
                 type="button"
                 onClick={handleBack}
                 disabled={currentLevel === 1}
                 className={`px-4 py-2 rounded-[6px] transition-colors ${currentLevel === 1
                     ? 'bg-zinc-700 cursor-not-allowed'
-                    : 'bg-zinc-900 text-white hover:bg-black'
+                    : 'bg-neutral-950 text-white hover:bg-black'
                     }`}
             >
                 <MdChevronLeft className={`${currentLevel === 1 ? "text-zinc-300" : "text-white"}`} />
@@ -55,7 +59,7 @@ export default function ProgressNavigation() {
                 <button aria-label="right"
                     type="button"
                     onClick={handleNext}
-                    className="px-4 py-2 rounded-[6px] bg-zinc-900 text-white hover:bg-black transition-colors"
+                    className="px-4 py-2 rounded-[6px] bg-neutral-950 text-white hover:bg-black transition-colors"
                 >
                     <MdChevronRight />
                 </button>

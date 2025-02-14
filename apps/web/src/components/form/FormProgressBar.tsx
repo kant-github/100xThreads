@@ -11,7 +11,7 @@ export default function ({ className }: FormProgressBarProps) {
 
   return (
     <div className={`max-w-md mx-auto  ${className}`}>
-      <div className="relative mb-8">
+      <div className="relative mb-4">
         <div className="h-2 bg-zinc-700 rounded-full">
           <div
             className="h-full bg-[#f5a331] rounded-full transition-all duration-500 ease-out"
