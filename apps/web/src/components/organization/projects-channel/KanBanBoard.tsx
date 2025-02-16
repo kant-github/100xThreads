@@ -15,9 +15,9 @@ export default function ({ tasks }: KanBanBoardProps) {
             tasksInColumn
         }
     })
-    
-    console.log("columns are : ", column);
-    
+
+    console.log('selected project is true now');
+
     return (
         <div className="w-full h-full grid grid-cols-3 divide-x divide-neutral-700">
             {

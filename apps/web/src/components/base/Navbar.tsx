@@ -22,7 +22,7 @@ export default function () {
   };
 
   return (
-    <>
+    <div>
       <div className="flex justify-between w-full px-16 py-4 bg-white dark:bg-[#131212] border-b dark:border-zinc-700 dark:shadow-[40px]">
         <div className="flex items-center gap-x-2">
           <AppLogo />
@@ -32,15 +32,15 @@ export default function () {
           <div className="flex flex-row items-center justify-center gap-x-6">
             {
               session?.user ? (
-                <WhiteBtn onClick={handleDashboardClick}>Dashboard</WhiteBtn>
+                <WhiteBtn className="z-[100]" onClick={handleDashboardClick}>Dashboard</WhiteBtn>
               ) : (
-                <WhiteBtn onClick={handleGettingStartedClick}>Getting Started</WhiteBtn>
+                <WhiteBtn className="z-[100]" onClick={handleGettingStartedClick}>Getting Started</WhiteBtn>
               )
             }
           </div>
         </div>
       </div>
       <LoginModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
-    </>
+    </div>
   );
 }

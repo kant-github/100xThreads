@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
-import { ChannelType, MessageType, UserRole } from "types";
+import { ChannelType, MessageType } from "types";
 import ChatMessageInput from '../chat/ChatMessageInput';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { userSessionAtom } from '@/recoil/atoms/atom';
@@ -210,11 +210,12 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
         <div className="w-full h-full flex flex-col relative px-4 py-2">
             <div className='flex-1 w-full overflow-y-auto scrollbar-hide'>
                 <div className='flex flex-col space-y-5 w-full'>
-                    <EmptyConversation className="mt-4 w-full" show={messages.length === 0} />
+
                     <GroupedByDateMessages channel={channel} groupedMessages={groupedMessages} />
                     <div ref={messagesEndRef} />
                 </div>
                 <PollCard channel={channel} pollCreationCard={pollCreationCard} setPollCreationCard={setPollCreationCard} />
+                {!messages.length && <EmptyConversation className="h-full" />}
             </div>
             <form className='w-full pb-1' onSubmit={handleSendMessage}>
                 <UserTyping usersTyping={usersTyping} />

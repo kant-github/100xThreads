@@ -10,7 +10,7 @@ import {
   IconUserCheck,
 } from "@tabler/icons-react";
 
-export default function () {
+export default function ({ className }: { className?: string }) {
   const features = [
     {
       title: "Real-Time Messaging",
@@ -64,7 +64,7 @@ export default function () {
 
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4  relative z-10 py-8 max-w-7xl mx-auto">
+    <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4  relative z-10 py-8 max-w-7xl mx-auto ${className}`}>
       {features.map((feature, index) => (
         <Feature key={feature.title} {...feature} index={index} />
       ))}

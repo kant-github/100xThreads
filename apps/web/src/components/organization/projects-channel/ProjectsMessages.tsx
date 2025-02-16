@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
 import CreateProjectsForm from '@/components/form/CreateProjectsForm';
-import { ChannelType, ProjectTypes } from 'types';
+import { ChannelType } from 'types';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { projectChannelMessageAtom } from '@/recoil/atoms/organizationAtoms/projectChannelMessageAtom';
 import Project from './Project';
-import KanbanTaskCard from './KanBanTaskCard';
 import KanBanBoard from './KanBanBoard';
 import { projectSelectedAtom } from '@/recoil/atoms/projects/projectSelectedAtom';
 
@@ -18,6 +17,10 @@ export default function ({ channel }: ProjectsProps) {
     const [createProjectsModal, setCreateProjectsModal] = useState<boolean>(false);
     const projectsChannelMessages = useRecoilValue(projectChannelMessageAtom);
 
+    useEffect(() => {
+        console.log("logging selected project : ", selectedProject);
+    }, [setSelectedProject])
+
     return (
         <div className='w-full px-2 flex flex-col flex-1 min-h-0'>
             <div className="border-b-[0.5px] border-neutral-600 my-6" />
@@ -29,7 +32,7 @@ export default function ({ channel }: ProjectsProps) {
                             <span className="ml-2 text-gray-600 dark:text-neutral-200 mb-[0.5px] text-sm">New Project</span>
                         </button>
                         {projectsChannelMessages.map((project) => (
-                            <Project key={project.id} project={project} setSelectedProject={setSelectedProject} />
+                            <Project channel={channel} key={project.id} project={project} setSelectedProject={setSelectedProject} />
                         ))}
                         {createProjectsModal && <CreateProjectsForm channel={channel} className='w-[30%]' open={createProjectsModal} setOpen={setCreateProjectsModal} />}
                     </div>

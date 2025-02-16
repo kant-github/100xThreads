@@ -1,19 +1,15 @@
-import { HiLightBulb } from "react-icons/hi";
+import Image from "next/image";
 
-interface EmptyConversationProps {
-    show: boolean;
-    className?: string
-}
-
-export default function ({ show, className }: EmptyConversationProps) {
-    if (show) {
-        return (
-            <div className={`flex items-center justify-center select-none ${className}`}>
-                <span className="flex items-center justify-center gap-2 bg-blue-200 dark:bg-yellow-500 dark:text-neutral-900 text-xs px-6 py-1.5 rounded-[5px] shadow-md">
-                    <HiLightBulb size={20} />
-                    No messages yet, Be the first to start the conversation !!
-                </span>
+export default function ({ className }: { className?: string }) {
+    return (
+        <div className={`flex flex-col items-center justify-center gap-2 px-4 text-center max-w-[90%] mx-auto ${className}`}>
+            <div className="bg-yellow-600/70 rounded-[12px]">
+                <Image src="/images/empty.png" width={100} height={40} alt="empty" className="p-3" />
             </div>
-        )
-    }
+            <div className="flex flex-col items-center justify-center">
+                <h1 className="text-xl font-semibold tracking-wide text-zinc-400">No chats yet</h1>
+                <p className="text-xs font-normal tracking-wide text-zinc-400">Start a conversation by sending a friendly greeting!</p>
+            </div>
+        </div>
+    );
 };

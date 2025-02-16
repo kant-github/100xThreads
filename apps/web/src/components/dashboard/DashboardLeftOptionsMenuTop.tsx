@@ -66,6 +66,8 @@ export default function () {
                 />
             </div>
             <UtilitySideBar
+                bottomLogo={true}
+                width="3/12"
                 open={open}
                 setOpen={setOpen}
                 content={
