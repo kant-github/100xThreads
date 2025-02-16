@@ -58,6 +58,8 @@ export default class WebSocketDatabaseManager {
                     return this.welcomeUserHandler(message, tokenData);
                 case 'new-announcement':
                     return this.announcementHandler(message, tokenData);
+                case 'project-channel-chat-messages':
+                    return this.insertProjectChannelMessage(message, tokenData);
             }
         }
         catch (err) {
@@ -343,6 +345,32 @@ export default class WebSocketDatabaseManager {
                 type: message.type
             }))
         }
+    }
+
+    private async insertProjectChannelMessage(message: WebSocketMessage, tokenData: any) {
+        console.log("got messages");
+        await this.prisma.projectChat.create({
+            data: {
+                id: message.payload.id,
+                project_id: message.payload.projectId,
+                organization_id: message.payload.organization_user.organization_id,
+                org_user_id: Number(message.payload.org_user_id),
+                message: message.payload.message,
+                name: message.payload.name,
+            }
+        })
+
+        const channelKey = this.getChannelKey({
+            organizationId: tokenData.organizationId,
+            channelId: message.payload.channelId,
+            type: message.payload.type
+        })
+
+        await this.publisher.publish(channelKey, JSON.stringify({
+            ...message,
+            userId: tokenData.userId,
+            timeStamp: Date.now()
+        }))
     }
 
     private getChannelKey(subscription: ChannelSubscription): string {

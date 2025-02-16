@@ -17,6 +17,7 @@ import { getAnnouncementChannelMessages } from "../controllers/announcement-chan
 import { createAnnouncement } from "../controllers/announcement-channel/createAnnouncement";
 import { createProjectHandler } from "../controllers/projects-channel/createProject";
 import { getProjectChannelMessages } from "../controllers/projects-channel/getProjectChannelMessages";
+import { getProjectchannelChats } from "../controllers/projects-channel/getProjectchannelChats";
 
 const router = Router();
 
@@ -47,6 +48,7 @@ router.post("/organizations/:organizationId/channels/:channelId/announcement-cha
 //project-channel-controller
 router.get("/organizations/:organizationId/channels/:channelId/project-channel", authmiddleware, getProjectChannelMessages);
 router.post("/organizations/:organizationId/channels/:channelId/project-channel", authmiddleware, createProjectHandler);
+router.get("/organizations/:organizationId/channels/:channelId/project/:projectId/chats", authmiddleware, getProjectchannelChats);
 
 //polls-controller
 router.get("/polls/:id/:channelId", authmiddleware, getPoll);

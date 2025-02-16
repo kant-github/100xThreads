@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 const DEFAULT_PAGE_SIZE = 50;
 const MAX_PAGE_SIZE = 100;
 
-export default async function getChats(req: Request, res: Response) {
+export async function getProjectchannelChats(req: Request, res: Response) {
     if (!req.user) {
         res.status(401).json({ message: "You are not authorized" });
         return;
@@ -12,6 +12,7 @@ export default async function getChats(req: Request, res: Response) {
 
     const organizationId = req.params.organizationId;
     const channelId = req.params.channelId;
+    const projectId = req.params.projectId;
 
     console.log("channel id is : ", channelId);
     const cursor = req.query.cursor;
@@ -25,18 +26,10 @@ export default async function getChats(req: Request, res: Response) {
     }
 
     try {
-        const chats = await prisma.chats.findMany({
+        const chats = await prisma.projectChat.findMany({
             where: {
-                AND: [
-                    {
-                        channel: {
-                            organization_id: organizationId
-                        }
-                    },
-                    {
-                        channel_id: channelId
-                    }
-                ]
+                project_id: projectId
+
             },
             take: page_size + 1,
             ...(cursor ? {
@@ -62,25 +55,6 @@ export default async function getChats(req: Request, res: Response) {
                                 bio: true,
                                 isOnline: true,
                                 lastSeen: true
-                            }
-                        }
-                    }
-                },
-                channel: {
-                    select: {
-                        id: true,
-                        title: true,
-                        type: true,
-                        description: true,
-                        is_archived: true,
-                        allowed_roles: true,
-                        organization: {
-                            select: {
-                                id: true,
-                                name: true,
-                                image: true,
-                                organizationColor: true,
-                                organization_type: true
                             }
                         }
                     }
@@ -115,6 +89,6 @@ export default async function getChats(req: Request, res: Response) {
             nextCursor: hasMore ? chats[chats.length - 1]!.id : undefined
         })
     } catch (err) {
-
+        console.log("Error in getiing project related chats", err);
     }
 }

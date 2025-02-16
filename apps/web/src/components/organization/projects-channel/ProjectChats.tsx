@@ -1,5 +1,4 @@
 import ChatMessageInput from "@/components/chat/ChatMessageInput";
-import UtilitySideBar from "@/components/utility/UtilitySideBar";
 import { useWebSocket } from "@/hooks/useWebsocket";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import { messageEditingState } from "@/recoil/atoms/chats/messageEditingStateAtom";
@@ -12,22 +11,22 @@ import { organizationUserAtom } from "@/recoil/atoms/organizationAtoms/organizat
 import UserTyping from "@/components/utility/UserTyping";
 import EmptyConversation from "@/components/chat/EmptyConversation";
 import GroupedByDateMessages from "@/components/chat/messages/GroupedByDateMessages";
-import DashboardComponentHeading from "@/components/dashboard/DashboardComponentHeading";
 
 interface ProjectChatsProps {
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
     project: ProjectTypes;
-    channel: ChannelType
+    channel: ChannelType;
+    chats: MessageType[];
 }
 
-export default function ({ open, setOpen, project, channel }: ProjectChatsProps) {
+export default function ({ open, project, channel, chats }: ProjectChatsProps) {
     const [message, setMessage] = useState<string>('');
     const session = useRecoilValue(userSessionAtom);
     const organizationId = useRecoilValue(organizationIdAtom);
     const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
     const [editingState, setEditingState] = useRecoilState(messageEditingState);
-    const [messages, setMessages] = useState<MessageType[]>([]);
+    const [messages, setMessages] = useState<MessageType[]>(chats);
     const organizationUser = useRecoilValue(organizationUserAtom);
     const [usersTyping, setUsersTyping] = useState<string[]>([]);
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -50,14 +49,22 @@ export default function ({ open, setOpen, project, channel }: ProjectChatsProps)
 
     const { sendMessage, subscribeToBackend, unsubscribeFromBackend, subscribeToHandler } = useWebSocket();
 
+    function handleIncomingMessageEvents(newMessage: any) {
+        setMessages(prev => [...prev, newMessage]);
+    }
+
     useEffect(() => {
         if (open && organizationId && channel.id) {
-            subscribeToBackend(channel.id, organizationId, 'project-channel-chat-messages')
+            console.log("sending a subscribe event");
+
+            subscribeToBackend(channel.id, organizationId, 'project-channel-chat-messages');
+            const unsubscribeIncomingMessageHandler = subscribeToHandler('project-channel-chat-messages', handleIncomingMessageEvents)
             return () => {
+                unsubscribeIncomingMessageHandler();
                 unsubscribeFromBackend(channel.id, organizationId, 'project-channel-chat-messages');
             }
         }
-    },)
+    }, [open, channel.id, organizationId])
     function sendTypingEvent(type: boolean) {
         const newTypingdata = {
             user_id: session.user?.id,
@@ -106,6 +113,7 @@ export default function ({ open, setOpen, project, channel }: ProjectChatsProps)
                     user: session.user as any,
                     user_id: Number(session.user?.id) || 0,
                 },
+                projectId: project.id,
                 message: message,
                 name: session.user?.name || "User",
                 is_deleted: false,
@@ -114,43 +122,33 @@ export default function ({ open, setOpen, project, channel }: ProjectChatsProps)
                 LikedUsers: []
             };
 
-            sendMessage(newMessage, channel.id, 'insert-general-channel-message');
+            sendMessage(newMessage, channel.id, 'project-channel-chat-messages');
             setMessages(prevChats => [...prevChats, newMessage]);
         }
         setMessage("");
     }
 
     return (
-        <UtilitySideBar
-            width="5/12"
-            open={open}
-            setOpen={setOpen}
-            content={
-                <div className="px-4 py-2 h-full flex flex-col">
-                    <DashboardComponentHeading className="ml-2 mt-2" description={project.description!}>{project.title}</DashboardComponentHeading>
-                    <div className="w-full flex flex-col relative px-4 py-2 mt-4 rounded-[12px] dark:bg-neutral-800 flex-1">
-                        <div className='flex-1 w-full overflow-y-auto scrollbar-hide'>
-                            <div className='flex flex-col space-y-5 w-full'>
-                                <GroupedByDateMessages channel={channel} groupedMessages={groupedMessages} />
-                                <div ref={messagesEndRef} />
-                            </div>
-                            {!messages.length && <EmptyConversation className="h-full" />}
-                        </div>
-                        <form className='w-full pb-1' onSubmit={handleSendMessage}>
-                            <UserTyping usersTyping={usersTyping} />
-                            <div className='flex items-center gap-x-2'>
-                                <ChatMessageInput
-                                    className="w-full mx-auto"
-                                    message={message}
-                                    setMessage={setMessage}
-                                    handleTyping={handleTyping}
-                                    onSendMessage={handleSendMessage}
-                                />
-                            </div>
-                        </form>
-                    </div>
+        <div className="w-full flex flex-col relative px-4 py-2 mt-4 rounded-[12px] dark:bg-neutral-800/60 flex-1">
+            <div className='flex-1 w-full overflow-y-auto scrollbar-hide'>
+                <div className='flex flex-col space-y-5 w-full'>
+                    <GroupedByDateMessages channel={channel} groupedMessages={groupedMessages} />
+                    <div ref={messagesEndRef} />
                 </div>
-            }
-        />
+                {!messages.length && <EmptyConversation className="h-full" />}
+            </div>
+            <form className='w-full' onSubmit={handleSendMessage}>
+                <UserTyping usersTyping={usersTyping} />
+                <div className='flex items-center gap-x-2'>
+                    <ChatMessageInput
+                        className="w-full mx-auto"
+                        message={message}
+                        setMessage={setMessage}
+                        handleTyping={handleTyping}
+                        onSendMessage={handleSendMessage}
+                    />
+                </div>
+            </form>
+        </div>
     )
 }
