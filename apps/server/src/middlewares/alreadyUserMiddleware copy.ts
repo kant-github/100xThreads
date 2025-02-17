@@ -6,8 +6,6 @@ import { getOrganizationsMetaDeta } from "../controllers/organization/getOrganiz
 export default async function alreadyUserMiddleware(req: Request, res: Response, next: NextFunction) {
     const user = req.user;
     const { organizationId } = req.params;
-    console.log("organization id is : ", organizationId);
-    console.log("req user is : ", user?.id);
 
     if (!user?.id) {
         res.status(401).json({ message: "Unauthorized: User not authenticated." });

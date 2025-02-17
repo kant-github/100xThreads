@@ -18,7 +18,7 @@ export default function ({ channel }: WelcomeChannelViewProps) {
                 <DashboardComponentHeading description={channel.description!}>{channel.title}</DashboardComponentHeading>
                 <DesignButton>
                     Raise an Issue
-                    <MdHelpCenter size={18} />
+                    <MdHelpCenter className=" text-amber-500" size={18} />
                 </DesignButton>
             </div>
             <UtilityCard className="p-8 w-full flex-grow mt-4 dark:bg-neutral-800 flex flex-col shadow-lg shadow-black/20">

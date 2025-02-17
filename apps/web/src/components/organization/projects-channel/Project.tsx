@@ -3,8 +3,8 @@ import { ChannelType, ProjectTypes } from "types"
 import { LiaTasksSolid } from "react-icons/lia";
 import ProjectTimespan from "@/components/utility/ProjectTimespan";
 import { IoMdOptions } from "react-icons/io";
-import ProjectChats from "./ProjectChats";
 import ProjectMessages from "./ProjectMessages";
+import ProjectTasksTicker from "@/components/utility/tickers/ProjectTasksTicker";
 
 interface ProjectProps {
     project: ProjectTypes;
@@ -25,15 +25,15 @@ export default function ({ project, setSelectedProject, channel }: ProjectProps)
             <p className="text-[12px] text-gray-600 dark:text-neutral-200 font-light tracking-wider mt-2">{project.description}</p>
             <ProjectTimespan project={project} />
             <div className="flex flex-row w-full justify-between items-center mt-5">
-                <span className="text-[11px] text-amber-400 tracking-wider flex items-center gap-x-1 border border-amber-500/60 rounded-[8px] py-0.5 px-2 bg-amber-500/10">
+                <ProjectTasksTicker>
                     <LiaTasksSolid size={14} />
                     {project?.tasks?.length} tasks
-                </span>
+                </ProjectTasksTicker>
                 <button onClick={() => setSelectedProject(project)} type='button' className="text-blue-500 hover:text-blue-600 text-[13px] tracking-wider">
                     View Tasks →
                 </button>
             </div>
-            {project && <ProjectMessages channel={channel} open={projectSideBar} setOpen={setProjectSideBar} project={project} />}
+            <ProjectMessages channel={channel} open={projectSideBar} setOpen={setProjectSideBar} project={project} />
         </div>
     )
 }

@@ -44,7 +44,7 @@ function MessageContent({ message, className, channel }: MessagesProps) {
     );
 }
 
-export default function Message({ message, channel }: MessagesProps) {
+export default function ({ message, channel }: MessagesProps) {
     const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
     const session = useRecoilValue(userSessionAtom);
     const isCurrentUser = Number(session.user?.id) === Number(message.org_user_id);

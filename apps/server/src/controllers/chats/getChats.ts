@@ -13,7 +13,6 @@ export default async function getChats(req: Request, res: Response) {
     const organizationId = req.params.organizationId;
     const channelId = req.params.channelId;
 
-    console.log("channel id is : ", channelId);
     const cursor = req.query.cursor;
     const page_size = Math.min(Number(req.query.page_size) || DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE);
 

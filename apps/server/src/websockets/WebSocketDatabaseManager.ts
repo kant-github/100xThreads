@@ -349,6 +349,7 @@ export default class WebSocketDatabaseManager {
 
     private async insertProjectChannelMessage(message: WebSocketMessage, tokenData: any) {
         console.log("got messages");
+        console.log(message.payload);
         await this.prisma.projectChat.create({
             data: {
                 id: message.payload.id,

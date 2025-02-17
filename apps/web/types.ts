@@ -87,7 +87,6 @@ export type OrganizationUsersType = {
   joined_at?: Date
 }
 
-// Interface for Announcement
 export interface AnnouncementType {
   id: string;
   channel_id: string;
@@ -128,6 +127,26 @@ export type ProjectTypes = {
   created_at: Date;
   due_date: Date
   tasks?: TaskTypes[];
+}
+
+export type ProjectChatTypes = {
+  id: string;
+  project_id: string;
+  project: ProjectTypes;
+  organization_id: string;
+  org_user_id: number;
+  organization_user: OrganizationUsersType;
+  message?: string;
+  name: string;
+  is_deleted: boolean;
+  deleted_at?: Date;
+  is_edited: boolean;
+  edited_at?: Date;
+  created_at: Date;
+  LikedUsers: LikedUser[];
+  Users?: UserType;
+  usersId?: number;
+  // ChatReaction: ChatReaction[];
 }
 
 export interface TaskTypes {

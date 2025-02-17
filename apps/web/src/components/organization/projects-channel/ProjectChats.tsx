@@ -6,7 +6,7 @@ import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizatio
 import { v4 as uuidv4 } from "uuid";
 import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { ChannelType, MessageType, ProjectTypes } from "types";
+import { ChannelType, ProjectChatTypes, ProjectTypes } from "types";
 import { organizationUserAtom } from "@/recoil/atoms/organizationAtoms/organizationUserAtom";
 import UserTyping from "@/components/utility/UserTyping";
 import EmptyConversation from "@/components/chat/EmptyConversation";
@@ -17,7 +17,7 @@ interface ProjectChatsProps {
     setOpen: Dispatch<SetStateAction<boolean>>;
     project: ProjectTypes;
     channel: ChannelType;
-    chats: MessageType[];
+    chats: ProjectChatTypes[];
 }
 
 export default function ({ open, project, channel, chats }: ProjectChatsProps) {
@@ -26,13 +26,23 @@ export default function ({ open, project, channel, chats }: ProjectChatsProps) {
     const organizationId = useRecoilValue(organizationIdAtom);
     const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
     const [editingState, setEditingState] = useRecoilState(messageEditingState);
-    const [messages, setMessages] = useState<MessageType[]>(chats);
+    const [messages, setMessages] = useState<ProjectChatTypes[]>(chats);
     const organizationUser = useRecoilValue(organizationUserAtom);
     const [usersTyping, setUsersTyping] = useState<string[]>([]);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
+    console.log("chats here are, : ", chats);
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages])
+
+    function scrollToBottom() {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+
     const groupedMessages = useMemo(() => {
-        const grouped: { [key: string]: MessageType[] } = {};
+        const grouped: { [key: string]: ProjectChatTypes[] } = {};
 
         messages.forEach(message => {
             const date = new Date(message.created_at).toDateString();
@@ -104,7 +114,7 @@ export default function ({ open, project, channel, chats }: ProjectChatsProps) {
             sendMessage(editedMessage, channel.id, 'edit-message');
             setEditingState(null);
         } else {
-            const newMessage: MessageType = {
+            const newMessage: ProjectChatTypes = {
                 id: uuidv4(),
                 org_user_id: Number(session.user?.id) || 0,
                 organization_user: {
@@ -129,17 +139,20 @@ export default function ({ open, project, channel, chats }: ProjectChatsProps) {
     }
 
     return (
-        <div className="w-full flex flex-col relative px-4 py-2 mt-4 rounded-[12px] dark:bg-neutral-800/60 flex-1">
-            <div className='flex-1 w-full overflow-y-auto scrollbar-hide'>
-                <div className='flex flex-col space-y-5 w-full'>
-                    <GroupedByDateMessages channel={channel} groupedMessages={groupedMessages} />
+        <div className="h-full flex flex-col relative px-4 py-2 mt-4 rounded-[12px] dark:bg-neutral-800/60">
+            <div className="flex-1 overflow-y-auto scrollbar-hide">
+                <div className="flex flex-col space-y-5 w-full min-h-0">
+                    <GroupedByDateMessages
+                        channel={channel}
+                        groupedMessages={groupedMessages}
+                    />
                     <div ref={messagesEndRef} />
                 </div>
                 {!messages.length && <EmptyConversation className="h-full" />}
             </div>
-            <form className='w-full' onSubmit={handleSendMessage}>
+            <form className="w-full mt-4" onSubmit={handleSendMessage}>
                 <UserTyping usersTyping={usersTyping} />
-                <div className='flex items-center gap-x-2'>
+                <div className="flex items-center gap-x-2">
                     <ChatMessageInput
                         className="w-full mx-auto"
                         message={message}
