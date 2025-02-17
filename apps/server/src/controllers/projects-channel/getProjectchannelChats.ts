@@ -5,17 +5,14 @@ const DEFAULT_PAGE_SIZE = 50;
 const MAX_PAGE_SIZE = 100;
 
 export async function getProjectchannelChats(req: Request, res: Response) {
-    console.log("hitted");
     if (!req.user) {
         res.status(401).json({ message: "You are not authorized" });
         return;
     }
-    await new Promise(t => setTimeout(t, 3000));
+
     const organizationId = req.params.organizationId;
     const channelId = req.params.channelId;
     const projectId = req.params.projectId;
-
-    console.log("fetching chats for project id : ", projectId);
 
     const cursor = req.query.cursor;
     const page_size = Math.min(Number(req.query.page_size) || DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE);
@@ -73,8 +70,6 @@ export async function getProjectchannelChats(req: Request, res: Response) {
                 }
             }
         });
-
-        console.log("chats fetched are : ", chats);
 
         const hasMore = chats.length > page_size;
         if (hasMore) {

@@ -10,7 +10,7 @@ import { ChannelType, ProjectChatTypes, ProjectTypes } from "types";
 import { organizationUserAtom } from "@/recoil/atoms/organizationAtoms/organizationUserAtom";
 import UserTyping from "@/components/utility/UserTyping";
 import EmptyConversation from "@/components/chat/EmptyConversation";
-import GroupedByDateMessages from "@/components/chat/messages/GroupedByDateMessages";
+import ProjectChatsGroupedByDate from "./ProjectChatsGroupedByDate";
 
 interface ProjectChatsProps {
     open: boolean;
@@ -31,7 +31,9 @@ export default function ({ open, project, channel, chats }: ProjectChatsProps) {
     const [usersTyping, setUsersTyping] = useState<string[]>([]);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    console.log("chats here are, : ", chats);
+    useEffect(() => {
+        setMessages(chats);
+    }, [chats]);
 
     useEffect(() => {
         scrollToBottom();
@@ -63,15 +65,77 @@ export default function ({ open, project, channel, chats }: ProjectChatsProps) {
         setMessages(prev => [...prev, newMessage]);
     }
 
+    function handleIncomingTypingEvents(newMessage: any) {
+        console.log(newMessage);
+        const { userName, typingEventType } = newMessage;
+        setUsersTyping(prevUsers => {
+            if (typingEventType && !prevUsers.includes(userName)) {
+                return [...prevUsers, userName];
+            } else if (!typingEventType) {
+                return prevUsers.filter(user => user !== userName);
+            }
+            return prevUsers;
+        });
+    }
+
+    function handleIncomingDeleteMessage(newMessage: any) {
+        console.log("delete message is : ", newMessage);
+        setMessages((prevMessage) => {
+            return prevMessage.map((message) => {
+                if (message.id === newMessage.id) {
+                    console.log("message id is : ", message.id);
+                    console.log("new message id is : ", newMessage.id);
+                    return {
+                        ...message,
+                        message: newMessage.message,
+                        is_deleted: true,
+                        deleted_at: newMessage.deleted_at
+                    }
+                }
+                return message;
+            })
+        })
+    }
+
+    function handleIncomingEditMessage(newMessage: any) {
+        console.log("new edited message recieved is : ", newMessage);
+        setMessages((prevMessages) => {
+            return prevMessages.map((message) => {
+                if (message.id === newMessage.id) {
+                    return {
+                        ...message,
+                        message: newMessage.message,
+                        is_edited: true,
+                        edited_at: newMessage.edited_at
+                    }
+                }
+                return message
+            })
+        })
+    }
+
+
     useEffect(() => {
         if (open && organizationId && channel.id) {
             console.log("sending a subscribe event");
 
             subscribeToBackend(channel.id, organizationId, 'project-channel-chat-messages');
-            const unsubscribeIncomingMessageHandler = subscribeToHandler('project-channel-chat-messages', handleIncomingMessageEvents)
+            subscribeToBackend(channel.id, organizationId, 'project-chat-delete-message');
+            subscribeToBackend(channel.id, organizationId, 'project-chat-edit-message');
+            subscribeToBackend(channel.id, organizationId, 'project-chat-typing-events');
+            const unsubscribeTypingEventHandler = subscribeToHandler('project-chat-typing-events', handleIncomingTypingEvents);
+            const unsubscribeIncomingMessageHandler = subscribeToHandler('project-channel-chat-messages', handleIncomingMessageEvents);
+            const unsubscribeDeleteMessageHandler = subscribeToHandler('project-chat-delete-message', handleIncomingDeleteMessage);
+            const unsubscribeEditMessageHandler = subscribeToHandler('project-chat-edit-message', handleIncomingEditMessage);
             return () => {
                 unsubscribeIncomingMessageHandler();
+                unsubscribeTypingEventHandler();
+                unsubscribeDeleteMessageHandler();
+                unsubscribeEditMessageHandler();
                 unsubscribeFromBackend(channel.id, organizationId, 'project-channel-chat-messages');
+                unsubscribeFromBackend(channel.id, organizationId, 'project-chat-delete-message');
+                unsubscribeFromBackend(channel.id, organizationId, 'project-chat-edit-message');
+                unsubscribeFromBackend(channel.id, organizationId, 'project-chat-typing-events');
             }
         }
     }, [open, channel.id, organizationId])
@@ -82,7 +146,7 @@ export default function ({ open, project, channel, chats }: ProjectChatsProps) {
             channel_id: channel.id,
             typingEventType: type,
         }
-        sendMessage(newTypingdata, channel.id, 'typing-event');
+        sendMessage(newTypingdata, channel.id, 'project-chat-typing-events');
     }
 
     function handleTyping() {
@@ -111,7 +175,7 @@ export default function ({ open, project, channel, chats }: ProjectChatsProps) {
                 messageId: editingState.messageId,
                 message: message.trim()
             };
-            sendMessage(editedMessage, channel.id, 'edit-message');
+            sendMessage(editedMessage, channel.id, 'project-chat-edit-message');
             setEditingState(null);
         } else {
             const newMessage: ProjectChatTypes = {
@@ -123,7 +187,7 @@ export default function ({ open, project, channel, chats }: ProjectChatsProps) {
                     user: session.user as any,
                     user_id: Number(session.user?.id) || 0,
                 },
-                projectId: project.id,
+                project_id: project.id,
                 message: message,
                 name: session.user?.name || "User",
                 is_deleted: false,
@@ -142,10 +206,11 @@ export default function ({ open, project, channel, chats }: ProjectChatsProps) {
         <div className="h-full flex flex-col relative px-4 py-2 mt-4 rounded-[12px] dark:bg-neutral-800/60">
             <div className="flex-1 overflow-y-auto scrollbar-hide">
                 <div className="flex flex-col space-y-5 w-full min-h-0">
-                    <GroupedByDateMessages
+                    <ProjectChatsGroupedByDate
                         channel={channel}
                         groupedMessages={groupedMessages}
                     />
+
                     <div ref={messagesEndRef} />
                 </div>
                 {!messages.length && <EmptyConversation className="h-full" />}

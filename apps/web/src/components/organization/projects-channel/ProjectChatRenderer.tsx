@@ -1,0 +1,103 @@
+import DashboardComponentHeading from "@/components/dashboard/DashboardComponentHeading";
+import UtilitySideBar from "@/components/utility/UtilitySideBar";
+import { API_URL } from "@/lib/apiAuthRoutes";
+import { userSessionAtom } from "@/recoil/atoms/atom";
+import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
+import axios from "axios";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { ChannelType, ProjectChatTypes, ProjectTypes } from "types";
+import ProjectChats from "./ProjectChats";
+import ChatSkeleton from "@/components/skeletons/ChatSkeleton";
+import ProjectTasksTicker from "@/components/utility/tickers/ProjectTasksTicker";
+import { LiaTasksSolid } from "react-icons/lia";
+import { projectChatsAtom } from "@/recoil/atoms/projects/projectChatsAtom";
+import Spinner from "@/components/loaders/Spinner";
+
+interface ProjectMessagesProps {
+    open: boolean;
+    setOpen: Dispatch<SetStateAction<boolean>>;
+    project: ProjectTypes;
+    channel: ChannelType
+}
+
+export default function ({ channel, open, setOpen, project }: ProjectMessagesProps) {
+    const [loading, setLoading] = useState(true);
+    const [chats, setChats] = useRecoilState<ProjectChatTypes[]>(projectChatsAtom);
+    const session = useRecoilValue(userSessionAtom);
+    const organization = useRecoilValue(organizationAtom);
+    let lastCursor: string | null = null;
+
+
+    useEffect(() => {
+        const SIDEBAR_ANIMATION_DURATION = 300;
+
+        if (open) {
+            setLoading(true);
+            const timer = setTimeout(() => {
+                const fetchInitialChats = async () => {
+                    try {
+                        const url = `${API_URL}/organizations/${organization?.id}/channels/${channel.id}/project/${project.id}/chats?pageSize=50`;
+                        const { data } = await axios.get(url, {
+                            headers: {
+                                authorization: `Bearer ${session.user?.token}`,
+                            }
+                        });
+                        console.log("logging things here : ", data.data);
+                        setChats(data.data);
+                    } catch (error) {
+                        console.error('Failed to fetch chats:', error);
+                    } finally {
+                        setLoading(false);
+                    }
+                };
+
+                fetchInitialChats();
+            }, SIDEBAR_ANIMATION_DURATION);
+
+            return () => {
+                clearTimeout(timer);
+                setChats([]);
+                setLoading(true);
+            };
+        }
+    }, [project.id, session.user, open]);
+
+    return (
+        <UtilitySideBar
+            width="5/12"
+            open={open}
+            setOpen={setOpen}
+            content={
+                <div className="h-full flex flex-col px-4 py-2 min-w-[300px]">
+                    <div className="h-16 flex flex-row justify-between items-center">
+                        <DashboardComponentHeading className="ml-2" description={project.description!}>
+                            {project.title}
+                        </DashboardComponentHeading>
+                        <div>
+                            <ProjectTasksTicker>
+                                <LiaTasksSolid size={14} />
+                                {project?.tasks?.length} tasks
+                            </ProjectTasksTicker>
+                        </div>
+                    </div>
+                    <div className="flex-1 overflow-hidden relative">
+                        {loading ? (
+                            <div className="h-full flex flex-col items-center justify-center relative px-4 py-2 mt-4 rounded-[12px] dark:bg-neutral-800/60">
+                                <Spinner />
+                            </div>
+                        ) : (
+                            <ProjectChats
+                                chats={chats}
+                                open={open}
+                                setOpen={setOpen}
+                                channel={channel}
+                                project={project}
+                            />
+                        )}
+                    </div>
+                </div>
+            }
+        />
+    );
+}

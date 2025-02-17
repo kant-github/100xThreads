@@ -1,9 +1,9 @@
 import React from "react"
 import Messages from "./Messages"
-import { ChannelType, MessageType } from "types"
+import { ChannelType,  ProjectChatTypes } from "types"
 
 interface GroupedByDateMessagesProps {
-    groupedMessages: Array<[string, MessageType[]]>;
+    groupedMessages: Array<[string, ProjectChatTypes[]]>;
     channel: ChannelType;
 }
 

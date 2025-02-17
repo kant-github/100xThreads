@@ -60,6 +60,10 @@ export default class WebSocketDatabaseManager {
                     return this.announcementHandler(message, tokenData);
                 case 'project-channel-chat-messages':
                     return this.insertProjectChannelMessage(message, tokenData);
+                case 'project-channel-edit-message':
+                    return this.projectChannelEditMessageHandler(message, tokenData);
+                case 'project-chat-typing-events':
+                    return this.projectChatTypingEventHandler(message, tokenData);
             }
         }
         catch (err) {
@@ -93,6 +97,19 @@ export default class WebSocketDatabaseManager {
     }
 
     private async typingEvent(message: WebSocketMessage, tokenData: any) {
+        const channelKey = this.getChannelKey({
+            organizationId: tokenData.organizationId,
+            channelId: message.payload.channelId,
+            type: message.payload.type
+        })
+        await this.publisher.publish(channelKey, JSON.stringify({
+            ...message,
+            userId: tokenData.userId,
+        }))
+    }
+
+    private async projectChatTypingEventHandler(message: WebSocketMessage, tokenData: any) {
+        console.log('typing data is : ', message.payload);
         const channelKey = this.getChannelKey({
             organizationId: tokenData.organizationId,
             channelId: message.payload.channelId,
@@ -353,7 +370,7 @@ export default class WebSocketDatabaseManager {
         await this.prisma.projectChat.create({
             data: {
                 id: message.payload.id,
-                project_id: message.payload.projectId,
+                project_id: message.payload.project_id,
                 organization_id: message.payload.organization_user.organization_id,
                 org_user_id: Number(message.payload.org_user_id),
                 message: message.payload.message,
@@ -372,6 +389,45 @@ export default class WebSocketDatabaseManager {
             userId: tokenData.userId,
             timeStamp: Date.now()
         }))
+    }
+
+    private async projectChannelEditMessageHandler(message: WebSocketMessage, tokenData: any) {
+        const channelKey = this.getChannelKey({
+            organizationId: tokenData.organizationId,
+            channelId: message.payload.channelId,
+            type: message.payload.type
+        })
+
+        console.log("Edit message handler called with data : ", message);
+
+        const currentUSerMEssageCheck = await this.prisma.projectChat.findUnique({
+            where: { id: message.payload.messageId },
+            include: {
+                organization_user: {
+                    include: {
+                        user: true
+                    }
+                }
+            }
+        })
+
+        if (Number(currentUSerMEssageCheck?.organization_user.user.id) === Number(tokenData.userId)) {
+            const messageData = await this.prisma.chats.update({
+                where: { id: message.payload.messageId },
+                data: {
+                    is_edited: true,
+                    edited_at: new Date(),
+                    message: message.payload.message
+                }
+            })
+
+            console.log("message data is : ", messageData)
+
+            await this.publisher.publish(channelKey, JSON.stringify({
+                payload: messageData,
+                type: message.type
+            }))
+        }
     }
 
     private getChannelKey(subscription: ChannelSubscription): string {

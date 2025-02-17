@@ -1,6 +1,6 @@
-import Messages from "@/components/chat/messages/Messages";
 import React from "react"
 import { ChannelType, ProjectChatTypes } from "types"
+import ProjectMessages from "./ProjectMessages";
 
 interface GroupedByDateMessagesProps {
     groupedMessages: Array<[string, ProjectChatTypes[]]>;
@@ -20,7 +20,7 @@ export default function ({ groupedMessages, channel }: GroupedByDateMessagesProp
                 </span>
             </div>
             {dayMessages.map((message) => (
-                <Messages channel={channel} key={message.id} message={message} />
+                <ProjectMessages channel={channel} key={message.id} message={message} />
             ))}
         </React.Fragment>
     ))

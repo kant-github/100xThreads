@@ -3,8 +3,8 @@ import { ChannelType, ProjectTypes } from "types"
 import { LiaTasksSolid } from "react-icons/lia";
 import ProjectTimespan from "@/components/utility/ProjectTimespan";
 import { IoMdOptions } from "react-icons/io";
-import ProjectMessages from "./ProjectMessages";
 import ProjectTasksTicker from "@/components/utility/tickers/ProjectTasksTicker";
+import ProjectChatRenderer from "./ProjectChatRenderer";
 
 interface ProjectProps {
     project: ProjectTypes;
@@ -33,7 +33,7 @@ export default function ({ project, setSelectedProject, channel }: ProjectProps)
                     View Tasks →
                 </button>
             </div>
-            <ProjectMessages channel={channel} open={projectSideBar} setOpen={setProjectSideBar} project={project} />
+            <ProjectChatRenderer channel={channel} open={projectSideBar} setOpen={setProjectSideBar} project={project} />
         </div>
     )
 }

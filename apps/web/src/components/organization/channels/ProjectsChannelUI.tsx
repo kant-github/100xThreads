@@ -1,6 +1,6 @@
 import DashboardComponentHeading from "@/components/dashboard/DashboardComponentHeading";
 import { ChannelType } from "types";
-import ProjectsMessages from "../projects-channel/ProjectsMessages";
+import ProjectsSection from "../projects-channel/ProjectsSection";
 import axios from "axios";
 import { API_URL } from "@/lib/apiAuthRoutes";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
@@ -68,7 +68,7 @@ export default function ({ channel }: WelcomeChannelViewProps) {
                     )
                 }
             </div>
-            <ProjectsMessages channel={channel} />
+            <ProjectsSection channel={channel} />
         </div>
     );
 }
