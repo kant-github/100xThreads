@@ -8,11 +8,12 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { ChannelType, ProjectChatTypes, ProjectTypes } from "types";
 import ProjectChats from "./ProjectChats";
-import ChatSkeleton from "@/components/skeletons/ChatSkeleton";
 import ProjectTasksTicker from "@/components/utility/tickers/ProjectTasksTicker";
 import { LiaTasksSolid } from "react-icons/lia";
 import { projectChatsAtom } from "@/recoil/atoms/projects/projectChatsAtom";
 import Spinner from "@/components/loaders/Spinner";
+import UnclickableTicker from "@/components/ui/UnclickableTicker";
+import { format } from 'date-fns'
 
 interface ProjectMessagesProps {
     open: boolean;
@@ -74,11 +75,16 @@ export default function ({ channel, open, setOpen, project }: ProjectMessagesPro
                         <DashboardComponentHeading className="ml-2" description={project.description!}>
                             {project.title}
                         </DashboardComponentHeading>
-                        <div>
+                        <div className="flex flex-row items-end gap-x-3">
+                            <div>
                             <ProjectTasksTicker>
                                 <LiaTasksSolid size={14} />
                                 {project?.tasks?.length} tasks
                             </ProjectTasksTicker>
+                            </div>
+                            <UnclickableTicker>
+                            Due : {format(new Date(project.due_date), "EEE d MMM")}
+                            </UnclickableTicker>
                         </div>
                     </div>
                     <div className="flex-1 overflow-hidden relative">

@@ -40,7 +40,7 @@ export default function RootLayout({
             }}
           />
         </head>
-        <body className={`${geistSans.variable} ${geistMono.variable} dark:bg-[#171717] bg-[#f2f2f2]`}>
+        <body className={`${geistSans.variable} ${geistMono.variable} dark:bg-neutral-900 bg-[#f2f2f2]`}>
           <RecoilRoot>
             {children}
           </RecoilRoot>

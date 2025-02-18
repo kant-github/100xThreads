@@ -12,7 +12,6 @@ import { organizationUsersAtom } from '@/recoil/atoms/organizationAtoms/organiza
 import { organizationAtom } from '@/recoil/atoms/organizationAtoms/organizationAtom'
 import { useWebSocket } from '@/hooks/useWebsocket'
 import { organizationUserAtom } from '@/recoil/atoms/organizationAtoms/organizationUserAtom'
-import OrgNavBar from '@/components/organization/OrgNavBar'
 
 export type protectedOrganizationMetadata = {
     name: string,

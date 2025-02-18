@@ -23,7 +23,7 @@ export default function () {
 
   return (
     <div>
-      <div className="flex justify-between w-full px-16 py-4 bg-white dark:bg-[#131212] border-b dark:border-zinc-700 dark:shadow-[40px]">
+      <div className="flex justify-between w-full px-16 py-4 bg-white dark:bg-black border-b dark:border-zinc-700 dark:shadow-[40px]">
         <div className="flex items-center gap-x-2">
           <AppLogo />
           <Version />
