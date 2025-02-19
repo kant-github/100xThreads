@@ -26,8 +26,6 @@ export default function HeroSection() {
             <div className="relative z-10">
                 <div>
                     <ContainerScrollAnimation />
-                    <StarsBackground />
-                    <ShootingStars />
                 </div>
                 <div className='bg-gradient-to-br from-neutral-950 via-neutral-900 to-[#1c1c1c] border-t border-neutral-600'>
                     <div className='mx-[8rem] flex flex-col relative'>

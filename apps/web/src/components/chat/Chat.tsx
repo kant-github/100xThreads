@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
-import { ChatGroupType, GroupChatUserType, LikedUser, MessageType, UserType } from "types";
+import { ChatGroupType, GroupChatUserType, LikedUser, MessageType, UserType } from "types/types";
 import { getSocket, sendMessage, sendTypingEvent } from "@/lib/socket.front";
 import { v4 as uuidv4 } from "uuid";
 import Messages from "./messages/Messages";

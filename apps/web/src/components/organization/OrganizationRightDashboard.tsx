@@ -1,7 +1,7 @@
 import { organizationUsersAtom } from "@/recoil/atoms/organizationAtoms/organizationUsersAtom"
 import Image from "next/image";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { OrganizationUsersType, UserType } from "types"
+import { OrganizationUsersType, UserType } from "types/types"
 import ProfileOption from "../ui/ProfileOption";
 import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import AppLogo from "../heading/AppLogo";

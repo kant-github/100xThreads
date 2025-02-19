@@ -3,7 +3,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import LogOutDialogBox from "../utility/LogOutDialogBox";
-import { ChatGroupType } from "types";
+import { ChatGroupType } from "types/types";
 import { FaGithub } from "react-icons/fa";
 import { IoLogOutOutline } from "react-icons/io5";
 import AccountInfoDropDown from "../utility/AccountInfoDropDown";

@@ -3,7 +3,7 @@ import UtilityCard from "../utility/UtilityCard";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { projectSelectedAtom } from "@/recoil/atoms/projects/projectSelectedAtom";
 import { z } from 'zod';
-import { Priority, TaskStatus } from "types";
+import { Priority, TaskStatus } from "types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import FormProgressBar from "./FormProgressBar";

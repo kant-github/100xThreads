@@ -5,7 +5,7 @@ import { fetchUser, updateUser } from "fetch/fetchUser";
 import { FaEdit } from "react-icons/fa";
 import { CustomSession } from "app/api/auth/[...nextauth]/options";
 import { format } from "date-fns";
-import { UserType } from "types";
+import { UserType } from "types/types";
 import AppLogo from "../heading/AppLogo";
 import Spinner from "../loaders/Spinner";
 import AccountInfoButtonGroup from "../ui/AccountInfoButtonGroup";

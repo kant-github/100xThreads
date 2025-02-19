@@ -1,7 +1,7 @@
 import { handleClickOutside } from "@/lib/handleClickOutside";
 import { useEffect, useRef, useState } from "react";
 import { SlOptionsVertical } from "react-icons/sl";
-import { GroupChatUserType } from "types";
+import { GroupChatUserType } from "types/types";
 
 type Props = {
     user: GroupChatUserType | null;

@@ -1,6 +1,6 @@
 "use client";
 import React, { Dispatch, SetStateAction, useEffect, useRef } from "react";
-import { ChatGroupType } from "types";
+import { ChatGroupType } from "types/types";
 
 interface SearchResultDialogBoxProps {
     searchResultDialogBox: boolean;

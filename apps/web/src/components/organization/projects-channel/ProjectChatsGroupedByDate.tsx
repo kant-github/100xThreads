@@ -1,5 +1,5 @@
 import React from "react"
-import { ChannelType, ProjectChatTypes } from "types"
+import { ChannelType, ProjectChatTypes } from "types/types"
 import ProjectMessages from "./ProjectMessages";
 
 interface GroupedByDateMessagesProps {

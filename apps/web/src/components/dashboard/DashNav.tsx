@@ -4,7 +4,7 @@ import SearchInput from "../utility/SearchInput";
 import ProfileDropDown from "./ProfileDropDown";
 import axios from "axios";
 import { CHAT_GROUP } from "@/lib/apiAuthRoutes";
-import { ChatGroupType } from "types";
+import { ChatGroupType } from "types/types";
 import SearchResultDialogBox from "../utility/SearchResultDialogBox";
 import AppLogo from "../heading/AppLogo";
 import { useSession } from "next-auth/react";

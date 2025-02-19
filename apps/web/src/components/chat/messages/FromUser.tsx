@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { MessageType, UserType } from "types";
+import { MessageType, UserType } from "types/types";
 import { formatDistanceToNowStrict } from "date-fns";
 import { useEffect, useState } from "react";
 import MessageOptionsMenu from "@/components/ui/MessageOptionsMenu";

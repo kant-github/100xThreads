@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ChannelType, MessageType } from "types";
+import { ChannelType, MessageType } from "types/types";
 import { format } from 'date-fns'
 import { useRecoilValue } from 'recoil';
 import { userSessionAtom } from '@/recoil/atoms/atom';

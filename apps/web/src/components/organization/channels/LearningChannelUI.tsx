@@ -1,6 +1,6 @@
 import DashboardComponentHeading from "@/components/dashboard/DashboardComponentHeading";
 import UtilityCard from "@/components/utility/UtilityCard";
-import { ChannelType } from "types";
+import { ChannelType } from "types/types";
 
 interface WelcomeChannelViewProps {
     channel: ChannelType;

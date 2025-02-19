@@ -1,6 +1,6 @@
 import { useWebSocket } from "@/hooks/useWebsocket";
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
-import { ChannelType, ProjectChatTypes } from "types";
+import { ChannelType, ProjectChatTypes } from "types/types";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSetRecoilState } from "recoil";
 import { messageEditingState } from "@/recoil/atoms/chats/messageEditingStateAtom";

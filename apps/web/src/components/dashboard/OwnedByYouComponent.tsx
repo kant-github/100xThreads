@@ -8,7 +8,7 @@ import CardHoverChatCards from "../ui/CardHoverChatCards";
 import DashboardComponentHeading from "./DashboardComponentHeading";
 import ListTypeOrganizations from "../ui/ListTypeOrganizations";
 import OrganizationDisplayTypeToggleButton from "../buttons/OrganizationDisplayTypeToggleButton";
-import { OrganizationType } from "types";
+import { OrganizationType } from "types/types";
 import ListTypeOrganizationSkeleton from "../skeletons/ListTypeOrganizationSkeleton";
 import EmptyOrganizationMessage from "../buttons/EmptyOrganizationMessage";
 

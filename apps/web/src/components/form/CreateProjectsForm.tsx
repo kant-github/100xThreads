@@ -11,7 +11,7 @@ import { API_URL } from "@/lib/apiAuthRoutes";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import { userSessionAtom } from "@/recoil/atoms/atom";
-import { ChannelType } from "types";
+import { ChannelType } from "types/types";
 import { projectChannelMessageAtom } from "@/recoil/atoms/organizationAtoms/projectChannelMessageAtom";
 
 interface CreateProjectsFormProps {

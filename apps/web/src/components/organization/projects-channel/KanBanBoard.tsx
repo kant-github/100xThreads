@@ -1,4 +1,4 @@
-import { TaskTypes } from "types"
+import { TaskTypes } from "types/types"
 import Column from "./Column";
 
 interface KanBanBoardProps {

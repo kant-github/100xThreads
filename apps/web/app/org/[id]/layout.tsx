@@ -1,10 +1,12 @@
 "use client"
-import SkeletonDashboard from "@/components/skeletons/DashboardSkeleton";
+import { Ability } from "@/rbac/ability";
+import { AbilityProvider } from "@/rbac/abilityContext";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
+import { organizationUserAtom } from "@/recoil/atoms/organizationAtoms/organizationUserAtom";
 import { useSession } from "next-auth/react";
 import { useEffect, useMemo } from "react";
-import {  useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 export default function ({
     children,
     params
@@ -12,9 +14,15 @@ export default function ({
     children: React.ReactNode;
     params: { id: string };
 }>) {
-    const { data: session, status } = useSession();
+    const { data: session } = useSession();
     const setUserSession = useSetRecoilState(userSessionAtom);
     const setOrganizationId = useSetRecoilState(organizationIdAtom);
+    const organizationUserRole = useRecoilValue(organizationUserAtom).role;
+
+
+    const ability = useMemo(() => {
+        return new Ability(organizationUserRole);
+    }, [organizationUserRole]);
 
     const sessionToken = useMemo(() => session, [session]);
 
@@ -30,10 +38,12 @@ export default function ({
         }
     }, [params?.id, setOrganizationId]);
 
-    
+
     return (
-        <div className="h-screen">
-            {children}
-        </div>
+        <AbilityProvider ability={ability}>
+            <div className="h-screen">
+                {children}
+            </div>
+        </AbilityProvider>
     )
 }

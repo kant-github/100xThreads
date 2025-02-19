@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
 import CreateProjectsForm from '@/components/form/CreateProjectsForm';
-import { ChannelType } from 'types';
+import { ChannelType } from 'types/types';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { projectChannelMessageAtom } from '@/recoil/atoms/organizationAtoms/projectChannelMessageAtom';
 import Project from './Project';

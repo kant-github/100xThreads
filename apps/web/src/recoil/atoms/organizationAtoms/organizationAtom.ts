@@ -1,5 +1,5 @@
 import { atom } from "recoil";
-import { OrganizationType } from "types";
+import { OrganizationType } from "types/types";
 
 export const organizationAtom = atom<OrganizationType | null>({
     key: 'organizationAtom',

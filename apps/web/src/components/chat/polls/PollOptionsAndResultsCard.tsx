@@ -2,7 +2,7 @@ import UtilityCard from "@/components/utility/UtilityCard";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { useRecoilValue } from "recoil";
-import { ChannelType, PollTypes } from "types";
+import { ChannelType, PollTypes } from "types/types";
 import { ImBullhorn } from "react-icons/im";
 import WhiteText from "@/components/heading/WhiteText";
 

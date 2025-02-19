@@ -7,6 +7,8 @@ import { TextHoverEffect } from "./text-hover-effect";
 import UnclickableTicker from "./UnclickableTicker";
 import { MdChatBubble } from "react-icons/md";
 import { IoCalendar } from "react-icons/io5";
+import StarsBackground from "./StarsBackground";
+import ShootingStars from "./ShootingStars";
 
 export default function HeroSection() {
     return (
@@ -14,6 +16,8 @@ export default function HeroSection() {
             <ContainerScroll
                 titleComponent={
                     <>
+                        <StarsBackground />
+                        <ShootingStars />
                         <div className="mb-12 flex flex-col items-center relative">
                             <UnclickableTicker className="-rotate-12 absolute -top-16 left-0 text-sm">
                                 <IoCalendar className="text-blue-600" />events

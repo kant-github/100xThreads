@@ -1,4 +1,4 @@
-import { ProjectTypes } from "types";
+import { ProjectTypes } from "types/types";
 import { format, differenceInDays } from 'date-fns';
 
 interface ProjectTimespanProps {

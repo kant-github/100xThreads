@@ -25,14 +25,14 @@ interface StarBackgroundProps {
   className?: string;
 }
 
-export default function({
+export default function ({
   starDensity = 0.00015,
   allStarsTwinkle = true,
   twinkleProbability = 0.7,
   minTwinkleSpeed = 0.5,
   maxTwinkleSpeed = 1,
   className,
-}: StarBackgroundProps)  {
+}: StarBackgroundProps) {
   const [stars, setStars] = useState<StarProps[]>([]);
   const canvasRef: RefObject<HTMLCanvasElement> =
     useRef<HTMLCanvasElement>(null);
@@ -51,7 +51,7 @@ export default function({
           opacity: Math.random() * 0.5 + 0.5,
           twinkleSpeed: shouldTwinkle
             ? minTwinkleSpeed +
-              Math.random() * (maxTwinkleSpeed - minTwinkleSpeed)
+            Math.random() * (maxTwinkleSpeed - minTwinkleSpeed)
             : null,
         };
       });

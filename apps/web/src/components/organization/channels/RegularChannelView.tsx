@@ -1,4 +1,4 @@
-import { ChannelType, ChannelTypeType } from "types";
+import { ChannelType, ChannelTypeType } from "types/types";
 import AnnouncementChannelUI from "./AnnouncementChannelUI";
 import GeneralChatChannelUI from "./GeneralChatChannelUI";
 import ResourcesChannelUI from "./ResourcesChannelUI";

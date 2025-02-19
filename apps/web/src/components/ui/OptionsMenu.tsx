@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { AnimatePresence, motion } from "framer-motion";
 import { FRONTEND_BASE_URL } from "@/lib/apiAuthRoutes";
 import { useSession } from "next-auth/react";
-import { OrganizationType } from "types";
+import { OrganizationType } from "types/types";
 import { handleClickOutside } from "@/lib/handleClickOutside";
 
 interface OptionsMenuProps {

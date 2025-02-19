@@ -1,0 +1,24 @@
+export enum Action {
+    CREATE = 'create',
+    READ = 'read',
+    UPDATE = 'update',
+    DELETE = 'delete',
+    MANAGE = 'manage' // Special permission that grants all access
+}
+
+export enum Subject {
+    CHANNEL = 'channel',
+    MESSAGE = 'message',
+    PROJECT = 'project',
+    TASK = 'task',
+    POLL = 'poll',
+    EVENT = 'event',
+    ORGANIZATION = 'organization',
+    ANNOUNCEMENT = 'announcement'
+}
+
+export type Permission = {
+    action: Action;
+    subject: Subject;
+    conditions?: Record<string, any>;
+};

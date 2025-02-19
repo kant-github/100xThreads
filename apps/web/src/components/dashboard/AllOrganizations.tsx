@@ -1,7 +1,7 @@
 "use client";
 import CardHoverChatCards from "../ui/CardHoverChatCards";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { OrganizationType } from "types";
+import { OrganizationType } from "types/types";
 import { organizationsAtom } from "@/recoil/atoms/organizationsAtom";
 import { useEffect, useState } from "react";
 import { fetchAllOrganization } from "fetch/fetchOrganizations";

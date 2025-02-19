@@ -1,7 +1,7 @@
 import DashboardComponentHeading from "@/components/dashboard/DashboardComponentHeading";
 import UtilityCard from "@/components/utility/UtilityCard";
 import Image from "next/image";
-import { WelcomeChannel } from "types";
+import { WelcomeChannel } from "types/types";
 import WelcomeChannelMessages from "../welcome-channel/WelcomeChannelMessages";
 import axios from "axios";
 import { useRecoilValue, useSetRecoilState } from "recoil";

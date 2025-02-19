@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import DashboardComponentHeading from "@/components/dashboard/DashboardComponentHeading";
 import UtilityCard from "@/components/utility/UtilityCard";
-import { ChannelType, MessageType } from "types";
+import { ChannelType, MessageType } from "types/types";
 import OrganizationMessageComponent from "../OrganizationMessageComponent";
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { generalChatsAtom } from '@/recoil/atoms/chats/generalChatsAtom';

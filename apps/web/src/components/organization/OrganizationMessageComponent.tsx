@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
-import { ChannelType, MessageType } from "types";
+import { ChannelType, MessageType } from "types/types";
 import ChatMessageInput from '../chat/ChatMessageInput';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { userSessionAtom } from '@/recoil/atoms/atom';

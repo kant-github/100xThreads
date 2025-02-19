@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { formatDistanceToNowStrict } from "date-fns";
-import { MessageType, UserType } from "types";
+import { MessageType, UserType } from "types/types";
 import { useEffect, useState } from "react";
 import MessageOptionsMenuToUser from "@/components/ui/MessageOptionsMenuToUser";
 import { sendLikeEvent, sendUnlikeEvent } from "@/lib/socket.front";

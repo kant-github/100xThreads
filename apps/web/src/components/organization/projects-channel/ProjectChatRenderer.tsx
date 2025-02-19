@@ -6,7 +6,7 @@ import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationA
 import axios from "axios";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { ChannelType, ProjectChatTypes, ProjectTypes } from "types";
+import { ChannelType, ProjectChatTypes, ProjectTypes } from "types/types";
 import ProjectChats from "./ProjectChats";
 import ProjectTasksTicker from "@/components/utility/tickers/ProjectTasksTicker";
 import { LiaTasksSolid } from "react-icons/lia";

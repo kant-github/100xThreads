@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import { ChannelType, ProjectTypes } from "types"
+import { ChannelType, ProjectTypes } from "types/types"
 import { LiaTasksSolid } from "react-icons/lia";
 import ProjectTimespan from "@/components/utility/ProjectTimespan";
 import { IoMdOptions } from "react-icons/io";
@@ -18,7 +18,6 @@ export default function ({ project, setSelectedProject, channel }: ProjectProps)
         <div key={project.id} className="flex flex-col items-start bg-white dark:bg-neutral-800 hover:dark:bg-[#242424] rounded-[14px] px-6 py-4 cursor-pointer hover:shadow-lg transition-shadow border dark:border-neutral-700 group relative">
             <IoMdOptions className="absolute right-4 top-4 text-neutral-200" onClick={(e) => {
                 e.stopPropagation();
-                console.log("sidebar opened");
                 setProjectSideBar(true);
             }} size={15} />
             <h3 className="text-lg text-gray-600 dark:text-neutral-200 font-medium tracking-wider">{project.title}</h3>

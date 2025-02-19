@@ -10,9 +10,9 @@ import axios from "axios";
 import { API_URL } from "@/lib/apiAuthRoutes";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
-import { ChannelType } from "types";
+import { ChannelType } from "types/types";
 import { userSessionAtom } from "@/recoil/atoms/atom";
-import { announcementChannelMessgaes } from "@/recoil/atoms/organizationAtoms/announcementChannelMessages";
+import { announcementChannelMessgaes } from "@/recoil/atoms/organizationAtoms/announcementChannelMessagesAtom";
 
 const PriorityEnum = z.enum(["LOW", "NORMAL", "HIGH", "URGENT"]);
 

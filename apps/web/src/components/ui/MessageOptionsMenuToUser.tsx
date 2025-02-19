@@ -3,7 +3,7 @@ import { IoIosCopy } from "react-icons/io";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PiDotsThreeVerticalBold } from "react-icons/pi";
-import { MessageType } from "types";
+import { MessageType } from "types/types";
 import { MdDelete } from "react-icons/md";
 import { toast } from "sonner";
 import { Dispatch, SetStateAction } from "react";

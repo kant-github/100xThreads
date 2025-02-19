@@ -1,6 +1,6 @@
 import DashboardComponentHeading from "@/components/dashboard/DashboardComponentHeading";
 import UtilityCard from "@/components/utility/UtilityCard";
-import { ChannelType } from "types";
+import { ChannelType } from "types/types";
 import HelpDeskChannelMessages from "../helpdesk-channel/HelpDeskChannelMessages";
 import { MdHelpCenter } from "react-icons/md";
 import DesignButton from "@/components/buttons/DesignButton";

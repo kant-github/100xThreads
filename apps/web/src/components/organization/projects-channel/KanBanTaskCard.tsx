@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Clock, Flag } from 'lucide-react';
-import { TaskTypes } from 'types';
+import { TaskTypes } from 'types/types';
 import Image from 'next/image';
 
 type CardStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';

@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import { useWebSocket } from "@/hooks/useWebsocket";
-import { ChannelType, PollTypes } from "types";
+import { ChannelType, PollTypes } from "types/types";
 import { useRecoilValue } from "recoil";
 import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import PollOptionsAndResultsCard from "./PollOptionsAndResultsCard";

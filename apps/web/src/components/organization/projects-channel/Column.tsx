@@ -1,4 +1,4 @@
-import { TaskStatus, TaskTypes } from "types"
+import { TaskStatus, TaskTypes } from "types/types"
 
 interface ColumnProps {
     col: {

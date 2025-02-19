@@ -1,5 +1,5 @@
 import DashboardComponentHeading from "@/components/dashboard/DashboardComponentHeading";
-import { ChannelType } from "types";
+import { ChannelType } from "types/types";
 import ProjectsSection from "../projects-channel/ProjectsSection";
 import axios from "axios";
 import { API_URL } from "@/lib/apiAuthRoutes";

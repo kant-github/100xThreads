@@ -6,7 +6,7 @@ import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizatio
 import { v4 as uuidv4 } from "uuid";
 import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { ChannelType, ProjectChatTypes, ProjectTypes } from "types";
+import { ChannelType, ProjectChatTypes, ProjectTypes } from "types/types";
 import { organizationUserAtom } from "@/recoil/atoms/organizationAtoms/organizationUserAtom";
 import UserTyping from "@/components/utility/UserTyping";
 import EmptyConversation from "@/components/chat/EmptyConversation";

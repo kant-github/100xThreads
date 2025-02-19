@@ -2,7 +2,7 @@ import Image from "next/image";
 import { MdDateRange } from "react-icons/md";
 import CompanyTagTicker from "../utility/CompanyTagTicker";
 import { SlOptions } from "react-icons/sl";
-import { OrganizationType } from "types";
+import { OrganizationType } from "types/types";
 import Link from "next/link";
 import { format } from 'date-fns'
 

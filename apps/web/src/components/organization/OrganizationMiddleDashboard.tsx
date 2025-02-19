@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import WelcomeChannelView from './channels/WelcomeChannelView';
 import EventChannelView from './channels/EventChannelView';
 import RegularChannelView from './channels/RegularChannelView';
-import { ChannelType, EventChannelType, WelcomeChannel } from 'types';
+import { ChannelType, EventChannelType, WelcomeChannel } from 'types/types';
 import DefaultOrganizationDashboardUI from './channels/DefaultOrganizationDashboardUI';
 
 

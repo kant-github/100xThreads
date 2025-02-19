@@ -8,7 +8,7 @@ import { IoEye } from "react-icons/io5";
 import { IoEyeOff } from "react-icons/io5";
 import { IoIosCopy } from "react-icons/io";
 import { toast } from "sonner";
-import { OrganizationType } from "types";
+import { OrganizationType } from "types/types";
 import GroupImage from "./GroupImage";
 
 

@@ -3,14 +3,16 @@ import PinnedCard from "@/components/cards/PinnedCard";
 import DashboardComponentHeading from "@/components/dashboard/DashboardComponentHeading";
 import CreateAnnouncementForm from "@/components/form/CreateAnnouncementForm";
 import UtilityCard from "@/components/utility/UtilityCard";
-import { announcementChannelMessgaes } from "@/recoil/atoms/organizationAtoms/announcementChannelMessages";
+import { announcementChannelMessgaes } from "@/recoil/atoms/organizationAtoms/announcementChannelMessagesAtom";
 import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import { useEffect, useState } from "react";
 import { CgMathPlus } from "react-icons/cg";
 import { useRecoilValue } from "recoil";
-import { ChannelType } from "types";
+import { ChannelType } from "types/types";
 import EmptyAnnouncementChannelMessage from "./EmptyAnnouncementChannelMessage";
 import DesignButton from "@/components/buttons/DesignButton";
+import GuardComponent from "@/rbac/GuardComponent";
+import { Action, Subject } from "types/permission";
 
 interface AnnouncementChannelMessagesProps {
     channel: ChannelType;
@@ -28,14 +30,14 @@ export default function ({ channel }: AnnouncementChannelMessagesProps) {
     return (
         <div className="dark:bg-neutral-900 h-full flex flex-col items-start w-full p-6 relative">
             <div className="mr-4 absolute top-6 right-3">
-                <DesignButton
-                    onClick={() => setCreateAnnouncementModal(prev => !prev)}
-                    className="group"
-                    // color={organization?.organizationColor}
-                >
-                    <CgMathPlus size={16} />
-                    Create Announcement
-                </DesignButton>
+
+                <GuardComponent action={Action.CREATE} subject={Subject.ANNOUNCEMENT} >
+                    <DesignButton onClick={() => setCreateAnnouncementModal(prev => !prev)} className="group">
+                        <CgMathPlus size={16} />
+                        Create Announcement
+                    </DesignButton>
+                </GuardComponent>
+
                 {createAnnoucementModal && (
                     <CreateAnnouncementForm
                         channel={channel}

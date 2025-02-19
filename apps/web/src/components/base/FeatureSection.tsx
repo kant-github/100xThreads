@@ -32,12 +32,10 @@ export default function () {
         <h4 className="text-3xl lg:text-5xl lg:leading-tight max-w-5xl mx-auto text-center tracking-tight font-medium text-black dark:text-white">
           <TextGenerateEffect className="" words="Everything you need for team communication" />
         </h4>
-
         <p className="text-sm lg:text-base max-w-2xl my-4 mx-auto text-neutral-500 text-center font-normal dark:text-neutral-300">
-          From instant messaging to file sharing,<span className="text-amber-500 font-semibold">`Shelv<span className="text-red-500">R</span>`</span> application provides a complete suite of communication tools powered by Redis for real-time performance.
+          From instant messaging to file sharing,<span className="text-yellow-500 font-semibold">`Shelv<span className="text-red-500">R</span>`</span> application provides a complete suite of communication tools powered by Redis for real-time performance.
         </p>
       </div>
-
       <div className="relative ">
         <div className="grid grid-cols-1 lg:grid-cols-6 mt-12 xl:border rounded-md dark:border-neutral-800">
           {features.map((feature) => (

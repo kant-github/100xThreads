@@ -1,7 +1,7 @@
 import { useState, ChangeEvent, Dispatch, SetStateAction, useRef, useEffect } from 'react';
 import UtilityCard from "@/components/utility/UtilityCard";
 import { Plus, Trash2 } from "lucide-react";
-import { ChannelType } from 'types';
+import { ChannelType } from 'types/types';
 import { useRecoilValue } from 'recoil';
 import { userSessionAtom } from '@/recoil/atoms/atom';
 
