@@ -19,10 +19,7 @@ export default function ({
     const ability = useAbility();
 
     if (ability.cannot(action, subject, context)) {
-        console.log("action was : ", action);
-        console.log("subject was : ", subject);
         return <>{fallback}</>;
     }
-
     return <>{children}</>;
 }

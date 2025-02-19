@@ -1,13 +1,8 @@
 import UtilityCard from "@/components/utility/UtilityCard";
 import { welcomeChannelMessagesAtom } from "@/recoil/atoms/organizationAtoms/welcomeChannelMessagesAtom";
-import Image from "next/image";
 import { useRecoilValue } from "recoil";
-import { FaHandPointRight } from "react-icons/fa";
-import { parseISO, formatDistanceToNow } from "date-fns";
-import GreyButton from "@/components/buttons/GreyButton";
-import { useState } from "react";
-import WelcomeChannelRoleOptionMenu from "./WelcomeChannelRoleOptionMenu";
 import WelcomeChannelData from "./WelcomeChannelData";
+import { userSessionAtom } from "@/recoil/atoms/atom";
 
 interface WelcomeChannelMessagesProps {
     className?: string;
@@ -15,15 +10,13 @@ interface WelcomeChannelMessagesProps {
 
 export default function WelcomeChannelMessages({ className }: WelcomeChannelMessagesProps) {
     const welcomeChannelMessages = useRecoilValue(welcomeChannelMessagesAtom);
-
+    const session = useRecoilValue(userSessionAtom);
     return (
         <UtilityCard className={`mt-4 overflow-hidden bg-white dark:bg-neutral-800 w-full shadow-lg shadow-black/20 ${className}`}>
-            <div className="flex flex-col overflow-y-auto max-h-[22rem] scrollbar-hide">
-
+            <div className="flex flex-col h-full overflow-y-auto scrollbar-hide">
                 {
-                    welcomeChannelMessages.map((message) => <WelcomeChannelData message={message} />)
+                    welcomeChannelMessages.map((message) => <WelcomeChannelData message={message} session={session} />)
                 }
-
             </div>
         </UtilityCard>
     );

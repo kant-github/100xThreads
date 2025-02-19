@@ -79,7 +79,7 @@ export default function ({ channel }: WelcomeChannelViewProps) {
                         WELCOME CHANNEL
                     </div>
                 </div>
-                <WelcomeChannelMessages className="" />
+                <WelcomeChannelMessages className="flex-1" />
             </UtilityCard>
         </div>
     );

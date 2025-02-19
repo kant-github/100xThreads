@@ -5,15 +5,17 @@ import { FaHandPointRight } from "react-icons/fa";
 import { WelcomedUserTypes } from "types/types";
 import WelcomeChannelRoleOptionMenu from "./WelcomeChannelRoleOptionMenu";
 import Image from "next/image";
+import { CustomSession } from "app/api/auth/[...nextauth]/options";
 
 interface WelcomeChannelDataProps {
     message: WelcomedUserTypes;
+    session: CustomSession
 }
 
-export default function ({ message }: WelcomeChannelDataProps) {
+export default function ({ message, session }: WelcomeChannelDataProps) {
     const welcomedAtDate = typeof message.welcomed_at === "string" ? parseISO(message.welcomed_at) : message.welcomed_at;
     const [askForRoleOptionMenu, setAskForRoleOptionMenu] = useState<boolean>(false);
-
+    
     function askForRoleHandler() {
         setAskForRoleOptionMenu(prev => !prev);
     }
@@ -27,7 +29,7 @@ export default function ({ message }: WelcomeChannelDataProps) {
                     <div className="font-normal">
                         joined {formatDistanceToNow(welcomedAtDate, { addSuffix: true })}
                     </div>
-                    <GreyButton onClick={askForRoleHandler} className="ml-8">Ask for Role</GreyButton>
+                    {Number(message.user_id) === Number(session.user?.id) && <GreyButton onClick={askForRoleHandler} className="ml-8">Ask for Role</GreyButton>}
                     <WelcomeChannelRoleOptionMenu open={askForRoleOptionMenu} setOpen={setAskForRoleOptionMenu} />
                 </div>
                 <div className="text-[13px] text-neutral-600 dark:text-neutral-300 font-light italic text-balance">
@@ -40,4 +42,6 @@ export default function ({ message }: WelcomeChannelDataProps) {
         </div>
 
     );
+
+
 }

@@ -30,14 +30,14 @@ function MessageContent({ message, className, channel }: MessagesProps) {
     const session = useRecoilValue(userSessionAtom);
     const isCurrentUser = Number(session.user?.id) === Number(message.org_user_id);
     return (
-        <div className={`flex-shrink-0 flex items-start gap-x-1 groupr ${isCurrentUser ? "flex-row-reverse" : "flex-row"}`}>
+        <div className={`flex-shrink-0 flex items-start gap-x-1 ${isCurrentUser ? "flex-row-reverse" : "flex-row"}`}>
             <div className={`space-y-2 mt-1 py-1.5 px-4 z-10 rounded-bl-[8px] rounded-br-[8px] ${isCurrentUser ? "bg-neutral-900 rounded-tl-[8px] text-neutral-300" : "bg-neutral-700 rounded-tr-[8px]"} ${className}`}>
                 <p className={` font-light tracking-wider whitespace-pre-wrap break-words ${message.is_deleted ? "text-neutral-400 italic select-none text-[12px]" : "text-[13px]"}`}>
                     {message.message}
                 </p>
             </div>
             <div>
-                <HiOutlineDotsVertical onClick={() => setOptionMenu(true)} size={24} className={`transition-all text-neutral-200 duration-300 ease-out cursor-pointer opacity-0 groupr-hover:opacity-100 mt-[10px]`} />
+                <HiOutlineDotsVertical onClick={() => setOptionMenu(true)} size={14} className={`transition-all text-neutral-200 duration-300 ease-out cursor-pointer  mt-[10px]`} />
                 <ProjectMessageOptionMenu channel={channel} isCurrentUser={isCurrentUser} open={messageOptionMenu} setOpen={setOptionMenu} message={message} />
             </div>
         </div>

@@ -181,7 +181,7 @@ export type WelcomeChannel = {
 export type WelcomedUserTypes = {
   id: string
   welcomeChannelId: string
-  userId: number
+  user_id: number
   user: UserType
   message: string | null
   welcomed_at: Date
