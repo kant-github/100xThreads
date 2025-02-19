@@ -4,8 +4,8 @@ import { useState } from "react";
 import { FaHandPointRight } from "react-icons/fa";
 import { WelcomedUserTypes } from "types/types";
 import WelcomeChannelRoleOptionMenu from "./WelcomeChannelRoleOptionMenu";
-import Image from "next/image";
 import { CustomSession } from "app/api/auth/[...nextauth]/options";
+import OptionImage from "@/components/ui/OptionImage";
 
 interface WelcomeChannelDataProps {
     message: WelcomedUserTypes;
@@ -15,7 +15,7 @@ interface WelcomeChannelDataProps {
 export default function ({ message, session }: WelcomeChannelDataProps) {
     const welcomedAtDate = typeof message.welcomed_at === "string" ? parseISO(message.welcomed_at) : message.welcomed_at;
     const [askForRoleOptionMenu, setAskForRoleOptionMenu] = useState<boolean>(false);
-    
+
     function askForRoleHandler() {
         setAskForRoleOptionMenu(prev => !prev);
     }
@@ -37,7 +37,15 @@ export default function ({ message, session }: WelcomeChannelDataProps) {
                 </div>
             </div>
             <div className="flex-shrink-0">
-                <Image src={message.user.image} width={40} height={40} alt={`${message.user.name}'s avatar`} className="rounded-[8px] object-cover" />
+                <OptionImage
+                    image={{
+                        src: message.user.image || '/default-avatar.png',
+                        alt: `${message.user.name}'s profile picture`,
+                        width: 40,
+                        height: 40
+                    }}
+                    imageClassName="rounded-[6px]"
+                />
             </div>
         </div>
 

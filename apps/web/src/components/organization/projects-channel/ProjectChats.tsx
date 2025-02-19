@@ -39,6 +39,14 @@ export default function ({ open, project, channel, chats }: ProjectChatsProps) {
         scrollToBottom();
     }, [messages])
 
+    useEffect(() => {
+        if (editingState) {
+            setMessage(editingState.originalMessage);
+        } else {
+            setMessage('');
+        }
+    }, [editingState])
+
     function scrollToBottom() {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
