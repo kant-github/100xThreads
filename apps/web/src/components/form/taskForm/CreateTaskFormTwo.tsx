@@ -48,23 +48,22 @@ export default function ({ control, errors }: CreateTaskFormTwoProps) {
             <Controller
                 name="dueDate"
                 control={control}
-                render={({ field }) => {
-                    return (
-                        <div className="w-full">
-                            <label htmlFor="date" className="block text-xs font-medium text-gray-700 dark:text-neutral-200 mb-1">
-                                Due Date
-                            </label>
-                            <input id="date" type="date"
-                                className="w-full px-3 py-2 border rounded-[8px] text-sm dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-200 outline-none select-none"
-                                onChange={field.onChange}
-                                value={field.value}
-                            />
-                            {errors.dueDate && (
-                                <p className="text-red-500 text-xs mt-1">{errors.dueDate.message}</p>
-                            )}
-                        </div>
-                    )
-                }}
+                render={({ field }) => (
+                    <div className="w-full">
+                        <label htmlFor="date" className="block text-xs font-medium text-gray-700 dark:text-neutral-200 mb-1">
+                            Due Date
+                        </label>
+                        <input id="date" type="date"
+                            className="w-full px-3 py-2 border rounded-[8px] text-sm dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-200 outline-none select-none"
+                            onChange={field.onChange}
+                            value={field.value}
+                        />
+                        {errors.dueDate && (
+                            <p className="text-red-500 text-xs mt-1">{errors.dueDate.message}</p>
+                        )}
+                    </div>
+                )
+                }
             />
         </>
     )

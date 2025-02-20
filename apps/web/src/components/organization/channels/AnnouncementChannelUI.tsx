@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react";
-import { AnnouncementType, ChannelType } from "types/types";
+import { useEffect } from "react";
+import { ChannelType } from "types/types";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import axios from "axios";
 import { API_URL } from "@/lib/apiAuthRoutes";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import AnnouncementChannelMessages from "../announcement-channel/AnnouncementChannelMessages";
-import CreateAnnouncementForm from "@/components/form/CreateAnnouncementForm";
 import { announcementChannelMessgaes } from "@/recoil/atoms/organizationAtoms/announcementChannelMessagesAtom";
 
 interface RegularChannelViewProps {

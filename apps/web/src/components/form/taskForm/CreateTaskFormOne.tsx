@@ -1,7 +1,7 @@
 
 import { Control, Controller, FieldErrors } from "react-hook-form";
 import { CreateTaskFormType } from "./CreateTaskForm";
-import InputBox from "../utility/InputBox";
+import InputBox from "@/components/utility/InputBox";
 
 interface CreateTaskFormOneProps {
     control: Control<CreateTaskFormType>;

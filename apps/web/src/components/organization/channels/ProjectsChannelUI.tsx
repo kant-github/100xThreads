@@ -11,7 +11,7 @@ import { projectChannelMessageAtom } from "@/recoil/atoms/organizationAtoms/proj
 import { projectSelectedAtom } from "@/recoil/atoms/projects/projectSelectedAtom";
 import DesignButton from "@/components/buttons/DesignButton";
 import { IoChevronBackOutline } from "react-icons/io5";
-import CreateTaskForm from "@/components/form/CreateTaskForm";
+import CreateTaskForm from "@/components/form/taskForm/CreateTaskForm";
 
 
 interface WelcomeChannelViewProps {

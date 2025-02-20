@@ -2,7 +2,7 @@ interface TickerProps {
     tickerText: string;
 }
 
-export default function Ticker({ tickerText }: TickerProps) {
+export default function ({ tickerText }: TickerProps) {
     switch (tickerText) {
         case 'ADMIN':
             return <AdminTicker tickerText={tickerText} />
