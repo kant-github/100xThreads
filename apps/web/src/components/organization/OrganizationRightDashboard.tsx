@@ -1,65 +1,102 @@
+import { useState } from 'react';
 import { organizationUsersAtom } from "@/recoil/atoms/organizationAtoms/organizationUsersAtom"
-import Image from "next/image";
+import { CiAlignRight } from "react-icons/ci";
+import { MdAirplanemodeActive } from "react-icons/md";
+import { IoIosNotifications } from "react-icons/io";
+import { GrTasks } from "react-icons/gr";
 import { useRecoilValue } from "recoil";
-import { OrganizationUsersType, UserType } from "types/types"
+import { OrganizationUsersType } from "types/types"
 import ProfileOption from "../ui/ProfileOption";
 import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import AppLogo from "../heading/AppLogo";
 import OrganizationRolesTickerRenderer from "../utility/tickers/organization_roles_tickers/OrganizationRolesTickerRenderer";
+import OptionImage from "../ui/OptionImage";
+import Image from 'next/image';
 
 const baseDivStyles = "flex items-center justify-between gap-x-2 sm:gap-x-3 py-1.5 sm:py-1.5 px-2 sm:px-3 rounded-[8px] cursor-pointer select-none";
 const textStyles = "text-[12px] sm:text-[12px] text-gray-100 dark:text-[#d6d6d6] font-semibold mt-0.5 tracking-wide hidden sm:block";
 
 export default function () {
+    const [isExpanded, setIsExpanded] = useState(true);
     const organizationUsers = useRecoilValue<OrganizationUsersType[]>(organizationUsersAtom);
+
+    const toggleSidebar = () => {
+        setIsExpanded(!isExpanded);
+    };
+
     return (
-        <div className="w-[30%] px-4 pt-4 bg-white dark:bg-[#171717] border-b-[1px] md:border-b-0 md:border-l-[1px] dark:border-zinc-800 flex flex-col justify-between">
-            <div>
-                <ProfileOption />
-                <div className="flex flex-row sm:flex-col justify-around sm:justify-start sm:mt-3 gap-x-1 py-1 rounded-[14px] bg-neutral-800">
+        <div className={`transition-all duration-300 ease-in-out ${isExpanded ? 'w-[30%]' : 'w-[120px]'} h-screen overflow-hidden bg-white dark:bg-[#171717] border-b-[1px] md:border-b-0 md:border-l-[1px] dark:border-zinc-800 flex flex-col justify-between`}>
+            <div className='flex flex-col gap-y-2 px-4 pt-4'>
+            <div className={`flex flex-row items-center ${isExpanded ? 'justify-between px-4' : 'justify-center'} pb-2`}>
+                    <CiAlignRight
+                        size={20}
+                        className={`text-neutral-100 cursor-pointer transform transition-transform ${isExpanded ? '' : 'rotate-180'}`}
+                        onClick={toggleSidebar}
+                    />
+                    {isExpanded && <IoIosNotifications size={20} className="text-neutral-100" />}
+                    {isExpanded && <GrTasks size={15} className="text-neutral-100" />}
+                    {isExpanded && <MdAirplanemodeActive size={18} className="text-neutral-100" />}
+                </div>
+
+                {isExpanded && <ProfileOption />}
+                <div className={`flex flex-col justify-start gap-y-2 rounded-[14px] bg-neutral-800 overflow-hidden`}>
                     {
                         organizationUsers.map((user) => (
-                            <Option key={user.id} user={user} />
+                            <Option
+                                key={user.id}
+                                user={user}
+                                isExpanded={isExpanded}
+                            />
                         ))
                     }
                 </div>
             </div>
-            <div className="mt-2 bottom-4 absolute  mx-2 dark:text-neutral-200">
-                <AppLogo />
-                <p className="text-[11px] font-thin mx-3 my-2 mb-4 italic">
-                    100xThreads is the go-to solution for managing group chats and rooms.
-                </p>
-            </div>
+            {isExpanded && (
+                <div className="px-6 pb-4 dark:text-neutral-200">
+                    <AppLogo />
+                    <p className="text-[11px] font-thin my-2 italic">
+                        100xThreads is the go-to solution for managing group chats and rooms.
+                    </p>
+                </div>
+            )}
         </div>
     )
 }
 
-function Option({ isSelected, onClick, user }: {
+function Option({ isSelected, onClick, user, isExpanded }: {
     isSelected?: boolean;
     onClick?: () => void;
     user: OrganizationUsersType;
+    isExpanded: boolean;
 }) {
     const organization = useRecoilValue(organizationAtom);
     return (
         <div onClick={onClick} style={{ ['--hover-color' as string]: `${organization?.organizationColor}66` }}
-            className={`${baseDivStyles} ${isSelected
+            className={`${isExpanded ? baseDivStyles : 'flex justify-center items-center py-1.5'} ${isSelected
                 ? "bg-zinc-700 text-white"
                 : "transition-colors duration-200"
                 } hover:[background-color:var(--hover-color)]`} >
-            <div className="flex items-center gap-x-2">
+            <div className={`flex items-center ${isExpanded ? 'gap-x-2' : ''}`}>
                 <span className="relative">
-                    <span className="bg-green-500 absolute bottom-1 right-1 transform translate-x-1/4 translate-y-1/4 rounded-full border-2 border-zinc-800 z-20 h-2.5 w-2.5"></span>
-                    <Image
-                        src={user?.user.image!}
-                        alt="user-image"
-                        width={32}
-                        height={32}
-                        className="rounded-full"
+                    <span className="bg-green-500 absolute bottom-1.5 right-1.5 transform translate-x-1/4 translate-y-1/4 rounded-full border-2 border-zinc-800 z-20 h-2.5 w-2.5"></span>
+                    <OptionImage
+                        content={
+                            <Image
+                                src={user.user.image || '/default-avatar.png'}
+                                alt={`${user.user.name}'s profile picture`}
+                                width={36}
+                                height={36}
+                                className='rounded-full'
+                            />
+                        }
+                        imageClassName="rounded-full"
+                        userId={user.user_id}
+                        organizationId={organization?.id!}
                     />
                 </span>
-                <span className={`${textStyles}`}>{user.user.name}</span>
+                {isExpanded && <span className={`${textStyles}`}>{user.user.name}</span>}
             </div>
-            <OrganizationRolesTickerRenderer tickerText={user.role} />
+            {isExpanded && <OrganizationRolesTickerRenderer tickerText={user.role} />}
         </div>
     );
 }

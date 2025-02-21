@@ -19,6 +19,8 @@ export async function storeOrganization(req: Request, res: Response) {
         return;
     }
 
+    console.log(req.body);
+
     const {
         organizationName,
         image,

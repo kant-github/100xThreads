@@ -14,7 +14,7 @@ export default function () {
                 <Image src={session.user?.image!} width={60} height={40} alt="user-image" className="rounded-full" />
                 <div className="flex flex-col">
                     <div className="flex flex-row items-center gap-x-2">
-                        <div className="text-lg font-medium">{"Rishi Kant"}</div>
+                        <div className="text-lg font-medium">{session.user?.name}</div>
                         <div className="flex items-center gap-x-1 text-green-500 text-[11px] "><IoIosCheckmarkCircleOutline size={14} /> {" "} Active</div>
                     </div>
                     <div>

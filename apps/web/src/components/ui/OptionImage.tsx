@@ -8,23 +8,18 @@ import { userSessionAtom } from '@/recoil/atoms/atom';
 import { OrganizationUsersType } from 'types/types';
 import WhiteText from '../heading/WhiteText';
 import { BsTextParagraph } from 'react-icons/bs';
-import { IoMdMail } from 'react-icons/io';
+import { IoIosCheckmarkCircleOutline, IoMdMail } from 'react-icons/io';
 import DesignButton from '../buttons/DesignButton';
 import OrganizationRolesTickerRenderer from '../utility/tickers/organization_roles_tickers/OrganizationRolesTickerRenderer';
 
 interface OptionImageProps {
-    image: {
-        src: string;
-        alt?: string;
-        width?: number;
-        height?: number;
-    };
+    content: any
     imageClassName?: string;
     organizationId: string;
     userId: number;
 }
 
-const OptionImage: React.FC<OptionImageProps> = ({ image, imageClassName, organizationId, userId }) => {
+const OptionImage: React.FC<OptionImageProps> = ({ imageClassName, organizationId, userId, content }) => {
     const [open, setOpen] = useState(false);
     const session = useRecoilValue(userSessionAtom);
     const [organizationUser, setOrganizationUser] = useState<OrganizationUsersType>({} as OrganizationUsersType);
@@ -55,22 +50,16 @@ const OptionImage: React.FC<OptionImageProps> = ({ image, imageClassName, organi
 
     return (
         <div className="relative inline-block">
-            <div className="cursor-pointer transition-transform hover:scale-105" onClick={handleImageClick}>
-                <Image
-                    src={image.src}
-                    alt={image.alt || 'Option image'}
-                    width={image.width || 64}
-                    height={image.height || 64}
-                    className={`object-cover ${imageClassName}`}
-                />
+            <div className="cursor-pointer" onClick={handleImageClick}>
+                {content}
             </div>
 
             <UtilityMiniSideBar
                 open={open}
                 setOpen={setOpen}
                 content={
-                    <div className='flex flex-col px-8 py-6'>
-                        <div className='flex items-center justify-center'>
+                    <div className='flex flex-col gap-y-1.5 px-8 py-6'>
+                        <div className='flex items-center justify-center gap-x-2'>
                             <Image
                                 src={organizationUser.user?.image}
                                 alt={`${organizationUser.user?.name}'s image`}
@@ -78,20 +67,29 @@ const OptionImage: React.FC<OptionImageProps> = ({ image, imageClassName, organi
                                 width={46}
                                 className='rounded-full'
                             />
+
+                        </div>
+                        <div className="flex flex-row justify-center items-center gap-x-2">
+                            <div className="text-lg font-medium">{organizationUser.user?.name}</div>
+                            <div className="flex items-center gap-x-1 text-green-500 text-[11px] "><IoIosCheckmarkCircleOutline size={14} /> {" "} Active</div>
                         </div>
                         <div className='flex items-center justify-center gap-x-2'>
-                            <DesignButton>Add Friend</DesignButton>
                             <OrganizationRolesTickerRenderer tickerText={organizationUser.role} />
+                            <DesignButton>Add Friend</DesignButton>
                         </div>
-                        <div className="flex items-start justify-center gap-x-4 mt-3">
-                            <WhiteText className="text-xs px-3 py-1 rounded-[4px] border-[1px] border-zinc-600 flex items-center gap-x-2">
+                        <div className="flex flex-col items-center gap-y-2 justify-center gap-x-4 mt-3">
+                            <WhiteText className="text-xs px-3 py-1 rounded-[4px] border-[1px] border-zinc-600 flex items-center justify-center gap-x-2">
                                 <IoMdMail />
-                                {session.user?.email}
+                                {organizationUser.user?.email}
                             </WhiteText>
                             <WhiteText className="text-xs px-3 py-1 rounded-[4px] border-[1px] border-zinc-600 flex items-center gap-x-2">
                                 <BsTextParagraph />
                                 {"faraaz aao sitaare safar ke dekhte hain 🌻"}
                             </WhiteText>
+                        </div>
+                        <div className="flex items-start justify-center gap-x-4 mt-3">
+
+
                         </div>
                     </div>
                 }
