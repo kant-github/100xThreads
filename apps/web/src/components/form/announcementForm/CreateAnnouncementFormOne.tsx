@@ -16,7 +16,7 @@ export default function ({ errors, control }: CreateAnnouncementFormOneProps) {
                 render={({ field }) => (
                     <InputBox
                         disable={true}
-                        label="Owner's Name"
+                        label="Creator's Name"
                         value={field.value}
                         onChange={field.onChange}
                         error={errors.creator_name?.message}

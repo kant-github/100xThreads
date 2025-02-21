@@ -18,12 +18,14 @@ import { createAnnouncement } from "../controllers/announcement-channel/createAn
 import { createProjectHandler } from "../controllers/projects-channel/createProject";
 import { getProjectChannelMessages } from "../controllers/projects-channel/getProjectChannelMessages";
 import { getProjectchannelChats } from "../controllers/projects-channel/getProjectchannelChats";
+import { getUserProfileData } from "../controllers/user/getUserProfileData";
 
 const router = Router();
 
 // user_controller
 router.get("/user/:id", authmiddleware, getUserDetails);
 router.put("/user", authmiddleware, updateUserDetails);
+router.get("/user/profile-data/:organizationId/:userId", authmiddleware, getUserProfileData);
 
 
 // organizations controller

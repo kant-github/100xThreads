@@ -25,18 +25,18 @@ export default function ({ channel }: AnnouncementChannelMessagesProps) {
         console.log(newMessage);
     }
 
-    useEffect(() => {
-        if (channel.id && organizationId) {
-            subscribeToBackend(channel.id, organizationId, 'create-announcement-messages');
-            subscribeToBackend(channel.id, organizationId, 'edit-announcement-messages');
-            subscribeToBackend(channel.id, organizationId, 'delete-announcement-messages');
-            const unsubscribeIncomingAnnouncementHandler = subscribeToHandler('create-announcement-messages', handleIncomingAnnouncemennts);
-            return () => {
-                unsubscribeIncomingAnnouncementHandler();
-                unsubscribeFromBackend(channel.id, organizationId, 'create-announcement-messages');
-            }
-        }
-    }, [channel.id, organizationId])
+    // useEffect(() => {
+    //     if (channel.id && organizationId) {
+    //         subscribeToBackend(channel.id, organizationId, 'create-announcement-messages');
+    //         subscribeToBackend(channel.id, organizationId, 'edit-announcement-messages');
+    //         subscribeToBackend(channel.id, organizationId, 'delete-announcement-messages');
+    //         const unsubscribeIncomingAnnouncementHandler = subscribeToHandler('create-announcement-messages', handleIncomingAnnouncemennts);
+    //         return () => {
+    //             unsubscribeIncomingAnnouncementHandler();
+    //             unsubscribeFromBackend(channel.id, organizationId, 'create-announcement-messages');
+    //         }
+    //     }
+    // }, [channel.id, organizationId])
 
     return (
         <div className="dark:bg-neutral-900 h-full flex flex-col items-start w-full p-6 relative">

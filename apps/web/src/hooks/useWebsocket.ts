@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef } from "react"
 import { useRecoilValue } from "recoil";
 
 export const useWebSocket = () => {
+  
   const webSocketRef = useRef<WebSocketClient | null>(null);
   const session = useRecoilValue(userSessionAtom);
   const organizationIdd = useRecoilValue(organizationIdAtom);

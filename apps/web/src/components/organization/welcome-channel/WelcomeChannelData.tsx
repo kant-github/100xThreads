@@ -9,10 +9,11 @@ import OptionImage from "@/components/ui/OptionImage";
 
 interface WelcomeChannelDataProps {
     message: WelcomedUserTypes;
-    session: CustomSession
+    session: CustomSession;
+    organizationId: string;
 }
 
-export default function ({ message, session }: WelcomeChannelDataProps) {
+export default function ({ message, session, organizationId }: WelcomeChannelDataProps) {
     const welcomedAtDate = typeof message.welcomed_at === "string" ? parseISO(message.welcomed_at) : message.welcomed_at;
     const [askForRoleOptionMenu, setAskForRoleOptionMenu] = useState<boolean>(false);
 
@@ -45,6 +46,8 @@ export default function ({ message, session }: WelcomeChannelDataProps) {
                         height: 40
                     }}
                     imageClassName="rounded-[6px]"
+                    userId={message.user_id}
+                    organizationId={organizationId}
                 />
             </div>
         </div>
