@@ -226,6 +226,7 @@ model Tasks {
   project_id  String          @db.Uuid
   title       String          @db.VarChar(191)
   description String?
+  color       String?
   status      CardStatus      @default(TODO)
   priority    Priority        @default(NORMAL)
   due_date    DateTime?
@@ -527,13 +528,13 @@ enum ChannelType {
   LEARNING // Educational content
   MENTORSHIP // Mentoring programs
   SOCIAL // Community engagement
-  CAREER // Job opportunities
+  CAREER
 }
 
 enum OrganizationAccessType {
-  PRIVATE // DONE
-  PUBLIC // DONE
-  INVITE_ONLY // DONE
+  PRIVATE
+  PUBLIC
+  INVITE_ONLY
 }
 
 enum CardStatus {

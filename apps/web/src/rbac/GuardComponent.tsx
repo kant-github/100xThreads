@@ -16,8 +16,8 @@ export default function ({
     fallback = null,
     children
 }: GuardComponentProps) {
+    
     const ability = useAbility();
-
     if (ability.cannot(action, subject, context)) {
         return <>{fallback}</>;
     }

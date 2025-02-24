@@ -13,7 +13,7 @@ import OrganizationRolesTickerRenderer from "../utility/tickers/organization_rol
 import OptionImage from "../ui/OptionImage";
 import Image from 'next/image';
 
-const baseDivStyles = "flex items-center justify-between gap-x-2 sm:gap-x-3 py-1.5 sm:py-1.5 px-2 sm:px-3 rounded-[8px] cursor-pointer select-none";
+const baseDivStyles = "flex items-center justify-between gap-x-2 sm:gap-x-3 py-1.5 sm:py-1 px-2 sm:px-3 rounded-[8px] cursor-pointer select-none";
 const textStyles = "text-[12px] sm:text-[12px] text-gray-100 dark:text-[#d6d6d6] font-semibold mt-0.5 tracking-wide hidden sm:block";
 
 export default function () {
@@ -27,7 +27,7 @@ export default function () {
     return (
         <div className={`transition-all duration-300 ease-in-out ${isExpanded ? 'w-[30%]' : 'w-[120px]'} h-screen overflow-hidden bg-white dark:bg-[#171717] border-b-[1px] md:border-b-0 md:border-l-[1px] dark:border-zinc-800 flex flex-col justify-between`}>
             <div className='flex flex-col gap-y-2 px-4 pt-4'>
-            <div className={`flex flex-row items-center ${isExpanded ? 'justify-between px-4' : 'justify-center'} pb-2`}>
+                <div className={`flex flex-row items-center ${isExpanded ? 'justify-between px-4' : 'justify-center'} pb-2`}>
                     <CiAlignRight
                         size={20}
                         className={`text-neutral-100 cursor-pointer transform transition-transform ${isExpanded ? '' : 'rotate-180'}`}
@@ -51,14 +51,6 @@ export default function () {
                     }
                 </div>
             </div>
-            {isExpanded && (
-                <div className="px-6 pb-4 dark:text-neutral-200">
-                    <AppLogo />
-                    <p className="text-[11px] font-thin my-2 italic">
-                        100xThreads is the go-to solution for managing group chats and rooms.
-                    </p>
-                </div>
-            )}
         </div>
     )
 }
@@ -71,16 +63,17 @@ function Option({ isSelected, onClick, user, isExpanded }: {
 }) {
     const organization = useRecoilValue(organizationAtom);
     return (
-        <div onClick={onClick} style={{ ['--hover-color' as string]: `${organization?.organizationColor}66` }}
-            className={`${isExpanded ? baseDivStyles : 'flex justify-center items-center py-1.5'} ${isSelected
-                ? "bg-zinc-700 text-white"
-                : "transition-colors duration-200"
-                } hover:[background-color:var(--hover-color)]`} >
-            <div className={`flex items-center ${isExpanded ? 'gap-x-2' : ''}`}>
-                <span className="relative">
-                    <span className="bg-green-500 absolute bottom-1.5 right-1.5 transform translate-x-1/4 translate-y-1/4 rounded-full border-2 border-zinc-800 z-20 h-2.5 w-2.5"></span>
-                    <OptionImage
-                        content={
+
+        <OptionImage
+            content={
+                <div onClick={onClick} style={{ ['--hover-color' as string]: `${organization?.organizationColor}66` }}
+                    className={`${isExpanded ? baseDivStyles : 'flex justify-center items-center py-1.5'} ${isSelected
+                        ? "bg-zinc-700 text-white"
+                        : "transition-colors duration-200"
+                        } hover:[background-color:var(--hover-color)]`} >
+                    <div className={`flex items-center ${isExpanded ? 'gap-x-2' : ''}`}>
+                        <span className="relative">
+                            <span className="bg-green-500 absolute bottom-1.5 right-1.5 transform translate-x-1/4 translate-y-1/4 rounded-full border-2 border-zinc-800 z-20 h-2.5 w-2.5"></span>
                             <Image
                                 src={user.user.image || '/default-avatar.png'}
                                 alt={`${user.user.name}'s profile picture`}
@@ -88,15 +81,15 @@ function Option({ isSelected, onClick, user, isExpanded }: {
                                 height={36}
                                 className='rounded-full'
                             />
-                        }
-                        imageClassName="rounded-full"
-                        userId={user.user_id}
-                        organizationId={organization?.id!}
-                    />
-                </span>
-                {isExpanded && <span className={`${textStyles}`}>{user.user.name}</span>}
-            </div>
-            {isExpanded && <OrganizationRolesTickerRenderer tickerText={user.role} />}
-        </div>
+                        </span>
+                        {isExpanded && <span className={`${textStyles}`}>{user.user.name}</span>}
+                    </div>
+                    {isExpanded && <OrganizationRolesTickerRenderer tickerText={user.role} />}
+                </div>
+            }
+            userId={user.user_id}
+            organizationId={organization?.id!}
+        />
+
     );
 }

@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
 import CreateProjectsForm from '@/components/form/CreateProjectsForm';
-import { ChannelType } from 'types/types';
+import { ChannelType, ProjectTypes, TaskTypes } from 'types/types';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { projectChannelMessageAtom } from '@/recoil/atoms/organizationAtoms/projectChannelMessageAtom';
 import Project from './Project';
 import KanBanBoard from './KanBanBoard';
 import { projectSelectedAtom } from '@/recoil/atoms/projects/projectSelectedAtom';
+import { useWebSocket } from '@/hooks/useWebsocket';
+import { organizationIdAtom } from '@/recoil/atoms/organizationAtoms/organizationAtom';
 
 interface ProjectsProps {
     channel: ChannelType;
@@ -15,11 +17,46 @@ interface ProjectsProps {
 export default function ({ channel }: ProjectsProps) {
     const [selectedProject, setSelectedProject] = useRecoilState(projectSelectedAtom);
     const [createProjectsModal, setCreateProjectsModal] = useState<boolean>(false);
-    const projectsChannelMessages = useRecoilValue(projectChannelMessageAtom);
+    const [projectsChannelMessages, setProjectChannelMessages] = useRecoilState(projectChannelMessageAtom);
+    const organizationId = useRecoilValue(organizationIdAtom);
+
+    const { subscribeToBackend, unsubscribeFromBackend, subscribeToHandler } = useWebSocket();
+
+    function incomingNewTasksHandler(newMessage: TaskTypes) {
+        
+        console.log("new task is : ", newMessage);
+
+        setProjectChannelMessages((prev: ProjectTypes[]) => prev.map((project) => {
+            if (project.id === newMessage.project_id) {
+                return {
+                    ...project,
+                    tasks: [newMessage, ...(project.tasks || [])]
+                };
+            }
+            return project;
+        }));
+
+        setSelectedProject((prev) => {
+            if (prev && prev.id === newMessage.project_id) {
+                return {
+                    ...prev,
+                    tasks: [newMessage, ...(prev.tasks || [])]
+                };
+            }
+            return prev;
+        });
+    }
 
     useEffect(() => {
-        console.log("logging selected project : ", selectedProject);
-    }, [setSelectedProject])
+        if (channel.id && organizationId) {
+            subscribeToBackend(channel.id, organizationId, 'new-created-task');
+            const unsubscribeNewCreatedTas = subscribeToHandler('new-created-task', incomingNewTasksHandler)
+            return () => {
+                unsubscribeNewCreatedTas();
+                unsubscribeFromBackend(channel.id, organizationId, 'new-created-task');
+            }
+        }
+    }, [channel.id, organizationId]);
 
     return (
         <div className='w-full px-2 flex flex-col flex-1 min-h-0'>

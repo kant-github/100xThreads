@@ -1,4 +1,3 @@
-
 import { Control, Controller, FieldErrors } from "react-hook-form";
 import { CreateTaskFormType } from "./CreateTaskForm";
 
@@ -33,7 +32,7 @@ export default function ({ control, errors }: CreateTaskFormTwoProps) {
                         Task status
                     </label>
                     <Controller
-                        name="priority"
+                        name="status"
                         control={control}
                         render={({ field }) => (
                             <select {...field} className="w-full rounded-[6px] px-2 text-sm dark:text-neutral-400 border border-neutral-300 dark:border-neutral-600 dark:bg-neutral-900 outline-none py-2.5" >
@@ -64,7 +63,7 @@ export default function ({ control, errors }: CreateTaskFormTwoProps) {
                     </div>
                 )
                 }
-            />
+            />            
         </>
     )
 }

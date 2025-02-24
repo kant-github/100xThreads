@@ -19,7 +19,7 @@ interface OptionImageProps {
     userId: number;
 }
 
-const OptionImage: React.FC<OptionImageProps> = ({ imageClassName, organizationId, userId, content }) => {
+const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, content }) => {
     const [open, setOpen] = useState(false);
     const session = useRecoilValue(userSessionAtom);
     const [organizationUser, setOrganizationUser] = useState<OrganizationUsersType>({} as OrganizationUsersType);
@@ -74,7 +74,10 @@ const OptionImage: React.FC<OptionImageProps> = ({ imageClassName, organizationI
                             <div className="flex items-center gap-x-1 text-green-500 text-[11px] "><IoIosCheckmarkCircleOutline size={14} /> {" "} Active</div>
                         </div>
                         <div className='flex items-center justify-center gap-x-2'>
+                            <WhiteText className="text-xs">Delhi, India</WhiteText>
                             <OrganizationRolesTickerRenderer tickerText={organizationUser.role} />
+                        </div>
+                        <div className='flex items-end justify-center gap-x-2'>
                             <DesignButton>Add Friend</DesignButton>
                         </div>
                         <div className="flex flex-col items-center gap-y-2 justify-center gap-x-4 mt-3">

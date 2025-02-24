@@ -154,6 +154,7 @@ export interface TaskTypes {
   project_id: string;
   title: string;
   description?: string | null;
+  color?: string
   status: TaskStatus;
   priority: Priority;
   due_date?: Date | null;

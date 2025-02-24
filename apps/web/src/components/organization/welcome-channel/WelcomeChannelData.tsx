@@ -6,6 +6,7 @@ import { WelcomedUserTypes } from "types/types";
 import WelcomeChannelRoleOptionMenu from "./WelcomeChannelRoleOptionMenu";
 import { CustomSession } from "app/api/auth/[...nextauth]/options";
 import OptionImage from "@/components/ui/OptionImage";
+import Image from "next/image";
 
 interface WelcomeChannelDataProps {
     message: WelcomedUserTypes;
@@ -39,12 +40,15 @@ export default function ({ message, session, organizationId }: WelcomeChannelDat
             </div>
             <div className="flex-shrink-0">
                 <OptionImage
-                    image={{
-                        src: message.user.image || '/default-avatar.png',
-                        alt: `${message.user.name}'s profile picture`,
-                        width: 40,
-                        height: 40
-                    }}
+                    content={
+                        <Image
+                            src={message.user.image || '/default-avatar.png'}
+                            alt={`${message.user.name}'s profile picture`}
+                            width={40}
+                            height={40}
+                            className="rounded-[6px]"
+                        />
+                    }
                     imageClassName="rounded-[6px]"
                     userId={message.user_id}
                     organizationId={organizationId}

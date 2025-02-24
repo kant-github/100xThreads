@@ -54,7 +54,7 @@ export default function ({ className }: ProgressBarButtonsProps) {
             </button>
 
             {currentLevel === totalLevels ? (
-                <BlackBtn type="submit">Submit</BlackBtn>
+                <BlackBtn onClick={() => console.log("pressing")} type="submit" >Submit</BlackBtn>
             ) : (
                 <button aria-label="right"
                     type="button"

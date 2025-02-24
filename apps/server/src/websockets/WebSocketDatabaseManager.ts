@@ -64,6 +64,8 @@ export default class WebSocketDatabaseManager {
                     return this.projectChannelEditMessageHandler(message, tokenData);
                 case 'project-chat-typing-events':
                     return this.projectChatTypingEventHandler(message, tokenData);
+                case 'new-created-task':
+                    return this.newTaskCreationHandler(message, tokenData);
             }
         }
         catch (err) {
@@ -428,6 +430,49 @@ export default class WebSocketDatabaseManager {
                 type: message.type
             }))
         }
+    }
+
+    private async newTaskCreationHandler(message: WebSocketMessage, tokenData: any) {
+        const channelKey = this.getChannelKey({
+            organizationId: tokenData.organizationId,
+            channelId: message.payload.channelId,
+            type: message.payload.type
+        })
+
+        console.log("new task creation is : ", message);
+
+        const task = await this.prisma.tasks.create({
+            data: {
+                project_id: message.payload.projectId,
+                title: message.payload.title,
+                description: message.payload.description,
+                color: message.payload.color,
+                priority: message.payload.priority,
+                due_date: message.payload.dueDate ? new Date(message.payload.dueDate) : null,
+                status: message.payload.status,
+                assignees: {
+                    create: message.payload.assignees.map((assigneeId: number) => ({
+                        org_user_id: assigneeId
+                    }))
+                }
+            },
+            include: {
+                assignees: {
+                    include: {
+                        organization_user: {
+                            include: {
+                                user: true
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        await this.publisher.publish(channelKey, JSON.stringify({
+            type: message.type,
+            payload: task
+        }));
     }
 
     private getChannelKey(subscription: ChannelSubscription): string {

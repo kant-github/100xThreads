@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { projectSelectedAtom } from "@/recoil/atoms/projects/projectSelectedAtom";
 import { z } from 'zod';
-import { Priority, TaskStatus } from "types/types";
+import { ChannelType, Priority, TaskStatus } from "types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { progressBarAtom } from "@/recoil/atoms/progressBarAtom";
@@ -12,30 +12,36 @@ import CreateTaskFormThree from "./CreateTaskFormThree";
 import UtilityCard from "@/components/utility/UtilityCard";
 import FormProgressBar from "../FormProgressBar";
 import ProgressBarButtons from "../ProgressBarButtons";
+import { useWebSocket } from "@/hooks/useWebsocket";
+import { presetColors } from "../FirstComponent";
 
 interface CreateTaskFormProps {
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
+    channel: ChannelType;
 }
 
 const createTaskFormSchema = z.object({
     title: z.string().min(1, 'Title is missing').max(28, 'Max 28 characters'),
-    description: z.string().min(1, 'DEscription is missing').max(35, 'Max 35 characters'),
+    description: z.string().min(1, 'Description is missing').max(70, 'Max 70 characters'),
     priority: z.enum([Priority.LOW, Priority.NORMAL, Priority.HIGH, Priority.URGENT]),
     dueDate: z.string().optional(),
     status: z.enum([TaskStatus.TODO, TaskStatus.IN_PROGRESS, TaskStatus.DONE]).default(TaskStatus.TODO),
-    assignees: z.array(z.number()).min(1, "At least one assignee is required")
-
+    assignees: z.array(z.number()).min(1, "At least one assignee is required"),
+    color: z.string().refine(
+        (color) => !color || presetColors.some((preset) => preset.value === color),
+        "Select a color"
+    ),
 })
 
 export type CreateTaskFormType = z.infer<typeof createTaskFormSchema>
 
-export default function ({ open, setOpen }: CreateTaskFormProps) {
-    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+export default function ({ open, setOpen, channel }: CreateTaskFormProps) {
     const [currentStep, setCurrentStep] = useRecoilState(progressBarAtom);
     const selectedProject = useRecoilValue(projectSelectedAtom);
+    const { sendMessage } = useWebSocket();
     const ref = useRef<HTMLDivElement | null>(null);
-    const { control, handleSubmit, formState: { errors } } = useForm<CreateTaskFormType>({
+    const { reset, control, handleSubmit, formState: { errors } } = useForm<CreateTaskFormType>({
         resolver: zodResolver(createTaskFormSchema),
         defaultValues: {
             priority: Priority.NORMAL,
@@ -56,8 +62,17 @@ export default function ({ open, setOpen }: CreateTaskFormProps) {
         }
     }, [open])
 
-    async function submitHandler(data: CreateTaskFormType) {
+    function submitHandler(data: CreateTaskFormType) {
+        console.log("form submitted");
         console.log(data);
+        const payload = {
+            ...data,
+            projectId: selectedProject?.id
+        }
+        sendMessage(payload, channel.id, 'new-created-task');
+        reset();
+        setCurrentStep(1);
+        setOpen(false);
     }
 
     function renderComponent() {

@@ -16,7 +16,7 @@ export default function ({ channel, createAnnoucementModal, setCreateAnnouncemen
     return (
         <div className="mr-4 absolute top-6 right-3">
 
-            <GuardComponent action={Action.CREATE} subject={Subject.ANNOUNCEMENT} >
+            <GuardComponent action={Action.CREATE} subject={Subject.ANNOUNCEMENT}>
                 <DesignButton onClick={() => setCreateAnnouncementModal(prev => !prev)} className="group">
                     <CgMathPlus size={16} />
                     Create Announcement

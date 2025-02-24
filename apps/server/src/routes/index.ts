@@ -19,6 +19,7 @@ import { createProjectHandler } from "../controllers/projects-channel/createProj
 import { getProjectChannelMessages } from "../controllers/projects-channel/getProjectChannelMessages";
 import { getProjectchannelChats } from "../controllers/projects-channel/getProjectchannelChats";
 import { getUserProfileData } from "../controllers/user/getUserProfileData";
+import { getTaskForProject } from "../controllers/projects-channel/getTaskForProject";
 
 const router = Router();
 
@@ -51,6 +52,7 @@ router.post("/organizations/:organizationId/channels/:channelId/announcement-cha
 router.get("/organizations/:organizationId/channels/:channelId/project-channel", authmiddleware, getProjectChannelMessages);
 router.post("/organizations/:organizationId/channels/:channelId/project-channel", authmiddleware, createProjectHandler);
 router.get("/organizations/:organizationId/channels/:channelId/project/:projectId/chats", authmiddleware, getProjectchannelChats);
+router.get("/organizations/:organizationId/channels/:channelId/project/:projectId", authmiddleware, getTaskForProject);
 
 //polls-controller
 router.get("/polls/:id/:channelId", authmiddleware, getPoll);

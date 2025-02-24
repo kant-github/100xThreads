@@ -49,8 +49,7 @@ export const useWebSocket = () => {
 
   function sendMessage(payload: any, channelId: string, type: string) {
     if (!webSocketRef.current) return;
-    console.log("sending message", payload);
-    console.log("type is : ", type);
+
     webSocketRef.current.send(type, {
       channelId,
       type,
@@ -65,3 +64,13 @@ export const useWebSocket = () => {
     sendMessage
   };
 };
+
+//       
+
+
+// <OrganizationId , set <WS connections> >
+
+// <Websocket, set <organzationId:channelId:event_type>>
+
+// <Websocket, set <organzationId:channelId:edit-messages>
+// <Websocket, set <organzationId:channelId:delete-messages>
