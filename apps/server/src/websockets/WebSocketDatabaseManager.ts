@@ -446,6 +446,7 @@ export default class WebSocketDatabaseManager {
                 project_id: message.payload.projectId,
                 title: message.payload.title,
                 description: message.payload.description,
+                tags: message.payload.tags,
                 color: message.payload.color,
                 priority: message.payload.priority,
                 due_date: message.payload.dueDate ? new Date(message.payload.dueDate) : null,

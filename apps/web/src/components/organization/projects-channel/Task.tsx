@@ -4,13 +4,15 @@ import { FaCalendar } from "react-icons/fa"
 import { RxDragHandleDots2 } from "react-icons/rx"
 import { TaskTypes } from "types/types"
 import { format } from 'date-fns'
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import { organizationUsersAtom } from "@/recoil/atoms/organizationAtoms/organizationUsersAtom"
 import { useRecoilValue } from "recoil"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom"
+import OptionImage from "@/components/ui/OptionImage"
 
 interface TaskProps {
     task: TaskTypes
@@ -27,6 +29,27 @@ export default function ({ task }: TaskProps) {
     const [searchExpand, setSearchExpand] = useState<boolean>(false);
     const organizationUsers = useRecoilValue(organizationUsersAtom);
     const [searchQuery, setSearchQuery] = useState("");
+    const organization = useRecoilValue(organizationAtom);
+    const ref = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        function handleClickOutside(e: MouseEvent) {
+            if (ref.current && !ref.current.contains(e.target as Node)) {
+                setCardExpand(false);
+                setSearchExpand(false);
+            }
+        }
+        if (cardExpand || searchExpand) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+        else {
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+    }, [cardExpand,]);
 
     const { control, handleSubmit, reset, formState: { errors } } = useForm<ChooseAssigneeSchemaType>({
         resolver: zodResolver(chooseTaskAssigneesSchema),
@@ -61,10 +84,11 @@ export default function ({ task }: TaskProps) {
 
     return (
         <div
+            ref={ref}
             onClick={expandCardHandler}
             key={task.id}
             style={{ backgroundColor: `${task.color}CA` }}
-            className={`p-3 rounded-[12px] select-none flex flex-col gap-y-1 relative cursor-grab transition-all duration-200 ease-in-out  ${searchExpand ? 'h-[21rem]' : 'h-[8rem]'} ${cardExpand && 'h-[10rem]'}`}
+            className={`p-3 rounded-[12px] select-none flex flex-col gap-y-1 relative cursor-grab transition-all duration-200 ease-in-out  ${searchExpand ? 'h-[25rem]' : ''} ${cardExpand ? 'h-[11rem]' : 'h-[8rem]'}`}
         >
             <div className="text-neutral-950 text-md font-semibold">
                 {task.title.substring(0, 15)}...
@@ -77,17 +101,13 @@ export default function ({ task }: TaskProps) {
                     <RxDragHandleDots2
                         onClick={(e) => {
                             e.stopPropagation();
-                            console.log("search tapped");
                             setSearchExpand(prev => !prev);
                         }}
                         size={19}
                         className='bg-neutral-300/50 rounded-[4px] cursor-pointer p-[2px] hover:bg-neutral-300/70 transition-colors'
                     />
                 </div>
-                <AnimatedTooltipPreview
-                    className="select-none"
-                    users={task.assignees!.map(assignee => assignee.organization_user)}
-                />
+                <AnimatedTooltipPreview className="select-none" users={task.assignees!.map(assignee => assignee.organization_user)} />
                 {searchExpand && (
                     <input
                         type="text"
@@ -95,7 +115,7 @@ export default function ({ task }: TaskProps) {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onClick={(e) => e.stopPropagation()}
-                        className="w-full px-3 py-1 border rounded-[8px] text-sm dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-200"
+                        className="w-full px-3 py-1 border rounded-[8px] text-sm dark:bg-neutral-300/50 dark:border-neutral-300 dark:text-neutral-200 placeholder:text-xs placeholder:text-neutral-700"
                     />
                 )}
             </div>
@@ -103,7 +123,11 @@ export default function ({ task }: TaskProps) {
                 <FaCalendar className="text-amber-500" />
                 {format(new Date(task.due_date!), "EEE d MMM")}
             </UnclickableTicker>
-
+            <div className={`${cardExpand || searchExpand ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 ease-linear mt-2 flex flex-row gap-x-2 items-center`}>
+                {
+                    task.tags.map((tag, index) => <UnclickableTicker key={index}>{tag}</UnclickableTicker>)
+                }
+            </div>
             <div
                 className={`mt-2 block transition-opacity duration-400 ${searchExpand ? 'opacity-100' : 'opacity-0'}`}
                 onClick={(e) => e.stopPropagation()}
@@ -132,15 +156,21 @@ export default function ({ task }: TaskProps) {
                                             className="w-4 h-4 appearance-none flex-shrink-0 rounded-md bg-gray-200 border border-gray-300 checked:bg-yellow-500 checked:border-yellow-500 checked:before:content-['✔'] checked:before:text-white checked:before:text-[10px] checked:before:font-bold checked:before:flex checked:before:justify-center checked:before:items-center transition-colors duration-200"
                                         />
                                         <label htmlFor={`user-${orgUser.id}`} className="flex items-center space-x-3 cursor-pointer w-full min-w-0">
-                                            {orgUser.user.image && (
-                                                <Image
-                                                    width={24}
-                                                    height={24}
-                                                    src={orgUser.user.image}
-                                                    alt={orgUser.user.name}
-                                                    className="h-8 w-8 rounded-full flex-shrink-0"
-                                                />
-                                            )}
+                                            <div className="flex">
+                                                {orgUser.user.image && (
+                                                    <OptionImage
+                                                        content={<Image
+                                                            width={40}
+                                                            height={40}
+                                                            src={orgUser.user.image}
+                                                            alt={orgUser.user.name}
+                                                            className="rounded-full flex-shrink-0"
+                                                        />}
+                                                        organizationId={organization?.id!}
+                                                        userId={orgUser.user_id}
+                                                    />
+                                                )}
+                                            </div>
                                             <div className="flex flex-col min-w-0 w-full pr-2">
                                                 <span className="text-[13px] font-medium dark:text-neutral-950 truncate">
                                                     {orgUser.user.name}
@@ -160,7 +190,6 @@ export default function ({ task }: TaskProps) {
                     )}
                 />
             </div>
-
         </div>
     )
 }

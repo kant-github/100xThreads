@@ -227,6 +227,7 @@ model Tasks {
   title       String          @db.VarChar(191)
   description String?
   color       String?
+  tags        String[]        @default([]) @db.VarChar(50)
   status      CardStatus      @default(TODO)
   priority    Priority        @default(NORMAL)
   due_date    DateTime?

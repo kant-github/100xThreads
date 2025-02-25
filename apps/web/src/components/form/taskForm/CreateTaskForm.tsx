@@ -28,6 +28,7 @@ const createTaskFormSchema = z.object({
     dueDate: z.string().optional(),
     status: z.enum([TaskStatus.TODO, TaskStatus.IN_PROGRESS, TaskStatus.DONE]).default(TaskStatus.TODO),
     assignees: z.array(z.number()).min(1, "At least one assignee is required"),
+    tags: z.array(z.string()).min(1, "Add at least one tag").max(5, "Maximum 5 tags allowed"),
     color: z.string().refine(
         (color) => !color || presetColors.some((preset) => preset.value === color),
         "Select a color"

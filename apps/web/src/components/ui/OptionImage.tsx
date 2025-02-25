@@ -49,7 +49,7 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
     }, [open, session?.user?.token, organizationId, userId])
 
     return (
-        <div className="relative inline-block">
+        <div className="relative">
             <div className="cursor-pointer" onClick={handleImageClick}>
                 {content}
             </div>
