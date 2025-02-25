@@ -24,7 +24,8 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
     const session = useRecoilValue(userSessionAtom);
     const [organizationUser, setOrganizationUser] = useState<OrganizationUsersType>({} as OrganizationUsersType);
 
-    const handleImageClick = () => {
+    function handleImageClick(e: React.MouseEvent) {
+        e.stopPropagation();
         setOpen(prev => !prev);
     };
 

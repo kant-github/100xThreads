@@ -1,5 +1,4 @@
 import { ChannelType } from "types/types";
-import ProjectsSection from "../projects-channel/ProjectsSection";
 import axios from "axios";
 import { API_URL } from "@/lib/apiAuthRoutes";
 import { useRecoilValue, useSetRecoilState } from "recoil";
@@ -8,6 +7,7 @@ import { userSessionAtom } from "@/recoil/atoms/atom";
 import { useEffect } from "react";
 import { projectChannelMessageAtom } from "@/recoil/atoms/organizationAtoms/projectChannelMessageAtom";
 import ProjectsChannelTopBar from "../projects-channel/ProjectsChannelTopBar";
+import ProjectsSectionRenderer from "../projects-channel/ProjectsSectionRenderer";
 
 
 interface WelcomeChannelViewProps {
@@ -27,7 +27,6 @@ export default function ({ channel }: WelcomeChannelViewProps) {
                     authorization: `Bearer ${session.user?.token}`,
                 }
             })
-            console.log(data);
             if (data.data) {
                 setProjectChannelMessages(data.data)
             }
@@ -45,7 +44,7 @@ export default function ({ channel }: WelcomeChannelViewProps) {
     return (
         <div className="dark:bg-neutral-900 h-full flex flex-col items-start w-full p-6 relative">
             <ProjectsChannelTopBar channel={channel} />
-            <ProjectsSection channel={channel} />
+            <ProjectsSectionRenderer channel={channel} />
         </div>
     );
 }

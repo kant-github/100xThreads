@@ -23,9 +23,6 @@ export default function ({ channel }: ProjectsProps) {
     const { subscribeToBackend, unsubscribeFromBackend, subscribeToHandler } = useWebSocket();
 
     function incomingNewTasksHandler(newMessage: TaskTypes) {
-        
-        console.log("new task is : ", newMessage);
-
         setProjectChannelMessages((prev: ProjectTypes[]) => prev.map((project) => {
             if (project.id === newMessage.project_id) {
                 return {
@@ -36,6 +33,7 @@ export default function ({ channel }: ProjectsProps) {
             return project;
         }));
 
+        // I am also updating the selectedPProject for the new upcoming task
         setSelectedProject((prev) => {
             if (prev && prev.id === newMessage.project_id) {
                 return {
@@ -57,6 +55,8 @@ export default function ({ channel }: ProjectsProps) {
             }
         }
     }, [channel.id, organizationId]);
+
+    
 
     return (
         <div className='w-full px-2 flex flex-col flex-1 min-h-0'>

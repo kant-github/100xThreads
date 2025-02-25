@@ -10,7 +10,7 @@ export default function ({ onClick, children, className = "", type = "button" }:
         <button
             type={type}
             onClick={onClick}
-            className={`${className} flex items-center gap-x-3 bg-neutral-500/30 text-xs px-4 py-2 text-[#f5a331] rounded-[6px] shadow-md shadow-zinc-900/40 hover:shadow-lg active:scale-95 transition-all duration-200 hover:-translate-y-0.5 mt-2`}>
+            className={`${className} flex items-center gap-x-2 bg-neutral-500/30 text-xs px-4 py-2 text-[#f5a331] rounded-[6px] shadow-md shadow-zinc-900/40 hover:shadow-lg active:scale-95 transition-all duration-200 hover:-translate-y-0.5 mt-2`}>
             {children}
         </button>
     );

@@ -41,15 +41,17 @@ export default function ({ task }: TaskProps) {
         }
         if (cardExpand || searchExpand) {
             document.addEventListener('mousedown', handleClickOutside);
+            console.log("added listeneer");
         }
         else {
             document.removeEventListener('mousedown', handleClickOutside);
+            console.log("removed listener");
         }
 
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         }
-    }, [cardExpand,]);
+    }, [cardExpand, searchExpand]);
 
     const { control, handleSubmit, reset, formState: { errors } } = useForm<ChooseAssigneeSchemaType>({
         resolver: zodResolver(chooseTaskAssigneesSchema),
@@ -67,15 +69,12 @@ export default function ({ task }: TaskProps) {
 
     function expandCardHandler() {
         if (cardExpand && searchExpand) {
-            console.log("rishi");
             setSearchExpand(false);
             setCardExpand(false);
         } else if (!cardExpand && searchExpand) {
-            console.log("somya");
             setSearchExpand(false);
             setCardExpand(false);
         } else if (cardExpand) {
-            console.log("falsed");
             setCardExpand(false);
         } else if (!cardExpand) {
             setCardExpand(true);
@@ -90,7 +89,7 @@ export default function ({ task }: TaskProps) {
             style={{ backgroundColor: `${task.color}CA` }}
             className={`p-3 rounded-[12px] select-none flex flex-col gap-y-1 relative cursor-grab transition-all duration-200 ease-in-out  ${searchExpand ? 'h-[25rem]' : ''} ${cardExpand ? 'h-[11rem]' : 'h-[8rem]'}`}
         >
-            <div className="text-neutral-950 text-md font-semibold">
+            <div className="text-neutral-950 text-base font-bold">
                 {task.title.substring(0, 15)}...
             </div>
             <div className="text-neutral-950 font-medium text-[13px] mt-1">
@@ -109,27 +108,29 @@ export default function ({ task }: TaskProps) {
                 </div>
                 <AnimatedTooltipPreview className="select-none" users={task.assignees!.map(assignee => assignee.organization_user)} />
                 {searchExpand && (
-                    <input
-                        type="text"
-                        placeholder="Search users..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        onClick={(e) => e.stopPropagation()}
-                        className="w-full px-3 py-1 border rounded-[8px] text-sm dark:bg-neutral-300/50 dark:border-neutral-300 dark:text-neutral-200 placeholder:text-xs placeholder:text-neutral-700"
-                    />
+                    <div className="w-full flex justify-end">
+                        <input
+                            type="text"
+                            placeholder="search users.."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onClick={(e) => e.stopPropagation()}
+                            className="w-3/4 px-3 py-1 border rounded-[8px] text-sm dark:bg-neutral-300/50 dark:border-neutral-300 dark:text-neutral-200 placeholder:text-xs placeholder:text-neutral-700"
+                        />
+                    </div>
                 )}
             </div>
             <UnclickableTicker className="absolute top-3 right-3 text-[9px]">
                 <FaCalendar className="text-amber-500" />
                 {format(new Date(task.due_date!), "EEE d MMM")}
             </UnclickableTicker>
-            <div className={`${cardExpand || searchExpand ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 ease-linear mt-2 flex flex-row gap-x-2 items-center`}>
+            <div className={`${cardExpand || searchExpand ? 'opacity-100 delay-200' : 'opacity-0'} transition-opacity ease-linear mt-2 flex flex-row gap-x-2 items-center`}>
                 {
                     task.tags.map((tag, index) => <UnclickableTicker key={index}>{tag}</UnclickableTicker>)
                 }
             </div>
             <div
-                className={`mt-2 block transition-opacity duration-400 ${searchExpand ? 'opacity-100' : 'opacity-0'}`}
+                className={`mt-2 block transition-opacity  ${searchExpand && 'delay-200'} ${searchExpand ? 'opacity-100' : 'opacity-0'}`}
                 onClick={(e) => e.stopPropagation()}
             >
                 <Controller
