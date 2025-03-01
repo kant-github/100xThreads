@@ -1,12 +1,10 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { ChannelType, ProjectTypes } from "types/types"
 import { LiaTasksSolid } from "react-icons/lia";
 import ProjectTimespan from "@/components/utility/ProjectTimespan";
 import ProjectTasksTicker from "@/components/utility/tickers/ProjectTasksTicker";
 import ProjectChatRenderer from "./ProjectChatRenderer";
-import { useRecoilState } from "recoil";
 import { MdChat } from "react-icons/md";
-import { projectChatSideBar } from "@/recoil/atoms/projects/projectChatSideBar";
 
 interface ProjectProps {
     project: ProjectTypes;
@@ -15,7 +13,7 @@ interface ProjectProps {
 }
 
 export default function ({ project, setSelectedProject, channel }: ProjectProps) {
-    const [projectSideBar, setProjectSideBar] = useRecoilState(projectChatSideBar);
+    const [projectSideBar, setProjectSideBar] = useState(false);
     return (
         <div key={project.id} className="flex flex-col items-start bg-white dark:bg-neutral-800 hover:dark:bg-[#242424] rounded-[14px] px-6 py-4 cursor-pointer hover:shadow-lg transition-shadow border dark:border-neutral-700 group relative">
             <MdChat className="absolute right-4 top-4 text-neutral-200" onClick={(e) => {
@@ -34,7 +32,7 @@ export default function ({ project, setSelectedProject, channel }: ProjectProps)
                     View Tasks →
                 </button>
             </div>
-            <ProjectChatRenderer channel={channel} open={projectSideBar} setOpen={setProjectSideBar} project={project} />
+            <ProjectChatRenderer project={project} channel={channel} open={projectSideBar} setOpen={setProjectSideBar} />
         </div>
     )
 }

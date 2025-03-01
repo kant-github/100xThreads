@@ -7,7 +7,6 @@ import { IoChevronBackOutline } from "react-icons/io5";
 import { useRecoilState } from "recoil";
 import { ChannelType, OrganizationUsersType, TaskAssigneeType } from "types/types";
 import ProjectChatRenderer from "./ProjectChatRenderer";
-import { projectChatSideBar } from "@/recoil/atoms/projects/projectChatSideBar";
 import { MdChat } from "react-icons/md";
 import { AnimatedTooltipPreview } from "@/components/utility/AnimatedTooltipPreview";
 
@@ -17,20 +16,22 @@ interface ProjectsChannelTopBarProps {
 }
 
 export default function ({ channel }: ProjectsChannelTopBarProps) {
-    const [projectSideBar, setProjectSideBar] = useRecoilState(projectChatSideBar);
+    const [projectSideBar, setProjectSideBar] = useState<boolean>(false);
     const [selectedProject, setSelectedProject] = useRecoilState(projectSelectedAtom);
     const [createTaskModal, setCreateTaskModal] = useState<boolean>(false);
     const [users, setUsers] = useState<TaskAssigneeType[]>([]);
 
     useEffect(() => {
         if (selectedProject) {
-            const allUsers = selectedProject.tasks?.flatMap((task) => task.assignees || []);
-            console.log("all users are : ", allUsers);
+            const allUsers = selectedProject.tasks?.flatMap((task) =>
+                (task.assignees || []).filter(assignee => assignee && assignee.organization_user)
+            );
             setUsers(allUsers || []);
         }
     }, [selectedProject]);
 
     const uniqueUsers: OrganizationUsersType[] = users
+        .filter(user => user && user.organization_user) // Ensure organization_user exists
         .map((user) => user.organization_user)
         .filter((value, index, self) =>
             index === self.findIndex((u) => u.user_id === value.user_id)
@@ -46,14 +47,18 @@ export default function ({ channel }: ProjectsChannelTopBarProps) {
 
     return (
         <div className="flex flex-row justify-between w-full">
-            <DashboardComponentHeading description={channel.description!}>{channel.title}</DashboardComponentHeading>
+            {selectedProject ? (
+                <DashboardComponentHeading description={selectedProject.description!}>{selectedProject.title}</DashboardComponentHeading>
+            ) : (
+                <DashboardComponentHeading description={channel.description!}>{channel.title}</DashboardComponentHeading>
+            )}
             {
                 selectedProject && (
                     <div className="flex items-center justify-center gap-x-3 relative">
                         <DesignButton onClick={backHandler} ><IoChevronBackOutline />Back</DesignButton>
                         <DesignButton onClick={() => setProjectSideBar(true)}> <MdChat className="transform scale-x-[-1]" /> Chat</DesignButton>
                         <DesignButton className={"whitespace-nowrap"} onClick={createTaskHandler}>Add Task</DesignButton>
-                        <AnimatedTooltipPreview users={uniqueUsers} className="mr-6 mt-1" />
+                        {/* <AnimatedTooltipPreview users={uniqueUsers} className="mr-6 mt-1" /> */}
 
                         <ProjectChatRenderer channel={channel} open={projectSideBar} setOpen={setProjectSideBar} project={selectedProject} />
                         {createTaskModal && <CreateTaskForm channel={channel} open={createTaskModal} setOpen={setCreateTaskModal} />}

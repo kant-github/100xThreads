@@ -18,12 +18,12 @@ export const AnimatedTooltip = ({ users }: AnimatedTooltipProps) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const springConfig = { stiffness: 100, damping: 5 };
   const x = useMotionValue(0);
-  
+
   const rotate = useSpring(
     useTransform(x, [-100, 100], [-45, 45]),
     springConfig
   );
-  
+
   const translateX = useSpring(
     useTransform(x, [-100, 100], [-50, 50]),
     springConfig
@@ -74,14 +74,18 @@ export const AnimatedTooltip = ({ users }: AnimatedTooltipProps) => {
               </motion.div>
             )}
           </AnimatePresence>
-          <Image
-            onMouseMove={handleMouseMove}
-            height={10}
-            width={10}
-            src={user.user.image}
-            alt={user.user.name}
-            className="object-cover !m-0 !p-0 object-top rounded-full h-8 w-8 border group-hover:scale-105 group-hover:z-30 border-neutral-300 relative transition duration-500"
-          />
+          {
+            user.user.image && (
+              <Image
+                onMouseMove={handleMouseMove}
+                height={10}
+                width={10}
+                src={user.user.image}
+                alt={user.user.name}
+                className="object-cover !m-0 !p-0 object-top rounded-full h-8 w-8 border group-hover:scale-105 group-hover:z-30 border-neutral-300 relative transition duration-500"
+              />
+            )
+          }
         </div>
       ))}
     </div>

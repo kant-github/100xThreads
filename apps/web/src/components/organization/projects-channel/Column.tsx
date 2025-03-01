@@ -1,12 +1,14 @@
 import React from 'react';
-import { TaskTypes } from "types/types";
+import { ChannelType, TaskTypes } from "types/types";
 import Task from './Task';
+import { useDroppable } from '@dnd-kit/core';
 
 interface ColumnProps {
     col: {
         status: string,
         tasksInColumn: TaskTypes[]
-    }
+    };
+    channel: ChannelType
 }
 
 const statusDisplayNames: Record<string, string> = {
@@ -15,15 +17,18 @@ const statusDisplayNames: Record<string, string> = {
     'DONE': 'Done'
 };
 
-export default function Column({ col }: ColumnProps) {
+export default function ({ col, channel }: ColumnProps) {
+    const { setNodeRef } = useDroppable({
+        id: col.status
+    })
     return (
         <div className="px-2 h-full">
             <h1 className="capitalize dark:text-neutral-200">
                 {statusDisplayNames[col.status] || col.status}
             </h1>
-            <div className="flex flex-col gap-y-2 mt-2 h-full">
+            <div className="flex flex-col gap-y-2 mt-2 h-full" ref={setNodeRef}>
                 {col.tasksInColumn && col.tasksInColumn.map((task) => (
-                    <Task task={task} />
+                    <Task key={task.id} channel={channel} task={task} />
                 ))}
             </div>
         </div>

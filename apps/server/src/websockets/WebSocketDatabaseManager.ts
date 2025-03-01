@@ -66,6 +66,8 @@ export default class WebSocketDatabaseManager {
                     return this.projectChatTypingEventHandler(message, tokenData);
                 case 'new-created-task':
                     return this.newTaskCreationHandler(message, tokenData);
+                case 'task-assignee-change':
+                    return this.taskAssigneeChangeHandler(message, tokenData);
             }
         }
         catch (err) {
@@ -111,7 +113,6 @@ export default class WebSocketDatabaseManager {
     }
 
     private async projectChatTypingEventHandler(message: WebSocketMessage, tokenData: any) {
-        console.log('typing data is : ', message.payload);
         const channelKey = this.getChannelKey({
             organizationId: tokenData.organizationId,
             channelId: message.payload.channelId,
@@ -158,8 +159,6 @@ export default class WebSocketDatabaseManager {
             channelId: message.payload.channelId,
             type: message.payload.type
         })
-
-        console.log("active poll message is : ", message);
 
         try {
             const existingVote = await this.prisma.pollVote.findUnique({
@@ -474,6 +473,52 @@ export default class WebSocketDatabaseManager {
             type: message.type,
             payload: task
         }));
+    }
+
+    private async taskAssigneeChangeHandler(message: WebSocketMessage, tokenData: any) {
+        const channelKey = this.getChannelKey({
+            organizationId: tokenData.organizationId,
+            channelId: message.payload.channelId,
+            type: message.payload.type
+        })
+
+        let assignee;
+        console.log("new task creation is : ", message);
+        if (message.payload.action === 'add') {
+            assignee = await this.prisma.taskAssignees.create({
+                data: {
+                    task_id: message.payload.task_id,
+                    org_user_id: message.payload.orgUserId,
+                }, 
+                include: {
+                    organization_user: {
+                        include: {
+                            user:true
+                        }
+                    }
+                }
+            })
+        } else if (message.payload.action === 'remove') {
+            await this.prisma.taskAssignees.delete({
+                where: {
+                    task_id_org_user_id: {
+                        task_id: message.payload.task_id,
+                        org_user_id: Number(message.payload.orgUserId)
+                    }
+                }
+            })
+        }
+
+        await this.publisher.publish(channelKey, JSON.stringify({
+            type: message.type,
+            payload: {
+                project_id: message.payload.project_id,
+                task_id: message.payload.task_id,
+                org_user_id: message.payload.orgUserId,
+                action: message.payload.action,
+                assignee: assignee
+            }
+        }))
     }
 
     private getChannelKey(subscription: ChannelSubscription): string {

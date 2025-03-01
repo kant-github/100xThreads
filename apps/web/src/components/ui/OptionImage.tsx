@@ -61,21 +61,23 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
                 content={
                     <div className='flex flex-col gap-y-1.5 px-8 py-6'>
                         <div className='flex items-center justify-center gap-x-2'>
-                            <Image
-                                src={organizationUser.user?.image}
-                                alt={`${organizationUser.user?.name}'s image`}
-                                height={46}
-                                width={46}
-                                className='rounded-full'
-                            />
-
+                            {organizationUser.user?.image && (
+                                <Image
+                                    src={organizationUser.user?.image}
+                                    alt={`${organizationUser.user?.name}'s image`}
+                                    height={46}
+                                    width={46}
+                                    className='rounded-full'
+                                />
+                            )}
                         </div>
                         <div className="flex flex-row justify-center items-center gap-x-2">
                             <div className="text-lg font-medium">{organizationUser.user?.name}</div>
                             <div className="flex items-center gap-x-1 text-green-500 text-[11px] "><IoIosCheckmarkCircleOutline size={14} /> {" "} Active</div>
                         </div>
+                        <WhiteText className="text-xs flex justify-center">Delhi, India</WhiteText>
                         <div className='flex items-center justify-center gap-x-2'>
-                            <WhiteText className="text-xs">Delhi, India</WhiteText>
+                            <WhiteText className="text-xs flex justify-center">{organizationUser.organization?.name}</WhiteText>
                             <OrganizationRolesTickerRenderer tickerText={organizationUser.role} />
                         </div>
                         <div className='flex items-end justify-center gap-x-2'>

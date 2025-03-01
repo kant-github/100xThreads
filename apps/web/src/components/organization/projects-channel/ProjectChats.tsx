@@ -75,15 +75,18 @@ export default function ({ open, project, channel, chats }: ProjectChatsProps) {
 
     function handleIncomingTypingEvents(newMessage: any) {
         console.log(newMessage);
-        const { userName, typingEventType } = newMessage;
-        setUsersTyping(prevUsers => {
-            if (typingEventType && !prevUsers.includes(userName)) {
-                return [...prevUsers, userName];
-            } else if (!typingEventType) {
-                return prevUsers.filter(user => user !== userName);
-            }
-            return prevUsers;
-        });
+        const { userName, typingEventType, project_id: incomingProjectID } = newMessage;
+
+        if (project.id === incomingProjectID) {
+            setUsersTyping(prevUsers => {
+                if (typingEventType && !prevUsers.includes(userName)) {
+                    return [...prevUsers, userName];
+                } else if (!typingEventType) {
+                    return prevUsers.filter(user => user !== userName);
+                }
+                return prevUsers;
+            });
+        }
     }
 
     function handleIncomingDeleteMessage(newMessage: any) {
@@ -151,6 +154,7 @@ export default function ({ open, project, channel, chats }: ProjectChatsProps) {
         const newTypingdata = {
             user_id: session.user?.id,
             userName: session.user?.name,
+            project_id: project.id,
             channel_id: channel.id,
             typingEventType: type,
         }

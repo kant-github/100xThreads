@@ -167,7 +167,7 @@ export interface TaskAssigneeType {
   id: number;
   task_id: string;
   org_user_id: number;
-  assigned_at: Date;
+  assigned_at?: Date;
   organization_user: OrganizationUsersType;
 }
 

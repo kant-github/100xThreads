@@ -20,6 +20,8 @@ export default function ({ channel }: WelcomeChannelViewProps) {
     const setProjectChannelMessages = useSetRecoilState(projectChannelMessageAtom);
 
 
+
+
     async function getWelcomeMessages() {
         try {
             const { data } = await axios.get(`${API_URL}/organizations/${organization?.id}/channels/${channel.id}/project-channel`, {

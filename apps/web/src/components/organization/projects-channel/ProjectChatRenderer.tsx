@@ -14,12 +14,13 @@ import { projectChatsAtom } from "@/recoil/atoms/projects/projectChatsAtom";
 import Spinner from "@/components/loaders/Spinner";
 import UnclickableTicker from "@/components/ui/UnclickableTicker";
 import { format } from 'date-fns'
+import { projectSelectedAtom } from "@/recoil/atoms/projects/projectSelectedAtom";
 
 interface ProjectMessagesProps {
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
+    channel: ChannelType;
     project: ProjectTypes;
-    channel: ChannelType
 }
 
 export default function ({ channel, open, setOpen, project }: ProjectMessagesProps) {
@@ -27,8 +28,12 @@ export default function ({ channel, open, setOpen, project }: ProjectMessagesPro
     const [chats, setChats] = useRecoilState<ProjectChatTypes[]>(projectChatsAtom);
     const session = useRecoilValue(userSessionAtom);
     const organization = useRecoilValue(organizationAtom);
+
     let lastCursor: string | null = null;
 
+    if (open) {
+        console.log("project is ", project?.title);
+    }
 
     useEffect(() => {
         const SIDEBAR_ANIMATION_DURATION = 300;
@@ -38,7 +43,7 @@ export default function ({ channel, open, setOpen, project }: ProjectMessagesPro
             const timer = setTimeout(() => {
                 const fetchInitialChats = async () => {
                     try {
-                        const url = `${API_URL}/organizations/${organization?.id}/channels/${channel.id}/project/${project.id}/chats?pageSize=50`;
+                        const url = `${API_URL}/organizations/${organization?.id}/channels/${channel.id}/project/${project?.id}/chats?pageSize=50`;
                         const { data } = await axios.get(url, {
                             headers: {
                                 authorization: `Bearer ${session.user?.token}`,
@@ -62,7 +67,7 @@ export default function ({ channel, open, setOpen, project }: ProjectMessagesPro
                 setLoading(true);
             };
         }
-    }, [project.id, session.user, open]);
+    }, [project?.id, session.user, open]);
 
     return (
         <UtilitySideBar
@@ -72,18 +77,18 @@ export default function ({ channel, open, setOpen, project }: ProjectMessagesPro
             content={
                 <div className="h-full flex flex-col px-4 py-2 min-w-[300px]">
                     <div className="h-16 flex flex-row justify-between items-center">
-                        <DashboardComponentHeading className="ml-2" description={project.description!}>
-                            {project.title}
+                        <DashboardComponentHeading className="ml-2" description={project?.description!}>
+                            {project?.title}
                         </DashboardComponentHeading>
                         <div className="flex flex-row items-end gap-x-3">
                             <div>
-                            <ProjectTasksTicker>
-                                <LiaTasksSolid size={14} />
-                                {project?.tasks?.length} tasks
-                            </ProjectTasksTicker>
+                                <ProjectTasksTicker>
+                                    <LiaTasksSolid size={14} />
+                                    {project?.tasks?.length} tasks
+                                </ProjectTasksTicker>
                             </div>
                             <UnclickableTicker>
-                            Due : {format(new Date(project.due_date), "EEE d MMM")}
+                                Due: {project?.due_date ? format(new Date(project?.due_date), "EEE d MMM") : 'No due date'}
                             </UnclickableTicker>
                         </div>
                     </div>
@@ -98,7 +103,7 @@ export default function ({ channel, open, setOpen, project }: ProjectMessagesPro
                                 open={open}
                                 setOpen={setOpen}
                                 channel={channel}
-                                project={project}
+                                project={project!}
                             />
                         )}
                     </div>
