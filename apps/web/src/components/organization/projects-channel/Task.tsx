@@ -130,7 +130,7 @@ export default function ({ task, channel }: TaskProps) {
                         className='bg-neutral-300/50 rounded-[4px] cursor-pointer p-[3px] hover:bg-neutral-300/70 transition-colors'
                     />
                 </div>
-                {/* <AnimatedTooltipPreview className="select-none" users={task.assignees!.map(assignee => assignee.organization_user)} /> */}
+                <AnimatedTooltipPreview className="select-none" users={task.assignees!.map(assignee => assignee.organization_user)} />
                 {searchExpand && (
                     <div className="w-full flex justify-end">
                         <input

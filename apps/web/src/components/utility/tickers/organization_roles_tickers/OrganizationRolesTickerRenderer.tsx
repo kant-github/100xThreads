@@ -3,6 +3,7 @@ interface TickerProps {
 }
 
 export default function ({ tickerText }: TickerProps) {
+    console.log("ticker text is : ", tickerText);
     switch (tickerText) {
         case 'ADMIN':
             return <AdminTicker tickerText={tickerText} />
