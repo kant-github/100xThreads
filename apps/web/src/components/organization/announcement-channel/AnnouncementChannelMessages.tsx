@@ -53,7 +53,7 @@ export default function ({ channel }: AnnouncementChannelMessagesProps) {
                     ) : (
                         <div className='grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12 mx-4'>
                             {announcementChannelMessages.map((announcement) => (
-                                <div key={announcement.id} className="relative">
+                                <div key={announcement.id}>
                                     <PinnedCard announcement={announcement} />
                                 </div>
                             ))}

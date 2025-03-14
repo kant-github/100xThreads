@@ -13,6 +13,7 @@ import { HiOutlineDotsVertical } from "react-icons/hi";
 import AnnouncementOptionMenu from '../organization/announcement-channel/AnnouncementOptionMenu';
 import GuardComponent from '@/rbac/GuardComponent';
 import { Action, Subject } from 'types/permission';
+import OptionImage from '../ui/OptionImage';
 
 interface PinnedCardProps {
     className?: string;
@@ -32,7 +33,7 @@ export default function PinnedCard({ className, announcement }: PinnedCardProps)
 
     return (
         <div onClick={() => setZoom((prev) => !prev)}
-            className={`relative flex flex-col items-start shadow-lg gap-y-4 select-none bg-neutral-900 rounded-[14px] w-full pt-8 px-5 pb-4 transition-all duration-300 ease-in-out hover:scale-[1.01] ${zoom ? 'md:row-span-2 h-44' : 'h-40'} ${className} `}
+            className={`relative flex flex-col items-start shadow-lg gap-y-4 select-none bg-neutral-900 rounded-[14px] w-full pt-8 px-5 pb-4 transition-all duration-300 ease-in-out ${zoom ? 'md:row-span-2 min-h-[11rem]' : 'min-h-[10rem]'} ${className} `}
         >
             <span className="flex items-center gap-x-1 absolute bottom-2 right-3 text-neutral-500">
                 <FaEye size={12} />
@@ -69,13 +70,19 @@ export default function PinnedCard({ className, announcement }: PinnedCardProps)
                 </span>
             </div>
 
-            <div className="flex items-center gap-x-2">
-                <WhiteText className="text-[10px] font-medium px-3 py-1 rounded-[4px] border-[1px] border-neutral-600 flex flex-row justify-start items-center gap-x-2 cursor-pointer hover:bg-neutral-800 transition-colors duration-200">
-                    <ImBullhorn />
-                    {announcement.creator.user.name}
-                </WhiteText>
-                <PriorityTicker className="" tickerText={announcement.priority} />
-            </div>
+            <OptionImage
+                content={
+                    <div className="flex items-center gap-x-2">
+                        <WhiteText className="text-[10px] font-medium px-3 py-1 rounded-[4px] border-[1px] border-neutral-600 flex flex-row justify-start items-center gap-x-2 cursor-pointer hover:bg-neutral-800 transition-colors duration-200">
+                            <ImBullhorn />
+                            {announcement.creator.user.name}
+                        </WhiteText>
+                        <PriorityTicker className="" tickerText={announcement.priority} />
+                    </div>
+                }
+                userId={announcement.creator.user.id}
+                organizationId={organization?.id!}
+            />
 
             <div className={`transition-all w-full duration-700 ease-in-out flex flex-col gap-y-4 items-start ${zoom ? 'opacity-100 max-h-20' : 'opacity-0 max-h-0 overflow-hidden'}`}>
                 <div className="flex flex-row items-center justify-start gap-x-2 md:gap-x-3 text-xs flex-wrap ">
