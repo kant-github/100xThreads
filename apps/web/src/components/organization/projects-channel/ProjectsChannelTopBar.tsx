@@ -58,8 +58,6 @@ export default function ({ channel }: ProjectsChannelTopBarProps) {
                         <DesignButton onClick={backHandler} ><IoChevronBackOutline />Back</DesignButton>
                         <DesignButton onClick={() => setProjectSideBar(true)}> <MdChat className="transform scale-x-[-1]" /> Chat</DesignButton>
                         <DesignButton className={"whitespace-nowrap"} onClick={createTaskHandler}>Add Task</DesignButton>
-                        {/* <AnimatedTooltipPreview users={uniqueUsers} className="mr-6 mt-1" /> */}
-
                         <ProjectChatRenderer channel={channel} open={projectSideBar} setOpen={setProjectSideBar} project={selectedProject} />
                         {createTaskModal && <CreateTaskForm channel={channel} open={createTaskModal} setOpen={setCreateTaskModal} />}
                     </div>

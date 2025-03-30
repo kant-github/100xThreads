@@ -10,6 +10,7 @@ import { MouseDownEvent } from "emoji-picker-react/dist/config/config";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import MessageOptionsMenu from "@/components/ui/MessageOptionsMenu";
 import OrganizationRolesTickerRenderer from "@/components/utility/tickers/organization_roles_tickers/OrganizationRolesTickerRenderer";
+import OptionImage from "@/components/ui/OptionImage";
 
 interface ReactionPayload {
     message_id: string;
@@ -48,6 +49,7 @@ export default function ({ message, channel }: MessagesProps) {
     const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
     const session = useRecoilValue(userSessionAtom);
     const isCurrentUser = Number(session.user?.id) === Number(message.org_user_id);
+    console.log("message is : ",message);
 
     const handleEmojiClick = () => {
         setShowEmojiPicker(!showEmojiPicker);
@@ -61,7 +63,11 @@ export default function ({ message, channel }: MessagesProps) {
     return (
         <div className={`flex gap-x-2 relative select-none ${isCurrentUser ? 'flex-row-reverse' : 'flex-row'} w-full`}>
             <div className="flex-shrink-0 gap-x-1">
-                <Image src={message.organization_user?.user.image!} width={39} height={39} className="rounded-full" alt="user-image" />
+                <OptionImage
+                    organizationId={message.channel?.organization.id!}
+                    userId={message.organization_user?.user.id!}
+                    content={<Image src={message.organization_user?.user.image!} width={39} height={39} className="rounded-full" alt="user-image" />}
+                />
             </div>
             <div className={`flex flex-col max-w-[70%] ${isCurrentUser ? 'items-end' : 'items-start'}`}>
                 <div className={`flex items-center justify-start gap-x-2 ${isCurrentUser ? 'flex-row-reverse' : 'flex-row'}`}>

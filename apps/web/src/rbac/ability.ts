@@ -17,6 +17,8 @@ export class Ability {
             case UserRole.MEMBER:
                 this.addMemberRules();
                 break;
+            // case UserRole.GUEST:
+            //     this.rules.push({action: Action.READ})
         }
     }
 

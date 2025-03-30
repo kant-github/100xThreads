@@ -154,16 +154,26 @@ export default function ({ channel }: ProjectsProps) {
         });
     }
 
+    function incomingNewProjectHandler(newMessage: any) {
+        console.log("new project is ", newMessage);
+        console.log("project channel messages are : ", projectsChannelMessages);
+        setProjectChannelMessages(prev => [newMessage, ...prev]);
+    }
+
     useEffect(() => {
         if (channel.id && organizationId) {
             subscribeToBackend(channel.id, organizationId, 'new-created-task');
             subscribeToBackend(channel.id, organizationId, 'task-assignee-change');
+            subscribeToBackend(channel.id, organizationId, 'new-project');
             const unsubscribeNewAssigneeHandler = subscribeToHandler('task-assignee-change', incomingNewAssigneeHandler);
-            const unsubscribeNewCreatedTas = subscribeToHandler('new-created-task', incomingNewTasksHandler)
+            const unsubscribeNewCreatedTask = subscribeToHandler('new-created-task', incomingNewTasksHandler)
+            const unsubscribeNewProjectHandler = subscribeToHandler('new-project', incomingNewProjectHandler)
 
             return () => {
-                unsubscribeNewCreatedTas();
+                unsubscribeNewCreatedTask();
                 unsubscribeNewAssigneeHandler();
+                unsubscribeNewProjectHandler();
+                unsubscribeFromBackend(channel.id, organizationId, 'new-project');
                 unsubscribeFromBackend(channel.id, organizationId, 'new-created-task');
                 unsubscribeFromBackend(channel.id, organizationId, 'task-assignee-change');
             }

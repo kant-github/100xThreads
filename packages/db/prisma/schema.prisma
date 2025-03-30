@@ -108,7 +108,8 @@ model OrganizationUsers {
   CreatedAnnouncements Announcement[]
   Chats                Chats[]
   Issues               Issues[]
-  TaskAssignees        TaskAssignees[]
+  CreatedProjects      Project[]       @relation("ProjectCreator")
+  ProjectMemberships   ProjectMember[]
   ProjectChat          ProjectChat[]
 
   @@unique([organization_id, user_id])
@@ -181,18 +182,37 @@ model WelcomedUser {
 }
 
 model Project {
-  id          String        @id @default(uuid()) @db.Uuid
-  channel     Channel       @relation(fields: [channel_id], references: [id], onDelete: Cascade)
-  channel_id  String        @db.Uuid
-  title       String        @db.VarChar(191)
+  id          String            @id @default(uuid()) @db.Uuid
+  channel     Channel           @relation(fields: [channel_id], references: [id], onDelete: Cascade)
+  channel_id  String            @db.Uuid
+  title       String            @db.VarChar(191)
   description String?
-  created_at  DateTime      @default(now())
-  due_date    DateTime      @default(now())
+  created_at  DateTime          @default(now())
+  due_date    DateTime          @default(now())
+  // Add creator information
+  creator     OrganizationUsers @relation("ProjectCreator", fields: [creator_id], references: [id], onDelete: Restrict)
+  creator_id  Int
   tasks       Tasks[]
   ProjectChat ProjectChat[]
+  // Add relation to project members
+  members     ProjectMember[]
 
   @@index([channel_id])
   @@map("projects")
+}
+
+model ProjectMember {
+  id                Int               @id @default(autoincrement())
+  project           Project           @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  project_id        String            @db.Uuid
+  organization_user OrganizationUsers @relation(fields: [org_user_id], references: [id], onDelete: Cascade)
+  org_user_id       Int
+  role              ProjectMemberRole @default(MEMBER)
+  joined_at         DateTime          @default(now())
+  tasks             TaskAssignees[]
+
+  @@unique([project_id, org_user_id])
+  @@map("project_members")
 }
 
 model ProjectChat {
@@ -239,14 +259,14 @@ model Tasks {
 }
 
 model TaskAssignees {
-  id                Int               @id @default(autoincrement())
-  task              Tasks             @relation(fields: [task_id], references: [id], onDelete: Cascade)
-  task_id           String            @db.Uuid
-  organization_user OrganizationUsers @relation(fields: [org_user_id], references: [id], onDelete: Cascade)
-  org_user_id       Int
-  assigned_at       DateTime          @default(now())
+  id                Int           @id @default(autoincrement())
+  task              Tasks         @relation(fields: [task_id], references: [id], onDelete: Cascade)
+  task_id           String        @db.Uuid
+  project_member    ProjectMember @relation(fields: [project_member_id], references: [id], onDelete: Cascade)
+  project_member_id Int
+  assigned_at       DateTime      @default(now())
 
-  @@unique([task_id, org_user_id])
+  @@unique([task_id, project_member_id])
   @@map("task_assignees")
 }
 
@@ -517,6 +537,11 @@ enum UserRole {
   IT_SUPPORT
   HR_MANAGER
   FINANCE_MANAGER
+}
+
+enum ProjectMemberRole {
+  ADMIN
+  MEMBER
 }
 
 enum ChannelType {

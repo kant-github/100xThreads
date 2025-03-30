@@ -19,8 +19,6 @@ export async function storeOrganization(req: Request, res: Response) {
         return;
     }
 
-    console.log(req.body);
-
     const {
         organizationName,
         image,
@@ -43,12 +41,8 @@ export async function storeOrganization(req: Request, res: Response) {
 
 
     if (hasPassword === 'true' && password) {
-        console.log("client sent : ", password);
         const [clientSalt, clientHash] = password.split(":");
         finalHash = await bcrypt.hash(clientHash + clientSalt, 10);
-        console.log("client salt : ", clientSalt);
-        console.log("client hash : ", clientHash);
-        console.log("final hash : ", finalHash);
 
         finalSalt = clientSalt;
     }

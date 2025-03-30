@@ -10,9 +10,7 @@ export default function ({ open, setOpen, content }: UtilityMiniSideBarProps) {
     const ref = useRef<HTMLDivElement | null>(null)
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            console.log("clicked");
             if (ref.current && !ref.current.contains(event.target as Node)) {
-                console.log("clicked outiside");
                 setOpen(false);
             }
         }

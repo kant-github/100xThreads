@@ -13,6 +13,7 @@ import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationA
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import { ChannelType } from "types/types";
 import { projectChannelMessageAtom } from "@/recoil/atoms/organizationAtoms/projectChannelMessageAtom";
+import { useWebSocket } from "@/hooks/useWebsocket";
 
 interface CreateProjectsFormProps {
     open: boolean;
@@ -35,6 +36,7 @@ export default function ({ open, setOpen, className, channel }: CreateProjectsFo
     const session = useRecoilValue(userSessionAtom);
     const ref = useRef<HTMLDivElement>(null);
     const setProjectChannelMessagesAtom = useSetRecoilState(projectChannelMessageAtom);
+    const { sendMessage } = useWebSocket()
     const { handleSubmit, control, formState: { errors } } = useForm<ProjectSchema>({
         resolver: zodResolver(createProjectSchema),
         defaultValues: {
@@ -58,22 +60,24 @@ export default function ({ open, setOpen, className, channel }: CreateProjectsFo
 
     async function submitHandler(formData: ProjectSchema) {
         console.log(formData);
-        try {
-            setIsSubmitting(true);
-            const { data } = await axios.post(`${API_URL}/organizations/${organization?.id}/channels/${channel.id}/project-channel`, formData, {
-                headers: {
-                    authorization: `Bearer ${session.user?.token}`
-                }
-            })
-            setProjectChannelMessagesAtom(prev => [...prev, data.data]);
-            console.log("project data is : ", data);
+        console.log(channel.id);
+        sendMessage(formData, channel.id, 'new-project');
+        // try {
+        //     setIsSubmitting(true);
+        //     const { data } = await axios.post(`${API_URL}/organizations/${organization?.id}/channels/${channel.id}/project-channel`, formData, {
+        //         headers: {
+        //             authorization: `Bearer ${session.user?.token}`
+        //         }
+        //     })
+        //     setProjectChannelMessagesAtom(prev => [...prev, data.data]);
+        //     console.log("project data is : ", data);
 
-        } catch (err) {
-            console.log("error in creation of anouncement in frontend ", err)
-        } finally {
-            setIsSubmitting(false);
-            setOpen(false);
-        }
+        // } catch (err) {
+        //     console.log("error in creation of anouncement in frontend ", err)
+        // } finally {
+        //     setIsSubmitting(false);
+        //     setOpen(false);
+        // }
     }
     return (
         <div className={`${className} absolute right-8`} ref={ref}>

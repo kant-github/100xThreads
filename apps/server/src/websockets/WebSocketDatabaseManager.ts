@@ -58,6 +58,8 @@ export default class WebSocketDatabaseManager {
                     return this.welcomeUserHandler(message, tokenData);
                 case 'new-announcement':
                     return this.announcementHandler(message, tokenData);
+                case 'new-project':
+                    return this.newProjectCreationHandler(message, tokenData);
                 case 'project-channel-chat-messages':
                     return this.insertProjectChannelMessage(message, tokenData);
                 case 'project-channel-edit-message':
@@ -333,7 +335,6 @@ export default class WebSocketDatabaseManager {
             type: message.payload.type
         })
 
-        console.log("Edit message handler called with data : ", message);
 
         const currentUSerMEssageCheck = await this.prisma.chats.findUnique({
             where: { id: message.payload.messageId },
@@ -356,8 +357,6 @@ export default class WebSocketDatabaseManager {
                 }
             })
 
-            console.log("message data is : ", messageData)
-
             await this.publisher.publish(channelKey, JSON.stringify({
                 payload: messageData,
                 type: message.type
@@ -366,8 +365,7 @@ export default class WebSocketDatabaseManager {
     }
 
     private async insertProjectChannelMessage(message: WebSocketMessage, tokenData: any) {
-        console.log("got messages");
-        console.log(message.payload);
+
         await this.prisma.projectChat.create({
             data: {
                 id: message.payload.id,
@@ -399,7 +397,6 @@ export default class WebSocketDatabaseManager {
             type: message.payload.type
         })
 
-        console.log("Edit message handler called with data : ", message);
 
         const currentUSerMEssageCheck = await this.prisma.projectChat.findUnique({
             where: { id: message.payload.messageId },
@@ -422,8 +419,6 @@ export default class WebSocketDatabaseManager {
                 }
             })
 
-            console.log("message data is : ", messageData)
-
             await this.publisher.publish(channelKey, JSON.stringify({
                 payload: messageData,
                 type: message.type
@@ -438,7 +433,6 @@ export default class WebSocketDatabaseManager {
             type: message.payload.type
         })
 
-        console.log("new task creation is : ", message);
 
         const task = await this.prisma.tasks.create({
             data: {
@@ -480,33 +474,79 @@ export default class WebSocketDatabaseManager {
             organizationId: tokenData.organizationId,
             channelId: message.payload.channelId,
             type: message.payload.type
-        })
+        });
 
         let assignee;
-        console.log("new task creation is : ", message);
+
         if (message.payload.action === 'add') {
-            assignee = await this.prisma.taskAssignees.create({
-                data: {
-                    task_id: message.payload.task_id,
-                    org_user_id: message.payload.orgUserId,
-                }, 
-                include: {
-                    organization_user: {
-                        include: {
-                            user:true
-                        }
-                    }
-                }
-            })
-        } else if (message.payload.action === 'remove') {
-            await this.prisma.taskAssignees.delete({
+            // Check if the assignee already exists
+            console.log("task id is : ", message.payload.task_id);
+            console.log("org user id is : ", message.payload.orgUserId);
+            const existingAssignee = await this.prisma.taskAssignees.findUnique({
                 where: {
                     task_id_org_user_id: {
                         task_id: message.payload.task_id,
                         org_user_id: Number(message.payload.orgUserId)
                     }
                 }
-            })
+            });
+
+            console.log("existing task assignee is : ", existingAssignee);
+
+            // Only create if the assignee doesn't already exist
+            if (!existingAssignee) {
+                assignee = await this.prisma.taskAssignees.create({
+                    data: {
+                        task_id: message.payload.task_id,
+                        org_user_id: message.payload.orgUserId,
+                    },
+                    include: {
+                        organization_user: {
+                            include: {
+                                user: true
+                            }
+                        }
+                    }
+                });
+            } else {
+                // If assignee already exists, just fetch the data to return
+                assignee = await this.prisma.taskAssignees.findUnique({
+                    where: {
+                        task_id_org_user_id: {
+                            task_id: message.payload.task_id,
+                            org_user_id: Number(message.payload.orgUserId)
+                        }
+                    },
+                    include: {
+                        organization_user: {
+                            include: {
+                                user: true
+                            }
+                        }
+                    }
+                });
+            }
+        } else if (message.payload.action === 'remove') {
+            // Check if the assignee exists before trying to delete
+            const existingAssignee = await this.prisma.taskAssignees.findUnique({
+                where: {
+                    task_id_org_user_id: {
+                        task_id: message.payload.task_id,
+                        org_user_id: Number(message.payload.orgUserId)
+                    }
+                }
+            });
+
+            if (existingAssignee) {
+                await this.prisma.taskAssignees.delete({
+                    where: {
+                        task_id_org_user_id: {
+                            task_id: message.payload.task_id,
+                            org_user_id: Number(message.payload.orgUserId)
+                        }
+                    }
+                });
+            }
         }
 
         await this.publisher.publish(channelKey, JSON.stringify({
@@ -518,6 +558,33 @@ export default class WebSocketDatabaseManager {
                 action: message.payload.action,
                 assignee: assignee
             }
+        }));
+    }
+
+    private async newProjectCreationHandler(message: WebSocketMessage, tokenData: any) {
+
+        const channelKey = this.getChannelKey({
+            organizationId: tokenData.organizationId,
+            channelId: message.payload.channelId,
+            type: message.payload.type
+        })
+
+        const project = await this.prisma.project.create({
+            data: {
+                channel_id: message.payload.channelId!,
+                title: message.payload.title,
+                description: message.payload.description,
+                due_date: new Date(message.payload.dueDate)
+            },
+            include: {
+                tasks: true
+            }
+        })
+
+        console.log("new createed project is : ", project);
+        await this.publisher.publish(channelKey, JSON.stringify({
+            type: message.type,
+            payload: project
         }))
     }
 
