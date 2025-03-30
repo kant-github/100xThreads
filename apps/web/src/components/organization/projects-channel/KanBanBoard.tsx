@@ -14,7 +14,7 @@ const statuses = ['TODO', 'IN_PROGRESS', 'DONE']
 
 export default function KanbanBoard({ tasks, channel }: KanBanBoardProps) {
     const organizationId = useRecoilValue(organizationIdAtom);
-
+    console.log("tasks are : ", tasks);
     const column = statuses.map((status) => {
         const tasksInColumn = tasks.filter(task => task.status === status);
         return {

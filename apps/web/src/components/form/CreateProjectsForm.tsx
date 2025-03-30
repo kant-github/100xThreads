@@ -11,9 +11,10 @@ import { API_URL } from "@/lib/apiAuthRoutes";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import { userSessionAtom } from "@/recoil/atoms/atom";
-import { ChannelType } from "types/types";
+import { ChannelType, OrganizationUsersType } from "types/types";
 import { projectChannelMessageAtom } from "@/recoil/atoms/organizationAtoms/projectChannelMessageAtom";
 import { useWebSocket } from "@/hooks/useWebsocket";
+import { organizationUserAtom } from "@/recoil/atoms/organizationAtoms/organizationUserAtom";
 
 interface CreateProjectsFormProps {
     open: boolean;
@@ -34,6 +35,7 @@ export default function ({ open, setOpen, className, channel }: CreateProjectsFo
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const organization = useRecoilValue(organizationAtom);
     const session = useRecoilValue(userSessionAtom);
+    const organizationUser = useRecoilValue<OrganizationUsersType>(organizationUserAtom);
     const ref = useRef<HTMLDivElement>(null);
     const setProjectChannelMessagesAtom = useSetRecoilState(projectChannelMessageAtom);
     const { sendMessage } = useWebSocket()
@@ -59,9 +61,7 @@ export default function ({ open, setOpen, className, channel }: CreateProjectsFo
     }, [open])
 
     async function submitHandler(formData: ProjectSchema) {
-        console.log(formData);
-        console.log(channel.id);
-        sendMessage(formData, channel.id, 'new-project');
+        sendMessage({ organizationUser, ...formData }, channel.id, 'new-project');
         // try {
         //     setIsSubmitting(true);
         //     const { data } = await axios.post(`${API_URL}/organizations/${organization?.id}/channels/${channel.id}/project-channel`, formData, {
