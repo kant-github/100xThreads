@@ -14,7 +14,8 @@ export enum Subject {
     POLL = 'poll',
     EVENT = 'event',
     ORGANIZATION = 'organization',
-    ANNOUNCEMENT = 'announcement'
+    ANNOUNCEMENT = 'announcement',
+    PROJECT_CHAT = 'project_chat'
 }
 
 export type Permission = {

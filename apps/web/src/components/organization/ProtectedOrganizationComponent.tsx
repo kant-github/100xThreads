@@ -20,6 +20,7 @@ import { organizationChannelsAtom, organizationEventChannelsAtom, organizationWe
 import { organizationUsersAtom } from "@/recoil/atoms/organizationAtoms/organizationUsersAtom";
 import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import { useWebSocket } from "@/hooks/useWebsocket";
+import OptionImage from "../ui/OptionImage";
 
 interface props {
     metaData: protectedOrganizationMetadata,
@@ -106,7 +107,13 @@ export default function ({ metaData, organizationId, setFlag }: props) {
                     <div className="flex flex-col justify-start gap-y-3 mt-4 w-full">
                         <div className="flex items-center gap-x-2">
                             <span className="text-xs text-zinc-300 tracking-wide">Owned by </span>
-                            <div className="text-xs dark:text-zinc-200 font-semibold border-[0.5px] border-zinc-600 py-1 px-2 md:px-3 rounded-[8px] dark:bg-zinc-800/20 dark:hover:bg-zinc-500/40 truncate max-w-[120px] sm:max-w-none cursor-pointer">{metaData.owner.name}</div>
+                            <OptionImage
+                                content={
+                                    <div className="text-xs dark:text-zinc-200 font-semibold border-[0.5px] border-zinc-600 py-1 px-2 md:px-3 rounded-[8px] dark:bg-zinc-800/20 dark:hover:bg-zinc-500/40 truncate max-w-[120px] sm:max-w-none cursor-pointer">{metaData.owner.name}</div>
+                                }
+                                organizationId={organizationId}
+                                userId={metaData.owner.id}
+                            />
                         </div>
                         <div className="text-xs text-zinc-300 tracking-wide">Organization created on {date}</div>
                         <div className="flex flex-row gap-x-2 md:gap-x-3 text-xs flex-wrap">

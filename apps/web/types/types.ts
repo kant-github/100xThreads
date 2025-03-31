@@ -125,8 +125,21 @@ export type ProjectTypes = {
   title: string;
   description?: string | null;
   created_at: Date;
-  due_date: Date
+  due_date: Date;
+  creator_id: number;
+  creator: OrganizationUsersType;
   tasks?: TaskTypes[];
+  members?: ProjectMemberType[];
+}
+
+
+export type ProjectMemberType = {
+  id: number;
+  project_id: string;
+  org_user_id: number;
+  role: ProjectMemberRole;
+  joined_at: Date;
+  organization_user: OrganizationUsersType;
 }
 
 export type ProjectChatTypes = {
@@ -166,9 +179,10 @@ export interface TaskTypes {
 export interface TaskAssigneeType {
   id: number;
   task_id: string;
-  org_user_id: number;
+  task: TaskTypes;
+  project_member: ProjectMemberType;
+  project_member_id: Number;
   assigned_at?: Date;
-  organization_user: OrganizationUsersType;
 }
 
 export type WelcomeChannel = {
@@ -247,6 +261,11 @@ export enum UserRole {
   IT_SUPPORT = 'IT_SUPPORT',
   HR_MANAGER = 'HR_MANAGER',
   FINANCE_MANAGER = 'FINANCE_MANAGER'
+}
+
+export enum ProjectMemberRole {
+  ADMIN = 'ADMIM',
+  MEMBER = 'MEMBER'
 }
 
 export enum Priority {

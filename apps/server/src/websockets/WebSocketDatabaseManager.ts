@@ -660,6 +660,8 @@ export default class WebSocketDatabaseManager {
             }
         }));
     }
+
+
     private async newProjectCreationHandler(message: WebSocketMessage, tokenData: any) {
 
         const channelKey = this.getChannelKey({
@@ -667,8 +669,6 @@ export default class WebSocketDatabaseManager {
             channelId: message.payload.channelId,
             type: message.payload.type
         })
-
-        console.log("message paload is : ", message.payload);
 
         const project = await this.prisma.project.create({
             data: {
@@ -683,7 +683,14 @@ export default class WebSocketDatabaseManager {
             }
         })
 
-        console.log("new createed project is : ", project);
+        await this.prisma.projectMember.create({
+            data: {
+                project_id: project.id,
+                org_user_id: message.payload.organizationUser.id,
+                role: 'ADMIN'
+            }
+        })
+
         await this.publisher.publish(channelKey, JSON.stringify({
             type: message.type,
             payload: project

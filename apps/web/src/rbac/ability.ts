@@ -1,5 +1,5 @@
 import { Action, Permission, Subject } from "types/permission";
-import { UserRole } from "types/types";
+import { ProjectMemberRole, UserRole } from "types/types";
 
 export class Ability {
     private rules: Permission[] = [];
