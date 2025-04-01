@@ -36,7 +36,7 @@ const ORG_ROLE_OVERRIDES = {
 
 
 export function checkProjectPermission(
-  organizationUserId: string,
+  organizationUserId: number,
   projectId: string,
   permission: ProjectPermission,
   userOrgRole: UserRole,
@@ -53,14 +53,12 @@ export function checkProjectPermission(
   console.log("project members are : ", projectMembers);
 
   // Find the user's role in this specific project
-  const userProjectMember = projectMembers.find(member => member.org_user_id === Number(organizationUserId));
+  const userProjectMember = projectMembers.find(member => member.org_user_id === organizationUserId);
   console.log("whether current user exists ? ", userProjectMember);
   console.log("and its role is : ", userProjectMember?.role);
   if (!userProjectMember) {
     return false; // User is not a member of this project
   }
-
-  console.log("logging : ", PROJECT_PERMISSIONS['ADMIM'])
 
   const check = PROJECT_PERMISSIONS[userProjectMember.role]?.includes(permission);
   console.log("check is : ", check);

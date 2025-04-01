@@ -11,7 +11,6 @@ export class Ability {
     private defineAbilities() {
         switch (this.role) {
             case UserRole.ADMIN:
-                console.log("yes admin");
                 this.rules.push({ action: Action.MANAGE, subject: Subject.ORGANIZATION })
                 break;
             case UserRole.MEMBER:
