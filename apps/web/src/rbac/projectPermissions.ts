@@ -60,7 +60,16 @@ export function checkProjectPermission(
     return false; // User is not a member of this project
   }
 
-  const check = PROJECT_PERMISSIONS[userProjectMember.role]?.includes(permission);
+  console.log("permissions aeade", permission)
+
+  console.log("project permission logs : ", PROJECT_PERMISSIONS['ADMIN']);
+
+  if(!PROJECT_PERMISSIONS[userProjectMember.role]){
+    console.log("returning ")
+    return false
+  };
+
+  const check = PROJECT_PERMISSIONS[userProjectMember.role].includes(permission);
   console.log("check is : ", check);
 
   // Check if the user's project role grants the permission

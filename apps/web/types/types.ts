@@ -264,7 +264,7 @@ export enum UserRole {
 }
 
 export enum ProjectMemberRole {
-  ADMIN = 'ADMIM',
+  ADMIN = 'ADMIN',
   MEMBER = 'MEMBER'
 }
 

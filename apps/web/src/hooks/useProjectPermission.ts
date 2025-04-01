@@ -9,15 +9,13 @@ import { ProjectTypes } from "types/types";
 
 export function useProjectPermission(project: ProjectTypes | null) {
   const session = useRecoilValue(userSessionAtom);
-
   const organizationUser = useRecoilValue(organizationUserAtom);
-
-  // Return a simple function to check permissions
-  const hasPermission = (permission: ProjectPermission): boolean => {
+  
+  // Function to check specific permissions only when needed
+  const checkSpecificPermission = (permission: ProjectPermission): boolean => {
     if (!organizationUser.id || !project || !organizationUser.role) {
       return false;
     }
-
     return checkProjectPermission(
       organizationUser.id,
       project.id,
@@ -28,9 +26,10 @@ export function useProjectPermission(project: ProjectTypes | null) {
   };
 
   return {
-    hasPermission,
-    canView: hasPermission(ProjectPermission.VIEW),
-    canEdit: hasPermission(ProjectPermission.EDIT),
-    canManage: hasPermission(ProjectPermission.MANAGE),
+    hasPermission: checkSpecificPermission,
+    // These will only be calculated when the properties are accessed
+    get canView() { return checkSpecificPermission(ProjectPermission.VIEW); },
+    get canEdit() { return checkSpecificPermission(ProjectPermission.EDIT); },
+    get canManage() { return checkSpecificPermission(ProjectPermission.MANAGE); },
   };
 }

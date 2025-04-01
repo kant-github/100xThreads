@@ -9,7 +9,10 @@ import { ChannelType, OrganizationUsersType, TaskAssigneeType } from "types/type
 import ProjectChatRenderer from "./ProjectChatRenderer";
 import { MdChat } from "react-icons/md";
 import { AnimatedTooltipPreview } from "@/components/utility/AnimatedTooltipPreview";
-
+import { BsThreeDotsVertical } from "react-icons/bs";
+import UtilityOptionMenuCard from "@/components/utility/UtilityOptionMenuCard";
+import ProjectOptionMenu from "@/components/ui/ProjectOptionMenu";
+import { useProjectPermission } from "@/hooks/useProjectPermission";
 
 interface ProjectsChannelTopBarProps {
     channel: ChannelType;
@@ -20,6 +23,9 @@ export default function ({ channel }: ProjectsChannelTopBarProps) {
     const [selectedProject, setSelectedProject] = useRecoilState(projectSelectedAtom);
     const [createTaskModal, setCreateTaskModal] = useState<boolean>(false);
     const [users, setUsers] = useState<TaskAssigneeType[]>([]);
+    const [openOptionMenuCard, setOpenOptionMenuCard] = useState<boolean>(false);
+    const { canView } = useProjectPermission(selectedProject);
+    console.log("rn can view is : ", canView);
 
     useEffect(() => {
         if (selectedProject) {
@@ -56,8 +62,11 @@ export default function ({ channel }: ProjectsChannelTopBarProps) {
                 selectedProject && (
                     <div className="flex items-center justify-center gap-x-3 relative">
                         <DesignButton onClick={backHandler} ><IoChevronBackOutline />Back</DesignButton>
-                        <DesignButton onClick={() => setProjectSideBar(true)}> <MdChat className="transform scale-x-[-1]" /> Chat</DesignButton>
+                        <DesignButton disabled={!canView} onClick={() => setProjectSideBar(true)}>  <MdChat className="transform scale-x-[-1]" /> Chat</DesignButton>
                         <DesignButton className={"whitespace-nowrap"} onClick={createTaskHandler}>Add Task</DesignButton>
+                        <BsThreeDotsVertical onClick={() => setOpenOptionMenuCard(true)} className="text-neutral-300 mt-1.5" />
+                        <ProjectOptionMenu open={openOptionMenuCard} setOpen={setOpenOptionMenuCard} />
+
                         <ProjectChatRenderer channel={channel} open={projectSideBar} setOpen={setProjectSideBar} project={selectedProject} />
                         {createTaskModal && <CreateTaskForm channel={channel} open={createTaskModal} setOpen={setCreateTaskModal} />}
                     </div>

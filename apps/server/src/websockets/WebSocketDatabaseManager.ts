@@ -482,7 +482,7 @@ export default class WebSocketDatabaseManager {
                         data: {
                             project_id: message.payload.projectId,
                             org_user_id: assigneeId,
-                            role: 'MEMBER' // Default role
+                            role: 'MEMBER'
                         }
                     });
                 }

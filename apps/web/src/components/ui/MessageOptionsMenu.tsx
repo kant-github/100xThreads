@@ -24,6 +24,7 @@ export default function ({
   className,
   channel,
 }: MessageOptionMenuProps) {
+  
   if (message.is_deleted) return null;
   const ref = useRef<HTMLDivElement>(null);
 
