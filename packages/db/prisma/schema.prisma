@@ -229,14 +229,21 @@ model ProjectChat {
   is_edited         Boolean           @default(false)
   edited_at         DateTime?
   created_at        DateTime          @default(now())
-  LikedUsers        LikedUser[]
-  Users             Users?            @relation(fields: [usersId], references: [id])
-  usersId           Int?
-  ChatReaction      ChatReaction[]
+
+  is_activity     Boolean             @default(false)
+  activity_type   ProjectActivityType?
+  activity_data   Json?
+  related_user_id Int?
+
+  LikedUsers   LikedUser[]
+  Users        Users?         @relation(fields: [usersId], references: [id])
+  usersId      Int?
+  ChatReaction ChatReaction[]
 
   @@index([created_at])
   @@index([project_id])
   @@index([organization_id, org_user_id])
+  @@index([is_activity])
   @@map("project_chats")
 }
 
@@ -555,6 +562,17 @@ enum ChannelType {
   MENTORSHIP // Mentoring programs
   SOCIAL // Community engagement
   CAREER
+}
+
+enum ProjectActivityType {
+  MEMBER_ADDED
+  MEMBER_REMOVED
+  MEMBER_ROLE_CHANGED
+  TASK_CREATED
+  TASK_ASSIGNED
+  TASK_STATUS_CHANGED
+  PROJECT_UPDATED
+  OTHER
 }
 
 enum OrganizationAccessType {

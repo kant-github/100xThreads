@@ -366,6 +366,12 @@ export default class WebSocketDatabaseManager {
 
     private async insertProjectChannelMessage(message: WebSocketMessage, tokenData: any) {
 
+        const channelKey = this.getChannelKey({
+            organizationId: tokenData.organizationId,
+            channelId: message.payload.channelId,
+            type: message.payload.type
+        })
+
         await this.prisma.projectChat.create({
             data: {
                 id: message.payload.id,
@@ -377,17 +383,12 @@ export default class WebSocketDatabaseManager {
             }
         })
 
-        const channelKey = this.getChannelKey({
-            organizationId: tokenData.organizationId,
-            channelId: message.payload.channelId,
-            type: message.payload.type
-        })
-
         await this.publisher.publish(channelKey, JSON.stringify({
             ...message,
             userId: tokenData.userId,
             timeStamp: Date.now()
         }))
+
     }
 
     private async projectChannelEditMessageHandler(message: WebSocketMessage, tokenData: any) {
@@ -432,6 +433,7 @@ export default class WebSocketDatabaseManager {
             channelId: message.payload.channelId,
             type: message.payload.type
         });
+        console.log("token data is : ", tokenData);
 
         // First create the task without assignees
         const task = await this.prisma.tasks.create({
@@ -445,33 +447,70 @@ export default class WebSocketDatabaseManager {
                 due_date: message.payload.dueDate ? new Date(message.payload.dueDate) : null,
                 status: message.payload.status,
             },
+        });
+
+        const project = await this.prisma.project.findUnique({
+            where: {
+                id: message.payload.project_id
+            },
+            select: { title: true }
+        })
+
+
+        const orgUser = await this.prisma.organizationUsers.findUnique({
+            where: {
+                organization_id_user_id: {
+                    organization_id: tokenData.organizationId,
+                    user_id: Number(tokenData.userId)
+                }
+            },
             include: {
-                assignees: {
-                    include: {
-                        project_member: {
-                            include: {
-                                organization_user: {
-                                    include: {
-                                        user: true
-                                    }
-                                }
-                            }
-                        }
+                user: {
+                    select: {
+                        name: true
                     }
                 }
             }
-        });
+        })
+
+        const chat = await this.prisma.projectChat.create({
+            data: {
+                project_id: message.payload.project_id,
+                organization_id: tokenData.organizationId,
+                org_user_id: orgUser?.id!,
+                name: 'SYSTEM-PROMPTED',
+                message: `Task "${task.title}" was created by "${orgUser?.user.name}"`,
+                is_activity: true,
+                activity_type: 'TASK_CREATED',
+                activity_data: {
+                    taskId: task.id,
+                    taskTitle: task.title,
+                    createdBy: tokenData.userId,
+                    priority: task.priority,
+                    status: task.status
+                }
+            }
+        })
 
         // Then for each assignee, find or create their project member record
         // and create the task assignee relationship
+        const assigneeNames = [];
         if (message.payload.assignees && message.payload.assignees.length > 0) {
             for (const assigneeId of message.payload.assignees) {
+
                 // Find or create project member
                 let projectMember = await this.prisma.projectMember.findUnique({
                     where: {
                         project_id_org_user_id: {
                             project_id: message.payload.projectId,
                             org_user_id: assigneeId
+                        }
+                    },
+                    include: {
+                        organization_user: {
+                            include: {
+                                user: true
+                            }
                         }
                     }
                 });
@@ -483,15 +522,61 @@ export default class WebSocketDatabaseManager {
                             project_id: message.payload.projectId,
                             org_user_id: assigneeId,
                             role: 'MEMBER'
+                        },
+                        include: {
+                            organization_user: {
+                                include: {
+                                    user: true
+                                }
+                            }
                         }
                     });
                 }
+
+                // Create activity for new member
+                await this.prisma.projectChat.create({
+                    data: {
+                        project_id: message.payload.projectId,
+                        organization_id: tokenData.organizationId,
+                        org_user_id: orgUser?.id!,
+                        name: "System",
+                        message: `${projectMember.organization_user.user.name} has been added to the project`,
+                        is_activity: true,
+                        activity_type: 'MEMBER_ADDED',
+                        related_user_id: projectMember.organization_user.user_id
+                    }
+                })
 
                 // Create task assignee relationship
                 await this.prisma.taskAssignees.create({
                     data: {
                         task_id: task.id,
                         project_member_id: projectMember.id
+                    }
+                });
+
+                assigneeNames.push(projectMember.organization_user.user.name);
+            }
+
+            if (assigneeNames.length > 0) {
+                const assignMessage = assigneeNames.length === 1
+                    ? `Task "${task.title}" was assigned to ${assigneeNames[0]}`
+                    : `Task "${task.title}" was assigned to ${assigneeNames.join(', ')}`;
+
+                await this.prisma.projectChat.create({
+                    data: {
+                        project_id: message.payload.projectId,
+                        organization_id: tokenData.organizationId,
+                        org_user_id: orgUser?.id!,
+                        name: "System",
+                        message: assignMessage,
+                        is_activity: true,
+                        activity_type: 'TASK_ASSIGNED',
+                        activity_data: {
+                            taskId: task.id,
+                            taskTitle: task.title,
+                            assigneeIds: message.payload.assignees
+                        }
                     }
                 });
             }

@@ -24,8 +24,7 @@ export default function ({ channel }: ProjectsChannelTopBarProps) {
     const [createTaskModal, setCreateTaskModal] = useState<boolean>(false);
     const [users, setUsers] = useState<TaskAssigneeType[]>([]);
     const [openOptionMenuCard, setOpenOptionMenuCard] = useState<boolean>(false);
-    const { canView } = useProjectPermission(selectedProject);
-    console.log("rn can view is : ", canView);
+    const { canView, canManage } = useProjectPermission(selectedProject);
 
     useEffect(() => {
         if (selectedProject) {
@@ -35,13 +34,6 @@ export default function ({ channel }: ProjectsChannelTopBarProps) {
             setUsers(allUsers || []);
         }
     }, [selectedProject]);
-
-    const uniqueUsers: OrganizationUsersType[] = users
-        .filter(user => user && user.organization_user) // Ensure organization_user exists
-        .map((user) => user.organization_user)
-        .filter((value, index, self) =>
-            index === self.findIndex((u) => u.user_id === value.user_id)
-        );
 
     function backHandler() {
         setSelectedProject(null);
@@ -63,7 +55,7 @@ export default function ({ channel }: ProjectsChannelTopBarProps) {
                     <div className="flex items-center justify-center gap-x-3 relative">
                         <DesignButton onClick={backHandler} ><IoChevronBackOutline />Back</DesignButton>
                         <DesignButton disabled={!canView} onClick={() => setProjectSideBar(true)}>  <MdChat className="transform scale-x-[-1]" /> Chat</DesignButton>
-                        <DesignButton className={"whitespace-nowrap"} onClick={createTaskHandler}>Add Task</DesignButton>
+                        {canManage && <DesignButton className={"whitespace-nowrap"} onClick={createTaskHandler}>Add Task</DesignButton>}
                         <BsThreeDotsVertical onClick={() => setOpenOptionMenuCard(true)} className="text-neutral-300 mt-1.5" />
                         <ProjectOptionMenu open={openOptionMenuCard} setOpen={setOpenOptionMenuCard} />
 
