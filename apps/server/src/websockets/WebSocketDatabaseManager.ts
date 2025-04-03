@@ -516,6 +516,8 @@ export default class WebSocketDatabaseManager {
                     }
                 });
 
+                console.log("project member is : ", projectMember);
+
                 // If user is not a project member yet, add them
                 if (!projectMember) {
                     projectMember = await this.prisma.projectMember.create({
@@ -532,21 +534,23 @@ export default class WebSocketDatabaseManager {
                             }
                         }
                     });
+
+                    await this.prisma.projectChat.create({
+                        data: {
+                            project_id: message.payload.projectId,
+                            organization_id: tokenData.organizationId,
+                            org_user_id: orgUser?.id!,
+                            name: "System",
+                            message: `${projectMember.organization_user.user.name} has been added to the project`,
+                            is_activity: true,
+                            activity_type: 'MEMBER_ADDED',
+                            related_user_id: projectMember.organization_user.user_id
+                        }
+                    })
                 }
 
                 // Create activity for new member
-                await this.prisma.projectChat.create({
-                    data: {
-                        project_id: message.payload.projectId,
-                        organization_id: tokenData.organizationId,
-                        org_user_id: orgUser?.id!,
-                        name: "System",
-                        message: `${projectMember.organization_user.user.name} has been added to the project`,
-                        is_activity: true,
-                        activity_type: 'MEMBER_ADDED',
-                        related_user_id: projectMember.organization_user.user_id
-                    }
-                })
+
 
                 // Create task assignee relationship
                 await this.prisma.taskAssignees.create({
