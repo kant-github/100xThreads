@@ -434,6 +434,7 @@ export default class WebSocketDatabaseManager {
             type: message.payload.type
         });
         console.log("token data is : ", tokenData);
+        console.log("message payload is : ", message.payload);
 
         // First create the task without assignees
         const task = await this.prisma.tasks.create({
@@ -451,7 +452,7 @@ export default class WebSocketDatabaseManager {
 
         const project = await this.prisma.project.findUnique({
             where: {
-                id: message.payload.project_id
+                id: message.payload.projectId
             },
             select: { title: true }
         })
@@ -475,7 +476,7 @@ export default class WebSocketDatabaseManager {
 
         const chat = await this.prisma.projectChat.create({
             data: {
-                project_id: message.payload.project_id,
+                project_id: message.payload.projectId,
                 organization_id: tokenData.organizationId,
                 org_user_id: orgUser?.id!,
                 name: 'SYSTEM-PROMPTED',
@@ -607,6 +608,24 @@ export default class WebSocketDatabaseManager {
             type: message.type,
             payload: updatedTask
         }));
+
+        const projectActivities = await this.prisma.projectChat.findMany({
+            where: {
+                project_id: message.payload.projectId,
+                is_activity: true
+            },
+            orderBy: {
+                created_at: 'desc'
+            },
+            take: 5 // Get latest few activities
+        });
+
+        console.log("project activities are : ", projectActivities);
+
+        // await this.publisher.publish(`${channelKey}:activities`, JSON.stringify({
+        //     type: 'PROJECT_ACTIVITY_UPDATE',
+        //     payload: projectActivities
+        // }));
     }
 
     private async taskAssigneeChangeHandler(message: WebSocketMessage, tokenData: any) {

@@ -710,22 +710,22 @@
   resolved "https://registry.npmjs.org/@redis/time-series/-/time-series-1.1.0.tgz"
   integrity sha512-c1Q99M5ljsIuc4YdaCwfUEXsofakb9c8+Zse2qxTadu8TalLXuAESzLvFAvNVbkmSlvlzIQOLpBCmWI9wTOt+g==
 
-"@repo/db@*", "@repo/db@file:/Users/somyakumari/Desktop/100xThreads/packages/db":
+"@repo/db@file:/Users/khairrishi/Utility/banter/packages/db":
   version "1.0.0"
   resolved "file:packages/db"
   dependencies:
     "@prisma/client" "^5.19.1"
     prisma "^5.19.1"
 
-"@repo/eslint-config@*", "@repo/eslint-config@file:/Users/somyakumari/Desktop/100xThreads/packages/eslint-config":
+"@repo/eslint-config@*", "@repo/eslint-config@file:/Users/khairrishi/Utility/banter/packages/eslint-config":
   version "0.0.0"
   resolved "file:packages/eslint-config"
 
-"@repo/typescript-config@*", "@repo/typescript-config@file:/Users/somyakumari/Desktop/100xThreads/packages/typescript-config":
+"@repo/typescript-config@*", "@repo/typescript-config@file:/Users/khairrishi/Utility/banter/packages/typescript-config":
   version "0.0.0"
   resolved "file:packages/typescript-config"
 
-"@repo/ui@*", "@repo/ui@file:/Users/somyakumari/Desktop/100xThreads/packages/ui":
+"@repo/ui@*", "@repo/ui@file:/Users/khairrishi/Utility/banter/packages/ui":
   version "0.0.0"
   resolved "file:packages/ui"
   dependencies:
@@ -933,7 +933,7 @@
     "@types/range-parser" "*"
     "@types/send" "*"
 
-"@types/express@*", "@types/express@^4.17.21", "@types/express@^5.0.0":
+"@types/express@*", "@types/express@^5.0.0":
   version "5.0.0"
   resolved "https://registry.npmjs.org/@types/express/-/express-5.0.0.tgz"
   integrity sha512-DvZriSMehGHL1ZNLzi6MidnsDhUZM/x2pRdDIKdwbUNqqwHxMlRdkxtn6/EPKyqKpHqTl/4nRZsRNLpZxZRpPQ==
@@ -1121,7 +1121,7 @@
   resolved "https://registry.npmjs.org/@types/uuid/-/uuid-10.0.0.tgz"
   integrity sha512-7gqG38EyHgyP1S+7+xomFtL+ZNHcKv6DwNaCZmJmo1vgMugyF3TCnXVg4t1uk89mLNwnLtnY3TpOpCOyp1/xHQ==
 
-"@types/ws@^8.5.12", "@types/ws@^8.5.13":
+"@types/ws@^8.5.13":
   version "8.5.13"
   resolved "https://registry.npmjs.org/@types/ws/-/ws-8.5.13.tgz"
   integrity sha512-osM/gWBTPKgHV8XkTunnegTRIsvF6owmf5w+JtAfOw472dptdm0dlGv4xCt6GwQRcC2XVOvvRE/0bAoQcL2QkA==
@@ -2478,15 +2478,15 @@ dot-case@^2.1.0:
   dependencies:
     no-case "^2.2.0"
 
-dotenv@^16.4.5, dotenv@16.0.3:
-  version "16.0.3"
-  resolved "https://registry.npmjs.org/dotenv/-/dotenv-16.0.3.tgz"
-  integrity sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==
-
 dotenv@^16.4.7:
   version "16.4.7"
   resolved "https://registry.npmjs.org/dotenv/-/dotenv-16.4.7.tgz"
   integrity sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==
+
+dotenv@16.0.3:
+  version "16.0.3"
+  resolved "https://registry.npmjs.org/dotenv/-/dotenv-16.0.3.tgz"
+  integrity sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==
 
 eastasianwidth@^0.2.0:
   version "0.2.0"
@@ -3088,7 +3088,7 @@ express-fileupload@^1.5.1:
   dependencies:
     busboy "^1.6.0"
 
-express@^4.19.2, express@^4.21.2:
+express@^4.21.2:
   version "4.21.2"
   resolved "https://registry.npmjs.org/express/-/express-4.21.2.tgz"
   integrity sha512-28HqgMZAmih1Czt9ny7qr6ek2qddF4FclbMzwhCREB6OFfH+rXAnuNCwo1/wFvrtbgsQDb4kSbX9de9lFbrXnA==
@@ -5729,7 +5729,7 @@ serve-static@1.16.2:
     parseurl "~1.3.3"
     send "0.19.0"
 
-"server@file:/Users/somyakumari/Desktop/100xThreads/apps/server":
+"server@file:/Users/khairrishi/Utility/banter/apps/server":
   version "1.0.0"
   resolved "file:apps/server"
   dependencies:
@@ -6586,7 +6586,7 @@ wcwidth@^1.0.1:
   dependencies:
     defaults "^1.0.3"
 
-"web@file:/Users/somyakumari/Desktop/100xThreads/apps/web":
+"web@file:/Users/khairrishi/Utility/banter/apps/web":
   version "0.1.0"
   resolved "file:apps/web"
   dependencies:
@@ -6755,7 +6755,12 @@ wrappy@1:
   resolved "https://registry.npmjs.org/wrappy/-/wrappy-1.0.2.tgz"
   integrity sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==
 
-ws@^8.18.0, ws@~8.17.1:
+ws@^8.18.0:
+  version "8.18.0"
+  resolved "https://registry.npmjs.org/ws/-/ws-8.18.0.tgz"
+  integrity sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw==
+
+ws@~8.17.1:
   version "8.17.1"
   resolved "https://registry.npmjs.org/ws/-/ws-8.17.1.tgz"
   integrity sha512-6XQFvXTkbfUOZOKKILFG1PDK2NDQs4azKQl26T0YS5CxqWLgXajbPZ+h4gZekJyRqFU8pvnbAbbs/3TgRPy+GQ==
