@@ -222,7 +222,6 @@ export default function ({ open, project, channel, chats }: ProjectChatsProps) {
                         channel={channel}
                         groupedMessages={groupedMessages}
                     />
-
                     <div ref={messagesEndRef} />
                 </div>
                 {!messages.length && <EmptyConversation className="h-full" />}

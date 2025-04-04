@@ -433,8 +433,8 @@ export default class WebSocketDatabaseManager {
             channelId: message.payload.channelId,
             type: message.payload.type
         });
-        console.log("token data is : ", tokenData);
-        console.log("message payload is : ", message.payload);
+
+        const activityLogchannelKey = `${tokenData.organizationId}:${message.payload.channelId}:project-channel-chat-messages`
 
         // First create the task without assignees
         const task = await this.prisma.tasks.create({
@@ -493,6 +493,17 @@ export default class WebSocketDatabaseManager {
             }
         })
 
+        console.log("project chat created : ", chat);
+
+
+
+        await this.publisher.publish(activityLogchannelKey, JSON.stringify({
+            type: 'project-channel-chat-messages',
+            payload: chat
+        }));
+
+
+
         // Then for each assignee, find or create their project member record
         // and create the task assignee relationship
         const assigneeNames = [];
@@ -516,8 +527,6 @@ export default class WebSocketDatabaseManager {
                     }
                 });
 
-                console.log("project member is : ", projectMember);
-
                 // If user is not a project member yet, add them
                 if (!projectMember) {
                     projectMember = await this.prisma.projectMember.create({
@@ -535,18 +544,25 @@ export default class WebSocketDatabaseManager {
                         }
                     });
 
-                    await this.prisma.projectChat.create({
+                    const newProjectMemberActivity = await this.prisma.projectChat.create({
                         data: {
                             project_id: message.payload.projectId,
                             organization_id: tokenData.organizationId,
                             org_user_id: orgUser?.id!,
-                            name: "System",
+                            name: "SYSTEM-PROMPT",
                             message: `${projectMember.organization_user.user.name} has been added to the project`,
                             is_activity: true,
                             activity_type: 'MEMBER_ADDED',
                             related_user_id: projectMember.organization_user.user_id
                         }
                     })
+
+                    console.log("project chat created : ", newProjectMemberActivity);
+
+                    await this.publisher.publish(activityLogchannelKey, JSON.stringify({
+                        type: 'project-channel-chat-messages',
+                        payload: newProjectMemberActivity
+                    }));
                 }
 
                 // Create activity for new member
@@ -568,7 +584,9 @@ export default class WebSocketDatabaseManager {
                     ? `Task "${task.title}" was assigned to ${assigneeNames[0]}`
                     : `Task "${task.title}" was assigned to ${assigneeNames.join(', ')}`;
 
-                await this.prisma.projectChat.create({
+                console.log("assignee message is : ", assignMessage);
+
+                const newAssigneeActivity = await this.prisma.projectChat.create({
                     data: {
                         project_id: message.payload.projectId,
                         organization_id: tokenData.organizationId,
@@ -584,8 +602,17 @@ export default class WebSocketDatabaseManager {
                         }
                     }
                 });
+
+                console.log("project chat created : ", newAssigneeActivity);
+
+                await this.publisher.publish(activityLogchannelKey, JSON.stringify({
+                    type: 'project-channel-chat-messages',
+                    payload: newAssigneeActivity
+                }));
             }
         }
+
+
 
         // Fetch the updated task with all relationships
         const updatedTask = await this.prisma.tasks.findUnique({
@@ -606,30 +633,11 @@ export default class WebSocketDatabaseManager {
                 }
             }
         });
-        console.log("updated task is : ", updatedTask);
 
         await this.publisher.publish(channelKey, JSON.stringify({
             type: message.type,
             payload: updatedTask
         }));
-
-        const projectActivities = await this.prisma.projectChat.findMany({
-            where: {
-                project_id: message.payload.projectId,
-                is_activity: true
-            },
-            orderBy: {
-                created_at: 'desc'
-            },
-            take: 5 // Get latest few activities
-        });
-
-        console.log("project activities are : ", projectActivities);
-
-        // await this.publisher.publish(`${channelKey}:activities`, JSON.stringify({
-        //     type: 'PROJECT_ACTIVITY_UPDATE',
-        //     payload: projectActivities
-        // }));
     }
 
     private async taskAssigneeChangeHandler(message: WebSocketMessage, tokenData: any) {

@@ -155,6 +155,12 @@ export type ProjectChatTypes = {
   deleted_at?: Date;
   is_edited: boolean;
   edited_at?: Date;
+
+  is_activity: Boolean;
+  activity_type?: ProjectActivityType
+  activity_data: any;
+  related_user_id: Number;
+
   created_at: Date;
   LikedUsers: LikedUser[];
   Users?: UserType;
@@ -298,4 +304,15 @@ export enum TaskStatus {
   TODO = 'TODO',
   IN_PROGRESS = 'IN_PROGRESS',
   DONE = 'DONE'
+}
+
+enum ProjectActivityType {
+  MEMBER_ADDED = 'MEMBER_ADDED',
+  MEMBER_REMOVED = 'MEMBER_REMOVED',
+  MEMBER_ROLE_CHANGED = 'MEMBER_ROLE_CHANGED',
+  TASK_CREATED = 'TASK_CREATED',
+  TASK_ASSIGNED = 'TASK_ASSIGNED',
+  TASK_STATUS_CHANGED = 'TASK_STATUS_CHANGED',
+  PROJECT_UPDATED = 'PROJECT_UPDATED',
+  OTHER = 'OTHER'
 }
