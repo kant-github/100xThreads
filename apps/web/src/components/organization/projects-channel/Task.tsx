@@ -88,7 +88,7 @@ export default function ({ task, channel }: TaskProps) {
             onClick={expandCardHandler}
             key={task.id}
             style={{
-                backgroundColor: `${task.color}CA`,
+                backgroundColor: `${task.color}80`,
                 ...(transform ? {
                     transform: `translate(${transform.x}px, ${transform.y}px)`,
                     transition: 'transform 0.05s ease'

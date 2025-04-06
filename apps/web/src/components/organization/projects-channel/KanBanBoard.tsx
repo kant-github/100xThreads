@@ -24,7 +24,7 @@ export default function KanbanBoard({ tasks, channel }: KanBanBoardProps) {
     })
 
     return (
-        <div className="w-full h-full overflow-y-auto scrollbar-hide flex-1 flex">
+        <div className="w-full h-full overflow-y-auto  scrollbar-hide flex-1 flex">
             {column.map((col, index) => (
                 <React.Fragment key={col.status}>
                     <div className="flex-1 min-w-0">
