@@ -9,6 +9,8 @@ export default async function (req: Request, res: Response) {
     const { organizationId } = req.params;
     const { password } = req.body;
 
+    console.log(req.body);
+
     if (!user?.id) {
         res.status(401).json({ message: "Unauthorized: User not authenticated." });
         return;

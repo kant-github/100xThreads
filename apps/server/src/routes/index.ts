@@ -5,7 +5,7 @@ import { caseJoinOrganization } from "../controllers/organization/caseJoinOrgani
 import { storeOrganization } from "../controllers/organization/storeOrganization";
 import { deleteOrganizations } from "../controllers/organization/deleteOrganizations";
 import getOrganizationBySearch from "../controllers/organization/getOrganizationBysearch";
-import alreadyUserMiddleware from "../middlewares/alreadyUserMiddleware copy";
+import alreadyUserMiddleware from "../middlewares/alreadyUserMiddleware";
 import { getUserDetails } from "../controllers/user/getUserDetails";
 import { updateUserDetails } from "../controllers/user/updateUserDetails";
 import authmiddleware from "../middlewares/authMiddleware";
@@ -21,7 +21,7 @@ import { getProjectchannelChats } from "../controllers/projects-channel/getProje
 import { getUserProfileData } from "../controllers/user/getUserProfileData";
 import { getTaskForProject } from "../controllers/projects-channel/getTaskForProject";
 
-const router = Router();
+const router: Router = Router();
 
 // user_controller
 router.get("/user/:id", authmiddleware, getUserDetails);
