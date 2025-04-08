@@ -8,32 +8,36 @@ datasource db {
 }
 
 model Users {
-  id                   Int                       @id @default(autoincrement())
-  name                 String
-  email                String                    @unique
-  bio                  String                    @default("")
-  provider             String
-  oauth_id             String
-  image                String?
-  created_at           DateTime                  @default(now())
-  isOnline             Boolean                   @default(false)
-  lastSeen             DateTime?
-  Organizations        OrganizationUsers[]
-  OwnedOrganizations   Organization[]
-  Chats                Chats[]
-  RecentlyJoinedGroups RecentlyJoinedGroups[]
-  LikedMessages        LikedUser[]
-  EventAttendee        EventAttendee[]
-  Channel              Channel[]
-  WelcomedChannels     WelcomedUser[]
-  EventChannel         EventChannel[]
-  JoinRequests         OrganizationJoinRequest[]
-  CreatedInvites       OrganizationInvite[]      @relation("InviteCreator")
-  UsedInvites          OrganizationInvite[]      @relation("InviteUser")
-  ChatReaction         ChatReaction[]
-  PollVote             PollVote[]
-  Poll                 Poll[]
-  ProjectChat          ProjectChat[]
+  id                     Int                       @id @default(autoincrement())
+  name                   String
+  email                  String                    @unique
+  bio                    String                    @default("")
+  provider               String
+  oauth_id               String
+  image                  String?
+  created_at             DateTime                  @default(now())
+  isOnline               Boolean                   @default(false)
+  lastSeen               DateTime?
+  Organizations          OrganizationUsers[]
+  OwnedOrganizations     Organization[]
+  Chats                  Chats[]
+  RecentlyJoinedGroups   RecentlyJoinedGroups[]
+  LikedMessages          LikedUser[]
+  EventAttendee          EventAttendee[]
+  Channel                Channel[]
+  WelcomedChannels       WelcomedUser[]
+  EventChannel           EventChannel[]
+  JoinRequests           OrganizationJoinRequest[]
+  CreatedInvites         OrganizationInvite[]      @relation("InviteCreator")
+  UsedInvites            OrganizationInvite[]      @relation("InviteUser")
+  ChatReaction           ChatReaction[]
+  PollVote               PollVote[]
+  Poll                   Poll[]
+  ProjectChat            ProjectChat[]
+  SentFriendRequests     FriendRequest[]           @relation("SentFriendRequests")
+  ReceivedFriendRequests FriendRequest[]           @relation("ReceivedFriendRequests")
+  Friends1               Friendship[]              @relation("UserFriends1")
+  Friends2               Friendship[]              @relation("UserFriends2")
 
   @@map("users")
 }
@@ -230,7 +234,7 @@ model ProjectChat {
   edited_at         DateTime?
   created_at        DateTime          @default(now())
 
-  is_activity     Boolean             @default(false)
+  is_activity     Boolean              @default(false)
   activity_type   ProjectActivityType?
   activity_data   Json?
   related_user_id Int?
@@ -500,6 +504,39 @@ model EventAttendee {
   @@map("event_attendees")
 }
 
+model FriendRequest {
+  id          String              @id @default(uuid()) @db.Uuid
+  sender      Users               @relation("SentFriendRequests", references: [id], fields: [sender_id], onDelete: Cascade)
+  sender_id   Int
+  reciever    Users               @relation("ReceivedFriendRequests", references: [id], fields: [reciever_id], onDelete: Cascade)
+  reciever_id Int
+  status      FriendRequestStatus @default(PENDING)
+  created_at  DateTime            @default(now())
+  updated_at  DateTime            @updatedAt
+  message     String?
+
+  @@unique([sender_id, reciever_id])
+  @@index([sender_id])
+  @@index([reciever_id])
+  @@index([status])
+  @@map("friend_requests")
+}
+
+model Friendship {
+  id              String    @id @default(uuid()) @db.Uuid
+  user_id_1       Int // Always the lower user_id to prevent duplicates
+  user_id_2       Int // Always the higher user_id to prevent duplicates
+  user1           Users     @relation("UserFriends1", fields: [user_id_1], references: [id], onDelete: Cascade)
+  user2           Users     @relation("UserFriends2", fields: [user_id_2], references: [id], onDelete: Cascade)
+  created_at      DateTime  @default(now())
+  last_message_at DateTime? // For sorting friends list by recent interaction
+
+  @@unique([user_id_1, user_id_2])
+  @@index([user_id_1])
+  @@index([user_id_2])
+  @@map("friendships")
+}
+
 enum RSVPStatus {
   GOING
   MAYBE
@@ -585,4 +622,11 @@ enum CardStatus {
   TODO
   IN_PROGRESS
   DONE
+}
+
+enum FriendRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  BLOCKED
 }
