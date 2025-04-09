@@ -70,6 +70,8 @@ export default class WebSocketDatabaseManager {
                     return this.newTaskCreationHandler(message, tokenData);
                 case 'task-assignee-change':
                     return this.taskAssigneeChangeHandler(message, tokenData);
+                case 'send-friend-request':
+                    return this.addFriendHandler(message, tokenData);
             }
         }
         catch (err) {
@@ -811,6 +813,62 @@ export default class WebSocketDatabaseManager {
             type: message.type,
             payload: project
         }))
+    }
+
+    private async addFriendHandler(message: WebSocketMessage, tokenData: any) {
+        console.log("message for friend request at backend is ", message);
+        const user1 = Number(tokenData.userId);
+        const user2 = Number(message.payload.friendsId);
+
+        if (!user1 || !user2) {
+            console.log("informationd are missing")
+            return;
+        }
+
+        try {
+
+            // check for existing request
+            const existingFriendRequest = await this.prisma.friendRequest.findUnique({
+                where: {
+                    sender_id_reciever_id: {
+                        sender_id: user1,
+                        reciever_id: user2
+                    }
+                }
+            })
+
+            if (existingFriendRequest) {
+                console.log("Friend request already exists");
+                return;
+            }
+
+            //check existing friendship
+            const exisitingFriends = await this.prisma.friendship.findUnique({
+                where: {
+                    user_id_1_user_id_2: {
+                        user_id_1: Math.min(user1, user2),
+                        user_id_2: Math.max(user1, user2)
+                    }
+                }
+            })
+
+            if (exisitingFriends) {
+                console.log("Users are already friends");
+                return;
+            }
+
+            const friendRequest = await this.prisma.friendRequest.create({
+                data: {
+                    sender_id: user1,
+                    reciever_id: user2,
+                    message: message.payload.message || "I'd like to add you as a friend"
+                }
+            });
+            console.log("Friend request created:", friendRequest);
+        } catch (err) {
+            console.log("Error in creating friendship", err);
+        }
+
     }
 
     private getChannelKey(subscription: ChannelSubscription): string {

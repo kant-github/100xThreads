@@ -11,6 +11,7 @@ import { BsTextParagraph } from 'react-icons/bs';
 import { IoIosCheckmarkCircleOutline, IoMdMail } from 'react-icons/io';
 import DesignButton from '../buttons/DesignButton';
 import OrganizationRolesTickerRenderer from '../utility/tickers/organization_roles_tickers/OrganizationRolesTickerRenderer';
+import { useWebSocket } from '@/hooks/useWebsocket';
 
 interface OptionImageProps {
     content: any
@@ -23,7 +24,9 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
     const [open, setOpen] = useState(false);
     const session = useRecoilValue(userSessionAtom);
     const [organizationUser, setOrganizationUser] = useState<OrganizationUsersType>({} as OrganizationUsersType);
-    
+    const [isFriend, setIsFriend] = useState<boolean>(false);
+    const { sendMessage, subscribeToBackend, subscribeToHandler, unsubscribeFromBackend } = useWebSocket();
+
     function handleImageClick(e: React.MouseEvent) {
         e.stopPropagation();
         setOpen(prev => !prev);
@@ -38,9 +41,14 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
             })
             console.log("profile data is : ", data.data);
             setOrganizationUser(data.data);
+            setIsFriend(data.isFriend);
         } catch (err) {
             console.log("Error in fetching user profile details");
         }
+    }
+
+    function incomingFriendRequestHandler(newMessage: any) {
+        console.log("new message is : ", newMessage);
     }
 
     useEffect(() => {
@@ -51,6 +59,27 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
             fetchUserProfileData();
         }
     }, [open, session?.user?.token, organizationId, userId])
+
+    useEffect(() => {
+        if (organizationUser && organizationUser.user) {
+            subscribeToBackend(String(organizationUser.user.id), 'friends', 'send-friend-request')
+            const unsubscribeSendFriendRequestHandler = subscribeToHandler('send-friend-request', incomingFriendRequestHandler);
+
+            return () => {
+                unsubscribeFromBackend(String(organizationUser.user.id), 'friends', 'send-friend-request');
+                unsubscribeSendFriendRequestHandler();
+            }
+        }
+    }, [organizationUser])
+
+    function sendFriendRequestHandler() {
+        if (organizationUser.id) {
+            const payload = {
+                friendsId: Number(organizationUser.user.id)
+            }
+            sendMessage(payload, String(organizationUser.user.id), 'send-friend-request');
+        }
+    }
 
     return (
         <div className="relative">
@@ -84,7 +113,10 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
                             <OrganizationRolesTickerRenderer tickerText={organizationUser.role} />
                         </div>
                         <div className='flex items-end justify-center gap-x-2'>
-                            <DesignButton>Add Friend</DesignButton>
+                            {!isFriend ?
+                                <DesignButton onClick={sendFriendRequestHandler}>Add Friend</DesignButton> :
+                                <DesignButton onClick={sendFriendRequestHandler}>Chat</DesignButton>
+                            }
                         </div>
                         <div className="flex flex-col items-center gap-y-2 justify-center gap-x-4 mt-3">
                             <WhiteText className="text-xs px-3 py-1 rounded-[4px] border-[1px] border-zinc-600 flex items-center justify-center gap-x-2">
