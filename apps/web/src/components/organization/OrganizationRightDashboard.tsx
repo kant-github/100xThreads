@@ -8,21 +8,26 @@ import { useRecoilValue } from "recoil";
 import { OrganizationUsersType } from "types/types"
 import ProfileOption from "../ui/ProfileOption";
 import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
-import AppLogo from "../heading/AppLogo";
 import OrganizationRolesTickerRenderer from "../utility/tickers/organization_roles_tickers/OrganizationRolesTickerRenderer";
 import OptionImage from "../ui/OptionImage";
 import Image from 'next/image';
+import OrganizationNotificationsRenderer from '../notifications/OrganizationNotificationsRenderer';
 
 const baseDivStyles = "flex items-center justify-between gap-x-2 sm:gap-x-3 py-1.5 sm:py-1 px-2 sm:px-3 rounded-[8px] cursor-pointer select-none";
 const textStyles = "text-[12px] sm:text-[12px] text-gray-100 dark:text-[#d6d6d6] font-semibold mt-0.5 tracking-wide hidden sm:block";
 
 export default function () {
     const [isExpanded, setIsExpanded] = useState(true);
+    const [notificatioPanel, setNotificationPanel] = useState<boolean>(false);
     const organizationUsers = useRecoilValue<OrganizationUsersType[]>(organizationUsersAtom);
 
-    const toggleSidebar = () => {
+    function toggleSidebar() {
         setIsExpanded(!isExpanded);
     };
+
+    function notificationPanelHandler() {
+        setNotificationPanel(true);
+    }
 
     return (
         <div className={`transition-all duration-300 ease-in-out ${isExpanded ? 'w-[30%]' : 'w-[120px]'} h-screen overflow-hidden bg-white dark:bg-[#171717] border-b-[1px] md:border-b-0 md:border-l-[1px] dark:border-zinc-800 flex flex-col justify-between`}>
@@ -33,7 +38,7 @@ export default function () {
                         className={`text-neutral-100 cursor-pointer transform transition-transform ${isExpanded ? '' : 'rotate-180'}`}
                         onClick={toggleSidebar}
                     />
-                    {isExpanded && <IoIosNotifications size={20} className="text-neutral-100" />}
+                    {isExpanded && <IoIosNotifications onClick={notificationPanelHandler} size={20} className="text-neutral-100 cursor-pointer" />}
                     {isExpanded && <GrTasks size={15} className="text-neutral-100" />}
                     {isExpanded && <MdAirplanemodeActive size={18} className="text-neutral-100" />}
                 </div>
@@ -50,6 +55,8 @@ export default function () {
                         ))
                     }
                 </div>
+
+                <OrganizationNotificationsRenderer open={notificatioPanel} setOpen={setNotificationPanel} />
             </div>
         </div>
     )

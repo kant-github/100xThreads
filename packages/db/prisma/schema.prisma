@@ -38,6 +38,7 @@ model Users {
   ReceivedFriendRequests FriendRequest[]           @relation("ReceivedFriendRequests")
   Friends1               Friendship[]              @relation("UserFriends1")
   Friends2               Friendship[]              @relation("UserFriends2")
+  Notification           Notification[]
 
   @@map("users")
 }
@@ -535,6 +536,80 @@ model Friendship {
   @@index([user_id_1])
   @@index([user_id_2])
   @@map("friendships")
+}
+
+model Notification {
+  id         String           @id @default(uuid()) @db.Uuid
+  user       Users            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id    Int
+  type       NotificationType
+  title      String
+  message    String
+  is_read    Boolean          @default(false)
+  created_at DateTime         @default(now())
+
+  // Reference fields for various notification types
+  // These can be null depending on notification type
+  reference_id    String? @db.Uuid // Generic reference ID for the entity
+  organization_id String? @db.Uuid
+  channel_id      String? @db.Uuid
+  sender_id       Int? // For friend requests, messages, etc.
+
+  // For storing additional data unique to notification types
+  metadata Json? // Flexible storage for type-specific data
+
+  // Optional action URL or deep link
+  action_url String?
+
+  @@index([user_id, created_at])
+  @@index([user_id, is_read])
+  @@map("notifications")
+}
+
+enum NotificationType {
+  // Friend System
+  FRIEND_REQUEST_RECEIVED
+  FRIEND_REQUEST_ACCEPTED
+  FRIEND_REQUEST_REJECTED
+  FRIEND_ONLINE
+  FRIEND_MESSAGE_RECEIVED
+
+  // Organization
+  ORG_INVITE_RECEIVED
+  ORG_JOIN_REQUEST_RESPONSE
+  ORG_ROLE_CHANGED
+  ORG_JOIN_REQUEST_RECEIVED
+
+  // Channel
+  NEW_CHANNEL_MESSAGE
+  CHANNEL_MENTION
+  NEW_ANNOUNCEMENT
+  ANNOUNCEMENT_REQUIRING_ACK
+
+  // Events
+  EVENT_CREATED
+  EVENT_REMINDER
+  EVENT_UPDATED
+  EVENT_CANCELLED
+
+  // Projects & Tasks
+  PROJECT_ADDED
+  TASK_ASSIGNED
+  TASK_DUE_SOON
+  TASK_STATUS_CHANGED
+
+  // Polls
+  NEW_POLL
+  POLL_ENDING_SOON
+  POLL_RESULTS
+
+  // Issues
+  ISSUE_ASSIGNED
+  ISSUE_STATUS_CHANGED
+
+  // Social
+  CHAT_REACTION
+  LIKED_MESSAGE
 }
 
 enum RSVPStatus {

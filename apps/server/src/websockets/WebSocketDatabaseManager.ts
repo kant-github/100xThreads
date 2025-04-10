@@ -1,11 +1,13 @@
 import { PrismaClient } from ".prisma/client";
 import Redis from "ioredis";
 import { ChannelSubscription, WebSocketMessage } from "./webSocketServer";
+import NotificationManager from "./NotificationManager";
 
 export default class WebSocketDatabaseManager {
 
     private prisma: PrismaClient;
     private publisher: Redis;
+    private notificationManager: NotificationManager;
     private static readonly pollInclude = {
         options: {
             include: {
@@ -37,6 +39,7 @@ export default class WebSocketDatabaseManager {
     constructor(prisma: PrismaClient, publisher: Redis) {
         this.prisma = prisma;
         this.publisher = publisher;
+        this.notificationManager = new NotificationManager(prisma, this.publisher);
     }
 
     async handleIncomingMessage(message: WebSocketMessage, tokenData: any) {
@@ -826,7 +829,6 @@ export default class WebSocketDatabaseManager {
         }
 
         try {
-
             // check for existing request
             const existingFriendRequest = await this.prisma.friendRequest.findUnique({
                 where: {
