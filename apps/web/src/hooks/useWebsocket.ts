@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef } from "react"
 import { useRecoilValue } from "recoil";
 
 export const useWebSocket = () => {
-  
+
   const webSocketRef = useRef<WebSocketClient | null>(null);
   const session = useRecoilValue(userSessionAtom);
   const organizationIdd = useRecoilValue(organizationIdAtom);
@@ -38,6 +38,7 @@ export const useWebSocket = () => {
   }
 
   function unsubscribeFromBackend(channelId: string, organizationId: string, type: string) {
+    console.log("unsubscribe event inside usewebsocket");
     if (!webSocketRef.current) return;
     webSocketRef.current.unSubscribeToBackendWSS(channelId, organizationId, type);
   }

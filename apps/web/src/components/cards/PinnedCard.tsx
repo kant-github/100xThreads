@@ -33,7 +33,7 @@ export default function PinnedCard({ className, announcement }: PinnedCardProps)
 
     return (
         <div onClick={() => setZoom((prev) => !prev)}
-            className={`relative flex flex-col items-start shadow-lg gap-y-4 select-none bg-neutral-900 rounded-[14px] w-full pt-8 px-5 pb-4 transition-all duration-300 ease-in-out ${zoom ? 'md:row-span-2 min-h-[11rem]' : 'min-h-[10rem]'} ${className} `}
+            className={`relative flex flex-col items-start shadow-lg gap-y-4 select-none bg-neutral-900 bg-gradient-to-br from-neutral-900 via-neutral-900 to-neutral-950 rounded-[14px] w-full pt-8 px-5 pb-4 transition-all duration-300 ease-in-out ${zoom ? 'md:row-span-2 min-h-[11rem]' : 'min-h-[10rem]'} ${className} `}
         >
             <span className="flex items-center gap-x-1 absolute bottom-2 right-3 text-neutral-500">
                 <FaEye size={12} />

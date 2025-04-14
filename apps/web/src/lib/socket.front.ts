@@ -68,18 +68,23 @@ export class WebSocketClient {
     public subscribeToBackendWSS(channelId: string, organizationId: string, type: string) {
         const channelKey = `${channelId}:${organizationId}:${type}`;
         if (!this.subscribedChannels.has(channelKey)) {
+            console.log("subscribe event sent : ", channelKey);
             this.send('subscribe-channel', {
                 channelId,
                 organizationId,
                 type
             })
             this.subscribedChannels.add(channelKey);
+            console.log("logging all subscriptions : ", this.subscribedChannels);
         }
     }
 
     public unSubscribeToBackendWSS(channelId: string, organizationId: string, type: string) {
+
+        console.log("sending ubsubscribe event from fe");
         const channelKey = `${channelId}:${organizationId}:${type}`;
-        if (!this.subscribedChannels.has(channelKey)) {
+        if (this.subscribedChannels.has(channelKey)) {
+            console.log("finally sent");
             this.send('unsubscribe-channel', {
                 channelId,
                 organizationId,

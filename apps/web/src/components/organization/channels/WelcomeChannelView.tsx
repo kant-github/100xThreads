@@ -32,6 +32,7 @@ export default function ({ channel }: WelcomeChannelViewProps) {
             const unsubscribeWelcomeMessageHandler = subscribeToHandler('welcome-user', handleIncomingWelcomeMessages);
             return () => {
                 unsubscribeWelcomeMessageHandler();
+                console.log("unsubscribeing the welcome channel messages");
                 unsubscribeFromBackend(channel.id, organization.id, 'welcome-user');
             }
         }

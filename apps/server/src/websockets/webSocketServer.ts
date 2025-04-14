@@ -16,6 +16,9 @@ export interface ChannelSubscription {
     channelId: string;
     organizationId: string;
     type: string;
+
+    // projectId
+    //type
 }
 
 export default class WebSocketServerManager {
@@ -91,6 +94,7 @@ export default class WebSocketServerManager {
 
     private async handleIncomingMessage(ws: WebSocket, data: string, tokenData: any) {
         const message: WebSocketMessage = JSON.parse(data);
+        console.log("message type is : ", message.type);
         switch (message.type) {
             case 'subscribe-channel':
                 await this.handleChannelSubscription(ws, message.payload);
@@ -108,6 +112,7 @@ export default class WebSocketServerManager {
     }
 
     private async handleChannelSubscription(ws: WebSocket, subscription: ChannelSubscription) {
+
         const channelKey: string = this.getChannelKey(subscription);
         this.userSubscriptions.get(ws)!.add(channelKey);
         await this.subscriber.subscribe(channelKey);
@@ -137,7 +142,9 @@ export default class WebSocketServerManager {
     }
 
     private async handleChannelUnsubscription(ws: WebSocket, subscription: ChannelSubscription) {
+        console.log("unsubscribing");
         const channelKey = this.getChannelKey(subscription);
+        console.log("unsubscribing channel key : ", channelKey);
         this.userSubscriptions.get(ws)!.delete(channelKey);
 
         let hasOtherSubscribers = false;
@@ -173,6 +180,7 @@ export default class WebSocketServerManager {
     }
 
     private handleClientDisconnect(ws: WebSocket) {
+
         const subscriptions = this.userSubscriptions.get(ws);
         if (subscriptions) {
             for (const channelKey of subscriptions) {
