@@ -26,11 +26,11 @@ export default class WebSocketServerManager {
 
     private initializeConnection() {
         this.wss.on('connection', (ws: WebSocketClient) => {
+            console.log("client connected");
             ws.id = uuidv4();
             ws.isAlive = true;
 
             this.clients.set(ws.id, ws);
-            console.log("socket client connected : ", ws.id);
 
             ws.on('message', (data: string) => {
                 this.handleIncomingMessage(ws, data);
@@ -44,7 +44,6 @@ export default class WebSocketServerManager {
 
     private handleIncomingMessage(ws: WebSocketClient, data: string) {
         const payload: PayloadInterface = JSON.parse(data);
-
         switch (payload.type) {
             case 'auth':
                 this.handleClientTracking(ws, payload);
@@ -62,6 +61,8 @@ export default class WebSocketServerManager {
         this.userSockets.get(userId)?.add(ws.id);
 
 
+        this.sendToUser(userId, "You are connected");
+        console.log(this.userSockets);
         //send client confirmation ---------------------------------------- >
     }
 
@@ -69,7 +70,6 @@ export default class WebSocketServerManager {
         const userConnections = this.userSockets.get(userId);
 
         if (!userConnections || userConnections.size === 0) {
-            console.log("no user and its respective socket id exist");
             return;
         }
         const message = JSON.stringify(data);
@@ -95,7 +95,7 @@ export default class WebSocketServerManager {
                 this.userSockets.delete(ws.userId);
             }
             this.clients.delete(ws.id);
-            console.log`Client disconnected ${ws.id}`
+            console.log(`After disconnection ------------------------------------- > `, this.userSockets);
         }
     }
 }
