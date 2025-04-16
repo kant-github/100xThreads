@@ -5,6 +5,7 @@ import cors from 'cors';
 import config from './config';
 import WebSocketServerManager from './sockets/WebSocketServer';
 import KafkaConsumerService from './services/KafkaService';
+import prisma from '@repo/db/client';
 const app = express();
 const server = createServer(app);
 
@@ -12,6 +13,23 @@ const server = createServer(app);
 app.use(cors());
 app.use(express.json());
 
+
+app.get("/store", async (req, res) => {
+    const announcement = await prisma.announcement.create({
+        data: {
+            channel_id: '9af56c66-3a3c-4b83-af53-bdf5ec075a58',
+            title: "Checkssss",
+            content: "checksssss",
+            priority: 'URGENT',
+            tags: ['fee', 'checks', 'tags'],
+            creator_org_user_id: 1,
+        }
+    })
+    res.json({
+        message: "created",
+        data: announcement
+    })
+})
 
 const kafka = new Kafka({
     clientId: 'notification-producer',
@@ -51,35 +69,37 @@ app.get("/produce", (req, res) => {
     res.json({
         message: "produced"
     });
-    produceTestNotification().catch(console.error);
+    for (let i = 0; i < 10; i++) {
+        produceTestNotification().catch(console.error);
+    }
 })
 
 
-const wsManager = new WebSocketServerManager(server);
+app.get("/consume", (req, res) => {
+    const wsManager = new WebSocketServerManager(server);
 
-const kafkaConsumerService = new KafkaConsumerService(
-    ['localhost:29092'], // Replace with your Kafka broker addresses
-    'notification-service-group',
-    wsManager,
-    ['notifications'] // Topics to subscribe to
-);
+    const kafkaConsumerService = new KafkaConsumerService(
+        ['localhost:29092'],
+        'notification-service-group',
+        wsManager,
+        ['notifications'] // Topics to subscribe to
+    );
 
-(async () => {
-    try {
-        await kafkaConsumerService.initialize(['notifications']);
-        await kafkaConsumerService.start();
-        console.log('Notification service started');
-
-    } catch (error) {
-        console.error('Failed to start notification service:', error);
-        process.exit(1);
-    }
-})();
+    (async () => {
+        try {
+            await kafkaConsumerService.initialize(['notifications']);
+            await kafkaConsumerService.start();
+        } catch (error) {
+            console.error('Failed to start notification service:', error);
+            process.exit(1);
+        }
+    })();
+})
 
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-server.listen(config.server.port, () => {
+server.listen(7002, () => {
     console.log(`Notification server running on port ${config.server.port}`);
 })
