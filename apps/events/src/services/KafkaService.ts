@@ -32,28 +32,31 @@ export default class KafkaConsumerService {
     this.wsManager = wsManager;
     this.consumer = kafka.consumer({ groupId });
     this.prisma = prisma;
-    this.initialize(topics);
+    // this.initialize(topics);
   }
 
-  private async initialize(topics: string[]): Promise<void> {
+  // Add more detailed connection logging in initialize()
+  public async initialize(topics: string[]): Promise<void> {
     try {
+      console.log(`Attempting to connect to Kafka brokers...`);
+      await this.consumer.connect();
+      console.log(`Connected to Kafka successfully`);
 
-      this.consumer.connect();
       for (const topic of topics) {
-        this.consumer.subscribe({ topic: topic, fromBeginning: false });
+        console.log(`Subscribing to topic: ${topic}`);
+        await this.consumer.subscribe({ topic: topic, fromBeginning: true });
+        console.log(`Successfully subscribed to topic: ${topic}`);
       }
 
       console.log('Kafka consumer initialized and subscribed to topics:', topics);
-
     } catch (err) {
-
-      console.log('Failed to initialize Kafka consumer:', err);
+      console.error('Failed to initialize Kafka consumer:', err);
       throw err;
-
     }
   }
 
   public async start(): Promise<void> {
+    console.log("Message consumption starting...");
 
     if (this.isRunning) {
       console.log("Consumer is already running");
@@ -61,20 +64,25 @@ export default class KafkaConsumerService {
     }
 
     try {
-      this.consumer.run({
+      await this.consumer.run({
         eachMessage: async ({ topic, partition, message }) => {
-          this.processMessage(message);
+          console.log(`Received message from topic ${topic}, partition ${partition}`);
+          console.log(`Message key: ${message.key?.toString()}`);
+          console.log(`Message value: ${message.value?.toString()}`);
+          await this.processMessage(message);
         }
-      })
+      });
 
-      this.isRunning = true;
-      console.log('Kafka consumer started');
+      this.isRunning = true;3
+      console.log('Kafka consumer started successfully');
     } catch (err) {
-      console.log("Error in starting the kafka consumer");
+      console.error("Error in starting the kafka consumer:", err);
     }
   }
 
   private async processMessage(message: KafkaMessage): Promise<void> {
+    console.log('Received Kafka message:', message.toString()); // Add this line
+
     try {
       if (!message.value) {
         console.warn('Received message with no value');
@@ -85,22 +93,22 @@ export default class KafkaConsumerService {
       console.log('Processing notification event:', eventData.type);
 
       // Store notification in database
-      const notification = await this.storeNotification(eventData);
+      // const notification = await this.storeNotification(eventData);
 
       // Send notification to user via WebSocket
-      this.wsManager.sendToUser(eventData.recipientUserId, {
-        type: 'NOTIFICATION',
-        notification: {
-          id: notification.id,
-          type: notification.type,
-          title: notification.title,
-          message: notification.message,
-          is_read: notification.is_read,
-          created_at: notification.created_at,
-          metadata: notification.metadata,
-          action_url: notification.action_url,
-        }
-      });
+      // this.wsManager.sendToUser(eventData.recipientUserId, {
+      //   type: 'NOTIFICATION',
+      //   notification: {
+      //     id: notification.id,
+      //     type: notification.type,
+      //     title: notification.title,
+      //     message: notification.message,
+      //     is_read: notification.is_read,
+      //     created_at: notification.created_at,
+      //     metadata: notification.metadata,
+      //     action_url: notification.action_url,
+      //   }
+      // });
 
     } catch (error) {
       console.error('Error processing message:', error);

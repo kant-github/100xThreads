@@ -11,6 +11,7 @@ interface WebSocketClient extends WebSocket {
 interface PayloadInterface {
     userId: string;
     type: string;
+    payload: any;
 }
 
 export default class WebSocketServerManager {
@@ -67,6 +68,7 @@ export default class WebSocketServerManager {
     }
 
     public sendToUser(userId: string, data: any) {
+        console.log("data came is : ", data);
         const userConnections = this.userSockets.get(userId);
 
         if (!userConnections || userConnections.size === 0) {
