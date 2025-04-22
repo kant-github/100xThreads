@@ -23,14 +23,14 @@ export default function () {
 
     return (
         <div className="w-full  flex flex-row justify-center items-center gap-x-12 px-12">
-            <div className="md:w-4/6 w-screen transform dark:bg-[#f5a331] bg-[#202a2e] px-12 py-4 rounded-[8px] mx-4 my-12">
+            <div className="md:w-4/6 w-screen transform bg-primary px-12 py-4 rounded-[8px] mx-4 my-12">
                 <div className="flex flex-col">
                     <div>
                         <div className="flex flex-row items-center ml-0.5 gap-x-2">
-                            <FaIndustry size={26} className="dark:text-gray-800 text-gray-200 text-20" />
-                            <h3 className={`${doto.className} dark:text-gray-800 pt-1 text-gray-200 text-2xl font-bold tracking-wider`}>CREATE ORGANIZATION</h3>
+                            <FaIndustry size={26} className="dark:text-lightText text-20" />
+                            <h3 className={`${doto.className} dark:text-lightText pt-1 text-lightText text-2xl font-bold tracking-wider`}>CREATE ORGANIZATION</h3>
                         </div>
-                        <p className="text-gray-200 dark:text-gray-800 font-semibold italic tracking-wider md:text-[13px] text-xs mt-3">
+                        <p className="dark:text-lightText font-semibold italic tracking-wider md:text-[13px] text-xs mt-3">
                             Start a chat room with just a few clicks and stay connected with friends. Chat, share, and catch up anytime!
                         </p>
                     </div>

@@ -43,7 +43,7 @@ async function produceTestNotification() {
 
     const message = {
         type: 'NEW_MESSAGE',
-        recipientUserId: '1', // make sure this user is connected via WS
+        recipientUserId: '1',
         title: 'Test Notification',
         message: 'Hello from Kafka!',
         metadata: { source: 'test-script' },
@@ -66,12 +66,14 @@ async function produceTestNotification() {
 }
 
 app.get("/produce", (req, res) => {
-    res.json({
-        message: "produced"
-    });
     for (let i = 0; i < 10; i++) {
         produceTestNotification().catch(console.error);
     }
+    res.json({
+        message: "produced"
+    });
+
+    return;
 })
 
 

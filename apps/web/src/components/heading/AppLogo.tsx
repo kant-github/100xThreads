@@ -1,4 +1,4 @@
-import { GiJigsawPiece } from "react-icons/gi";
+import { GiDoubleDragon } from "react-icons/gi";
 import { useRouter } from "next/navigation";
 
 
@@ -14,7 +14,7 @@ export default function ({ className }: props) {
                 router.push("/dashboard");
             }}
             className={`flex flex-row gap-x-5 items-center ml-2 cursor-pointer select-none group ${className}`}>
-            <GiJigsawPiece
+            <GiDoubleDragon
                 size={30}
                 className="transition-transform transform group-hover:-translate-x-[3px] text-[#f2a633] dark:text-[#f2a633]"
             />

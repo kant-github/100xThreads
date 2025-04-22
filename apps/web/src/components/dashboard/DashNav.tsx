@@ -82,7 +82,7 @@ export default function Header({ groups }: Props) {
 
 
   return (
-    <div className="flex bg-white dark:bg-[#171717] flex-row justify-between items-center w-full h-full px-8 border-b dark:border-zinc-700 dark:shadow-[40px]">
+    <div className="flex bg-light dark:bg-dark flex-row justify-between items-center w-full h-full px-8 border-b border-neutral-300 dark:border-zinc-700 dark:shadow-[40px]">
       <div className="flex items-center gap-x-2">
         <AppLogo />
         <Version />

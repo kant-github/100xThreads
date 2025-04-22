@@ -10,7 +10,7 @@ import UtilitySideBar from "../utility/UtilitySideBar";
 import DashboardComponentHeading from "./DashboardComponentHeading";
 
 export const baseDivStyles = "flex items-center justify-start gap-x-2 sm:gap-x-3 py-1.5 sm:py-2 px-2 sm:px-3 rounded-[8px] cursor-pointer select-none";
-const textStyles = "text-[12px] sm:text-[13px] text-gray-100 dark:text-neutral-100 font-normal mt-0.5 tracking-wide hidden sm:block";
+const textStyles = "text-[12px] sm:text-[13px] text-lightText dark:text-neutral-100 font-normal mt-0.5 tracking-wide hidden sm:block";
 
 function Option({ isSelected, onClick, Icon, label }: {
     isSelected?: boolean;
@@ -19,7 +19,7 @@ function Option({ isSelected, onClick, Icon, label }: {
     label: string;
 }) {
     return (
-        <div onClick={onClick} className={`${baseDivStyles} ${isSelected ? "bg-neutral-700 text-white" : "hover:bg-neutral-800"}`}>
+        <div onClick={onClick} className={`${baseDivStyles} ${isSelected ? "dark:bg-neutral-700 bg-[#d9d3cc] dark:text-darkText text-lightText" : "dark:hover:bg-neutral-800 hover:bg-secondLight"}`}>
             <Icon size={16} className="sm:hidden" />
             <Icon size={18} className="hidden sm:block" />
             <span className={`${textStyles}`}>{label}</span>
