@@ -128,6 +128,9 @@ export default class ProjectChannelManager {
             type: message.payload.type
         });
 
+        console.log("incoming message is : ", message);
+
+
         const activityLogchannelKey = `${tokenData.organizationId}:${message.payload.channelId}:project-channel-chat-messages`
 
         // First create the task without assignees
@@ -187,7 +190,6 @@ export default class ProjectChannelManager {
             }
         })
 
-        console.log("project chat created : ", chat);
 
 
 
@@ -251,7 +253,6 @@ export default class ProjectChannelManager {
                         }
                     })
 
-                    console.log("project chat created : ", newProjectMemberActivity);
 
                     await this.publisher.publish(activityLogchannelKey, JSON.stringify({
                         type: 'project-channel-chat-messages',
@@ -278,7 +279,6 @@ export default class ProjectChannelManager {
                     ? `Task "${task.title}" was assigned to ${assigneeNames[0]}`
                     : `Task "${task.title}" was assigned to ${assigneeNames.join(', ')}`;
 
-                console.log("assignee message is : ", assignMessage);
 
                 const newAssigneeActivity = await this.prisma.projectChat.create({
                     data: {
@@ -297,7 +297,6 @@ export default class ProjectChannelManager {
                     }
                 });
 
-                console.log("project chat created : ", newAssigneeActivity);
 
                 await this.publisher.publish(activityLogchannelKey, JSON.stringify({
                     type: 'project-channel-chat-messages',
@@ -369,8 +368,6 @@ export default class ProjectChannelManager {
             }
 
             // Check if the task assignee already exists
-            console.log("task id is: ", message.payload.task_id);
-            console.log("project member id is: ", projectMemberId);
 
             const existingAssignee = await this.prisma.taskAssignees.findUnique({
                 where: {
@@ -381,7 +378,6 @@ export default class ProjectChannelManager {
                 }
             });
 
-            console.log("existing task assignee is: ", existingAssignee);
 
             // Only create if the assignee doesn't already exist
             if (!existingAssignee) {

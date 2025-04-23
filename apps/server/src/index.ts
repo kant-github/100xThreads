@@ -4,7 +4,6 @@ import cors from "cors";
 import fileUpload from "express-fileupload";
 import Routes from "./routes";
 import WebSocketServerManager from "./websockets/webSocketServer";
-import prisma from "@repo/db/client";
 
 const app = express();
 
@@ -23,26 +22,8 @@ new WebSocketServerManager(server);
 
 
 app.get("/health-check", (req, res) => {
-  res.send("Server started Dipanshu gandu :)");
+  res.send("Server started");
 });
-
-app.get("/store", async (req, res) => {
-  const announcement = await prisma.announcement.create({
-      data: {
-          channel_id: '9af56c66-3a3c-4b83-af53-bdf5ec075a58',
-          title: "Checkssss",
-          content: "checksssss",
-          priority: 'URGENT',
-          tags: ['fee', 'checks', 'tags'],
-          creator_org_user_id: 1,
-      }
-  })
-  res.json({
-      message: "created",
-      data: announcement
-  })
-})
-
 
 app.use("/api", Routes);
 

@@ -1,7 +1,5 @@
-import { useDebugValue, useEffect, useState } from 'react';
-import { Plus } from 'lucide-react';
-import CreateProjectsForm from '@/components/form/CreateProjectsForm';
-import { ChannelType, OrganizationUsersType, ProjectTypes, TaskStatus, TaskTypes } from 'types/types';
+import { useEffect } from 'react';
+import { ChannelType, ProjectTypes, TaskStatus, TaskTypes } from 'types/types';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { projectChannelMessageAtom } from '@/recoil/atoms/organizationAtoms/projectChannelMessageAtom';
 import Project from './Project';
@@ -10,6 +8,7 @@ import { projectSelectedAtom } from '@/recoil/atoms/projects/projectSelectedAtom
 import { useWebSocket } from '@/hooks/useWebsocket';
 import { organizationIdAtom } from '@/recoil/atoms/organizationAtoms/organizationAtom';
 import { DndContext, DragEndEvent } from '@dnd-kit/core';
+import UtilityCard from '@/components/utility/UtilityCard';
 
 interface ProjectsProps {
     channel: ChannelType;
@@ -17,7 +16,6 @@ interface ProjectsProps {
 
 export default function ({ channel }: ProjectsProps) {
     const [selectedProject, setSelectedProject] = useRecoilState(projectSelectedAtom);
-    const [createProjectsModal, setCreateProjectsModal] = useState<boolean>(false);
     const [projectsChannelMessages, setProjectChannelMessages] = useRecoilState(projectChannelMessageAtom);
     const organizationId = useRecoilValue(organizationIdAtom);
 
@@ -154,26 +152,16 @@ export default function ({ channel }: ProjectsProps) {
         });
     }
 
-    function incomingNewProjectHandler(newMessage: any) {
-        console.log("new project is ", newMessage);
-        console.log("project channel messages are : ", projectsChannelMessages);
-        setProjectChannelMessages(prev => [newMessage, ...prev]);
-    }
-
     useEffect(() => {
         if (channel.id && organizationId) {
             subscribeToBackend(channel.id, organizationId, 'new-created-task');
             subscribeToBackend(channel.id, organizationId, 'task-assignee-change');
-            subscribeToBackend(channel.id, organizationId, 'new-project');
             const unsubscribeNewAssigneeHandler = subscribeToHandler('task-assignee-change', incomingNewAssigneeHandler);
             const unsubscribeNewCreatedTask = subscribeToHandler('new-created-task', incomingNewTasksHandler)
-            const unsubscribeNewProjectHandler = subscribeToHandler('new-project', incomingNewProjectHandler)
 
             return () => {
                 unsubscribeNewCreatedTask();
                 unsubscribeNewAssigneeHandler();
-                unsubscribeNewProjectHandler();
-                unsubscribeFromBackend(channel.id, organizationId, 'new-project');
                 unsubscribeFromBackend(channel.id, organizationId, 'new-created-task');
                 unsubscribeFromBackend(channel.id, organizationId, 'task-assignee-change');
             }
@@ -182,20 +170,14 @@ export default function ({ channel }: ProjectsProps) {
 
     return (
         <DndContext onDragEnd={handleDragEnd}>
-            <div className='w-full px-2 flex flex-col flex-1 min-h-0 '>
-                <div className="border-b-[0.5px] border-neutral-600 my-6" />
+            <div className='w-full flex flex-col flex-1 min-h-0'>
                 {
                     !selectedProject ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <button type='button' onClick={() => setCreateProjectsModal(true)} className="bg-gray-50 dark:bg-neutral-800 rounded-[14px] p-4 flex items-center justify-center cursor-pointer hover:bg-gray-100 hover:dark:bg-neutral-800/80 border-[1px] dark:border-neutral-700 relative">
-                                <Plus className="w-5 h-5 text-neutral-200" />
-                                <span className="ml-2 text-gray-600 dark:text-neutral-200 mb-[0.5px] text-sm">New Project</span>
-                            </button>
+                        <UtilityCard className='p-8 w-full flex-1 mt-4 dark:bg-neutral-800 flex flex-col min-h-0 shadow-lg shadow-black/20'>
                             {projectsChannelMessages.map((project) => (
                                 <Project channel={channel} key={project.id} project={project} setSelectedProject={setSelectedProject} />
                             ))}
-                            {createProjectsModal && <CreateProjectsForm channel={channel} className='w-[30%]' open={createProjectsModal} setOpen={setCreateProjectsModal} />}
-                        </div>
+                        </UtilityCard>
                     ) : (
                         <KanBanBoard channel={channel} tasks={selectedProject.tasks!} />
                     )

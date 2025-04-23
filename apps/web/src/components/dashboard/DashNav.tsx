@@ -45,14 +45,6 @@ export default function Header({ groups }: Props) {
     }
   }
 
-  async function globalRoomButtonHandler() {
-    if (!session?.user.id) {
-      toast.error("User not authenticated");
-      return;
-    }
-    await globalRoomHandler(globalGroupId, session.user.id, router);
-  }
-
   useEffect(() => {
     const debouncedTimeout = setTimeout(() => {
       if (searchInput) {

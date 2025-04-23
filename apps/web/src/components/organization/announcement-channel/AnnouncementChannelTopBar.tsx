@@ -1,4 +1,5 @@
 import DesignButton from "@/components/buttons/DesignButton";
+import DashboardComponentHeading from "@/components/dashboard/DashboardComponentHeading";
 import CreateAnnouncementForm from "@/components/form/announcementForm/CreateAnnouncementForm";
 import GuardComponent from "@/rbac/GuardComponent";
 import { Dispatch, SetStateAction } from "react";
@@ -14,7 +15,10 @@ interface AnnouncementChannelTopBarProps {
 
 export default function ({ channel, createAnnoucementModal, setCreateAnnouncementModal }: AnnouncementChannelTopBarProps) {
     return (
-        <div className="mr-4 absolute top-6 right-3">
+        <div className="flex flex-row justify-between w-full">
+
+
+            <DashboardComponentHeading description={channel.description!}>{channel.title}</DashboardComponentHeading>
 
             <GuardComponent action={Action.CREATE} subject={Subject.ANNOUNCEMENT}>
                 <DesignButton onClick={() => setCreateAnnouncementModal(prev => !prev)} className="group">

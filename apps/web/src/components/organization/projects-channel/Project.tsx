@@ -20,7 +20,7 @@ export default function ({ project, setSelectedProject, channel }: ProjectProps)
     const { canView } = useProjectPermission(project);
 
     return (
-        <div key={project.id} className="flex flex-col items-start bg-white dark:bg-neutral-800 hover:dark:bg-[#242424] rounded-[14px] px-6 py-4 cursor-pointer hover:shadow-lg transition-shadow border-[1px] dark:border-neutral-700 group relative">
+        <div key={project.id} className="flex flex-col items-start bg-white bg-gradient-to-br from-neutral-900 via-neutral-900 to-neutral-950 rounded-[14px] px-6 py-4 cursor-pointer hover:shadow-lg transition-shadow group relative">
             {
                 canView ? (
                     <MdChat className="absolute right-4 top-4 text-neutral-200" onClick={(e) => {

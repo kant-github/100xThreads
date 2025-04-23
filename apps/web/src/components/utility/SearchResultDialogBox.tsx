@@ -1,11 +1,11 @@
 "use client";
 import React, { Dispatch, SetStateAction, useEffect, useRef } from "react";
-import { ChatGroupType } from "types/types";
+import { OrganizationType } from "types/types";
 
 interface SearchResultDialogBoxProps {
     searchResultDialogBox: boolean;
     setSearchResultDialogBox: Dispatch<SetStateAction<boolean>>;
-    searchResults: ChatGroupType[];
+    searchResults: OrganizationType[];
 }
 
 export default function SearchResultDialogBox({ searchResultDialogBox, setSearchResultDialogBox, searchResults }: SearchResultDialogBoxProps) {
@@ -46,7 +46,7 @@ export default function SearchResultDialogBox({ searchResultDialogBox, setSearch
                             key={index}
                             className="hover:bg-gray-100 dark:hover:bg-zinc-700 px-4 py-2.5 text-xs font-thin"
                         >
-                            {result.title}
+                            {result.name}
                         </div>
                     ))
                 ) : (

@@ -94,7 +94,6 @@ export default class WebSocketServerManager {
 
     private async handleIncomingMessage(ws: WebSocket, data: string, tokenData: any) {
         const message: WebSocketMessage = JSON.parse(data);
-        console.log("message type is : ", message.type);
         switch (message.type) {
             case 'subscribe-channel':
                 await this.handleChannelSubscription(ws, message.payload);

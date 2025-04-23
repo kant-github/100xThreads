@@ -151,7 +151,7 @@ export function PlaceholdersAndVanishInput({
   return (
     <form
       className={cn(
-        " select-none w-full relative max-w-xl mx-auto bg-white dark:bg-zinc-800 h-9 rounded-full overflow-hidden shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),_0px_1px_0px_0px_rgba(25,28,33,0.02),_0px_0px_0px_1px_rgba(25,28,33,0.08)] transition duration-200",
+        " select-none w-full relative max-w-xl mx-auto bg-white dark:bg-neutral-800 h-9 rounded-full overflow-hidden shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),_0px_1px_0px_0px_rgba(25,28,33,0.02),_0px_0px_0px_1px_rgba(25,28,33,0.08)] transition duration-200",
         value && "bg-gray-50"
       )}
     >
@@ -185,7 +185,7 @@ export function PlaceholdersAndVanishInput({
       </span>
 
 
-      <div className="absolute inset-0  flex items-center rounded-full pointer-events-none">
+      <div className="absolute inset-0 flex items-center rounded-full pointer-events-none">
         <AnimatePresence mode="wait">
           {!value && (
             <motion.p

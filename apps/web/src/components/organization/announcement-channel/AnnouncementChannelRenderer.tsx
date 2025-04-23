@@ -1,30 +1,18 @@
 import PinnedCard from "@/components/cards/PinnedCard";
-import DashboardComponentHeading from "@/components/dashboard/DashboardComponentHeading";
 import UtilityCard from "@/components/utility/UtilityCard";
 import { announcementChannelMessgaes } from "@/recoil/atoms/organizationAtoms/announcementChannelMessagesAtom";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction  } from "react";
 import { useRecoilValue } from "recoil";
 import { ChannelType } from "types/types";
 import EmptyAnnouncementChannelMessage from "./EmptyAnnouncementChannelMessage";
 
-import AnnouncementChannelTopBar from "./AnnouncementChannelTopBar";
-import { useWebSocket } from "@/hooks/useWebsocket";
-import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
-
 interface AnnouncementChannelMessagesProps {
     channel: ChannelType;
+    setCreateAnnouncementModal: Dispatch<SetStateAction<boolean>>
 }
 
-export default function ({ channel }: AnnouncementChannelMessagesProps) {
+export default function ({ channel, setCreateAnnouncementModal }: AnnouncementChannelMessagesProps) {
     const announcementChannelMessages = useRecoilValue(announcementChannelMessgaes);
-    const [createAnnoucementModal, setCreateAnnouncementModal] = useState<boolean>(false);
-    const organizationId = useRecoilValue(organizationIdAtom);
-    const { subscribeToBackend, unsubscribeFromBackend, subscribeToHandler } = useWebSocket();
-
-    function handleIncomingAnnouncemennts(newMessage: any) {
-        console.log(newMessage);
-    }
-
     // useEffect(() => {
     //     if (channel.id && organizationId) {
     //         subscribeToBackend(channel.id, organizationId, 'create-announcement-messages');
@@ -39,11 +27,7 @@ export default function ({ channel }: AnnouncementChannelMessagesProps) {
     // }, [channel.id, organizationId])
 
     return (
-        <div className="dark:bg-neutral-900 h-full flex flex-col items-start w-full p-6 relative">
-            <AnnouncementChannelTopBar createAnnoucementModal={createAnnoucementModal} setCreateAnnouncementModal={setCreateAnnouncementModal} channel={channel} />
-            <DashboardComponentHeading description={channel.description!}>
-                {channel.title}
-            </DashboardComponentHeading>
+        <div className="w-full flex flex-col flex-1 min-h-0">            
             <UtilityCard className='p-8 w-full flex-1 mt-4 dark:bg-neutral-800 flex flex-col min-h-0 shadow-lg shadow-black/20'>
                 <div className='w-full h-full overflow-y-auto scrollbar-hide'>
                     {!announcementChannelMessages.length ? (

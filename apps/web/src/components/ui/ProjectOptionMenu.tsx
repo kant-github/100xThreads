@@ -10,6 +10,7 @@ import { organizationUsersAtom } from "@/recoil/atoms/organizationAtoms/organiza
 import { OrganizationUsersType, ProjectMemberRole, ProjectMemberType, ProjectTypes } from "types/types";
 import OptionImage from "./OptionImage";
 import Image from "next/image";
+import SearchInput from "../utility/SearchInput";
 
 interface ProjectOptionMenuProps {
     open: boolean;
@@ -122,12 +123,13 @@ export default function ProjectOptionMenu({ open, setOpen, isAdmin = false }: Pr
                     >
                         Manage members
                     </button>
+
                 </div>
             </UtilityOptionMenuCard>
 
             <UtilitySideBar
                 content={
-                    <div className="h-full flex flex-col px-5 py-4 min-w-[300px] relative">
+                    <div className="h-full flex flex-col gap-y-4 px-5 py-4 min-w-[300px] relative">
                         <div className="flex flex-row absolute top-4 right-4">
                             <ProjectTasksTicker>
                                 <LiaTasksSolid size={14} />
@@ -141,9 +143,11 @@ export default function ProjectOptionMenu({ open, setOpen, isAdmin = false }: Pr
                             {selectedProject?.title}
                         </DashboardComponentHeading>
 
-                        <div className="mt-3 text-sm font-normal mb-4">
-                            {selectedProject?.members?.length || 0} members
-                        </div>
+                        <SearchInput
+                            // setSearchResultDialogBox={setSearchResultDialogBox}
+                            // input={searchInput}
+                            // setInput={setSearchInput}
+                        />
 
                         <div className="flex flex-col space-y-2 mt-2 max-h-[50vh] overflow-y-auto">
                             {organizationUsers.map((orgUser) => (

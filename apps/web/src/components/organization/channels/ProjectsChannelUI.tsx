@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { projectChannelMessageAtom } from "@/recoil/atoms/organizationAtoms/projectChannelMessageAtom";
 import ProjectsChannelTopBar from "../projects-channel/ProjectsChannelTopBar";
 import ProjectsSectionRenderer from "../projects-channel/ProjectsSectionRenderer";
+import { useWebSocket } from "@/hooks/useWebsocket";
 
 
 interface WelcomeChannelViewProps {
@@ -18,7 +19,7 @@ export default function ({ channel }: WelcomeChannelViewProps) {
     const organization = useRecoilValue(organizationAtom);
     const session = useRecoilValue(userSessionAtom);
     const setProjectChannelMessages = useSetRecoilState(projectChannelMessageAtom);
-
+    
 
     async function getWelcomeMessages() {
         try {

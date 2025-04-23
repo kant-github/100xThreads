@@ -1,14 +1,10 @@
-// src/hooks/useProjectPermission.ts
-
 import { useRecoilValue } from "recoil";
-import { userSessionAtom } from "@/recoil/atoms/atom";
 import { organizationUserAtom } from "@/recoil/atoms/organizationAtoms/organizationUserAtom";
 import { checkProjectPermission, ProjectPermission } from "@/rbac/projectPermissions";
 import { ProjectTypes } from "types/types";
 
 
 export function useProjectPermission(project: ProjectTypes | null) {
-  const session = useRecoilValue(userSessionAtom);
   const organizationUser = useRecoilValue(organizationUserAtom);
   
   // Function to check specific permissions only when needed
