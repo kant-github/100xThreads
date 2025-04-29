@@ -1,6 +1,7 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import UtilitySideBar from "../utility/UtilitySideBar";
 import DashboardComponentHeading from "../dashboard/DashboardComponentHeading";
+import { useNotificationWebSocket } from "@/hooks/useNotificationWebsocket";
 
 interface OrganizationNotificationsRendererProps {
     open: boolean;
@@ -8,7 +9,22 @@ interface OrganizationNotificationsRendererProps {
 }
 
 export default function ({ open, setOpen }: OrganizationNotificationsRendererProps) {
+
+    const { subscribeToHandler } = useNotificationWebSocket();
+
+    function handleIncomingNotifications(newMessage: any) {
+        console.log("incoming message is : ", newMessage);
+    }
+
+    useEffect(() => {
+        const unsubscribeNotificationHandler = subscribeToHandler('notifications', handleIncomingNotifications);
+        return () => {
+            unsubscribeNotificationHandler();
+        }
+    }, [])
+
     return (
+
         <UtilitySideBar
             width="4/12"
             blob={true}

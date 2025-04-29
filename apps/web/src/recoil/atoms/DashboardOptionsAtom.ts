@@ -1,7 +1,8 @@
 import { atom } from "recoil";
 
-export enum RendererOption{
+export enum RendererOption {
     Home,
+    Notification,
     AllOrganization,
     OwnedByYou,
     Settings,

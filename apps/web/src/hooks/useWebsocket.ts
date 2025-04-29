@@ -20,7 +20,7 @@ export const useWebSocket = () => {
         userName: session.user.name
       }));
 
-      const ws = new WebSocketClient(`ws://localhost:7001?token=${wsToken}`);
+      const ws = new WebSocketClient(`ws://localhost:7001/socket?token=${wsToken}`);
       webSocketRef.current = ws;
     }
   }, [session.user?.id, session.user?.name, organizationIdd]);

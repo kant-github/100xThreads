@@ -1,5 +1,6 @@
 export class WebSocketClient {
     private ws: WebSocket | null = null;
+    private URL: string;
     private reconnectAttempts = 0;
     private maxReconnectAttempts = 5;
     private reconnectTimeout = 1000;
@@ -8,7 +9,9 @@ export class WebSocketClient {
     private MessageHandlers: Map<string, ((payload: any) => void)[]> = new Map();
     private subscribedChannels: Set<string> = new Set(); // Track subscribed channels
 
-    constructor(private URL: string) {
+
+    constructor(URL: string) {
+        this.URL = URL;
         this.connect();
     }
 

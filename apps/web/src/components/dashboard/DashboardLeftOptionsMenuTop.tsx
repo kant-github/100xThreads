@@ -1,6 +1,6 @@
 import { GoHomeFill } from "react-icons/go";
 import { FaIndustry } from "react-icons/fa6";
-import { IoMdBody, IoMdSettings } from "react-icons/io";
+import { IoMdBody, IoMdSettings, IoIosNotifications } from "react-icons/io";
 import ProfileOption from "../ui/ProfileOption";
 import { useRecoilState } from "recoil";
 import { dashboardOptionsAtom, RendererOption } from "@/recoil/atoms/DashboardOptionsAtom";
@@ -8,6 +8,7 @@ import { FaUserFriends } from "react-icons/fa";
 import { useState } from "react";
 import UtilitySideBar from "../utility/UtilitySideBar";
 import DashboardComponentHeading from "./DashboardComponentHeading";
+import OrganizationNotificationsRenderer from "../notifications/OrganizationNotificationsRenderer";
 
 export const baseDivStyles = "flex items-center justify-start gap-x-2 sm:gap-x-3 py-1.5 sm:py-2 px-2 sm:px-3 rounded-[8px] cursor-pointer select-none";
 const textStyles = "text-[12px] sm:text-[13px] text-lightText dark:text-neutral-100 font-normal mt-0.5 tracking-wide hidden sm:block";
@@ -29,8 +30,8 @@ function Option({ isSelected, onClick, Icon, label }: {
 
 export default function () {
     const [renderOption, setRenderOption] = useRecoilState(dashboardOptionsAtom);
-    const [open, setOpen] = useState<boolean>(false);
-
+    const [friendOptionMenu, setFriendOptionMenu] = useState<boolean>(false);
+    const [notificationMenu, setNotificationMenu] = useState<boolean>(false);
     return (
         <div className="h-auto sm:h-24 py-1 sm:py-2 rounded-[8px]">
             <ProfileOption />
@@ -40,6 +41,12 @@ export default function () {
                     onClick={() => setRenderOption(RendererOption.Home)}
                     Icon={GoHomeFill}
                     label="Home"
+                />
+                <Option
+                    isSelected={renderOption === RendererOption.Notification}
+                    onClick={() => setNotificationMenu(prev => !prev)}
+                    Icon={IoIosNotifications}
+                    label="Notifications"
                 />
                 <Option
                     isSelected={renderOption === RendererOption.OwnedByYou}
@@ -54,7 +61,7 @@ export default function () {
                     label="All Organizations"
                 />
                 <Option
-                    onClick={() => setOpen(prev => !prev)}
+                    onClick={() => setFriendOptionMenu(prev => !prev)}
                     Icon={FaUserFriends}
                     label="Friends"
                 />
@@ -68,14 +75,15 @@ export default function () {
             <UtilitySideBar
                 bottomLogo={true}
                 width="3/12"
-                open={open}
-                setOpen={setOpen}
+                open={friendOptionMenu}
+                setOpen={setFriendOptionMenu}
                 content={
                     <DashboardComponentHeading className="pt-4 sm:pt-6 pl-4 sm:pl-8" description="check list of friends you made" >
                         Friends
                     </DashboardComponentHeading>
                 }
             />
+            <OrganizationNotificationsRenderer open={notificationMenu} setOpen={setNotificationMenu} />
         </div>
     );
 }

@@ -8,6 +8,7 @@ import KafkaConsumerService from './services/KafkaService';
 import prisma from '@repo/db/client';
 const app = express();
 const server = createServer(app);
+const wsManager = new WebSocketServerManager(server);
 
 
 app.use(cors());
@@ -78,7 +79,6 @@ app.get("/produce", (req, res) => {
 
 
 app.get("/consume", (req, res) => {
-    const wsManager = new WebSocketServerManager(server);
 
     const kafkaConsumerService = new KafkaConsumerService(
         ['localhost:29092'],

@@ -7,7 +7,7 @@ import AnnouncementchannelManager from "./ws-controllers/AnnouncementchannelMana
 import ProjectChannelManager from "./ws-controllers/ProjectChannelManager";
 
 export default class WebSocketDatabaseManager {
-
+    
     private prisma: PrismaClient;
     private publisher: Redis;
     private generalchannelManager: GeneralChannelManager;
