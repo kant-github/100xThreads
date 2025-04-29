@@ -71,7 +71,7 @@ export default class ProjectChannelManager {
                 id: message.payload.id,
                 project_id: message.payload.project_id,
                 organization_id: message.payload.organization_user.organization_id,
-                org_user_id: Number(message.payload.org_user_id),
+                user_id: Number(tokenData.userId),
                 message: message.payload.message,
                 name: message.payload.name,
             }
@@ -165,17 +165,21 @@ export default class ProjectChannelManager {
             include: {
                 user: {
                     select: {
-                        name: true
+                        name: true,
+                        id: true
                     }
                 }
             }
         })
 
+        console.log("org user is : ", orgUser);
+        console.log("token data : ", tokenData);
+
         const chat = await this.prisma.projectChat.create({
             data: {
                 project_id: message.payload.projectId,
                 organization_id: tokenData.organizationId,
-                org_user_id: orgUser?.id!,
+                user_id: Number(tokenData.userId),
                 name: 'SYSTEM-PROMPTED',
                 message: `Task "${task.title}" was created by "${orgUser?.user.name}"`,
                 is_activity: true,
@@ -189,6 +193,8 @@ export default class ProjectChannelManager {
                 }
             }
         })
+
+        console.log("chat is : ", chat);
 
 
 
@@ -244,7 +250,7 @@ export default class ProjectChannelManager {
                         data: {
                             project_id: message.payload.projectId,
                             organization_id: tokenData.organizationId,
-                            org_user_id: orgUser?.id!,
+                            user_id: Number(tokenData.userId),
                             name: "SYSTEM-PROMPT",
                             message: `${projectMember.organization_user.user.name} has been added to the project`,
                             is_activity: true,
@@ -284,7 +290,7 @@ export default class ProjectChannelManager {
                     data: {
                         project_id: message.payload.projectId,
                         organization_id: tokenData.organizationId,
-                        org_user_id: orgUser?.id!,
+                        user_id: Number(tokenData.userId),
                         name: "System",
                         message: assignMessage,
                         is_activity: true,

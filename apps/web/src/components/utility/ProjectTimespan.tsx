@@ -1,30 +1,49 @@
-import { ProjectTypes } from "types/types";
 import { format, differenceInDays } from 'date-fns';
 
+// Define the props interface
 interface ProjectTimespanProps {
-    project: ProjectTypes
+    project: {
+        created_at: string | Date;
+        due_date: string | Date;
+    }
 }
 
-export default function ({ project }: ProjectTimespanProps) {
+export default function ProjectTimespan({ project }: ProjectTimespanProps) {
     const createdProjectDate = new Date(project.created_at);
     const projectDueDate = new Date(project.due_date);
-
-    const claculatedDifference = differenceInDays(projectDueDate, createdProjectDate);
+    const calculatedDifference = differenceInDays(projectDueDate, createdProjectDate);
 
     return (
         <div className="mt-5 w-full relative">
-            <hr className="border-t-1 border-green-600" />
-            <div className="absolute -top-2 left-0 right-0 text-green-600 flex justify-between items-center">
-                <span className="text-[11px] bg-white dark:bg-neutral-800 group-hover:dark:bg-[#242424] pr-2">
-                    {format(createdProjectDate, 'd MMM')}
-                </span>
-                <span className="text-[11px] bg-white dark:bg-neutral-800 group-hover:dark:bg-[#242424] px-2 font-semibold italic">
-                    {claculatedDifference} days
-                </span>
-                <span className="text-[11px] bg-white dark:bg-neutral-800 group-hover:dark:bg-[#242424] pl-2">
-                    {format(projectDueDate, 'd MMM')}
-                </span>
+            {/* Container for the timeline */}
+            <div className="flex items-center w-full h-6">
+                {/* Start date bubble */}
+                <div className="z-10 bg-green-700 px-2 py-0.5 rounded-full border border-green-600 shadow-sm">
+                    <span className="text-xs dark:text-light font-light flex items-center justify-center">
+                        {format(createdProjectDate, 'd MMM')}
+                    </span>
+                </div>
+
+                {/* Timeline line */}
+                <div className="flex-grow h-0.5 bg-green-600 mx-1"></div>
+
+                {/* Days count bubble */}
+                <div className="z-10 bg-green-700 px-2 py-0.5 rounded-full border border-green-600 shadow-sm">
+                    <span className="text-xs dark:text-light font-light flex items-center justify-center">
+                        {calculatedDifference} days
+                    </span>
+                </div>
+
+                {/* Timeline line */}
+                <div className="flex-grow h-0.5 bg-green-600 mx-1"></div>
+
+                {/* End date bubble */}
+                <div className="z-10 bg-green-700 px-2 py-0.5 rounded-full border border-green-600 shadow-sm">
+                    <span className="text-xs dark:text-light font-light flex items-center justify-center">
+                        {format(projectDueDate, 'd MMM')}
+                    </span>
+                </div>
             </div>
         </div>
     );
-};
+}

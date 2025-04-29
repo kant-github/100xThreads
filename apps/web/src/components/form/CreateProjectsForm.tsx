@@ -80,7 +80,7 @@ export default function ({ open, setOpen, className, channel }: CreateProjectsFo
         // }
     }
     return (
-        <div className={`${className} absolute right-8`} ref={ref}>
+        <div className={`${className} absolute right-8 z-[100]`} ref={ref}>
             <UtilityCard open={open} setOpen={setOpen} className="px-[20px] py-4 dark:bg-neutral-900 dark:border-neutral-600 border" >
                 {/* <DashboardComponentHeading description="start creating the project">Create project</DashboardComponentHeading> */}
                 <form className="flex flex-col items-center justify-between gap-y-4" onSubmit={handleSubmit(submitHandler)}>

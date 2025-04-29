@@ -15,8 +15,9 @@ import { useWebSocket } from "@/hooks/useWebsocket";
 import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import { projectChannelMessageAtom } from "@/recoil/atoms/organizationAtoms/projectChannelMessageAtom";
 import CreateProjectsForm from "@/components/form/CreateProjectsForm";
-import { Plus } from "lucide-react";
 import { CgMathPlus } from "react-icons/cg";
+import GuardComponent from "@/rbac/GuardComponent";
+import { Action, Subject } from "types/permission";
 
 interface ProjectsChannelTopBarProps {
     channel: ChannelType;
@@ -78,9 +79,12 @@ export default function ({ channel }: ProjectsChannelTopBarProps) {
             ) : (
                 <>
                     <DashboardComponentHeading description={channel.description!}>{channel.title}</DashboardComponentHeading>
-                    <DesignButton onClick={() => setCreateProjectsModal(true)}>
-                        <CgMathPlus size={16} />
-                        Add Project</DesignButton>
+                    <GuardComponent subject={Subject.PROJECT} action={Action.CREATE} >
+                        <DesignButton onClick={() => setCreateProjectsModal(true)}>
+                            <CgMathPlus size={16} />
+                            Add Project
+                        </DesignButton>
+                    </GuardComponent>
                     {createProjectsModal && <CreateProjectsForm channel={channel} className='w-[30%]' open={createProjectsModal} setOpen={setCreateProjectsModal} />}
                 </>
             )}

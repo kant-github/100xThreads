@@ -195,7 +195,7 @@ model Project {
   created_at  DateTime          @default(now())
   due_date    DateTime          @default(now())
   // Add creator information
-  creator     OrganizationUsers @relation("ProjectCreator", fields: [creator_id], references: [id], onDelete: Restrict)
+  creator     OrganizationUsers @relation("ProjectCreator", fields: [creator_id], references: [id], onDelete: Cascade)
   creator_id  Int
   tasks       Tasks[]
   ProjectChat ProjectChat[]
@@ -224,9 +224,9 @@ model ProjectChat {
   id                String            @id @default(uuid()) @db.Uuid
   project           Project           @relation(fields: [project_id], references: [id], onDelete: Cascade)
   project_id        String            @db.Uuid
-  organization_user OrganizationUsers @relation(fields: [organization_id, org_user_id], references: [organization_id, user_id], onDelete: Cascade)
+  organization_user OrganizationUsers @relation(fields: [organization_id, user_id], references: [organization_id, user_id], onDelete: Cascade)
   organization_id   String            @db.Uuid
-  org_user_id       Int
+  user_id           Int
   message           String?
   name              String
   is_deleted        Boolean           @default(false)
@@ -247,7 +247,7 @@ model ProjectChat {
 
   @@index([created_at])
   @@index([project_id])
-  @@index([organization_id, org_user_id])
+  @@index([organization_id, user_id])
   @@index([is_activity])
   @@map("project_chats")
 }

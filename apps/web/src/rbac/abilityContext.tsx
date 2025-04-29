@@ -3,10 +3,7 @@ import { Ability } from './ability';
 
 const AbilityContext = createContext<Ability | null>(null);
 
-export const AbilityProvider: React.FC<{ ability: Ability; children: React.ReactNode }> = ({
-    ability,
-    children
-}) => (
+export const AbilityProvider: React.FC<{ ability: Ability; children: React.ReactNode }> = ({ ability, children }) => (
     <AbilityContext.Provider value={ability}>
         {children}
     </AbilityContext.Provider>

@@ -4,6 +4,7 @@ import Column from "./Column";
 import { useWebSocket } from '@/hooks/useWebsocket';
 import { useRecoilValue } from 'recoil';
 import { organizationIdAtom } from '@/recoil/atoms/organizationAtoms/organizationAtom';
+import UtilityCard from '@/components/utility/UtilityCard';
 
 interface KanBanBoardProps {
     tasks: TaskTypes[] | [];
@@ -24,7 +25,7 @@ export default function KanbanBoard({ tasks, channel }: KanBanBoardProps) {
     })
 
     return (
-        <div className="w-full h-full overflow-y-auto  scrollbar-hide flex-1 flex">
+        <div className="w-full h-full overflow-y-auto  scrollbar-hide flex-1 flex mt-6">
             {column.map((col, index) => (
                 <React.Fragment key={col.status}>
                     <div className="flex-1 min-w-0">
