@@ -9,20 +9,6 @@ interface OrganizationNotificationsRendererProps {
 }
 
 export default function ({ open, setOpen }: OrganizationNotificationsRendererProps) {
-
-    const { subscribeToHandler } = useNotificationWebSocket();
-
-    function handleIncomingNotifications(newMessage: any) {
-        console.log("incoming message is : ", newMessage);
-    }
-
-    useEffect(() => {
-        const unsubscribeNotificationHandler = subscribeToHandler('notifications', handleIncomingNotifications);
-        return () => {
-            unsubscribeNotificationHandler();
-        }
-    }, [])
-
     return (
 
         <UtilitySideBar

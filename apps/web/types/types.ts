@@ -149,6 +149,7 @@ export type ProjectChatTypes = {
   organization_id: string;
   org_user_id: number;
   organization_user: OrganizationUsersType;
+  user_id: string;
   message?: string;
   name: string;
   is_deleted: boolean;

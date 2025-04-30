@@ -18,7 +18,7 @@ export default class WebSocketNotificationClient {
             this.ws = new WebSocket(this.URL);
 
             this.ws.onopen = () => {
-                console.log("WebSocket connection established successfully!");
+                // console.log("WebSocket connection established successfully!");
                 this.isConnected = true;
                 this.reconnectAttempts = 0;
             }
@@ -26,7 +26,7 @@ export default class WebSocketNotificationClient {
             this.ws.onmessage = (event) => {
                 try {
                     const message = JSON.parse(event.data);
-                    console.log("Received message:", message);
+                    // console.log("Received message:", message);
                     this.processNotification(message);
                 } catch (error) {
                     console.error("Error parsing WebSocket message:", error);
@@ -79,7 +79,7 @@ export default class WebSocketNotificationClient {
         if (this.reconnectAttempts < this.maxReconnectAttempts) {
             this.reconnectAttempts++;
             const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
-            console.log(`Attempting to reconnect in ${delay / 1000} seconds... (Attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+            // console.log(`Attempting to reconnect in ${delay / 1000} seconds... (Attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
 
             this.reconnectTimeout = setTimeout(() => {
                 this.connect();

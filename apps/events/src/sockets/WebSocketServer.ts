@@ -1,6 +1,12 @@
 import { Server } from 'http'
 import { WebSocketServer, WebSocket } from 'ws'
-import { v4 as uuidv4 } from 'uuid'
+import { v4 as uuidv4 } from 'uuid';
+import { parse as parseUrl } from 'url';
+
+interface TokenData {
+    userId: string;
+    userName: string;
+}
 
 interface WebSocketClient extends WebSocket {
     id: string;
@@ -26,12 +32,16 @@ export default class WebSocketServerManager {
     }
 
     private initializeConnection() {
-        this.wss.on('connection', (ws: WebSocketClient) => {
+        this.wss.on('connection', async (ws: WebSocketClient, req) => {
             console.log("client connected");
+            const token: string = this.extractToken(req);
+            const tokenData: TokenData = await this.authenticateUser(token);
+            console.log("token is : ", tokenData);
+
             ws.id = uuidv4();
             ws.isAlive = true;
-
             this.clients.set(ws.id, ws);
+            this.initTRacking(ws, tokenData)
 
             ws.on('message', (data: string) => {
                 this.handleIncomingMessage(ws, data);
@@ -42,6 +52,20 @@ export default class WebSocketServerManager {
             });
         })
     };
+
+    private initTRacking(ws: WebSocketClient, tokenData: TokenData) {
+        const userId = tokenData.userId;
+        ws.userId = userId;
+
+        if (!this.userSockets.has(userId)) {
+            this.userSockets.set(userId, new Set());
+        }
+
+        this.userSockets.get(userId)?.add(ws.id);
+        this.sendToUser(userId, "You are connected");
+        console.log("user sockets is : ", this.userSockets);
+        console.log("and : ", this.clients)
+    }
 
     private handleIncomingMessage(ws: WebSocketClient, data: string) {
         const payload: PayloadInterface = JSON.parse(data);
@@ -89,6 +113,7 @@ export default class WebSocketServerManager {
     }
 
     private handleDisconnection(ws: WebSocketClient) {
+        console.log(`After disconnection ------------------------------------- > `, this.userSockets);
         if (ws.userId) {
             const userConnections = this.userSockets.get(ws.userId);
             userConnections?.delete(ws.id);
@@ -97,7 +122,29 @@ export default class WebSocketServerManager {
                 this.userSockets.delete(ws.userId);
             }
             this.clients.delete(ws.id);
-            console.log(`After disconnection ------------------------------------- > `, this.userSockets);
+        }
+    }
+
+    private extractToken(req: any) {
+        const url = parseUrl(req.url!, true);
+        const token = url.query.token;
+        return token as string;
+    }
+
+    private async authenticateUser(token: string) {
+        try {
+
+            const decodedString = Buffer.from(token, 'base64').toString();
+            const tokenData = JSON.parse(decodedString);
+
+            if (!tokenData) {
+                throw new Error('Invalid token structure');
+            }
+
+            return tokenData;
+        } catch (err) {
+            console.error('Authentication error:', err);
+            return null;
         }
     }
 }

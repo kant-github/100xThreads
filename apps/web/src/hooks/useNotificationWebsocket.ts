@@ -1,38 +1,31 @@
-import WebSocketNotificationClient from "@/lib/socket.notification"
+import WebSocketNotificationClient from "@/lib/socket.notification";
 import { userSessionAtom } from "@/recoil/atoms/atom";
-import { useCallback, useEffect, useState } from "react"
-import { useRecoilValue } from "recoil";
+import { NotificationAtom } from "@/recoil/atoms/notifications/NotificationsAtom";
+import { useCallback, useEffect, useRef } from "react";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { NotificationType } from "types/types";
 
 export const useNotificationWebSocket = () => {
-    const [socket, setSocket] = useState<WebSocketNotificationClient | null>(null);
+    const webSocketRef = useRef<WebSocketNotificationClient | null>(null);
     const session = useRecoilValue(userSessionAtom);
 
-    const initializeConnection = useCallback(() => {
-        const newSocket = new WebSocketNotificationClient('ws://localhost:7002/socket');
-        setSocket(newSocket);
+    const initializeWebSocket = useCallback(() => {
 
-        return () => {
-            if (newSocket) {
-                newSocket.close();
-            }
+        if (session.user?.id) {
+            const wsToken = btoa(JSON.stringify({
+                userId: session.user.id,
+                userName: session.user.name
+            }));
+
+            const ws = new WebSocketNotificationClient(`ws://localhost:7002/socket?token=${wsToken}`);
+            webSocketRef.current = ws;
         }
-    }, [session.user?.id])
-
+    }, [session.user?.id, session.user?.name]);
 
     useEffect(() => {
-        const cleanup = initializeConnection();
-        return cleanup;
-    }, [initializeConnection])
-
-    function subscribeToHandler(type: string, handler: (payload: any) => void) {
-        if (!socket) return () => { };
-        socket.subscribeToHandlers(type, handler);
-
-        return socket.subscribeToHandlers(type, handler);
-    }
-
-    return {
-        subscribeToHandler,
-
-    };
-}
+        initializeWebSocket();
+        return () => {
+            console.log("web socket cleaned");
+        };
+    }, [initializeWebSocket]);
+};

@@ -29,9 +29,13 @@ interface MessagesProps {
 function MessageContent({ message, className, channel }: MessagesProps) {
     const [messageOptionMenu, setOptionMenu] = useState<boolean>(false);
     const session = useRecoilValue(userSessionAtom);
-    const isCurrentUser = Number(session.user?.id) === Number(message.org_user_id);
+    const isCurrentUser = Number(session.user?.id) === Number(message.user_id);
+    console.log("session user id is : ", session.user?.id);
+    console.log("message is : ", message);
+    console.log("user is : ", message.org_user_id);
     return (
         <div className={`flex-shrink-0 flex items-start gap-x-1 ${isCurrentUser ? "flex-row-reverse" : "flex-row"}`}>
+
             <div className={`space-y-2 mt-1 py-1.5 px-4 z-10 rounded-bl-[8px] rounded-br-[8px] ${isCurrentUser ? "bg-neutral-900 rounded-tl-[8px] text-neutral-300" : "bg-neutral-700 rounded-tr-[8px]"} ${className}`}>
                 <p className={` font-light tracking-wider whitespace-pre-wrap break-words ${message.is_deleted ? "text-neutral-400 italic select-none text-[12px]" : "text-[13px]"}`}>
                     {message.message}
@@ -48,7 +52,7 @@ function MessageContent({ message, className, channel }: MessagesProps) {
 export default function ({ message, channel }: MessagesProps) {
     const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
     const session = useRecoilValue(userSessionAtom);
-    const isCurrentUser = Number(session.user?.id) === Number(message.org_user_id);
+    const isCurrentUser = Number(session.user?.id) === Number(message.user_id);
 
     const handleEmojiClick = () => {
         setShowEmojiPicker(!showEmojiPicker);

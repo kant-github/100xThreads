@@ -52,10 +52,7 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
     }
 
     useEffect(() => {
-        console.log(organizationId);
-        console.log(userId);
         if (session && organizationId && userId && open) {
-
             fetchUserProfileData();
         }
     }, [open, session?.user?.token, organizationId, userId])

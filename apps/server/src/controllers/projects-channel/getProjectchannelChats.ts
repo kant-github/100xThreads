@@ -81,11 +81,14 @@ export async function getProjectchannelChats(req: Request, res: Response) {
             message: chat.is_deleted ? "[ This message has been deleted ]" : chat.message
         }));
 
+        console.log("chats are : ", transformedChats);
+
         res.status(200).json({
             data: transformedChats,
             hasMore,
             nextCursor: hasMore ? chats[chats.length - 1]!.id : undefined
         })
+        return;
     } catch (err) {
         console.log("Error in getiing project related chats", err);
     }

@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import { Toaster } from 'sonner';
 import "./globals.css";
 import { RecoilRoot } from "recoil";
+import { NotificationProvider } from "providers/NotificationProvider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -42,9 +43,11 @@ export default function RootLayout({
         </head>
         <body className={`${geistSans.variable} ${geistMono.variable} dark:bg-neutral-900 bg-[#f2f2f2]`}>
           <RecoilRoot>
-            {children}
+            <NotificationProvider>
+              {children}
+              <Toaster position="bottom-center" closeButton duration={2300} />
+            </NotificationProvider>
           </RecoilRoot>
-          <Toaster position="bottom-center" closeButton duration={2300} />
         </body>
       </SessionProvider>
     </html>
