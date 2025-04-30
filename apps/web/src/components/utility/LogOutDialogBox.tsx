@@ -3,6 +3,7 @@ import { signOut } from "next-auth/react";
 import BigWhiteBtn from "../buttons/BigWhiteBtn";
 import CrossButton from "./CrossButton";
 import { Dispatch, SetStateAction } from "react";
+import UtilityCard from "./UtilityCard";
 
 interface props {
     logoutDropdown: boolean;
@@ -19,7 +20,7 @@ export default function ({ setLogoutDropDown }: props) {
     }
     return (
         <div className={`fixed inset-0 bg-opacity-50 bg-black flex items-center justify-center z-50 `}>
-            <div className="bg-white dark:bg-[#262629] dark:text-gray-200 max-w-lg p-6 relative">
+            <UtilityCard className="dark:bg-neutral-800 dark:border-neutral-600 border-[1px] max-w-lg p-6 relative">
                 <div className="w-[400px]">
                     <div className="flex justify-between">
                     <p className="text-md font-bold mb-4">
@@ -38,7 +39,7 @@ export default function ({ setLogoutDropDown }: props) {
                         </RedBtn>
                     </div>
                 </div>
-            </div>
+            </UtilityCard>
         </div>
     )
 }

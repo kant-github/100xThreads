@@ -82,6 +82,7 @@ export class WebSocketClient {
     public unSubscribeToBackendWSS(channelId: string, organizationId: string, type: string) {
         const channelKey = `${channelId}:${organizationId}:${type}`;
         if (this.subscribedChannels.has(channelKey)) {
+            console.log("finally sedning : ", channelKey);
             this.send('unsubscribe-channel', {
                 channelId,
                 organizationId,

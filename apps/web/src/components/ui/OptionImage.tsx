@@ -39,7 +39,6 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
                     authorization: `Bearer ${session.user?.token}`,
                 },
             })
-            console.log("profile data is : ", data.data);
             setOrganizationUser(data.data);
             setIsFriend(data.isFriend);
         } catch (err) {

@@ -17,7 +17,7 @@ export default function WelcomeChannelMessages({ className }: WelcomeChannelMess
         <UtilityCard className={`mt-4 overflow-hidden bg-white dark:bg-neutral-800 w-full shadow-lg shadow-black/20 ${className}`}>
             <div className="flex flex-col h-full overflow-y-auto scrollbar-hide">
                 {
-                    welcomeChannelMessages.map((message) => <WelcomeChannelData message={message} session={session} organizationId={organizationId!} />)
+                    welcomeChannelMessages.map((message) => <WelcomeChannelData key={message.id} message={message} session={session} organizationId={organizationId!} />)
                 }
             </div>
         </UtilityCard>

@@ -24,7 +24,6 @@ export default function ({ channel }: RegularChannelViewProps) {
     const { subscribeToBackend, unsubscribeFromBackend, subscribeToHandler } = useWebSocket();
 
     function handleIncomingAnnouncemennts(newMessage: any) {
-        console.log(newMessage);
     }
 
     async function getWelcomeMessages() {

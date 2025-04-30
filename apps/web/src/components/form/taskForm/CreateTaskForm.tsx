@@ -64,8 +64,6 @@ export default function ({ open, setOpen, channel }: CreateTaskFormProps) {
     }, [open])
 
     function submitHandler(data: CreateTaskFormType) {
-        console.log("form submitted");
-        console.log(data);
         const payload = {
             ...data,
             projectId: selectedProject?.id

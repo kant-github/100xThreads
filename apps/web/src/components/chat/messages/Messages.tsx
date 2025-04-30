@@ -49,14 +49,11 @@ export default function ({ message, channel }: MessagesProps) {
     const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
     const session = useRecoilValue(userSessionAtom);
     const isCurrentUser = Number(session.user?.id) === Number(message.org_user_id);
-    console.log("message is : ",message);
-
     const handleEmojiClick = () => {
         setShowEmojiPicker(!showEmojiPicker);
     };
 
-    const onEmojiClick = (emoji: MouseDownEvent) => {
-        console.log(emoji);
+    const onEmojiClick = () => {
         setShowEmojiPicker(false);
     };
 

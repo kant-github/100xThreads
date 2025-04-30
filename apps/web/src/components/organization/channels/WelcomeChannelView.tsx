@@ -20,7 +20,6 @@ interface WelcomeChannelViewProps {
 }
 
 export default function ({ channel }: WelcomeChannelViewProps) {
-    console.log("channel currently is : ", channel);
     const organization = useRecoilValue(organizationAtom);
     const session = useRecoilValue(userSessionAtom);
     const setWelcomeChannelMessages = useSetRecoilState(welcomeChannelMessagesAtom);
@@ -32,14 +31,12 @@ export default function ({ channel }: WelcomeChannelViewProps) {
             const unsubscribeWelcomeMessageHandler = subscribeToHandler('welcome-user', handleIncomingWelcomeMessages);
             return () => {
                 unsubscribeWelcomeMessageHandler();
-                console.log("unsubscribeing the welcome channel messages");
                 unsubscribeFromBackend(channel.id, organization.id, 'welcome-user');
             }
         }
     }, [channel.id, organization?.id]);
 
     function handleIncomingWelcomeMessages(newMessage: any) {
-        console.log("message incoming");
         setWelcomeChannelMessages(prev => [...prev, newMessage]);
     }
 
