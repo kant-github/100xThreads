@@ -20,6 +20,7 @@ import { getProjectChannelMessages } from "../controllers/projects-channel/getPr
 import { getProjectchannelChats } from "../controllers/projects-channel/getProjectchannelChats";
 import { getUserProfileData } from "../controllers/user/getUserProfileData";
 import { getTaskForProject } from "../controllers/projects-channel/getTaskForProject";
+import getNotifications from "../controllers/notifications/getNotifications";
 
 const router: Router = Router();
 
@@ -56,6 +57,10 @@ router.get("/organizations/:organizationId/channels/:channelId/project/:projectI
 
 //polls-controller
 router.get("/polls/:id/:channelId", authmiddleware, getPoll);
+
+
+//notification-controller
+router.get("/notifications", authmiddleware, getNotifications);
 
 
 export default router;

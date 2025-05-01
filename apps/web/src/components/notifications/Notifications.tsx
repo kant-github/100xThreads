@@ -1,10 +1,12 @@
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import UtilitySideBar from "../utility/UtilitySideBar";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { NotificationAtom } from "@/recoil/atoms/notifications/NotificationsAtom";
 import NotificationFilterButtons from "./NotificationFilterButtons";
 import NotificationsRenderer from "./NotificationsRenderer";
-import { CalculateDate } from "./CalculateDate";
+import axios from "axios";
+import { API_URL } from "@/lib/apiAuthRoutes";
+import { userSessionAtom } from "@/recoil/atoms/atom";
 
 interface OrganizationNotificationsRendererProps {
     open: boolean;
@@ -12,9 +14,10 @@ interface OrganizationNotificationsRendererProps {
 }
 
 export default function ({ open, setOpen }: OrganizationNotificationsRendererProps) {
-    const notifications = useRecoilValue(NotificationAtom);
+    const [notifications, setNotifications] = useRecoilState(NotificationAtom);
     const [activeFilter, setActiveFilter] = useState<'all' | 'unread'>('all');
-    const dateCalculator = new CalculateDate();
+    const session = useRecoilValue(userSessionAtom);
+
 
     const filteredNotifications = useMemo(() => {
         if (activeFilter === 'unread') {
@@ -22,6 +25,23 @@ export default function ({ open, setOpen }: OrganizationNotificationsRendererPro
         }
         return notifications;
     }, [notifications, activeFilter]);
+
+
+    async function fetchNotifications() {
+        if (!session.user?.token) return;
+        console.log("making backend call");
+        const data = await axios.get(`${API_URL}/notifications`, {
+            headers: {
+                authorization: `Bearer ${session.user.token}`,
+            }
+        })
+        console.log("notifications are : ", data.data.data);
+        setNotifications(data.data.data);
+    }
+
+    useEffect(() => {
+        fetchNotifications();
+    }, [])
 
 
     return (

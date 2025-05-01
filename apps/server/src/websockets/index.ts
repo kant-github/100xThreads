@@ -1,16 +1,16 @@
-import { WebSocketServer } from "./webSocketServer";
+// import { WebSocketServer } from "./webSocketServer";
 
 
-const initializeWebSocketServer = (port: number) => {
-    const wss = new WebSocketServer(port);
+// const initializeWebSocketServer = (port: number) => {
+//     const wss = new WebSocketServer(port);
     
-    // Handle process termination
-    process.on('SIGTERM', () => {
-        console.log('SIGTERM received. Closing WebSocket server...');
-        wss.close();
-    });
+//     // Handle process termination
+//     process.on('SIGTERM', () => {
+//         console.log('SIGTERM received. Closing WebSocket server...');
+//         wss.close();
+//     });
     
-    return wss;
-};
+//     return wss;
+// };
 
-export default initializeWebSocketServer;
+// export default initializeWebSocketServer;

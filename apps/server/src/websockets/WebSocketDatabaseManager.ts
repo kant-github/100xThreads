@@ -5,15 +5,18 @@ import GeneralChannelManager from "./ws-controllers/GeneralChannelManager";
 import WelcomeChannelManager from "./ws-controllers/WelcomeChannelManager";
 import AnnouncementchannelManager from "./ws-controllers/AnnouncementchannelManager";
 import ProjectChannelManager from "./ws-controllers/ProjectChannelManager";
+import KafkaProducer from "../kafka/KafkaProducer";
+import { NotificationType } from "./types";
 
 export default class WebSocketDatabaseManager {
-    
+
     private prisma: PrismaClient;
     private publisher: Redis;
     private generalchannelManager: GeneralChannelManager;
     private welcomeChannelManager: WelcomeChannelManager;
     private announcementchannelManager: AnnouncementchannelManager;
     private projectChannelManager: ProjectChannelManager;
+    private kafkaProducer: KafkaProducer
 
     constructor(prisma: PrismaClient, publisher: Redis) {
         this.prisma = prisma;
@@ -22,6 +25,7 @@ export default class WebSocketDatabaseManager {
         this.welcomeChannelManager = new WelcomeChannelManager(prisma, publisher);
         this.announcementchannelManager = new AnnouncementchannelManager(prisma, publisher);
         this.projectChannelManager = new ProjectChannelManager(prisma, publisher);
+        this.kafkaProducer = new KafkaProducer(['localhost:29092'], 'notification-producer')
     }
 
     async handleIncomingMessage(message: WebSocketMessage, tokenData: any) {
@@ -67,7 +71,7 @@ export default class WebSocketDatabaseManager {
     private async addFriendHandler(message: WebSocketMessage, tokenData: any) {
         const user1 = Number(tokenData.userId);
         const user2 = Number(message.payload.friendsId);
-
+        console.log("here");
         if (!user1 || !user2) {
             console.log("informationd are missing")
             return;
@@ -109,8 +113,22 @@ export default class WebSocketDatabaseManager {
                     sender_id: user1,
                     reciever_id: user2,
                     message: message.payload.message || "I'd like to add you as a friend"
+                },
+                include: {
+                    sender: true
                 }
             });
+
+            const notificationData: NotificationType = {
+                user_id: user2,
+                type: 'FRIEND_REQUEST_RECEIVED',
+                title: 'Friend request',
+                message: `${friendRequest.sender.name} sent you a friend request`,
+                created_at: Date.now().toString(),
+                sender_id: user1
+            }
+            console.log("kafka stream will recieve : ", notificationData);
+            this.kafkaProducer.sendMessage('notifications', notificationData, Number(user2))
 
         } catch (err) {
             console.log("Error in creating friendship", err);

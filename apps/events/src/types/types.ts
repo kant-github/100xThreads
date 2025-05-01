@@ -1,11 +1,3 @@
-
-export interface WebSocketClient {
-    id: string;
-    userId?: string;
-    channels: Set<string>;
-}
-
-
 export interface NotificationType {
     id?: string;
     user_id: number;

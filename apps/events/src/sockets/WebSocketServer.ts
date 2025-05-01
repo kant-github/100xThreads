@@ -35,7 +35,7 @@ export default class WebSocketServerManager {
         this.wss.on('connection', async (ws: WebSocketClient, req) => {
             const token: string = this.extractToken(req);
             const tokenData: TokenData = await this.authenticateUser(token);
-            
+
             ws.id = uuidv4();
             ws.isAlive = true;
             this.clients.set(ws.id, ws);
@@ -48,6 +48,7 @@ export default class WebSocketServerManager {
     };
 
     private initTRacking(ws: WebSocketClient, tokenData: TokenData) {
+        console.log(tokenData.userId, "is in");
         const userId = tokenData.userId;
         ws.userId = userId;
 
@@ -64,7 +65,9 @@ export default class WebSocketServerManager {
     }
 
     public sendToUser(userId: string, data: any) {
+        console.log("sending to ", userId);
         const userConnections = this.userSockets.get(userId);
+        console.log("active user connections are : ", userConnections);
         if (!userConnections || userConnections.size === 0) {
             return;
         }

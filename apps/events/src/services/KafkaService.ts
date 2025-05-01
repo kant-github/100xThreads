@@ -2,6 +2,7 @@ import { Consumer, Kafka, KafkaMessage } from "kafkajs";
 import WebSocketServerManager from "../sockets/WebSocketServer";
 import { PrismaClient } from '.prisma/client';
 import prisma from '@repo/db/client';
+import { NotificationTypeEnum } from "../types/types";
 
 interface NotificationEvent {
   type: string;
@@ -12,7 +13,7 @@ interface NotificationEvent {
   referenceId?: string;
   organizationId?: string;
   channelId?: string;
-  senderId?: number;
+  sender_id?: number;
   actionUrl?: string;
 }
 
@@ -75,11 +76,14 @@ export default class KafkaConsumerService {
         return;
       }
 
-      const eventData: NotificationEvent = JSON.parse(message.value.toString());
+      const eventData = JSON.parse(message.value.toString());
+      const payload: NotificationEvent = eventData.value;
+      const userId = eventData.userId;
+      console.log(userId);
+      console.log("final event data : ", eventData);
+      const notification = await this.storeNotification(payload, userId);
 
-      const notification = await this.storeNotification(eventData);
-
-      this.wsManager.sendToUser('1', {
+      this.wsManager.sendToUser(String(userId), {
         type: 'NOTIFICATION',
         notification: {
           id: notification.id,
@@ -99,19 +103,19 @@ export default class KafkaConsumerService {
   }
 
 
-  private async storeNotification(event: NotificationEvent) {
+  private async storeNotification(event: NotificationEvent, userId: number) {
 
     return await this.prisma.notification.create({
       data: {
-        user_id: Number(1), // Assuming user_id is Int in your schema
-        type: 'EVENT_CANCELLED',
+        user_id: Number(userId), // Assuming user_id is Int in your schema
+        type: event.type as NotificationTypeEnum,
         title: event.title,
         message: event.message,
-        // reference_id: event.referenceId,
-        // organization_id: event.organizationId,
-        // channel_id: '0f7940bb-b639-4292-a718-5ad9a554f3a1',
-        // sender_id: 1,
-        // action_url: event.actionUrl
+        reference_id: event.referenceId,
+        organization_id: event.organizationId,
+        channel_id: '0f7940bb-b639-4292-a718-5ad9a554f3a1',
+        sender_id: Number(event.sender_id),
+        action_url: event.actionUrl
       }
     });
   }

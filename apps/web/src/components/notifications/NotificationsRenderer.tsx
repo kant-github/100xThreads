@@ -2,15 +2,17 @@ import { NotificationType } from "types/types"
 import NotificationemptyState from "./NotificationemptyState";
 import { useMemo } from "react";
 import { CalculateDate } from "./CalculateDate";
+import NotificationRendererByGroup from "./NotificationRendererByGroup";
 
 interface NotificationsRendererProps {
     filteredNotifications: NotificationType[];
     activeFilter: 'all' | 'unread'
 }
 
-export default function ({ filteredNotifications, activeFilter }: NotificationsRendererProps) {
+export default function NotificationsRenderer({ filteredNotifications, activeFilter }: NotificationsRendererProps) {
 
     const calculateDate = new CalculateDate();
+
     const groupedNotifications = useMemo(() => {
         const groups = {
             today: [] as NotificationType[],
@@ -20,7 +22,7 @@ export default function ({ filteredNotifications, activeFilter }: NotificationsR
             older: [] as NotificationType[]
         };
 
-        filteredNotifications.forEach(notification => {
+        filteredNotifications?.forEach?.(notification => {
             if (calculateDate.isToday(notification.created_at)) {
                 groups.today.push(notification);
             } else if (calculateDate.isYesterday(notification.created_at)) {
@@ -38,14 +40,18 @@ export default function ({ filteredNotifications, activeFilter }: NotificationsR
     }, [filteredNotifications]);
 
     return (
-        <div className="overflow-y-auto flex-1">
+        <div className="overflow-y-auto flex-1 bg-neutral-800 my-3 rounded-[8px]">
             {filteredNotifications.length === 0 ? (
                 <>
                     <NotificationemptyState activeFilter={activeFilter} />
                 </>
             ) : (
                 <>
-                    
+                    {NotificationRendererByGroup("Today", groupedNotifications.today)}
+                    {NotificationRendererByGroup("Yesterday", groupedNotifications.yesterday)}
+                    {NotificationRendererByGroup("This Week", groupedNotifications.thisWeek)}
+                    {NotificationRendererByGroup("This Month", groupedNotifications.thisMonth)}
+                    {NotificationRendererByGroup("Older", groupedNotifications.older)}
                 </>
             )}
         </div>
