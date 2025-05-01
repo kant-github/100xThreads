@@ -8,7 +8,7 @@ import { FaUserFriends } from "react-icons/fa";
 import { useState } from "react";
 import UtilitySideBar from "../utility/UtilitySideBar";
 import DashboardComponentHeading from "./DashboardComponentHeading";
-import OrganizationNotificationsRenderer from "../notifications/OrganizationNotificationsRenderer";
+import OrganizationNotificationsRenderer from "../notifications/Notifications";
 
 export const baseDivStyles = "flex items-center justify-start gap-x-2 sm:gap-x-3 py-1.5 sm:py-2 px-2 sm:px-3 rounded-[8px] cursor-pointer select-none";
 const textStyles = "text-[12px] sm:text-[13px] text-lightText dark:text-neutral-100 font-normal mt-0.5 tracking-wide hidden sm:block";
