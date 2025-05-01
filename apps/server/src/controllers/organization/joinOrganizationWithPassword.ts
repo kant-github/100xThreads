@@ -4,12 +4,9 @@ import bcrypt from 'bcryptjs';
 import { getOrganizationsMetaDeta } from "./getOrganizationsMetaDeta";
 
 export default async function (req: Request, res: Response) {
-    console.log("hitted");
     const user = req.user;
     const { organizationId } = req.params;
     const { password } = req.body;
-
-    console.log(req.body);
 
     if (!user?.id) {
         res.status(401).json({ message: "Unauthorized: User not authenticated." });
@@ -33,7 +30,6 @@ export default async function (req: Request, res: Response) {
         const submittedHash = clientHash + clientSalt;
 
         const isPasswordValid = await bcrypt.compare(submittedHash, organization?.passwordHash!);
-        console.log("password valid check ", isPasswordValid);
         if (!isPasswordValid) {
             res.status(200).json({
                 flag: 'PROTECTED',

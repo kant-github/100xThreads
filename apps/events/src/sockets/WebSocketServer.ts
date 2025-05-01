@@ -33,19 +33,13 @@ export default class WebSocketServerManager {
 
     private initializeConnection() {
         this.wss.on('connection', async (ws: WebSocketClient, req) => {
-            console.log("client connected");
             const token: string = this.extractToken(req);
             const tokenData: TokenData = await this.authenticateUser(token);
-            console.log("token is : ", tokenData);
-
+            
             ws.id = uuidv4();
             ws.isAlive = true;
             this.clients.set(ws.id, ws);
             this.initTRacking(ws, tokenData)
-
-            ws.on('message', (data: string) => {
-                this.handleIncomingMessage(ws, data);
-            })
 
             ws.on('close', () => {
                 this.handleDisconnection(ws);
@@ -62,39 +56,15 @@ export default class WebSocketServerManager {
         }
 
         this.userSockets.get(userId)?.add(ws.id);
-        this.sendToUser(userId, "You are connected");
-        console.log("user sockets is : ", this.userSockets);
-        console.log("and : ", this.clients)
-    }
+        this.sendToUser(userId, {
+            type: "CONNECTED",
+            data: "You are connected"
+        });
 
-    private handleIncomingMessage(ws: WebSocketClient, data: string) {
-        const payload: PayloadInterface = JSON.parse(data);
-        switch (payload.type) {
-            case 'auth':
-                this.handleClientTracking(ws, payload);
-        }
-    }
-
-    private handleClientTracking(ws: WebSocketClient, payload: PayloadInterface) {
-        const userId = payload.userId;
-        ws.userId = userId;
-
-        if (!this.userSockets.has(userId)) {
-            this.userSockets.set(userId, new Set());
-        }
-
-        this.userSockets.get(userId)?.add(ws.id);
-
-
-        this.sendToUser(userId, "You are connected");
-        console.log(this.userSockets);
-        //send client confirmation ---------------------------------------- >
     }
 
     public sendToUser(userId: string, data: any) {
-        console.log("data came is : ", data);
         const userConnections = this.userSockets.get(userId);
-
         if (!userConnections || userConnections.size === 0) {
             return;
         }
@@ -108,12 +78,9 @@ export default class WebSocketServerManager {
                 sentCount++;
             }
         })
-
-        console.log(`message sent to ${sentCount} active connection of userId : ${userId}`);
     }
 
     private handleDisconnection(ws: WebSocketClient) {
-        console.log(`After disconnection ------------------------------------- > `, this.userSockets);
         if (ws.userId) {
             const userConnections = this.userSockets.get(ws.userId);
             userConnections?.delete(ws.id);

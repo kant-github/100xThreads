@@ -1,3 +1,5 @@
+import { NotificationType } from "types/types";
+
 export default class WebSocketNotificationClient {
     private ws: WebSocket | null = null;
     private URL: string;
@@ -24,7 +26,7 @@ export default class WebSocketNotificationClient {
             this.ws.onmessage = (event) => {
                 try {
                     const message = JSON.parse(event.data);
-                    console.log("Received message:", message);
+                    console.log("message is : ", message)
                     this.processNotification(message);
                 } catch (error) {
                     console.error("Error parsing WebSocket message:", error);
@@ -46,15 +48,21 @@ export default class WebSocketNotificationClient {
     }
 
     private processNotification(message: any) {
-        const type = message.type;
+        const type: string = message.type;
+        const notification: NotificationType = message.notification;
 
         const handlers = this.messageHandlers.get(type) || [];
+
         handlers.forEach(handler => {
-            handler(message.data);
+            try {
+                handler(notification);
+            } catch (error) {
+                console.error("Error in message handler:", error);
+            }
         })
     }
 
-    public subscribeToHandlers(type: String, handler: (payload: any) => void): () => void {
+    public subscribeToHandlers(type: String, handler: (payload: NotificationType) => void): () => void {
         if (!this.messageHandlers.has(type)) {
             this.messageHandlers.set(type, []);
         }

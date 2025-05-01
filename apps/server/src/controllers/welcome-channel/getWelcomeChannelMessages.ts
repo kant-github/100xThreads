@@ -8,7 +8,6 @@ export async function getWelcomeChannelMessages(req: Request, res: Response) {
     }
 
     const channelId = req.params.channelId;
-    console.log("channel id is : ", channelId);
 
     try {
         const data = await prisma.welcomedUser.findMany({

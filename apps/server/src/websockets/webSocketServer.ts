@@ -1,4 +1,4 @@
-import { createServer } from "http";
+import { createServer, Server } from "http";
 import { WebSocket, WebSocketServer as WSServer } from "ws";
 import { parse as parseUrl } from 'url';
 import Redis from "ioredis";
@@ -16,9 +16,6 @@ export interface ChannelSubscription {
     channelId: string;
     organizationId: string;
     type: string;
-
-    // projectId
-    //type
 }
 
 export default class WebSocketServerManager {
@@ -30,7 +27,7 @@ export default class WebSocketServerManager {
     private clients: Map<String, Set<WebSocket>> = new Map();
     private userSubscriptions: Map<WebSocket, Set<string>> = new Map();
 
-    constructor(server: ReturnType<typeof createServer>) {
+    constructor(server: Server) {
         this.wss = new WSServer({ server });
 
         this.publisher = new Redis({
@@ -51,6 +48,7 @@ export default class WebSocketServerManager {
 
         this.wss.on('connection', async (ws: WebSocket, req) => {
             try {
+                console.log("new socket connection is made");
                 const token = this.extractToken(req);
                 const tokenData = await this.authenticateUser(token);
                 if (!tokenData) {
@@ -113,6 +111,7 @@ export default class WebSocketServerManager {
     private async handleChannelSubscription(ws: WebSocket, subscription: ChannelSubscription) {
 
         const channelKey: string = this.getChannelKey(subscription);
+        console.log("subscribe evnet -------- >", channelKey);
         this.userSubscriptions.get(ws)!.add(channelKey);
         await this.subscriber.subscribe(channelKey);
 
@@ -141,9 +140,8 @@ export default class WebSocketServerManager {
     }
 
     private async handleChannelUnsubscription(ws: WebSocket, subscription: ChannelSubscription) {
-        console.log("unsubscribing");
         const channelKey = this.getChannelKey(subscription);
-        console.log("unsubscribing channel key : ", channelKey);
+        console.log("unsubscribe evnet -------- >", channelKey);
         this.userSubscriptions.get(ws)!.delete(channelKey);
 
         let hasOtherSubscribers = false;

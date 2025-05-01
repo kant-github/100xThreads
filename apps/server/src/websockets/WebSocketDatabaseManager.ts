@@ -65,7 +65,6 @@ export default class WebSocketDatabaseManager {
     }
 
     private async addFriendHandler(message: WebSocketMessage, tokenData: any) {
-        console.log("message for friend request at backend is ", message);
         const user1 = Number(tokenData.userId);
         const user2 = Number(message.payload.friendsId);
 
@@ -113,7 +112,6 @@ export default class WebSocketDatabaseManager {
                 }
             });
 
-            console.log("Friend request created:", friendRequest);
         } catch (err) {
             console.log("Error in creating friendship", err);
         }

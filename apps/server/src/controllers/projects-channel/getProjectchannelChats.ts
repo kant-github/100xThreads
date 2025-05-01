@@ -81,7 +81,6 @@ export async function getProjectchannelChats(req: Request, res: Response) {
             message: chat.is_deleted ? "[ This message has been deleted ]" : chat.message
         }));
 
-        console.log("chats are : ", transformedChats);
 
         res.status(200).json({
             data: transformedChats,
@@ -90,6 +89,6 @@ export async function getProjectchannelChats(req: Request, res: Response) {
         })
         return;
     } catch (err) {
-        console.log("Error in getiing project related chats", err);
+        console.error("Error in getiing project related chats", err);
     }
 }

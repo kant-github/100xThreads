@@ -62,14 +62,11 @@ async function produceTestNotification() {
         ],
     });
 
-    console.log('✅ Test notification sent');
     await producer.disconnect();
 }
 
 app.get("/produce", (req, res) => {
-    for (let i = 0; i < 10; i++) {
-        produceTestNotification().catch(console.error);
-    }
+    produceTestNotification().catch(console.error);
     res.json({
         message: "produced"
     });
@@ -96,6 +93,10 @@ app.get("/consume", (req, res) => {
             process.exit(1);
         }
     })();
+    res.json({
+        message: 'started consuming'
+    })
+    return;
 })
 
 app.get('/health', (req, res) => {

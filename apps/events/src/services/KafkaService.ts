@@ -52,7 +52,6 @@ export default class KafkaConsumerService {
   public async start(): Promise<void> {
 
     if (this.isRunning) {
-      console.log("Consumer is already running");
       return;
     }
 
@@ -64,7 +63,6 @@ export default class KafkaConsumerService {
       });
 
       this.isRunning = true;
-      console.log('Kafka consumer started successfully');
     } catch (err) {
       console.error("Error in starting the kafka consumer:", err);
     }
@@ -79,11 +77,9 @@ export default class KafkaConsumerService {
 
       const eventData: NotificationEvent = JSON.parse(message.value.toString());
 
-      // Store notification in database
       const notification = await this.storeNotification(eventData);
 
-      // Send notification to user via WebSocket
-      this.wsManager.sendToUser(eventData.recipientUserId, {
+      this.wsManager.sendToUser('1', {
         type: 'NOTIFICATION',
         notification: {
           id: notification.id,
@@ -104,8 +100,6 @@ export default class KafkaConsumerService {
 
 
   private async storeNotification(event: NotificationEvent) {
-    // Store notification in database
-    console.log("message storage started : ", event);
 
     return await this.prisma.notification.create({
       data: {
@@ -125,14 +119,12 @@ export default class KafkaConsumerService {
 
   public async stop(): Promise<void> {
     if (!this.isRunning) {
-      console.log('Consumer is not running');
       return;
     }
 
     try {
       await this.consumer.disconnect();
       this.isRunning = false;
-      console.log('Kafka consumer stopped');
     } catch (error) {
       console.error('Error stopping Kafka consumer:', error);
       throw error;

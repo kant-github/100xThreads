@@ -9,7 +9,6 @@ export async function createProjectHandler(req: Request, res: Response) {
 
     const { channelId } = req.params;
     const { title, description, dueDate } = req.body;
-    console.log("in the backend is : ", dueDate);
 
     try {
         const project = await prisma.project.create({
@@ -30,7 +29,7 @@ export async function createProjectHandler(req: Request, res: Response) {
         })
         return;
     } catch (err) {
-        console.log("Error in creating project")
+        console.error("Error in creating project")
         res.status(405).json({
             message: "Error in storing the project",
         })
