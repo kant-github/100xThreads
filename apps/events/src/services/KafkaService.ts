@@ -10,7 +10,7 @@ interface NotificationEvent {
   title: string;
   message: string;
   metadata?: Record<string, any>;
-  referenceId?: string;
+  reference_id?: string;
   organizationId?: string;
   channelId?: string;
   sender_id?: number;
@@ -90,6 +90,7 @@ export default class KafkaConsumerService {
           type: notification.type,
           title: notification.title,
           message: notification.message,
+          reference_id: notification.reference_id,
           is_read: notification.is_read,
           created_at: notification.created_at,
           metadata: notification.metadata,
@@ -111,7 +112,7 @@ export default class KafkaConsumerService {
         type: event.type as NotificationTypeEnum,
         title: event.title,
         message: event.message,
-        reference_id: event.referenceId,
+        reference_id: event.reference_id,
         organization_id: event.organizationId,
         channel_id: '0f7940bb-b639-4292-a718-5ad9a554f3a1',
         sender_id: Number(event.sender_id),

@@ -1,7 +1,36 @@
 import { NotificationType } from "types/types";
 import { CalculateDate } from "./CalculateDate";
+import { useWebSocket } from "@/hooks/useWebsocket";
+import { useRecoilValue } from "recoil";
+import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
+import { userSessionAtom } from "@/recoil/atoms/atom";
 
-export default function (notification: NotificationType) {
+interface EachNotificationProps {
+    notification: NotificationType;
+}
+
+export default function ({ notification }: EachNotificationProps) {
+    const { sendMessage } = useWebSocket();
+    const session = useRecoilValue(userSessionAtom);
+    const organizationIdKey = `${session.user?.id}`;
+    console.log("notification is : ", notification);
+
+
+    function friendRequestAcceptHandler(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+        e.stopPropagation();
+        const newMessage = {
+            notificationId: notification.id,
+            senderId: notification.sender_id,
+            reference_id: notification.reference_id,
+            organization_id: organizationIdKey,
+            channel_id: 'friends-channel',
+            type: 'friend-request-accept'
+        };
+
+        sendMessage(newMessage, 'friends-channel', 'friend-request-accept');
+
+    }
+
     const calculateDate = new CalculateDate();
     return (
         <div
@@ -29,11 +58,7 @@ export default function (notification: NotificationType) {
                         <button
                             type="button"
                             className="px-3 py-1 bg-yellow-600 text-white text-xs rounded-[4px] hover:bg-yellow-600/80 transition-colors"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                console.log(`Accept action for ${notification.id}`);
-                                // markAsRead(notification.id);
-                            }}
+                            onClick={friendRequestAcceptHandler}
                         >
                             Accept
                         </button>

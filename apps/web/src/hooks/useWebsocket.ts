@@ -2,7 +2,7 @@ import { getWebSocketClient } from "@/lib/singleGeneralWebSocketManager";
 import { WebSocketClient } from "@/lib/socket.front";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
-import { useCallback, useEffect, useMemo, useRef } from "react"
+import { useMemo, useRef } from "react"
 import { useRecoilValue } from "recoil";
 
 export const useWebSocket = () => {

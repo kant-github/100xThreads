@@ -7,6 +7,7 @@ import AnnouncementchannelManager from "./ws-controllers/AnnouncementchannelMana
 import ProjectChannelManager from "./ws-controllers/ProjectChannelManager";
 import KafkaProducer from "../kafka/KafkaProducer";
 import { NotificationType } from "./types";
+import FriendsChannelManager from "./ws-controllers/FriendsChannelManager";
 
 export default class WebSocketDatabaseManager {
 
@@ -17,18 +18,19 @@ export default class WebSocketDatabaseManager {
     private announcementchannelManager: AnnouncementchannelManager;
     private projectChannelManager: ProjectChannelManager;
     private kafkaProducer: KafkaProducer
-
+    private friendsChannelManager: FriendsChannelManager;
     constructor(prisma: PrismaClient, publisher: Redis) {
         this.prisma = prisma;
         this.publisher = publisher;
+        this.kafkaProducer = new KafkaProducer(['localhost:29092'], 'notification-producer');
         this.generalchannelManager = new GeneralChannelManager(prisma, publisher);
         this.welcomeChannelManager = new WelcomeChannelManager(prisma, publisher);
         this.announcementchannelManager = new AnnouncementchannelManager(prisma, publisher);
         this.projectChannelManager = new ProjectChannelManager(prisma, publisher);
-        this.kafkaProducer = new KafkaProducer(['localhost:29092'], 'notification-producer')
+        this.friendsChannelManager = new FriendsChannelManager(prisma, publisher, this.kafkaProducer);
     }
 
-    async handleIncomingMessage(message: WebSocketMessage, tokenData: any) {
+    public async handleIncomingMessage(message: WebSocketMessage, tokenData: any) {
         try {
             switch (message.type) {
                 case 'insert-general-channel-message':
@@ -60,7 +62,10 @@ export default class WebSocketDatabaseManager {
                 case 'task-assignee-change':
                     return this.projectChannelManager.taskAssigneeChangeHandler(message, tokenData);
                 case 'send-friend-request':
-                    return this.addFriendHandler(message, tokenData);
+                    return this.friendsChannelManager.addFriendHandler(message, tokenData);
+                case 'friend-request-accept':
+                    return this.friendsChannelManager.handleIncomingFriendRequest(message, tokenData);
+
             }
         }
         catch (err) {
@@ -68,73 +73,7 @@ export default class WebSocketDatabaseManager {
         }
     }
 
-    private async addFriendHandler(message: WebSocketMessage, tokenData: any) {
-        const user1 = Number(tokenData.userId);
-        const user2 = Number(message.payload.friendsId);
-        console.log("here");
-        if (!user1 || !user2) {
-            console.log("informationd are missing")
-            return;
-        }
 
-        try {
-            // check for existing request
-            const existingFriendRequest = await this.prisma.friendRequest.findUnique({
-                where: {
-                    sender_id_reciever_id: {
-                        sender_id: user1,
-                        reciever_id: user2
-                    }
-                }
-            })
-
-            if (existingFriendRequest) {
-                console.log("Friend request already exists");
-                return;
-            }
-
-            //check existing friendship
-            const exisitingFriends = await this.prisma.friendship.findUnique({
-                where: {
-                    user_id_1_user_id_2: {
-                        user_id_1: Math.min(user1, user2),
-                        user_id_2: Math.max(user1, user2)
-                    }
-                }
-            })
-
-            if (exisitingFriends) {
-                console.log("Users are already friends");
-                return;
-            }
-
-            const friendRequest = await this.prisma.friendRequest.create({
-                data: {
-                    sender_id: user1,
-                    reciever_id: user2,
-                    message: message.payload.message || "I'd like to add you as a friend"
-                },
-                include: {
-                    sender: true
-                }
-            });
-
-            const notificationData: NotificationType = {
-                user_id: user2,
-                type: 'FRIEND_REQUEST_RECEIVED',
-                title: 'Friend request',
-                message: `${friendRequest.sender.name} sent you a friend request`,
-                created_at: Date.now().toString(),
-                sender_id: user1
-            }
-            console.log("kafka stream will recieve : ", notificationData);
-            this.kafkaProducer.sendMessage('notifications', notificationData, Number(user2))
-
-        } catch (err) {
-            console.log("Error in creating friendship", err);
-        }
-
-    }
 
     private getChannelKey(subscription: ChannelSubscription): string {
         return `${subscription.organizationId}:${subscription.channelId}:${subscription.type}`

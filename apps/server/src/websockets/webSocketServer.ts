@@ -111,7 +111,8 @@ export default class WebSocketServerManager {
     private async handleChannelSubscription(ws: WebSocket, subscription: ChannelSubscription) {
 
         const channelKey: string = this.getChannelKey(subscription);
-        console.log("subscribe evnet -------- >", channelKey);
+        console.log("subscribe event -------- >", channelKey);
+        // organizationId:channelKey:message-type
         this.userSubscriptions.get(ws)!.add(channelKey);
         await this.subscriber.subscribe(channelKey);
 
@@ -123,7 +124,10 @@ export default class WebSocketServerManager {
     }
 
     private handleRedisMessage(channelKey: string, message: string) {
+        console.log("------------------------------------------------ >")
         const parsedMessage = JSON.parse(message);
+        console.log("channel key came in subscriber is : ", channelKey)
+        console.log("message came in subscriber is : ", parsedMessage);
         const [organizationId] = channelKey.split(':');
 
         const clients = this.clients.get(organizationId!);
@@ -162,6 +166,7 @@ export default class WebSocketServerManager {
     }
 
     private parseChannelKey(key: string): ChannelSubscription {
+        console.log("key is : ", key);
 
         const [organizationId, channelId, type] = key.split(':');
 
