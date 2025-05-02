@@ -13,7 +13,7 @@ export default function ({ className }: props) {
             onClick={() => {
                 router.push("/dashboard");
             }}
-            className={`flex flex-row gap-x-5 items-center ml-2 cursor-pointer select-none group ${className}`}>
+            className={`flex flex-row gap-x-3 items-center ml-2 cursor-pointer select-none group ${className}`}>
             <GiDoubleDragon
                 size={30}
                 className="transition-transform transform group-hover:-translate-x-[3px] text-[#f2a633] dark:text-[#f2a633]"

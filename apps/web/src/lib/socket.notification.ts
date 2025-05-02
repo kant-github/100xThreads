@@ -1,3 +1,4 @@
+import { AiOutlineConsoleSql } from "react-icons/ai";
 import { NotificationType } from "types/types";
 
 export default class WebSocketNotificationClient {
@@ -8,6 +9,7 @@ export default class WebSocketNotificationClient {
     private maxReconnectAttempts = 5;
     private reconnectTimeout: NodeJS.Timeout | null = null;
     private messageHandlers: Map<String, ((payload: any) => void)[]> = new Map();
+    private subscribedChannels: Set<String> = new Set(); // Track subscribed channels
 
     constructor(URL: string) {
         this.URL = URL;
@@ -26,8 +28,8 @@ export default class WebSocketNotificationClient {
             this.ws.onmessage = (event) => {
                 try {
                     const message = JSON.parse(event.data);
-                    console.log("message is : ", message)
-                    this.processNotification(message);
+                    console.log("message is : ", message);
+                    this.processMessage(message);
                 } catch (error) {
                     console.error("Error parsing WebSocket message:", error);
                 }
@@ -47,12 +49,17 @@ export default class WebSocketNotificationClient {
         }
     }
 
-    private processNotification(message: any) {
+    private processMessage(message: any) {
         const type: string = message.type;
-        const notification: NotificationType = message.notification;
+        const notification: NotificationType = message.data;
+        console.log("---------------------------------------- >")
+        console.log("actual message was ", message);
+        console.log("notification finally came is ", message.data)
+        console.log("and its type was", message.type);
 
         const handlers = this.messageHandlers.get(type) || [];
-
+        console.log("handlers for this message is : ", type, handlers.length);
+        console.log("---------------------------------------- >")
         handlers.forEach(handler => {
             try {
                 handler(notification);
@@ -60,6 +67,29 @@ export default class WebSocketNotificationClient {
                 console.error("Error in message handler:", error);
             }
         })
+    }
+
+    public subscribeToBackendWSS(key: string, type: string) {
+        const channelKey = `${key}:${type}`;
+        if (!this.subscribedChannels.has(channelKey)) {
+            this.sendMessage('subscribe-channel', key, {
+                key,
+                type
+            })
+            this.subscribedChannels.add(channelKey);
+        }
+    }
+
+    public unSubscribeToBackendWSS(key: string, type: string) {
+        const channelKey = `${key}:${type}`;
+        if (this.subscribedChannels.has(channelKey)) {
+            console.log("finally sedning : ", channelKey);
+            this.sendMessage('unsubscribe-channel', key, {
+                key,
+                type
+            })
+            this.subscribedChannels.delete(channelKey);
+        }
     }
 
     public subscribeToHandlers(type: String, handler: (payload: NotificationType) => void): () => void {
@@ -78,7 +108,6 @@ export default class WebSocketNotificationClient {
         };
     }
 
-
     private attemptReconnect() {
         if (this.reconnectAttempts < this.maxReconnectAttempts) {
             this.reconnectAttempts++;
@@ -88,6 +117,21 @@ export default class WebSocketNotificationClient {
             }, delay);
         } else {
             console.error("Maximum reconnection attempts reached. Please check your server or network connection.");
+        }
+    }
+
+    public sendMessage(type: string, key: string, payload: any) {
+        if (this.isConnected === false) return;
+        const message = {
+            type,
+            key,
+            payload
+        }
+
+        try {
+            this.ws?.send(JSON.stringify(message));
+        } catch (err) {
+            console.error("Error ins sending message to notification server", err)
         }
     }
 

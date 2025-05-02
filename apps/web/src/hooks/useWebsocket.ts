@@ -57,13 +57,3 @@ export const useWebSocket = () => {
     sendMessage
   };
 };
-
-//       
-
-
-// <OrganizationId , set <WS connections> >
-
-// <Websocket, set <organzationId:channelId:event_type>>
-
-// <Websocket, set <organzationId:channelId:edit-messages>
-// <Websocket, set <organzationId:channelId:delete-messages>

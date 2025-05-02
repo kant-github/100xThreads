@@ -4,16 +4,16 @@ import { useWebSocket } from "@/hooks/useWebsocket";
 import { useRecoilValue } from "recoil";
 import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import { userSessionAtom } from "@/recoil/atoms/atom";
+import { useNotificationWebSocket } from "@/hooks/useNotificationWebsocket";
 
 interface EachNotificationProps {
     notification: NotificationType;
 }
 
 export default function ({ notification }: EachNotificationProps) {
-    const { sendMessage } = useWebSocket();
+    const { sendMessage } = useNotificationWebSocket();
     const session = useRecoilValue(userSessionAtom);
     const organizationIdKey = `${session.user?.id}`;
-    console.log("notification is : ", notification);
 
 
     function friendRequestAcceptHandler(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
@@ -27,7 +27,7 @@ export default function ({ notification }: EachNotificationProps) {
             type: 'friend-request-accept'
         };
 
-        sendMessage(newMessage, 'friends-channel', 'friend-request-accept');
+        sendMessage('friend-request-accept', 'global', newMessage);
 
     }
 

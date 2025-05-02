@@ -7,8 +7,8 @@ import NotificationsRenderer from "./NotificationsRenderer";
 import axios from "axios";
 import { API_URL } from "@/lib/apiAuthRoutes";
 import { userSessionAtom } from "@/recoil/atoms/atom";
-import { useWebSocket } from "@/hooks/useWebsocket";
 import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
+import { useNotificationWebSocket } from "@/hooks/useNotificationWebsocket";
 
 interface OrganizationNotificationsRendererProps {
     open: boolean;
@@ -22,24 +22,27 @@ export default function ({ open, setOpen }: OrganizationNotificationsRendererPro
     const organizationId = useRecoilValue(organizationIdAtom);
 
     function friendRequestAcceptHandler(newMessage: any) {
-        console.log("new message is : ", newMessage);
+
     }
 
-    const { subscribeToBackend, subscribeToHandler, unsubscribeFromBackend } = useWebSocket();
+    function newNotificationHandler(newMessage: any) {
+        console.log("message recieved kela is : ", newMessage);
+        setNotifications(prev => [newMessage, ...prev]);
+    }
+
+    const { subscribeToHandler, subscribeToBackend, unsubscribeFromBackend } = useNotificationWebSocket();
 
     useEffect(() => {
-        const userId = session.user?.id;
-
-        if (userId && open) {
-            const organizationIdKey = `${userId}`;
-
-            subscribeToBackend('friends-channel', organizationIdKey, 'friend-request-accept');
-            console.log("sent subscription to friendschannel");
+        if (open) {
+            console.log("subscribing to handler");
+            subscribeToBackend('global', 'friend-request-accept');
             const unsubscribeFriendRequestAcceptHandler = subscribeToHandler('friend-request-accept', friendRequestAcceptHandler);
+            const unsubscribeNotificationHandler = subscribeToHandler('notifications', newNotificationHandler);
 
             return () => {
-                unsubscribeFromBackend('friends-channel', organizationIdKey, 'friend-request-accept');
+                unsubscribeFromBackend('global', 'friend-request-accept');
                 unsubscribeFriendRequestAcceptHandler();
+                unsubscribeNotificationHandler();
             };
         }
     }, [session.user?.id, organizationId, open]);

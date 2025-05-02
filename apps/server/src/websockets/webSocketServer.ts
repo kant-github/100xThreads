@@ -80,13 +80,16 @@ export default class WebSocketServerManager {
 
     private setupClientTracking(ws: WebSocket, tokenData: any) {
         const organizationId = tokenData.organizationId
+        console.log("organization id is : --------------------------------------------------------- >", organizationId);
         if (!this.clients.has(organizationId)) {
             this.clients.set(organizationId, new Set());
         }
+
         (ws as any).tokenData = tokenData;
 
         this.clients.get(organizationId)!.add(ws);
         this.userSubscriptions.set(ws, new Set());
+        console.log("all clients are : ", this.clients.get(tokenData.organizationId));
     }
 
 

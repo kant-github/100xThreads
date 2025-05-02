@@ -83,20 +83,18 @@ export default class KafkaConsumerService {
       console.log("final event data : ", eventData);
       const notification = await this.storeNotification(payload, userId);
 
-      this.wsManager.sendToUser(String(userId), {
-        type: 'NOTIFICATION',
-        notification: {
-          id: notification.id,
-          type: notification.type,
-          title: notification.title,
-          message: notification.message,
-          reference_id: notification.reference_id,
-          is_read: notification.is_read,
-          created_at: notification.created_at,
-          metadata: notification.metadata,
-          action_url: notification.action_url,
-        }
-      });
+      this.wsManager.sendToUser(String(userId), 'notifications', {
+        id: notification.id,
+        type: notification.type,
+        title: notification.title,
+        message: notification.message,
+        reference_id: notification.reference_id,
+        is_read: notification.is_read,
+        created_at: notification.created_at,
+        metadata: notification.metadata,
+        action_url: notification.action_url,
+      }
+      );
 
     } catch (error) {
       console.error('Error processing message:', error);

@@ -1,31 +1,23 @@
 import Redis from "ioredis";
 import { PrismaClient } from ".prisma/client";
-import { ChannelSubscription, WebSocketMessage } from "../webSocketServer";
-import KafkaProducer from "../../kafka/KafkaProducer";
-import { NotificationType } from "../types";
+import { NotificationType } from "../../types/types";
 
-
+export interface WebSocketMessage {
+    type: string;
+    payload: any;
+    timestamp: number;
+    senderId?: string;
+}
 
 export default class FriendsChannelManager {
     private prisma: PrismaClient;
-    private publisher: Redis;
-    private kafkaProducer: KafkaProducer
 
-    constructor(prisma: PrismaClient, publisher: Redis, kafkaProducer: KafkaProducer) {
+    constructor(prisma: PrismaClient) {
         this.prisma = prisma;
-        this.publisher = publisher;
-        this.kafkaProducer = kafkaProducer
     }
 
-    public async handleIncomingFriendRequest(message: WebSocketMessage, tokenData: any) {
+    public async handleIncomingFriendRequest(message: WebSocketMessage) {
         console.log("new message is : ", message);
-        const channelKey = this.getChannelKey({
-            organizationId: message.payload.organization_id,
-            channelId: message.payload.channel_id,
-            type: message.payload.type
-        })
-
-        console.log("channel key : ", channelKey);
         const friendRequest = await this.prisma.friendRequest.update({
             where: {
                 id: message.payload.reference_id
@@ -53,10 +45,7 @@ export default class FriendsChannelManager {
             }
         })
         console.log("Friendship created:", friendship);
-        await this.publisher.publish(channelKey, JSON.stringify({
-            payload: "kelapaw",
-            type: message.payload.type
-        }))
+        return friendship;
     }
 
     public async addFriendHandler(message: WebSocketMessage, tokenData: any) {
@@ -120,7 +109,6 @@ export default class FriendsChannelManager {
                 reference_id: friendRequest.id
             }
             console.log("kafka stream will recieve : ", notificationData);
-            this.kafkaProducer.sendMessage('notifications', notificationData, Number(user2))
 
         } catch (err) {
             console.log("Error in creating friendship", err);
@@ -128,7 +116,4 @@ export default class FriendsChannelManager {
 
     }
 
-    private getChannelKey(subscription: ChannelSubscription): string {
-        return `${subscription.organizationId}:${subscription.channelId}:${subscription.type}`
-    }
 }

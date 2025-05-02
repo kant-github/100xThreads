@@ -73,11 +73,7 @@ export default class WebSocketDatabaseManager {
         }
     }
 
-
-
     private getChannelKey(subscription: ChannelSubscription): string {
         return `${subscription.organizationId}:${subscription.channelId}:${subscription.type}`
     }
-
-
 }

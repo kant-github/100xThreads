@@ -1,58 +1,56 @@
-import WebSocketNotificationClient from "@/lib/socket.notification";
-import { userSessionAtom } from "@/recoil/atoms/atom";
-import { NotificationAtom } from "@/recoil/atoms/notifications/NotificationsAtom";
+"use client";
 import { useCallback, useEffect, useRef } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
+import { userSessionAtom } from "@/recoil/atoms/atom";
+import { getWebSocketClient } from "@/lib/singleton.socket-notification";
+import WebSocketNotificationClient from "@/lib/socket.notification";
 
 export const useNotificationWebSocket = () => {
-    const webSocketRef = useRef<WebSocketNotificationClient | null>(null);
     const session = useRecoilValue(userSessionAtom);
-    const [notifications, setNotifications] = useRecoilState(NotificationAtom);
+    const wsClientRef = useRef<WebSocketNotificationClient | null>(null);
 
-    const initializeWebSocket = useCallback(() => {
-        if (session.user?.id && !webSocketRef.current) {
-            const wsToken = btoa(JSON.stringify({
-                userId: session.user.id,
-                userName: session.user.name
-            }));
-            const ws = new WebSocketNotificationClient(`ws://localhost:7002/socket?token=${wsToken}`);
-            webSocketRef.current = ws;
-            console.log("WebSocket connection initialized");
-        }
+    useEffect(() => {
+
+        if (!session.user?.id) return;
+
+        const token = btoa(JSON.stringify({
+            userId: session.user.id,
+            userName: session.user.name
+        }));
+
+        const wsClient = getWebSocketClient(token);
+        wsClientRef.current = wsClient;
+
     }, [session.user?.id, session.user?.name]);
 
-    useEffect(() => {
-        initializeWebSocket();
+    const sendMessage = useCallback((type: string, key: string, payload: any) => {
+        wsClientRef.current?.sendMessage(type, key, {
+            type,
+            ...payload
+        });
+    }, [session.user?.id, session.user?.name]);
 
-        return () => {
-            if (webSocketRef.current) {
-                webSocketRef.current.close();
-                webSocketRef.current = null;
-                console.log("WebSocket connection closed");
-            }
-        };
-    }, [initializeWebSocket]);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            const wsClient = webSocketRef.current;
-            if (wsClient) {
-
-                const notificationHandler = (data: any) => {
-                    console.log("final data --------------- >", data);
-                    setNotifications(prev => [data, ...prev]);
-                };
-
-                const unsubscribe = wsClient.subscribeToHandlers("NOTIFICATION", notificationHandler);
-                clearInterval(interval); // Stop checking once subscribed
-
-                return () => {
-                    console.log("Cleaning up notification subscription");
-                    unsubscribe?.();
-                };
-            }
-        }, 500); // check every 500ms
-
-        return () => clearInterval(interval);
+    const subscribeToHandler = useCallback((type: string, handler: (data: any) => void) => {
+        if (!wsClientRef.current) return () => { }
+        return wsClientRef.current?.subscribeToHandlers(type, handler);
     }, []);
+
+    const subscribeToBackend = useCallback((key: string, type: string) => {
+        if (!wsClientRef.current) return;
+        wsClientRef.current.subscribeToBackendWSS(key, type);
+    }, [])
+
+    const unsubscribeFromBackend = useCallback((key: string, type: string) => {
+        if (!wsClientRef.current) return;
+        console.log("sending unsubscribe evnt");
+        wsClientRef.current.unSubscribeToBackendWSS(key, type);
+    }, [])
+
+
+    return {
+        sendMessage,
+        subscribeToHandler,
+        subscribeToBackend,
+        unsubscribeFromBackend
+    };
 };
