@@ -52,14 +52,7 @@ export default class WebSocketNotificationClient {
     private processMessage(message: any) {
         const type: string = message.type;
         const notification: NotificationType = message.data;
-        console.log("---------------------------------------- >")
-        console.log("actual message was ", message);
-        console.log("notification finally came is ", message.data)
-        console.log("and its type was", message.type);
-
         const handlers = this.messageHandlers.get(type) || [];
-        console.log("handlers for this message is : ", type, handlers.length);
-        console.log("---------------------------------------- >")
         handlers.forEach(handler => {
             try {
                 handler(notification);

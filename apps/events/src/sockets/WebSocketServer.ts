@@ -94,7 +94,6 @@ export default class WebSocketServerManager {
                     this.handleUnsubscription(ws, payload);
                     break;
                 default:
-                    // Handle custom message types
                     this.handleCustomMessage(ws, type, message);
             }
         } catch (error) {
@@ -150,25 +149,25 @@ export default class WebSocketServerManager {
         }));
     }
 
-    private handleCustomMessage(ws: WebSocketClient, type: string, message: any) {
+    private async handleCustomMessage(ws: WebSocketClient, type: string, message: any) {
         console.log(`Handling custom message : `, message);
         console.log("and type is : ", type);
 
         switch (type) {
-            case 'friend-request-accept':
+            case 'friend-request-accept': {
+                const data = await this.friendsChannelManager.handleIncomingFriendRequest(message);
+                console.log("jahapnah data : ", data);
+                if (ws.userId) {
+                    this.sendToUser(ws.userId, type, data);
+                }
+                break;
+            }
 
+            // Handle other custom types here
+            default:
+                console.warn("Unknown message type:", type);
         }
 
-        const data = this.friendsChannelManager.handleIncomingFriendRequest(message);
-        const channelKey = this.getChannelKey({
-            key: message.key,
-            type
-        })
-        if (ws.userId) {
-            this.sendToUser(ws.userId, type, {
-                data
-            });
-        }
     }
 
     private initTracking(ws: WebSocketClient, tokenData: TokenData) {

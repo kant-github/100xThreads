@@ -22,7 +22,7 @@ export default function ({ open, setOpen }: OrganizationNotificationsRendererPro
     const organizationId = useRecoilValue(organizationIdAtom);
 
     function friendRequestAcceptHandler(newMessage: any) {
-
+        console.log("I did it : ", newMessage);
     }
 
     function newNotificationHandler(newMessage: any) {
