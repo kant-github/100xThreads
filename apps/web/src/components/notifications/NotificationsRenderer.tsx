@@ -40,7 +40,7 @@ export default function NotificationsRenderer({ filteredNotifications, activeFil
     }, [filteredNotifications]);
 
     return (
-        <div className="overflow-y-auto flex-1 bg-neutral-800 my-3 rounded-[8px]">
+        <div className="overflow-y-auto flex-1 bg-neutral-900 my-3 rounded-[8px]">
             {filteredNotifications.length === 0 ? (
                 <>
                     <NotificationemptyState activeFilter={activeFilter} />

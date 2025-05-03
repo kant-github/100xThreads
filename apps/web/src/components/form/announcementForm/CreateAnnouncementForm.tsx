@@ -16,6 +16,7 @@ import { userSessionAtom } from "@/recoil/atoms/atom";
 import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import { announcementChannelMessgaes } from "@/recoil/atoms/organizationAtoms/announcementChannelMessagesAtom";
 import { progressBarAtom } from "@/recoil/atoms/progressBarAtom";
+import { useWebSocket } from "@/hooks/useWebsocket";
 
 const PriorityEnum = z.enum(["LOW", "NORMAL", "HIGH", "URGENT"]);
 
@@ -45,12 +46,17 @@ export default function ({ className, createAnnoucementModal, setCreateAnnouncem
     const setAnnouncementChannelMessages = useSetRecoilState(announcementChannelMessgaes);
     const session = useRecoilValue(userSessionAtom);
     const organizationId = useRecoilValue(organizationIdAtom);
+    const { sendMessage } = useWebSocket();
     const { control, reset, handleSubmit, formState: { errors } } = useForm<CreateAnnouncementFormSchemaType>({
         resolver: zodResolver(createAnnouncementFormSchema),
         defaultValues: {
             creator_name: session.user?.name!
         }
     })
+
+    useEffect(() => {
+
+    }, [])
 
     useEffect(() => {
         function handleClickOutside(e: MouseEvent) {
@@ -69,22 +75,13 @@ export default function ({ className, createAnnoucementModal, setCreateAnnouncem
         }
     }, [createAnnoucementModal])
 
-    async function submitHandler(formData: CreateAnnouncementFormSchemaType) {
-        try {
-            setIsSubmitting(true);
-            const { data } = await axios.post(`${API_URL}/organizations/${organizationId}/channels/${channel.id}/announcement-channel`, formData, {
-                headers: {
-                    authorization: `Bearer ${session.user?.token}`
-                }
-            })
-            setAnnouncementChannelMessages(prev => [...prev, data.data]);
-
-        } catch (err) {
-            console.log("error in creation of anouncement in frontend ", err)
-        } finally {
-            setIsSubmitting(false);
-            setCreateAnnouncementModal(false);
+    function submitHandler(formData: CreateAnnouncementFormSchemaType) {
+        const newMessage = {
+            ...formData,
+            userId: session.user?.id,
         }
+        console.log('creating new message : ', newMessage);
+        sendMessage(newMessage, channel.id, 'new-announcement');
     }
 
     function renderComponent() {

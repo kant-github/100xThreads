@@ -117,7 +117,10 @@ export default class FriendsChannelManager {
                 message: `${friendRequest.sender.name} sent you a friend request`,
                 created_at: Date.now().toString(),
                 sender_id: user1,
-                reference_id: friendRequest.id
+                reference_id: friendRequest.id,
+                metadata: {
+                    image: friendRequest.sender.image
+                }
             }
             console.log("kafka stream will recieve : ", notificationData);
             this.kafkaProducer.sendMessage('notifications', notificationData, Number(user2))

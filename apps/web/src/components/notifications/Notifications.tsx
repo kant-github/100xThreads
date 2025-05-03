@@ -21,9 +21,17 @@ export default function ({ open, setOpen }: OrganizationNotificationsRendererPro
     const session = useRecoilValue(userSessionAtom);
     const organizationId = useRecoilValue(organizationIdAtom);
 
-    function friendRequestAcceptHandler(newMessage: any) {
-        console.log("I did it : ", newMessage);
+    function friendRequestAcceptHandler(newNotification: any) {
+        setNotifications(prev =>
+            [
+                newNotification,
+                ...prev.filter(notification => notification.id !== newNotification.metadata?.oldNotificationId)
+            ]
+        );
     }
+
+
+
 
     function newNotificationHandler(newMessage: any) {
         console.log("message recieved kela is : ", newMessage);
@@ -65,13 +73,12 @@ export default function ({ open, setOpen }: OrganizationNotificationsRendererPro
                 authorization: `Bearer ${session.user.token}`,
             }
         })
-        console.log("notifications are : ", data.data.data);
         setNotifications(data.data.data);
     }
 
     useEffect(() => {
         fetchNotifications();
-    }, [])
+    }, [open])
 
 
     return (

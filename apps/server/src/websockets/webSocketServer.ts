@@ -48,7 +48,6 @@ export default class WebSocketServerManager {
 
         this.wss.on('connection', async (ws: WebSocket, req) => {
             try {
-                console.log("new socket connection is made");
                 const token = this.extractToken(req);
                 const tokenData = await this.authenticateUser(token);
                 if (!tokenData) {
@@ -89,7 +88,6 @@ export default class WebSocketServerManager {
 
         this.clients.get(organizationId)!.add(ws);
         this.userSubscriptions.set(ws, new Set());
-        console.log("all clients are : ", this.clients.get(tokenData.organizationId));
     }
 
 
@@ -114,8 +112,6 @@ export default class WebSocketServerManager {
     private async handleChannelSubscription(ws: WebSocket, subscription: ChannelSubscription) {
 
         const channelKey: string = this.getChannelKey(subscription);
-        console.log("subscribe event -------- >", channelKey);
-        // organizationId:channelKey:message-type
         this.userSubscriptions.get(ws)!.add(channelKey);
         await this.subscriber.subscribe(channelKey);
 
@@ -127,10 +123,7 @@ export default class WebSocketServerManager {
     }
 
     private handleRedisMessage(channelKey: string, message: string) {
-        console.log("------------------------------------------------ >")
         const parsedMessage = JSON.parse(message);
-        console.log("channel key came in subscriber is : ", channelKey)
-        console.log("message came in subscriber is : ", parsedMessage);
         const [organizationId] = channelKey.split(':');
 
         const clients = this.clients.get(organizationId!);
@@ -148,7 +141,6 @@ export default class WebSocketServerManager {
 
     private async handleChannelUnsubscription(ws: WebSocket, subscription: ChannelSubscription) {
         const channelKey = this.getChannelKey(subscription);
-        console.log("unsubscribe evnet -------- >", channelKey);
         this.userSubscriptions.get(ws)!.delete(channelKey);
 
         let hasOtherSubscribers = false;
@@ -169,7 +161,6 @@ export default class WebSocketServerManager {
     }
 
     private parseChannelKey(key: string): ChannelSubscription {
-        console.log("key is : ", key);
 
         const [organizationId, channelId, type] = key.split(':');
 
@@ -207,11 +198,9 @@ export default class WebSocketServerManager {
 
     private async authenticateUser(token: string) {
         try {
-            // Decode the base64 token
             const decodedString = Buffer.from(token, 'base64').toString();
             const tokenData = JSON.parse(decodedString);
 
-            // Validate the required fields are present
             if (!tokenData.userId || !tokenData.organizationId) {
                 throw new Error('Invalid token structure');
             }

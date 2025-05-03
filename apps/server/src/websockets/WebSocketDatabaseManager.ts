@@ -49,6 +49,10 @@ export default class WebSocketDatabaseManager {
                     return this.welcomeChannelManager.welcomeUserHandler(message, tokenData);
                 case 'new-announcement':
                     return this.announcementchannelManager.announcementHandler(message, tokenData);
+                case 'update-announcement':
+                    return this.announcementchannelManager.updateAnnouncementHandler(message, tokenData);
+                case 'delete-announcement':
+                    return this.announcementchannelManager.deleteAnnouncementHandler(message, tokenData);
                 case 'new-project':
                     return this.projectChannelManager.newProjectCreationHandler(message, tokenData);
                 case 'project-channel-chat-messages':

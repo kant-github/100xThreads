@@ -17,18 +17,52 @@ interface RegularChannelViewProps {
 export default function ({ channel }: RegularChannelViewProps) {
     const session = useRecoilValue(userSessionAtom);
     const setAnnouncementChannelMessages = useSetRecoilState(announcementChannelMessgaes);
-    const organization = useRecoilValue(organizationAtom);
-    
-    const [createAnnoucementModal, setCreateAnnouncementModal] = useState<boolean>(false);
     const organizationId = useRecoilValue(organizationIdAtom);
+    const [createAnnoucementModal, setCreateAnnouncementModal] = useState<boolean>(false);
     const { subscribeToBackend, unsubscribeFromBackend, subscribeToHandler } = useWebSocket();
 
-    function handleIncomingAnnouncemennts(newMessage: any) {
+    function handleNewAnnouncement(newMessage: any) {
+        setAnnouncementChannelMessages(prev => [newMessage, ...prev]);
     }
+
+    function handleUpdateAnnouncement(updated: any) {
+        setAnnouncementChannelMessages(prev =>
+            prev.map(item => item.id === updated.id ? updated : item)
+        );
+    }
+
+    function handleDeleteAnnouncement(deleted: any) {
+        setAnnouncementChannelMessages(prev =>
+            prev.filter(item => item.id !== deleted.id)
+        );
+    }
+
+    useEffect(() => {
+        if (organizationId && channel.id && session.user?.id) {
+
+            subscribeToBackend(channel.id, organizationId, 'new-announcement')
+            subscribeToBackend(channel.id, organizationId, 'update-announcement');
+            subscribeToBackend(channel.id, organizationId, 'delete-announcement');
+
+            const unsubNew = subscribeToHandler('new-announcement', handleNewAnnouncement);
+            const unsubUpdate = subscribeToHandler('update-announcement', handleUpdateAnnouncement);
+            const unsubDelete = subscribeToHandler('delete-announcement', handleDeleteAnnouncement);
+            return () => {
+                unsubNew();
+                unsubUpdate();
+                unsubDelete();
+                unsubscribeFromBackend(channel.id, organizationId, 'new-announcement');
+                unsubscribeFromBackend(channel.id, organizationId, 'update-announcement');
+                unsubscribeFromBackend(channel.id, organizationId, 'delete-announcement');
+            }
+        }
+    })
+
+
 
     async function getWelcomeMessages() {
         try {
-            const data = await axios.get(`${API_URL}/organizations/${organization?.id}/channels/${channel.id}/announcement-channel`, {
+            const data = await axios.get(`${API_URL}/organizations/${organizationId}/channels/${channel.id}/announcement-channel`, {
                 headers: {
                     authorization: `Bearer ${session.user?.token}`,
                 }

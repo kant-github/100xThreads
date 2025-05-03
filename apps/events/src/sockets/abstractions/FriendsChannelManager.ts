@@ -18,34 +18,86 @@ export default class FriendsChannelManager {
 
     public async handleIncomingFriendRequest(message: WebSocketMessage) {
         console.log("new message is : ", message);
-        const friendRequest = await this.prisma.friendRequest.update({
-            where: {
-                id: message.payload.reference_id
-            },
-            data: {
-                status: 'ACCEPTED'
-            },
-            include: {
-                sender: true,
-                reciever: true
-            }
+
+        const result = await this.prisma.$transaction(async (tx) => {
+
+            const friendRequest = await tx.friendRequest.update({
+                where: {
+                    id: message.payload.reference_id
+                },
+                data: {
+                    status: 'ACCEPTED'
+                },
+                include: {
+                    sender: true,
+                    reciever: true
+                }
+            });
+
+            const deletedNotification1 = await tx.notification.delete({
+                where: {
+                    id: message.payload.notificationId,
+                }
+            });
+
+            const notificationData1 = await tx.notification.create({
+                data: {
+                    user_id: friendRequest.reciever_id,
+                    type: 'FRIEND_REQUEST_ACCEPTED',
+                    title: 'You are now friends',
+                    message: `You accepted ${friendRequest.sender.name}'s friend request`,
+                    metadata: {
+                        image: friendRequest.sender.image,
+                        oldNotificationId: deletedNotification1.id
+                    }
+                }
+            });
+
+            const notificationData2 = await tx.notification.create({
+                data: {
+                    user_id: friendRequest.sender_id,
+                    type: 'FRIEND_REQUEST_ACCEPTED',
+                    title: 'Friend request accepted',
+                    message: `${friendRequest.reciever.name} has accepted your friend request`,
+                    metadata: {
+                        image: friendRequest.reciever.image
+                    }
+                }
+            })
+
+            const senderId = friendRequest.sender_id;
+            const receiverId = friendRequest.reciever_id;
+
+            const [user_id_1, user_id_2] = senderId < receiverId
+                ? [senderId, receiverId]
+                : [receiverId, senderId];
+
+            const friendship = await tx.friendship.create({
+                data: {
+                    user_id_1,
+                    user_id_2
+                },
+                include: {
+                    user1: true,
+                    user2: true
+                }
+            });
+
+            console.log("Friendship created:", friendship);
+            return {
+                user1: {
+                    userId: senderId,
+                    data: notificationData2
+                },
+                user2: {
+                    userId: receiverId,
+                    data: notificationData1
+                }
+            };
         })
 
-        const senderId = friendRequest.sender_id;
-        const receiverId = friendRequest.reciever_id;
-
-        const [user_id_1, user_id_2] = senderId < receiverId
-            ? [senderId, receiverId]
-            : [receiverId, senderId];
-
-        const friendship = await this.prisma.friendship.create({
-            data: {
-                user_id_1,
-                user_id_2
-            }
-        })
-        console.log("Friendship created:", friendship);
-        return friendship;
+        console.log("returning result", result);
+        return result;
     }
 
     public async addFriendHandler(message: WebSocketMessage, tokenData: any) {
@@ -73,7 +125,7 @@ export default class FriendsChannelManager {
                 return;
             }
 
-            //check existing friendship
+
             const exisitingFriends = await this.prisma.friendship.findUnique({
                 where: {
                     user_id_1_user_id_2: {

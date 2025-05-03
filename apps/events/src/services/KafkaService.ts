@@ -82,7 +82,7 @@ export default class KafkaConsumerService {
       console.log(userId);
       console.log("final event data : ", eventData);
       const notification = await this.storeNotification(payload, userId);
-
+      console.log("notification created by kafka service is : ----------------- >", notification);
       this.wsManager.sendToUser(String(userId), 'notifications', {
         id: notification.id,
         type: notification.type,
@@ -106,7 +106,7 @@ export default class KafkaConsumerService {
 
     return await this.prisma.notification.create({
       data: {
-        user_id: Number(userId), // Assuming user_id is Int in your schema
+        user_id: Number(userId),
         type: event.type as NotificationTypeEnum,
         title: event.title,
         message: event.message,
@@ -114,7 +114,10 @@ export default class KafkaConsumerService {
         organization_id: event.organizationId,
         channel_id: '0f7940bb-b639-4292-a718-5ad9a554f3a1',
         sender_id: Number(event.sender_id),
-        action_url: event.actionUrl
+        action_url: event.actionUrl,
+        metadata: {
+          image: event.metadata?.image
+        }
       }
     });
   }

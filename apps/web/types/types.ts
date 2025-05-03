@@ -340,7 +340,8 @@ export enum ChannelTypeType {
   LEARNING = 'LEARNING',
   MENTORSHIP = 'MENTORSHIP',
   SOCIAL = 'SOCIAL',
-  CAREER = 'CAREER'
+  CAREER = 'CAREER',
+  EVENT = 'EVENT'
 }
 
 export enum PollStatus {

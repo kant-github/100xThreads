@@ -25,6 +25,7 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
     const session = useRecoilValue(userSessionAtom);
     const [organizationUser, setOrganizationUser] = useState<OrganizationUsersType>({} as OrganizationUsersType);
     const [isFriend, setIsFriend] = useState<boolean>(false);
+    const [friendshipStatus, setFriendshipStatus] = useState<string>("");
     const { sendMessage, subscribeToBackend, subscribeToHandler, unsubscribeFromBackend } = useWebSocket();
 
     function handleImageClick(e: React.MouseEvent) {
@@ -41,6 +42,8 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
             })
             setOrganizationUser(data.data);
             setIsFriend(data.isFriend);
+            setFriendshipStatus(data.friendshipStatus);
+
         } catch (err) {
             console.log("Error in fetching user profile details");
         }
@@ -77,6 +80,20 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
         }
     }
 
+    // function friendRequestAcceptHandler(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    //     e.stopPropagation();
+    //     const newMessage = {
+    //         notificationId: notification.id,
+    //         senderId: notification.sender_id,
+    //         reference_id: notification.reference_id,
+    //         organization_id: organizationIdKey,
+    //         channel_id: 'friends-channel',
+    //         type: 'friend-request-accept'
+    //     };
+
+    //     sendMessage('friend-request-accept', 'global', newMessage);
+    // }
+
     return (
         <div className="relative">
             <div className="cursor-pointer" onClick={handleImageClick}>
@@ -109,11 +126,24 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
                             <OrganizationRolesTickerRenderer tickerText={organizationUser.role} />
                         </div>
                         <div className='flex items-end justify-center gap-x-2'>
-                            {!isFriend ?
-                                <DesignButton onClick={sendFriendRequestHandler}>Add Friend</DesignButton> :
-                                <DesignButton onClick={sendFriendRequestHandler}>Chat</DesignButton>
-                            }
+                            {friendshipStatus === "FRIENDS" ? (
+                                <DesignButton>Chat</DesignButton>
+                            ) : friendshipStatus.startsWith("REQUEST_RECEIVED") ? (
+                                <div className="mt-2 flex w-full space-x-3">
+                                    <button type="button" className="px-4 py-2 bg-yellow-600 text-white text-xs font-medium rounded-[4px] hover:bg-yellow-600/80 transition-colors">
+                                        Accept
+                                    </button>
+                                    <button type="button" className="px-4 py-2 bg-gray-200 text-gray-800 text-xs font-medium rounded-[4px] hover:bg-gray-300 transition-colors" onClick={(e) => e.stopPropagation()}>
+                                        Decline
+                                    </button>
+                                </div>
+                            ) : friendshipStatus.startsWith("REQUEST_SENT") ? (
+                                <DesignButton disabled>Request Sent</DesignButton>
+                            ) : (
+                                <DesignButton onClick={sendFriendRequestHandler}>Add Friend</DesignButton>
+                            )}
                         </div>
+
                         <div className="flex flex-col items-center gap-y-2 justify-center gap-x-4 mt-3">
                             <WhiteText className="text-xs px-3 py-1 rounded-[4px] border-[1px] border-zinc-600 flex items-center justify-center gap-x-2">
                                 <IoMdMail />

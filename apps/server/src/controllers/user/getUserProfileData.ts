@@ -84,7 +84,8 @@ export async function getUserProfileData(req: Request, res: Response) {
         res.status(200).json({
             message: "Successfully fetched the user details",
             data: useorganizationUser,
-            isFriend: !!friendship // Convert to boolean
+            isFriend: !!friendship,
+            friendshipStatus
         });
 
         return;

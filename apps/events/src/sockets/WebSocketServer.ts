@@ -150,20 +150,20 @@ export default class WebSocketServerManager {
     }
 
     private async handleCustomMessage(ws: WebSocketClient, type: string, message: any) {
-        console.log(`Handling custom message : `, message);
-        console.log("and type is : ", type);
-
+        
         switch (type) {
             case 'friend-request-accept': {
                 const data = await this.friendsChannelManager.handleIncomingFriendRequest(message);
-                console.log("jahapnah data : ", data);
-                if (ws.userId) {
-                    this.sendToUser(ws.userId, type, data);
+                if (data.user1.userId) {
+                    this.sendToUser(String(data.user1.userId), type, data.user1.data);
+                }
+                if (data.user2.userId) {
+                    this.sendToUser(String(data.user2.userId), type, data.user2.data);
                 }
                 break;
             }
 
-            // Handle other custom types here
+
             default:
                 console.warn("Unknown message type:", type);
         }
