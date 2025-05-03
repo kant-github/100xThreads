@@ -17,14 +17,9 @@ export default function ({ notification }: EachNotificationProps) {
     function friendRequestAcceptHandler(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         e.stopPropagation();
         const newMessage = {
-            notificationId: notification.id,
-            senderId: notification.sender_id,
-            reference_id: notification.reference_id,
-            organization_id: organizationIdKey,
-            channel_id: 'friends-channel',
+            friendRequestId: notification.reference_id,
             type: 'friend-request-accept'
         };
-
         sendMessage('friend-request-accept', 'global', newMessage);
     }
 

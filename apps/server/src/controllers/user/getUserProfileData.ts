@@ -79,13 +79,12 @@ export async function getUserProfileData(req: Request, res: Response) {
             friendshipStatus = `REQUEST_RECEIVED_${recievedRequest.status}`;
         }
 
-        // console.log("friendship status: ", friendshipStatus);
 
         res.status(200).json({
             message: "Successfully fetched the user details",
             data: useorganizationUser,
-            isFriend: !!friendship,
-            friendshipStatus
+            friendshipStatus,
+            friendRequestId: sentRequest?.id || recievedRequest?.id || null
         });
 
         return;

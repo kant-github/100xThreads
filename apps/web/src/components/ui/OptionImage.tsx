@@ -12,6 +12,8 @@ import { IoIosCheckmarkCircleOutline, IoMdMail } from 'react-icons/io';
 import DesignButton from '../buttons/DesignButton';
 import OrganizationRolesTickerRenderer from '../utility/tickers/organization_roles_tickers/OrganizationRolesTickerRenderer';
 import { useWebSocket } from '@/hooks/useWebsocket';
+import { useNotificationWebSocket } from '@/hooks/useNotificationWebsocket';
+import FriendsTicker from '../utility/tickers/FriendsTicker';
 
 interface OptionImageProps {
     content: any
@@ -24,10 +26,10 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
     const [open, setOpen] = useState(false);
     const session = useRecoilValue(userSessionAtom);
     const [organizationUser, setOrganizationUser] = useState<OrganizationUsersType>({} as OrganizationUsersType);
-    const [isFriend, setIsFriend] = useState<boolean>(false);
     const [friendshipStatus, setFriendshipStatus] = useState<string>("");
+    const [friendRequestId, setFriendRequestId] = useState<string>("");
     const { sendMessage, subscribeToBackend, subscribeToHandler, unsubscribeFromBackend } = useWebSocket();
-
+    const { sendMessage: sendNotificationMessage } = useNotificationWebSocket();
     function handleImageClick(e: React.MouseEvent) {
         e.stopPropagation();
         setOpen(prev => !prev);
@@ -41,9 +43,8 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
                 },
             })
             setOrganizationUser(data.data);
-            setIsFriend(data.isFriend);
             setFriendshipStatus(data.friendshipStatus);
-
+            setFriendRequestId(data.friendRequestId);
         } catch (err) {
             console.log("Error in fetching user profile details");
         }
@@ -80,19 +81,16 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
         }
     }
 
-    // function friendRequestAcceptHandler(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-    //     e.stopPropagation();
-    //     const newMessage = {
-    //         notificationId: notification.id,
-    //         senderId: notification.sender_id,
-    //         reference_id: notification.reference_id,
-    //         organization_id: organizationIdKey,
-    //         channel_id: 'friends-channel',
-    //         type: 'friend-request-accept'
-    //     };
-
-    //     sendMessage('friend-request-accept', 'global', newMessage);
-    // }
+    function friendRequestAcceptHandler(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+        e.stopPropagation();
+        if (!friendRequestId) return;
+        const newMessage = {
+            friendRequestId: friendRequestId,
+            type: 'friend-request-accept'
+        };
+        sendNotificationMessage('friend-request-accept', 'global', newMessage);
+        setFriendshipStatus('FRIENDS');
+    }
 
     return (
         <div className="relative">
@@ -127,10 +125,14 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
                         </div>
                         <div className='flex items-end justify-center gap-x-2'>
                             {friendshipStatus === "FRIENDS" ? (
-                                <DesignButton>Chat</DesignButton>
+                                <div className="flex items-center justify-center gap-x-3">
+                                    <FriendsTicker/>
+                                    <DesignButton>Chat</DesignButton>
+                                </div>
+
                             ) : friendshipStatus.startsWith("REQUEST_RECEIVED") ? (
                                 <div className="mt-2 flex w-full space-x-3">
-                                    <button type="button" className="px-4 py-2 bg-yellow-600 text-white text-xs font-medium rounded-[4px] hover:bg-yellow-600/80 transition-colors">
+                                    <button type="button" className="px-4 py-2 bg-yellow-600 text-white text-xs font-medium rounded-[4px] hover:bg-yellow-600/80 transition-colors" onClick={friendRequestAcceptHandler}>
                                         Accept
                                     </button>
                                     <button type="button" className="px-4 py-2 bg-gray-200 text-gray-800 text-xs font-medium rounded-[4px] hover:bg-gray-300 transition-colors" onClick={(e) => e.stopPropagation()}>

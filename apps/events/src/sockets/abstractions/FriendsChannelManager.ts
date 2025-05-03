@@ -20,25 +20,26 @@ export default class FriendsChannelManager {
         console.log("new message is : ", message);
 
         const result = await this.prisma.$transaction(async (tx) => {
-
             const friendRequest = await tx.friendRequest.update({
+                where: { id: message.payload.friendRequestId },
+                data: { status: 'ACCEPTED' },
+                include: { sender: true, reciever: true }
+            });
+
+            // Find old notification related to this friend request
+            const oldNotification = await tx.notification.findFirst({
                 where: {
-                    id: message.payload.reference_id
-                },
-                data: {
-                    status: 'ACCEPTED'
-                },
-                include: {
-                    sender: true,
-                    reciever: true
+                    reference_id: message.payload.friendRequestId,
+                    type: 'FRIEND_REQUEST_RECEIVED',
+                    user_id: friendRequest.reciever_id // the one who received the request
                 }
             });
 
-            const deletedNotification1 = await tx.notification.delete({
-                where: {
-                    id: message.payload.notificationId,
-                }
-            });
+            if (oldNotification) {
+                await tx.notification.delete({
+                    where: { id: oldNotification.id }
+                });
+            }
 
             const notificationData1 = await tx.notification.create({
                 data: {
@@ -48,7 +49,7 @@ export default class FriendsChannelManager {
                     message: `You accepted ${friendRequest.sender.name}'s friend request`,
                     metadata: {
                         image: friendRequest.sender.image,
-                        oldNotificationId: deletedNotification1.id
+                        oldNotificationId: oldNotification?.id
                     }
                 }
             });
@@ -63,7 +64,7 @@ export default class FriendsChannelManager {
                         image: friendRequest.reciever.image
                     }
                 }
-            })
+            });
 
             const senderId = friendRequest.sender_id;
             const receiverId = friendRequest.reciever_id;
@@ -84,6 +85,7 @@ export default class FriendsChannelManager {
             });
 
             console.log("Friendship created:", friendship);
+
             return {
                 user1: {
                     userId: senderId,
@@ -94,11 +96,12 @@ export default class FriendsChannelManager {
                     data: notificationData1
                 }
             };
-        })
+        });
 
         console.log("returning result", result);
         return result;
     }
+
 
     public async addFriendHandler(message: WebSocketMessage, tokenData: any) {
         const user1 = Number(tokenData.userId);
