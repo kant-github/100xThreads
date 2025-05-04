@@ -4,6 +4,7 @@ import { useRecoilValue } from "recoil";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import { useNotificationWebSocket } from "@/hooks/useNotificationWebsocket";
 import Image from "next/image";
+import NotificationTitle from "./NotificationTitle";
 
 interface EachNotificationProps {
     notification: NotificationType;
@@ -18,9 +19,9 @@ export default function ({ notification }: EachNotificationProps) {
         e.stopPropagation();
         const newMessage = {
             friendRequestId: notification.reference_id,
-            type: 'friend-request-accept'
+            type: 'accept-friend-request'
         };
-        sendMessage('friend-request-accept', 'global', newMessage);
+        sendMessage('accept-friend-request', 'global', newMessage);
     }
 
     const calculateDate = new CalculateDate();
@@ -49,9 +50,8 @@ export default function ({ notification }: EachNotificationProps) {
                 )}
                 <div className="ml-3 w-full">
                     <div className="flex w-full justify-between items-center">
-                        <p className={`text-sm font-semibold ${!notification.is_read ? 'text-neutral-500' : 'text-gray-900'}`}>
-                            {notification.title}
-                        </p>
+                    <NotificationTitle type={notification.type} title={notification.title} />
+
                         <span className="text-xs text-gray-500">
                             {calculateDate.formatNotificationTime(notification.created_at)}
                         </span>

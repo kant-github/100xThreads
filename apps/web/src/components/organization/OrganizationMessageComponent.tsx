@@ -66,6 +66,7 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
     const { subscribeToBackend, unsubscribeFromBackend, subscribeToHandler, sendMessage } = useWebSocket();
 
     function handleIncomingMessage(newMessage: MessageType) {
+        console.log("new chat message is ", newMessage);
         setMessages(prev => [...prev, newMessage]);
     }
 
@@ -158,15 +159,10 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
             sendMessage(editedMessage, channel.id, 'edit-message');
             setEditingState(null);
         } else {
-            const newMessage: MessageType = {
+            const newMessage: any = {
                 id: uuidv4(),
-                org_user_id: Number(session.user?.id) || 0,
-                organization_user: {
-                    organization_id: organization?.id!,
-                    role: organizationUser.role,
-                    user: session.user as any,
-                    user_id: Number(session.user?.id) || 0,
-                },
+                org_user_id: organizationUser.user_id,
+                organization_id: organization?.id!,
                 message: message,
                 name: session.user?.name || "User",
                 is_deleted: false,
@@ -176,7 +172,7 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
             };
 
             sendMessage(newMessage, channel.id, 'insert-general-channel-message');
-            setMessages(prevChats => [...prevChats, newMessage]);
+            // setMessages(prevChats => [...prevChats, newMessage]);
         }
         setMessage("");
     }

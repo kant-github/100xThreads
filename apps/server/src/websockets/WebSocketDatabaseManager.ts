@@ -25,7 +25,7 @@ export default class WebSocketDatabaseManager {
         this.kafkaProducer = new KafkaProducer(['localhost:29092'], 'notification-producer');
         this.generalchannelManager = new GeneralChannelManager(prisma, publisher);
         this.welcomeChannelManager = new WelcomeChannelManager(prisma, publisher);
-        this.announcementchannelManager = new AnnouncementchannelManager(prisma, publisher);
+        this.announcementchannelManager = new AnnouncementchannelManager(prisma, publisher, this.kafkaProducer);
         this.projectChannelManager = new ProjectChannelManager(prisma, publisher);
         this.friendsChannelManager = new FriendsChannelManager(prisma, publisher, this.kafkaProducer);
     }
@@ -67,7 +67,7 @@ export default class WebSocketDatabaseManager {
                     return this.projectChannelManager.taskAssigneeChangeHandler(message, tokenData);
                 case 'send-friend-request':
                     return this.friendsChannelManager.addFriendHandler(message, tokenData);
-                case 'friend-request-accept':
+                case 'accept-friend-request':
                     return this.friendsChannelManager.handleIncomingFriendRequest(message, tokenData);
 
             }

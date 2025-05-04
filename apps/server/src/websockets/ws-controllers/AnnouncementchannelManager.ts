@@ -1,14 +1,17 @@
 import Redis from "ioredis";
 import { PrismaClient } from ".prisma/client";
 import { ChannelSubscription, WebSocketMessage } from "../webSocketServer";
+import KafkaProducer from "../../kafka/KafkaProducer";
+import { NotificationType } from "../types";
 
 export default class AnnouncementchannelManager {
     private prisma: PrismaClient;
     private publisher: Redis;
-
-    constructor(prisma: PrismaClient, publisher: Redis) {
+    private kafkaProducer: KafkaProducer
+    constructor(prisma: PrismaClient, publisher: Redis, kafkaProducer: KafkaProducer) {
         this.prisma = prisma;
         this.publisher = publisher;
+        this.kafkaProducer = kafkaProducer;
     }
 
 
@@ -18,8 +21,6 @@ export default class AnnouncementchannelManager {
             channelId: message.payload.channelId,
             type: message.payload.type
         })
-        console.log("channel key is : ", channelKey);
-        console.log("message is : ", message);
 
         try {
             const announcement = await this.prisma.announcement.create({
@@ -39,6 +40,32 @@ export default class AnnouncementchannelManager {
                     }
                 }
             })
+
+            const organizationUsers = await this.prisma.organizationUsers.findMany({
+                where: {
+                    organization_id: tokenData.organizationId
+                }, include: {
+                    organization: true
+                }
+            })
+
+
+            for (const orgUser of organizationUsers) {
+                const notificationData: NotificationType = {
+                    user_id: orgUser.user_id,
+                    type: 'NEW_ANNOUNCEMENT',
+                    title: 'New Announcement',
+                    message: `📢 "${announcement.title}" posted in ${orgUser.organization.name}`,
+                    created_at: Date.now().toString(),
+                    sender_id: Number(message.payload.userId),
+                    reference_id: announcement.id,
+                    metadata: {
+                        image: announcement.creator?.user?.image || ''
+                    }
+                };
+
+                this.kafkaProducer.sendMessage('notifications', notificationData, Number(orgUser.user_id))
+            }
 
             await this.publisher.publish(channelKey, JSON.stringify({
                 payload: announcement,

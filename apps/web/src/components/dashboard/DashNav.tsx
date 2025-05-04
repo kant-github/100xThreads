@@ -3,23 +3,19 @@ import { useEffect, useState } from "react";
 import SearchInput from "../utility/SearchInput";
 import ProfileDropDown from "./ProfileDropDown";
 import axios from "axios";
-import { CHAT_GROUP } from "@/lib/apiAuthRoutes";
-import { ChatGroupType } from "types/types";
+import { ORGANIZATION_AND_USER_SEARCH } from "@/lib/apiAuthRoutes";
+import { OrganizationType, UserType } from "types/types";
 import SearchResultDialogBox from "../utility/SearchResultDialogBox";
 import AppLogo from "../heading/AppLogo";
-import { useSession } from "next-auth/react";
 import { WhiteBtn } from "../buttons/WhiteBtn";
 import Version from "../buttons/Version";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { globalRoomHandler } from "@/lib/globalRoomHandler";
 import Greetings from "../utility/Greetings";
-import { GoPlus } from "react-icons/go";
 import CreateRoomForm from "./CreateOrganizationForm";
 import { MdKeyboardControlKey } from "react-icons/md";
 import { TbLetterK } from "react-icons/tb";
-import { createOrganizationAtom } from "@/recoil/atoms/atom";
-import { useRecoilState } from "recoil";
+import { createOrganizationAtom, userSessionAtom } from "@/recoil/atoms/atom";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 interface Props {
   groups: any;
@@ -28,29 +24,35 @@ interface Props {
 export const globalGroupId: string = "d023e34a-3aaf-46f4-88b5-b38b2ec6cffe";
 export default function Header({ groups }: Props) {
   const [searchInput, setSearchInput] = useState("");
-  const [searchResults, setSearchResults] = useState<ChatGroupType[] | []>([]);
+  const [usersList, setUsersList] = useState<UserType[] | []>([]);
+  const [organizationsList, setOrganizationsList] = useState<OrganizationType[]>([]);
   const [open, setOpen] = useRecoilState(createOrganizationAtom);
   const [searchResultDialogBox, setSearchResultDialogBox] = useState<boolean>(false);
-  const { data: session } = useSession();
+  const session = useRecoilValue(userSessionAtom);
   const router = useRouter();
 
   async function getSearchInputChatGroups() {
     try {
-      const response = await axios.get(
-        `${CHAT_GROUP}-by-search?group_id=${searchInput}`
-      );
-      setSearchResults(response.data.data);
+      const response = await axios.get(`${ORGANIZATION_AND_USER_SEARCH}?name=${searchInput}`, {
+        headers: {
+          authorization: `Bearer ${session.user?.token}`,
+        },
+      });
+      console.log("response dot data is : ", response.data);
+      setUsersList(response.data.users);
+      setOrganizationsList(response.data.organizations);
     } catch (err) {
       console.error("Error in searching chat groups:", err);
     }
   }
+
 
   useEffect(() => {
     const debouncedTimeout = setTimeout(() => {
       if (searchInput) {
         getSearchInputChatGroups();
       }
-    }, 500);
+    }, 2000);
 
     return () => {
       clearTimeout(debouncedTimeout);
@@ -100,7 +102,8 @@ export default function Header({ groups }: Props) {
             <SearchResultDialogBox
               searchResultDialogBox={searchResultDialogBox}
               setSearchResultDialogBox={setSearchResultDialogBox}
-              searchResults={searchResults}
+              usersList={usersList}
+              organizationsList={organizationsList}
             />
           )}
         </div>

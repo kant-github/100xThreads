@@ -22,6 +22,7 @@ export default function ({ open, setOpen }: OrganizationNotificationsRendererPro
     const organizationId = useRecoilValue(organizationIdAtom);
 
     function friendRequestAcceptHandler(newNotification: any) {
+        console.log("hello bbg");
         setNotifications(prev =>
             [
                 newNotification,
@@ -29,9 +30,6 @@ export default function ({ open, setOpen }: OrganizationNotificationsRendererPro
             ]
         );
     }
-
-
-
 
     function newNotificationHandler(newMessage: any) {
         console.log("message recieved kela is : ", newMessage);
@@ -43,13 +41,15 @@ export default function ({ open, setOpen }: OrganizationNotificationsRendererPro
     useEffect(() => {
         if (open) {
             console.log("subscribing to handler");
-            subscribeToBackend('global', 'friend-request-accept');
-            const unsubscribeFriendRequestAcceptHandler = subscribeToHandler('friend-request-accept', friendRequestAcceptHandler);
+            subscribeToBackend('global', 'accept-friend-request');
+            const unsubscribeFriendRequestAcceptHandler = subscribeToHandler('accept-friend-request', friendRequestAcceptHandler);
+            const unsubscribeSendFriendRequestHandler = subscribeToHandler('send-friend-request', friendRequestAcceptHandler);
             const unsubscribeNotificationHandler = subscribeToHandler('notifications', newNotificationHandler);
 
             return () => {
-                unsubscribeFromBackend('global', 'friend-request-accept');
+                unsubscribeFromBackend('global', 'accept-friend-request');
                 unsubscribeFriendRequestAcceptHandler();
+                unsubscribeSendFriendRequestHandler();
                 unsubscribeNotificationHandler();
             };
         }

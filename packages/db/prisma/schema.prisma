@@ -8,8 +8,9 @@ datasource db {
 }
 
 model Users {
-  id                     Int                       @id @default(autoincrement())
-  name                   String
+  id       Int     @id @default(autoincrement())
+  name     String
+  username String? @unique
   email                  String                    @unique
   bio                    String                    @default("")
   provider               String

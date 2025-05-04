@@ -124,6 +124,7 @@ export default class WebSocketServerManager {
 
     private handleRedisMessage(channelKey: string, message: string) {
         const parsedMessage = JSON.parse(message);
+        console.log("message cam e from subscriber : ", parsedMessage);
         const [organizationId] = channelKey.split(':');
 
         const clients = this.clients.get(organizationId!);

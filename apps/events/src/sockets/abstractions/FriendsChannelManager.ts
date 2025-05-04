@@ -103,17 +103,16 @@ export default class FriendsChannelManager {
     }
 
 
-    public async addFriendHandler(message: WebSocketMessage, tokenData: any) {
-        const user1 = Number(tokenData.userId);
+    public async addFriendHandler(message: WebSocketMessage) {
+        const user1 = Number(message.payload.userId);
         const user2 = Number(message.payload.friendsId);
         console.log("here");
         if (!user1 || !user2) {
-            console.log("informationd are missing")
+            console.log("informations are missing")
             return;
         }
 
         try {
-            // check for existing request
             const existingFriendRequest = await this.prisma.friendRequest.findUnique({
                 where: {
                     sender_id_reciever_id: {
@@ -124,10 +123,8 @@ export default class FriendsChannelManager {
             })
 
             if (existingFriendRequest) {
-                console.log("Friend request already exists");
                 return;
             }
-
 
             const exisitingFriends = await this.prisma.friendship.findUnique({
                 where: {
@@ -154,16 +151,28 @@ export default class FriendsChannelManager {
                 }
             });
 
-            const notificationData: NotificationType = {
-                user_id: user2,
-                type: 'FRIEND_REQUEST_RECEIVED',
-                title: 'Friend request',
-                message: `${friendRequest.sender.name} sent you a friend request`,
-                created_at: Date.now().toString(),
-                sender_id: user1,
-                reference_id: friendRequest.id
+            const notification = await this.prisma.notification.create({
+                data: {
+                    user_id: Number(user2),
+                    type: 'FRIEND_REQUEST_RECEIVED',
+                    title: 'Friend Request',
+                    message: `${friendRequest.sender.name} sent you a friend request`,
+                    created_at: new Date(),
+                    sender_id: Number(user1),
+                    reference_id: friendRequest.id,
+                    metadata: {
+                        image: friendRequest.sender.image
+                    }
+
+                }
+            })
+
+            return {
+                user1: {
+                    userId: user2,
+                    data: notification
+                },
             }
-            console.log("kafka stream will recieve : ", notificationData);
 
         } catch (err) {
             console.log("Error in creating friendship", err);

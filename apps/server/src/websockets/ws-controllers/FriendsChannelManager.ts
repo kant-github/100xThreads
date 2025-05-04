@@ -64,12 +64,11 @@ export default class FriendsChannelManager {
         const user2 = Number(message.payload.friendsId);
         console.log("here");
         if (!user1 || !user2) {
-            console.log("informationd are missing")
+            console.log("informations are missing")
             return;
         }
 
         try {
-            // check for existing request
             const existingFriendRequest = await this.prisma.friendRequest.findUnique({
                 where: {
                     sender_id_reciever_id: {
@@ -80,11 +79,9 @@ export default class FriendsChannelManager {
             })
 
             if (existingFriendRequest) {
-                console.log("Friend request already exists");
                 return;
             }
 
-            //check existing friendship
             const exisitingFriends = await this.prisma.friendship.findUnique({
                 where: {
                     user_id_1_user_id_2: {

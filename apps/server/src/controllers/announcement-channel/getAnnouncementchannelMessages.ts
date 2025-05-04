@@ -7,7 +7,7 @@ export async function getAnnouncementChannelMessages(req: Request, res: Response
         return;
     }
 
-    const { id: channelId } = req.params;
+    const { channelId } = req.params;
 
     try {
         const data = await prisma.announcement.findMany({

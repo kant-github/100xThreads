@@ -5,7 +5,7 @@ import axios from 'axios';
 import { USER_URL } from '@/lib/apiAuthRoutes';
 import { useRecoilValue } from 'recoil';
 import { userSessionAtom } from '@/recoil/atoms/atom';
-import { OrganizationUsersType } from 'types/types';
+import { OrganizationUsersType, UserRole } from 'types/types';
 import WhiteText from '../heading/WhiteText';
 import { BsTextParagraph } from 'react-icons/bs';
 import { IoIosCheckmarkCircleOutline, IoMdMail } from 'react-icons/io';
@@ -18,7 +18,7 @@ import FriendsTicker from '../utility/tickers/FriendsTicker';
 interface OptionImageProps {
     content: any
     imageClassName?: string;
-    organizationId: string;
+    organizationId?: string;
     userId: number;
 }
 
@@ -41,8 +41,26 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
                 headers: {
                     authorization: `Bearer ${session.user?.token}`,
                 },
-            })
-            setOrganizationUser(data.data);
+            });
+
+            let normalizedData: OrganizationUsersType;
+
+            if (organizationId) {
+                normalizedData = data.data; // already in correct shape
+            } else {
+                // No organizationId — we got a pure user
+                const userData = data.data;
+                normalizedData = {
+                    id: userData.id, // you can set this to user id or something like `0`
+                    user: userData,
+                    organization: undefined,
+                    role: UserRole.OBSERVER, // or default/fallback role
+                };
+            }
+
+            console.log("normalize data is : ", normalizedData);
+
+            setOrganizationUser(normalizedData);
             setFriendshipStatus(data.friendshipStatus);
             setFriendRequestId(data.friendRequestId);
         } catch (err) {
@@ -50,12 +68,13 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
         }
     }
 
+
     function incomingFriendRequestHandler(newMessage: any) {
         console.log("new message is : ", newMessage);
     }
 
     useEffect(() => {
-        if (session && organizationId && userId && open) {
+        if (session && userId && open) {
             fetchUserProfileData();
         }
     }, [open, session?.user?.token, organizationId, userId])
@@ -73,11 +92,15 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
     }, [organizationUser])
 
     function sendFriendRequestHandler() {
-        if (organizationUser.id) {
+        if (organizationUser.user.id, session.user?.id) {
+
             const payload = {
-                friendsId: Number(organizationUser.user.id)
+                friendsId: Number(organizationUser.user.id),
+                userId: Number(session.user.id)
             }
-            sendMessage(payload, String(organizationUser.user.id), 'send-friend-request');
+
+            console.log("payload while sending friend request is : ", payload);
+            sendNotificationMessage('send-friend-request', 'global', payload);
         }
     }
 
@@ -86,9 +109,9 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
         if (!friendRequestId) return;
         const newMessage = {
             friendRequestId: friendRequestId,
-            type: 'friend-request-accept'
+            type: 'accept-friend-request'
         };
-        sendNotificationMessage('friend-request-accept', 'global', newMessage);
+        sendNotificationMessage('accept-friend-request', 'global', newMessage);
         setFriendshipStatus('FRIENDS');
     }
 
@@ -102,7 +125,7 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
                 open={open}
                 setOpen={setOpen}
                 content={
-                    <div className='flex flex-col gap-y-1.5 px-8 py-6'>
+                    <div className='flex flex-col gap-y-1.5 px-8 py-6 z-[100]'>
                         <div className='flex items-center justify-center gap-x-2'>
                             {organizationUser.user?.image && (
                                 <Image
@@ -126,7 +149,7 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
                         <div className='flex items-end justify-center gap-x-2'>
                             {friendshipStatus === "FRIENDS" ? (
                                 <div className="flex items-center justify-center gap-x-3">
-                                    <FriendsTicker/>
+                                    <FriendsTicker />
                                     <DesignButton>Chat</DesignButton>
                                 </div>
 

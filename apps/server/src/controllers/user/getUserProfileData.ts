@@ -3,44 +3,61 @@ import { Request, Response } from "express";
 
 export async function getUserProfileData(req: Request, res: Response) {
     if (!req.user?.id) {
-        res.send("returned");
+        res.status(401).json({ message: "Unauthorized" });
         return;
     }
+
     const { organizationId, userId } = req.params;
-    if (!organizationId || !userId) {
-        res.status(500).json({
-            message: "organizationId or userId is not found"
-        })
+    console.log("req params is : ", req.params);
+    if (!userId) {
+        res.status(400).json({
+            message: "userId is required"
+        });
         return;
     }
+
+    const currentUserId = Number(req.user.id);
+    const profileUserId = Number(userId);
+
+    const sanitizedOrganizationId = organizationId === "undefined" ? undefined : organizationId;
 
     try {
-        const currentUserId = Number(req.user.id);
-        const profileUserId = Number(userId);
+        let userProfile: any = null;
 
-        const useorganizationUser = await prisma.organizationUsers.findUnique({
-            where: {
-                organization_id_user_id: {
-                    organization_id: organizationId,
-                    user_id: profileUserId
+        if (sanitizedOrganizationId) {
+            userProfile = await prisma.organizationUsers.findUnique({
+                where: {
+                    organization_id_user_id: {
+                        organization_id: organizationId!,
+                        user_id: profileUserId
+                    }
+                },
+                include: {
+                    user: true
                 }
-            },
-            include: {
-                user: true
+            });
+
+            if (!userProfile) {
+                res.status(404).json({
+                    message: 'User does not exist in this organization',
+                });
+                return;
             }
-        });
+        } else {
+            userProfile = await prisma.users.findUnique({
+                where: {
+                    id: profileUserId
+                }
+            });
 
-        // console.log("org user is : ", useorganizationUser);
-
-        if (!useorganizationUser) {
-            res.status(200).json({
-                message: 'User does not exist',
-            })
-            return;
+            if (!userProfile) {
+                res.status(404).json({
+                    message: 'User not found',
+                });
+                return;
+            }
         }
 
-        // Check if users are friends
-        // Using the fact that user_id_1 is always the lower ID and user_id_2 is always the higher ID
         const friendship = await prisma.friendship.findUnique({
             where: {
                 user_id_1_user_id_2: {
@@ -57,7 +74,7 @@ export async function getUserProfileData(req: Request, res: Response) {
                     reciever_id: profileUserId
                 }
             }
-        })
+        });
 
         const recievedRequest = await prisma.friendRequest.findUnique({
             where: {
@@ -66,9 +83,8 @@ export async function getUserProfileData(req: Request, res: Response) {
                     reciever_id: currentUserId
                 }
             }
-        })
+        });
 
-        // console.log("friendship is : ", friendship);
         let friendshipStatus = "NOT_FRIENDS";
 
         if (friendship) {
@@ -79,19 +95,21 @@ export async function getUserProfileData(req: Request, res: Response) {
             friendshipStatus = `REQUEST_RECEIVED_${recievedRequest.status}`;
         }
 
+        console.log("logginf user profile : ", userProfile);
 
         res.status(200).json({
-            message: "Successfully fetched the user details",
-            data: useorganizationUser,
+            message: "Successfully fetched user profile data",
+            data: userProfile,
             friendshipStatus,
             friendRequestId: sentRequest?.id || recievedRequest?.id || null
         });
-
         return;
+
     } catch (err) {
-        console.log("Error in getting user profile data details", err);
+        console.error("Error fetching user profile data:", err);
         res.status(500).json({
-            message: "Error fetching user profile data"
+            message: "Internal server error"
         });
+        return;
     }
 }

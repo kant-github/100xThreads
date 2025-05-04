@@ -39,14 +39,22 @@ export default class GeneralChannelManager {
     }
 
     public async insertGeneralChannelMessage(message: WebSocketMessage, tokenData: any) {
-        await this.prisma.chats.create({
+
+        const chat = await this.prisma.chats.create({
             data: {
                 id: message.payload.id,
                 channel_id: message.payload.channelId,
-                organization_id: message.payload.organization_user.organization_id,
+                organization_id: message.payload.organization_id,
                 org_user_id: Number(message.payload.org_user_id),
                 message: message.payload.message,
                 name: message.payload.name,
+            },
+            include: {
+                organization_user: {
+                    include: {
+                        user: true
+                    }
+                }
             }
         })
 
@@ -57,8 +65,9 @@ export default class GeneralChannelManager {
         })
 
         await this.publisher.publish(channelKey, JSON.stringify({
-            ...message,
-            userId: tokenData.userId,
+            payload: chat,
+            type: message.type,
+            // userId: tokenData.userId,
             timeStamp: Date.now()
         }))
     }

@@ -70,7 +70,7 @@ export default function ({ message, channel }: MessagesProps) {
                 <div className={`flex items-center justify-start gap-x-2 ${isCurrentUser ? 'flex-row-reverse' : 'flex-row'}`}>
                     <span className="text-[12px] font-semibold flex">{message.name}</span>
                     <span className="text-[11px] tracking-wide font-extralight"> {format(new Date(message.created_at), "h:mm a")}</span>
-                    <MdEmojiEmotions onClick={handleEmojiClick} size={18} className={`text-neutral-900 bg-neutral-600 rounded-[6px] p-[2px]`} />
+                    <MdEmojiEmotions size={18} className={`text-neutral-900 bg-neutral-600 rounded-[6px] p-[2px]`} />
                     <OrganizationRolesTickerRenderer tickerText={message.organization_user?.role!} />
                     {message.is_edited && !message.is_deleted && <span className="text-[11px] italic font-light">edited</span>}
                 </div>

@@ -4,7 +4,7 @@ import { getOrganizations } from "../controllers/organization/getOrganizations";
 import { caseJoinOrganization } from "../controllers/organization/caseJoinOrganization";
 import { storeOrganization } from "../controllers/organization/storeOrganization";
 import { deleteOrganizations } from "../controllers/organization/deleteOrganizations";
-import getOrganizationBySearch from "../controllers/organization/getOrganizationBysearch";
+import getOrganizationBySearch from "../controllers/organization/getOrganizationAndUserBySearch";
 import alreadyUserMiddleware from "../middlewares/alreadyUserMiddleware";
 import { getUserDetails } from "../controllers/user/getUserDetails";
 import { updateUserDetails } from "../controllers/user/updateUserDetails";
@@ -21,6 +21,8 @@ import { getProjectchannelChats } from "../controllers/projects-channel/getProje
 import { getUserProfileData } from "../controllers/user/getUserProfileData";
 import { getTaskForProject } from "../controllers/projects-channel/getTaskForProject";
 import getNotifications from "../controllers/notifications/getNotifications";
+import { getUserNameDetails } from "../controllers/user/getUserNameDetails";
+import getOrganizationAndUserBySearch from "../controllers/organization/getOrganizationAndUserBySearch";
 
 const router: Router = Router();
 
@@ -28,6 +30,7 @@ const router: Router = Router();
 router.get("/user/:id", authmiddleware, getUserDetails);
 router.put("/user", authmiddleware, updateUserDetails);
 router.get("/user/profile-data/:organizationId/:userId", authmiddleware, getUserProfileData);
+router.get("/check-username", authmiddleware, getUserNameDetails);
 
 
 // organizations controller
@@ -36,7 +39,7 @@ router.post("/organizations/join-by-passcode/:organizationId", authmiddleware, j
 router.get("/organizations/join/:organizationId", authmiddleware, alreadyUserMiddleware, caseJoinOrganization);
 router.post("/organizations", authmiddleware, storeOrganization);
 router.delete("/organizations/:organizationId", authmiddleware, deleteOrganizations);
-router.get("/organizations-by-search", authmiddleware, getOrganizationBySearch);
+router.get("/organizations-and-user-by-search", authmiddleware, getOrganizationAndUserBySearch);
 router.get("/organizations-all", authmiddleware, getAllOrganizations);
 
 // chats-controller

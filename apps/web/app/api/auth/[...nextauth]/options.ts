@@ -1,4 +1,4 @@
-import { Account, AuthOptions, ISODateString} from "next-auth";
+import { Account, AuthOptions, ISODateString } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import prisma from "@repo/db/client";
 import jwt from "jsonwebtoken";
@@ -11,6 +11,7 @@ export interface UserType {
     image?: string | null;
     provider?: string | null;
     token?: string | null;
+    username?: string | null
 }
 
 export interface CustomSession {

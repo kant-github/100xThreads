@@ -5,6 +5,7 @@ import { useRecoilValue } from "recoil";
 import WhiteText from "@/components/heading/WhiteText";
 import { IoMdMail } from "react-icons/io";
 import { BsTextParagraph } from "react-icons/bs";
+import UserNameOption from "../UserNameOption";
 
 export default function () {
     const session = useRecoilValue(userSessionAtom);
@@ -34,6 +35,7 @@ export default function () {
                     {"faraaz aao sitaare safar ke dekhte hain 🌻"}
                 </WhiteText>
             </div>
+            <UserNameOption className="mt-3" hasUserName={true} username="khairrishi" />
         </div>
     )
 }

@@ -93,6 +93,7 @@ export class WebSocketClient {
     }
 
     public handleMessage(message: any) {
+        console.log("chat message came in fe is : ", message);
         const handlers = this.MessageHandlers.get(message.type) || [];
 
         handlers.forEach(handler => {
