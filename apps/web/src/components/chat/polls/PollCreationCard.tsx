@@ -4,6 +4,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { ChannelType } from 'types/types';
 import { useRecoilValue } from 'recoil';
 import { userSessionAtom } from '@/recoil/atoms/atom';
+import { useWebSocket } from '@/hooks/useWebsocket';
 
 
 type ExpirationOption = '1h' | '6h' | '12h' | '24h' | '48h' | '1w';
@@ -13,13 +14,11 @@ interface Props {
     className?: string;
     pollCreationCard: boolean;
     setPollCreationCard: Dispatch<SetStateAction<boolean>>;
-    sendMessage: (pollData: PollData, channelId: string, type: string) => void;
     channel: ChannelType
 }
 
 export default function ({
     setPollCreationCard,
-    sendMessage,
     maxOptions = 10,
     channel
 }: Props) {
@@ -31,6 +30,7 @@ export default function ({
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const pollOptionCardRef = useRef<HTMLDivElement | null>(null);
     const session = useRecoilValue(userSessionAtom);
+    const { sendMessage } = useWebSocket();
 
     useEffect(() => {
         function handleClickOutside(e: MouseEvent) {
@@ -67,7 +67,7 @@ export default function ({
     const handleSubmit = async (): Promise<void> => {
         if (!question.trim() || options.some(opt => !opt.trim())) return;
 
-        const pollData: PollData = {
+        const pollData: any = {
             question: question.trim(),
             options: options.map(opt => opt.trim()),
             expiresIn,

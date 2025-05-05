@@ -1,6 +1,6 @@
 import UtilityCard from "@/components/utility/UtilityCard";
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import FormProgressBar from "../FormProgressBar";
@@ -8,13 +8,9 @@ import ProgressBarButtons from "../ProgressBarButtons";
 import CreateAnnouncementFormOne from "./CreateAnnouncementFormOne";
 import CreateAnnouncementFormTwo from "./CreateAnnouncementFormTwo";
 import CreateAnnouncementFormThree from "./CreateAnnouncementFormThree";
-import axios from "axios";
-import { API_URL } from "@/lib/apiAuthRoutes";
 import { ChannelType } from "types/types";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { userSessionAtom } from "@/recoil/atoms/atom";
-import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
-import { announcementChannelMessgaes } from "@/recoil/atoms/organizationAtoms/announcementChannelMessagesAtom";
 import { progressBarAtom } from "@/recoil/atoms/progressBarAtom";
 import { useWebSocket } from "@/hooks/useWebsocket";
 
@@ -39,13 +35,10 @@ interface CreateAnnouncementFormProps {
 }
 
 
-export default function ({ className, createAnnoucementModal, setCreateAnnouncementModal, channel }: CreateAnnouncementFormProps) {
+export default function ({ createAnnoucementModal, setCreateAnnouncementModal, channel }: CreateAnnouncementFormProps) {
     const ref = useRef<HTMLDivElement | null>(null);
-    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-    const [currentStep, setCurrentStep] = useRecoilState(progressBarAtom);
-    const setAnnouncementChannelMessages = useSetRecoilState(announcementChannelMessgaes);
+    const currentStep = useRecoilValue(progressBarAtom);
     const session = useRecoilValue(userSessionAtom);
-    const organizationId = useRecoilValue(organizationIdAtom);
     const { sendMessage } = useWebSocket();
     const { control, reset, handleSubmit, formState: { errors } } = useForm<CreateAnnouncementFormSchemaType>({
         resolver: zodResolver(createAnnouncementFormSchema),
@@ -80,8 +73,8 @@ export default function ({ className, createAnnoucementModal, setCreateAnnouncem
             ...formData,
             userId: session.user?.id,
         }
-        console.log('creating new message : ', newMessage);
         sendMessage(newMessage, channel.id, 'new-announcement');
+        reset();
     }
 
     function renderComponent() {

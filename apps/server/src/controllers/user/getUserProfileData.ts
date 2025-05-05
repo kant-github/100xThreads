@@ -8,7 +8,6 @@ export async function getUserProfileData(req: Request, res: Response) {
     }
 
     const { organizationId, userId } = req.params;
-    console.log("req params is : ", req.params);
     if (!userId) {
         res.status(400).json({
             message: "userId is required"
@@ -95,7 +94,6 @@ export async function getUserProfileData(req: Request, res: Response) {
             friendshipStatus = `REQUEST_RECEIVED_${recievedRequest.status}`;
         }
 
-        console.log("logginf user profile : ", userProfile);
 
         res.status(200).json({
             message: "Successfully fetched user profile data",

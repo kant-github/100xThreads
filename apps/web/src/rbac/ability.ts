@@ -6,7 +6,7 @@ export class Ability {
     private role: UserRole;
     private projectRole: ProjectMemberRole;
 
-    constructor(role: UserRole, projectRole: ProjectMemberRole) {
+    constructor(role: UserRole, projectRole: ProjectMemberRole = ProjectMemberRole.MEMBER) {
         this.role = role;
         this.projectRole = projectRole;
         this.defineAbilities();

@@ -79,10 +79,10 @@ export default function PollCreation({ pollCreationCard, setPollCreationCard, ch
     return (
         <>
             {pollCreationCard && (
-                <PollCreationCard channel={channel} sendMessage={sendMessage} pollCreationCard={pollCreationCard} setPollCreationCard={setPollCreationCard} />
+                <PollCreationCard channel={channel} pollCreationCard={pollCreationCard} setPollCreationCard={setPollCreationCard} />
             )}
             {pollOptionCard && (
-                <PollOptionsAndResultsCard sendMessage={sendMessage} channel={channel} poll={poll} pollOptionCard={pollOptionCard} setPollOptionCard={setPollOptionCard} />
+                <PollOptionsAndResultsCard channel={channel} poll={poll}  setPollOptionCard={setPollOptionCard} />
             )}
         </>
     );

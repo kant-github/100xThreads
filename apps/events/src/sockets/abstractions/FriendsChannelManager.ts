@@ -17,7 +17,6 @@ export default class FriendsChannelManager {
     }
 
     public async handleIncomingFriendRequest(message: WebSocketMessage) {
-        console.log("new message is : ", message);
 
         const result = await this.prisma.$transaction(async (tx) => {
             const friendRequest = await tx.friendRequest.update({
@@ -26,12 +25,11 @@ export default class FriendsChannelManager {
                 include: { sender: true, reciever: true }
             });
 
-            // Find old notification related to this friend request
             const oldNotification = await tx.notification.findFirst({
                 where: {
                     reference_id: message.payload.friendRequestId,
                     type: 'FRIEND_REQUEST_RECEIVED',
-                    user_id: friendRequest.reciever_id // the one who received the request
+                    user_id: friendRequest.reciever_id
                 }
             });
 
@@ -84,7 +82,6 @@ export default class FriendsChannelManager {
                 }
             });
 
-            console.log("Friendship created:", friendship);
 
             return {
                 user1: {
@@ -98,7 +95,6 @@ export default class FriendsChannelManager {
             };
         });
 
-        console.log("returning result", result);
         return result;
     }
 
@@ -106,9 +102,7 @@ export default class FriendsChannelManager {
     public async addFriendHandler(message: WebSocketMessage) {
         const user1 = Number(message.payload.userId);
         const user2 = Number(message.payload.friendsId);
-        console.log("here");
         if (!user1 || !user2) {
-            console.log("informations are missing")
             return;
         }
 
@@ -136,7 +130,6 @@ export default class FriendsChannelManager {
             })
 
             if (exisitingFriends) {
-                console.log("Users are already friends");
                 return;
             }
 

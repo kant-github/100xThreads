@@ -28,7 +28,7 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
     const [organizationUser, setOrganizationUser] = useState<OrganizationUsersType>({} as OrganizationUsersType);
     const [friendshipStatus, setFriendshipStatus] = useState<string>("");
     const [friendRequestId, setFriendRequestId] = useState<string>("");
-    const { sendMessage, subscribeToBackend, subscribeToHandler, unsubscribeFromBackend } = useWebSocket();
+    const { subscribeToBackend, subscribeToHandler, unsubscribeFromBackend } = useWebSocket();
     const { sendMessage: sendNotificationMessage } = useNotificationWebSocket();
     function handleImageClick(e: React.MouseEvent) {
         e.stopPropagation();
@@ -46,19 +46,17 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
             let normalizedData: OrganizationUsersType;
 
             if (organizationId) {
-                normalizedData = data.data; // already in correct shape
+                normalizedData = data.data;
             } else {
-                // No organizationId — we got a pure user
                 const userData = data.data;
+                // @ts-ignore
                 normalizedData = {
-                    id: userData.id, // you can set this to user id or something like `0`
+                    id: userData.id,
                     user: userData,
                     organization: undefined,
-                    role: UserRole.OBSERVER, // or default/fallback role
+                    role: UserRole.OBSERVER,
                 };
             }
-
-            console.log("normalize data is : ", normalizedData);
 
             setOrganizationUser(normalizedData);
             setFriendshipStatus(data.friendshipStatus);
@@ -69,8 +67,7 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
     }
 
 
-    function incomingFriendRequestHandler(newMessage: any) {
-        console.log("new message is : ", newMessage);
+    function incomingFriendRequestHandler() {
     }
 
     useEffect(() => {
@@ -98,8 +95,6 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
                 friendsId: Number(organizationUser.user.id),
                 userId: Number(session.user.id)
             }
-
-            console.log("payload while sending friend request is : ", payload);
             sendNotificationMessage('send-friend-request', 'global', payload);
         }
     }
@@ -180,8 +175,6 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
                             </WhiteText>
                         </div>
                         <div className="flex items-start justify-center gap-x-4 mt-3">
-
-
                         </div>
                     </div>
                 }

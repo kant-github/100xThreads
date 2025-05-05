@@ -21,7 +21,7 @@ export default function ({
 
 
     const ability = useMemo(() => {
-        return new Ability(organizationUserRole);
+        return new Ability(organizationUserRole, );
     }, [organizationUserRole]);
 
     const sessionToken = useMemo(() => session, [session]);

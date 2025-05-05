@@ -64,6 +64,8 @@ export default class AnnouncementchannelManager {
                     }
                 };
 
+                console.log("sending this data to kafka stream : ", notificationData);
+
                 this.kafkaProducer.sendMessage('notifications', notificationData, Number(orgUser.user_id))
             }
 
@@ -113,8 +115,6 @@ export default class AnnouncementchannelManager {
             channelId: message.payload.channelId,
             type: message.payload.type
         });
-        console.log("channel key is : ", channelKey);
-        console.log("message came is : ", message);
 
         try {
             const deletedAnnouncement = await this.prisma.announcement.delete({
@@ -122,7 +122,6 @@ export default class AnnouncementchannelManager {
                     id: message.payload.announcementId
                 }
             });
-            console.log("deleted annoucnemnt is : ", deletedAnnouncement);
 
             await this.publisher.publish(channelKey, JSON.stringify({
                 payload: deletedAnnouncement,

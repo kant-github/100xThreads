@@ -20,7 +20,7 @@ interface WebSocketClient extends WebSocket {
     id: string;
     userId?: string;
     isAlive: boolean;
-    subscribedChannels: Set<string>; // Track channels this client is subscribed to
+    subscribedChannels: Set<string>;
 }
 
 interface Channel {
@@ -114,7 +114,6 @@ export default class WebSocketServerManager {
         }
         this.channels.get(channelKey)?.add(ws.id);
 
-        console.log(`Client ${ws.id} subscribed to channel ${channelKey}`);
 
         ws.send(JSON.stringify({
             type: 'subscription-confirmed',
@@ -140,9 +139,7 @@ export default class WebSocketServerManager {
             }
         }
 
-        console.log(`Client ${ws.id} unsubscribed from channel ${channelKey}`);
 
-        // Confirm unsubscription to client
         ws.send(JSON.stringify({
             type: 'unsubscription-confirmed',
             data: { key, type }
@@ -177,7 +174,6 @@ export default class WebSocketServerManager {
     }
 
     private initTracking(ws: WebSocketClient, tokenData: TokenData) {
-        console.log(`User ${tokenData.userId} (${tokenData.userName}) connected`);
         const userId = tokenData.userId;
         ws.userId = userId;
 
@@ -187,7 +183,6 @@ export default class WebSocketServerManager {
 
         this.userSockets.get(userId)?.add(ws.id);
 
-        // Send welcome message
         this.sendToClient(ws, {
             type: "CONNECTED",
             data: {
@@ -207,11 +202,9 @@ export default class WebSocketServerManager {
     }
 
     public sendToUser(userId: string, type: string, data: any) {
-        console.log(`Sending to user ${userId}:`, data);
 
         const userConnections = this.userSockets.get(userId);
         if (!userConnections || userConnections.size === 0) {
-            console.log(`No active connections for user ${userId}`);
             return false;
         }
 
@@ -231,17 +224,14 @@ export default class WebSocketServerManager {
             }
         });
 
-        console.log(`Message sent to ${sentCount}/${userConnections.size} connections`);
         return sentCount > 0;
     }
 
     public broadcastToChannel(key: string, type: string, data: any) {
         const channelKey = `${key}:${type}`;
-        console.log(`Broadcasting to channel ${channelKey}:`, data);
 
         const channelSubscribers = this.channels.get(channelKey);
         if (!channelSubscribers || channelSubscribers.size === 0) {
-            console.log(`No subscribers for channel ${channelKey}`);
             return false;
         }
 
@@ -256,12 +246,10 @@ export default class WebSocketServerManager {
             }
         });
 
-        console.log(`Message broadcast to ${sentCount}/${channelSubscribers.size} subscribers`);
         return sentCount > 0;
     }
 
     public broadcastToAll(data: any) {
-        console.log("Broadcasting to all clients:", data);
         const message = JSON.stringify(data);
         let sentCount = 0;
 
@@ -272,14 +260,11 @@ export default class WebSocketServerManager {
             }
         });
 
-        console.log(`Message broadcast to ${sentCount}/${this.clients.size} clients`);
         return sentCount > 0;
     }
 
     private handleDisconnection(ws: WebSocketClient) {
-        console.log(`Client ${ws.id} disconnected`);
 
-        // Clean up user tracking
         if (ws.userId) {
             const userConnections = this.userSockets.get(ws.userId);
             if (userConnections) {
@@ -290,7 +275,6 @@ export default class WebSocketServerManager {
             }
         }
 
-        // Clean up channel subscriptions
         ws.subscribedChannels.forEach((channelKey) => {
             const channelSubscribers = this.channels.get(channelKey);
             if (channelSubscribers) {
@@ -301,7 +285,6 @@ export default class WebSocketServerManager {
             }
         });
 
-        // Remove client from clients map
         this.clients.delete(ws.id);
     }
 
@@ -324,11 +307,6 @@ export default class WebSocketServerManager {
                 console.error('Invalid token structure');
                 return null;
             }
-
-            // Optional: Verify user existence in the database
-            // const user = await this.prisma.user.findUnique({ where: { id: tokenData.userId } });
-            // if (!user) return null;
-
             return tokenData;
         } catch (err) {
             console.error('Authentication error:', err);
@@ -341,13 +319,12 @@ export default class WebSocketServerManager {
             clearInterval(this.pingInterval);
         }
 
-        // Close all connections
+
         this.clients.forEach((client) => {
             client.terminate();
         });
 
         this.wss.close();
-        console.log("WebSocket server shut down");
     }
 
     private getChannelKey(subscription: ChannelSubscription): string {

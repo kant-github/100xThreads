@@ -90,12 +90,9 @@ export default function ({ open, project, channel, chats }: ProjectChatsProps) {
     }
 
     function handleIncomingDeleteMessage(newMessage: any) {
-        console.log("delete message is : ", newMessage);
         setMessages((prevMessage) => {
             return prevMessage.map((message) => {
                 if (message.id === newMessage.id) {
-                    console.log("message id is : ", message.id);
-                    console.log("new message id is : ", newMessage.id);
                     return {
                         ...message,
                         message: newMessage.message,
@@ -109,7 +106,6 @@ export default function ({ open, project, channel, chats }: ProjectChatsProps) {
     }
 
     function handleIncomingEditMessage(newMessage: any) {
-        console.log("new edited message recieved is : ", newMessage);
         setMessages((prevMessages) => {
             return prevMessages.map((message) => {
                 if (message.id === newMessage.id) {
@@ -128,8 +124,6 @@ export default function ({ open, project, channel, chats }: ProjectChatsProps) {
 
     useEffect(() => {
         if (open && organizationId && channel.id) {
-            console.log("sending a subscribe event");
-
             subscribeToBackend(channel.id, organizationId, 'project-channel-chat-messages');
             subscribeToBackend(channel.id, organizationId, 'project-chat-delete-message');
             subscribeToBackend(channel.id, organizationId, 'project-chat-edit-message');
@@ -193,6 +187,7 @@ export default function ({ open, project, channel, chats }: ProjectChatsProps) {
             const newMessage: ProjectChatTypes = {
                 id: uuidv4(),
                 org_user_id: Number(session.user?.id) || 0,
+                //@ts-ignore
                 organization_user: {
                     organization_id: organizationId!,
                     role: organizationUser.role,

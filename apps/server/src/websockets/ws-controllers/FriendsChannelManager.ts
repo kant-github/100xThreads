@@ -18,14 +18,12 @@ export default class FriendsChannelManager {
     }
 
     public async handleIncomingFriendRequest(message: WebSocketMessage, tokenData: any) {
-        console.log("new message is : ", message);
         const channelKey = this.getChannelKey({
             organizationId: message.payload.organization_id,
             channelId: message.payload.channel_id,
             type: message.payload.type
         })
 
-        console.log("channel key : ", channelKey);
         const friendRequest = await this.prisma.friendRequest.update({
             where: {
                 id: message.payload.reference_id
@@ -52,7 +50,6 @@ export default class FriendsChannelManager {
                 user_id_2
             }
         })
-        console.log("Friendship created:", friendship);
         await this.publisher.publish(channelKey, JSON.stringify({
             payload: "kelapaw",
             type: message.payload.type
@@ -62,7 +59,6 @@ export default class FriendsChannelManager {
     public async addFriendHandler(message: WebSocketMessage, tokenData: any) {
         const user1 = Number(tokenData.userId);
         const user2 = Number(message.payload.friendsId);
-        console.log("here");
         if (!user1 || !user2) {
             console.log("informations are missing")
             return;
@@ -92,7 +88,6 @@ export default class FriendsChannelManager {
             })
 
             if (exisitingFriends) {
-                console.log("Users are already friends");
                 return;
             }
 
@@ -119,7 +114,6 @@ export default class FriendsChannelManager {
                     image: friendRequest.sender.image
                 }
             }
-            console.log("kafka stream will recieve : ", notificationData);
             this.kafkaProducer.sendMessage('notifications', notificationData, Number(user2))
 
         } catch (err) {

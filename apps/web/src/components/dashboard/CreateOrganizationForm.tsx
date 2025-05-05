@@ -72,9 +72,7 @@ export default function ({ open, setOpen }: CreateRoomProps) {
             const processedData = { ...data };
 
             if ('password' in processedData) {
-                console.log("password before hashing : ", processedData.password);
                 processedData.password = hashPassword(processedData.password!);
-                console.log("passsword after hashng : ", processedData.password);
             }
 
             const formData = new FormData();
@@ -92,9 +90,6 @@ export default function ({ open, setOpen }: CreateRoomProps) {
                 }
             });
 
-            for (const [key, value] of formData.entries()) {
-                console.log(`${key}:`, value);
-            }
 
             const response = await axios.post(`${ORGANIZATION}`, formData, {
                 headers: {

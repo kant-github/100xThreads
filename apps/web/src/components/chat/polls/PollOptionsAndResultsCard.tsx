@@ -5,25 +5,23 @@ import { useRecoilValue } from "recoil";
 import { ChannelType, PollTypes } from "types/types";
 import { ImBullhorn } from "react-icons/im";
 import WhiteText from "@/components/heading/WhiteText";
+import { useWebSocket } from "@/hooks/useWebsocket";
 
 interface PollOptionsAndResultsProps {
     setPollOptionCard: Dispatch<SetStateAction<boolean>>;
     poll: PollTypes;
     channel: ChannelType;
-    sendMessage: (pollData: any, channelId: string, type: string) => void;
 }
 
 export default function PollOptionsAndResults({
     setPollOptionCard,
     poll,
     channel,
-    sendMessage,
 }: PollOptionsAndResultsProps) {
     const session = useRecoilValue(userSessionAtom);
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
-    console.log(poll);
-
+    const {sendMessage} = useWebSocket()
     const totalVotes = poll.votes.length;
 
     function handleVoteSelect(optionId: string) {

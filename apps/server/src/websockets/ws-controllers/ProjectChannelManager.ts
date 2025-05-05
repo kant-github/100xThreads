@@ -1,14 +1,17 @@
 import Redis from "ioredis";
-import { PrismaClient } from ".prisma/client";
+import { PrismaClient, ProjectMemberRole } from ".prisma/client";
 import { ChannelSubscription, WebSocketMessage } from "../webSocketServer";
+import KafkaProducer from "../../kafka/KafkaProducer";
+import { NotificationType } from "../types";
 
 export default class ProjectChannelManager {
     public prisma: PrismaClient;
     public publisher: Redis;
-
-    constructor(prisma: PrismaClient, publisher: Redis) {
+    public kafkaProducer: KafkaProducer;
+    constructor(prisma: PrismaClient, publisher: Redis, kafkaProducer: KafkaProducer) {
         this.prisma = prisma;
         this.publisher = publisher;
+        this.kafkaProducer = kafkaProducer
     }
 
     public async projectChatTypingEventHandler(message: WebSocketMessage, tokenData: any) {
@@ -128,7 +131,6 @@ export default class ProjectChannelManager {
             type: message.payload.type
         });
 
-        console.log("incoming message is : ", message);
 
 
         const activityLogchannelKey = `${tokenData.organizationId}:${message.payload.channelId}:project-channel-chat-messages`
@@ -172,8 +174,6 @@ export default class ProjectChannelManager {
             }
         })
 
-        console.log("org user is : ", orgUser);
-        console.log("token data : ", tokenData);
 
         const chat = await this.prisma.projectChat.create({
             data: {
@@ -194,10 +194,6 @@ export default class ProjectChannelManager {
             }
         })
 
-        console.log("chat is : ", chat);
-
-
-
 
         await this.publisher.publish(activityLogchannelKey, JSON.stringify({
             type: 'project-channel-chat-messages',
@@ -206,13 +202,10 @@ export default class ProjectChannelManager {
 
 
 
-        // Then for each assignee, find or create their project member record
-        // and create the task assignee relationship
         const assigneeNames = [];
         if (message.payload.assignees && message.payload.assignees.length > 0) {
             for (const assigneeId of message.payload.assignees) {
 
-                // Find or create project member
                 let projectMember = await this.prisma.projectMember.findUnique({
                     where: {
                         project_id_org_user_id: {
@@ -229,7 +222,6 @@ export default class ProjectChannelManager {
                     }
                 });
 
-                // If user is not a project member yet, add them
                 if (!projectMember) {
                     projectMember = await this.prisma.projectMember.create({
                         data: {
@@ -266,10 +258,6 @@ export default class ProjectChannelManager {
                     }));
                 }
 
-                // Create activity for new member
-
-
-                // Create task assignee relationship
                 await this.prisma.taskAssignees.create({
                     data: {
                         task_id: task.id,
@@ -313,7 +301,6 @@ export default class ProjectChannelManager {
 
 
 
-        // Fetch the updated task with all relationships
         const updatedTask = await this.prisma.tasks.findUnique({
             where: { id: task.id },
             include: {
@@ -348,7 +335,6 @@ export default class ProjectChannelManager {
 
         let assignee;
         if (message.payload.action === 'add') {
-            // First check if the user is a member of the project
             const projectMember = await this.prisma.projectMember.findUnique({
                 where: {
                     project_id_org_user_id: {
@@ -358,7 +344,6 @@ export default class ProjectChannelManager {
                 }
             });
 
-            // If not a project member, add them as a member with the default role (MEMBER)
             let projectMemberId;
             if (!projectMember) {
                 const newProjectMember = await this.prisma.projectMember.create({
@@ -373,7 +358,6 @@ export default class ProjectChannelManager {
                 projectMemberId = projectMember.id;
             }
 
-            // Check if the task assignee already exists
 
             const existingAssignee = await this.prisma.taskAssignees.findUnique({
                 where: {
@@ -385,7 +369,6 @@ export default class ProjectChannelManager {
             });
 
 
-            // Only create if the assignee doesn't already exist
             if (!existingAssignee) {
                 assignee = await this.prisma.taskAssignees.create({
                     data: {
@@ -405,7 +388,6 @@ export default class ProjectChannelManager {
                     }
                 });
             } else {
-                // If assignee already exists, just fetch the data to return
                 assignee = await this.prisma.taskAssignees.findUnique({
                     where: {
                         task_id_project_member_id: {
@@ -427,7 +409,6 @@ export default class ProjectChannelManager {
                 });
             }
         } else if (message.payload.action === 'remove') {
-            // First get the project member ID
             const projectMember = await this.prisma.projectMember.findUnique({
                 where: {
                     project_id_org_user_id: {
@@ -438,7 +419,6 @@ export default class ProjectChannelManager {
             });
 
             if (projectMember) {
-                // Check if the assignee exists before trying to delete
                 const existingAssignee = await this.prisma.taskAssignees.findUnique({
                     where: {
                         task_id_project_member_id: {
@@ -472,6 +452,118 @@ export default class ProjectChannelManager {
             }
         }));
     }
+
+    public async projectMemberChangeHandler(message: WebSocketMessage, tokenData: any) {
+        const { project_id, members, projectName } = message.payload as {
+            project_id: string;
+            members: { org_user_id: number; role?: string }[];
+            projectName: string;
+        };
+
+        const channelKey = this.getChannelKey({
+            organizationId: tokenData.organizationId,
+            channelId: message.payload.channelId,
+            type: message.payload.type
+        });
+
+        const orgUserIds = members.map(member => member.org_user_id);
+
+        const existingMembers = await this.prisma.projectMember.findMany({
+            where: { project_id },
+            select: { org_user_id: true }
+        });
+
+        const existingIds = new Set(existingMembers.map(m => m.org_user_id));
+        const incomingIds = new Set(orgUserIds);
+        const toAdd = members.filter(m => !existingIds.has(m.org_user_id));
+        const toRemove = [...existingIds].filter(id => !incomingIds.has(id));
+
+        if (toAdd.length > 0) {
+            await this.prisma.projectMember.createMany({
+                data: toAdd.map(member => ({
+                    project_id,
+                    org_user_id: member.org_user_id,
+                    role: ProjectMemberRole.MEMBER
+                })),
+                skipDuplicates: true
+            });
+        }
+
+        if (toRemove.length > 0) {
+            await this.prisma.projectMember.deleteMany({
+                where: {
+                    project_id,
+                    org_user_id: { in: toRemove }
+                }
+            });
+        }
+
+        await this.publisher.publish(channelKey, JSON.stringify({
+            ...message,
+            timeStamp: Date.now()
+        }));
+
+        const affectedOrgUserIds = [...new Set([
+            ...toAdd.map(m => m.org_user_id),
+            ...toRemove
+        ])];
+
+        if (affectedOrgUserIds.length === 0) return;
+
+        const affectedUsers = await this.prisma.organizationUsers.findMany({
+            where: {
+                user_id: { in: affectedOrgUserIds }
+            },
+            include: {
+                user: true,
+                organization: true
+            }
+        });
+
+        for (const member of toAdd) {
+            const orgUser = affectedUsers.find(u => u.user_id === member.org_user_id);
+            if (!orgUser) continue;
+
+            const notificationData: NotificationType = {
+                user_id: orgUser.user_id,
+                type: 'PROJECT_ADDED',
+                title: 'Project Member',
+                message: `📽️ You are added to the project '${projectName}' posted in '${orgUser.organization.name}'`,
+                created_at: Date.now().toString(),
+                sender_id: Number(message.payload.userId),
+                reference_id: project_id,
+                metadata: {
+                    image: orgUser.user?.image || ''
+                }
+            };
+
+            this.kafkaProducer.sendMessage('notifications', notificationData, orgUser.user_id);
+        }
+
+        // (Optional) Notify removed users
+        // for (const removedId of toRemove) {
+        //     const orgUser = affectedUsers.find(u => u.user_id === removedId);
+        //     if (!orgUser) continue;
+
+        //     const notificationData: NotificationType = {
+        //         user_id: orgUser.user_id,
+        //         type: 'PROJECT_REMOVED',
+        //         title: 'Project Member',
+        //         message: `🚫 You were removed from the project ${projectName} in ${orgUser.organization.name}`,
+        //         created_at: Date.now().toString(),
+        //         sender_id: Number(message.payload.userId),
+        //         reference_id: project_id,
+        //         metadata: {
+        //             image: orgUser.user?.image || ''
+        //         }
+        //     };
+
+        //     this.kafkaProducer.sendMessage('notifications', notificationData, orgUser.user_id);
+        // }
+    }
+
+
+
 
     public getChannelKey(subscription: ChannelSubscription): string {
         return `${subscription.organizationId}:${subscription.channelId}:${subscription.type}`

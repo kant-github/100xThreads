@@ -16,7 +16,7 @@ const textStyles = "text-[12px] sm:text-[13px] text-lightText dark:text-neutral-
 function Option({ isSelected, onClick, Icon, label }: {
     isSelected?: boolean;
     onClick: () => void;
-    Icon: React.ComponentType<{ size: number }>;
+    Icon: React.ComponentType<{ size: number } & React.SVGProps<SVGSVGElement>>;
     label: string;
 }) {
     return (

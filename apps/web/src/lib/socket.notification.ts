@@ -28,7 +28,6 @@ export default class WebSocketNotificationClient {
             this.ws.onmessage = (event) => {
                 try {
                     const message = JSON.parse(event.data);
-                    console.log("message is : ", message);
                     this.processMessage(message);
                 } catch (error) {
                     console.error("Error parsing WebSocket message:", error);
@@ -76,7 +75,6 @@ export default class WebSocketNotificationClient {
     public unSubscribeToBackendWSS(key: string, type: string) {
         const channelKey = `${key}:${type}`;
         if (this.subscribedChannels.has(channelKey)) {
-            console.log("finally sedning : ", channelKey);
             this.sendMessage('unsubscribe-channel', key, {
                 key,
                 type

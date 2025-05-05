@@ -39,11 +39,15 @@ export default function ({ channel }: ProjectsChannelTopBarProps) {
         if (channel.id && organizationId) {
 
             subscribeToBackend(channel.id, organizationId, 'new-project');
-            const unsubscribeNewProjectHandler = subscribeToHandler('new-project', incomingNewProjectHandler)
+            subscribeToBackend(channel.id, organizationId, 'project-member-change');
+            const unsubscribeNewProjectHandler = subscribeToHandler('new-project', incomingNewProjectHandler);
+            const ubsubscribeProjectMemberChangeHandler = subscribeToHandler('project-member-change', projectMemberChangeHandler)
 
             return () => {
                 unsubscribeNewProjectHandler();
+                ubsubscribeProjectMemberChangeHandler();
                 unsubscribeFromBackend(channel.id, organizationId, 'new-project');
+                unsubscribeFromBackend(channel.id, organizationId, 'project-member-change');
             }
         }
     }, [channel.id, organizationId]);
@@ -69,6 +73,10 @@ export default function ({ channel }: ProjectsChannelTopBarProps) {
         console.log("new project is ", newMessage);
         console.log("project channel messages are : ", projectsChannelMessages);
         setProjectChannelMessages(prev => [newMessage, ...prev]);
+    }
+
+    function projectMemberChangeHandler(newMessage: any) {
+        console.log("new project members are : ", newMessage);
     }
 
 

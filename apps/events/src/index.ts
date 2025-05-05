@@ -34,7 +34,7 @@ app.get("/store", async (req, res) => {
 
 const kafka = new Kafka({
     clientId: 'notification-producer',
-    brokers: ['localhost:29092'],
+    brokers: ['13.53.234.218:9092'],
 });
 
 const producer = kafka.producer();
@@ -78,11 +78,12 @@ app.get("/produce", (req, res) => {
 app.get("/consume", (req, res) => {
 
     const kafkaConsumerService = new KafkaConsumerService(
-        ['localhost:29092'],
+        ['13.53.234.218:9092'],
         'notification-service-group',
         wsManager,
         ['notifications'] // Topics to subscribe to
     );
+    
 
     (async () => {
         try {

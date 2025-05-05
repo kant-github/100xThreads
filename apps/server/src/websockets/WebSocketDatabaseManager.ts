@@ -22,11 +22,11 @@ export default class WebSocketDatabaseManager {
     constructor(prisma: PrismaClient, publisher: Redis) {
         this.prisma = prisma;
         this.publisher = publisher;
-        this.kafkaProducer = new KafkaProducer(['localhost:29092'], 'notification-producer');
+        this.kafkaProducer = new KafkaProducer(['13.53.234.218:9092'], 'notification-producer');
         this.generalchannelManager = new GeneralChannelManager(prisma, publisher);
         this.welcomeChannelManager = new WelcomeChannelManager(prisma, publisher);
         this.announcementchannelManager = new AnnouncementchannelManager(prisma, publisher, this.kafkaProducer);
-        this.projectChannelManager = new ProjectChannelManager(prisma, publisher);
+        this.projectChannelManager = new ProjectChannelManager(prisma, publisher, this.kafkaProducer);
         this.friendsChannelManager = new FriendsChannelManager(prisma, publisher, this.kafkaProducer);
     }
 
@@ -57,6 +57,8 @@ export default class WebSocketDatabaseManager {
                     return this.projectChannelManager.newProjectCreationHandler(message, tokenData);
                 case 'project-channel-chat-messages':
                     return this.projectChannelManager.insertProjectChannelMessage(message, tokenData);
+                case 'project-member-change':
+                    return this.projectChannelManager.projectMemberChangeHandler(message, tokenData);
                 case 'project-channel-edit-message':
                     return this.projectChannelManager.projectChannelEditMessageHandler(message, tokenData);
                 case 'project-chat-typing-events':

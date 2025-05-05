@@ -6,19 +6,10 @@ import { userSessionAtom } from '@/recoil/atoms/atom';
 import { MdEmojiEmotions } from "react-icons/md";
 import { useState } from "react";
 import EmojiPicker from 'emoji-picker-react';
-import { MouseDownEvent } from "emoji-picker-react/dist/config/config";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import OrganizationRolesTickerRenderer from "@/components/utility/tickers/organization_roles_tickers/OrganizationRolesTickerRenderer";
 import ProjectMessageOptionMenu from "./ProjectMessageOptionMenu";
 import ProjectchatActivityLogMessage from "./ProjectchatActivityLogMessage";
-
-interface ReactionPayload {
-    message_id: string;
-    emoji: string;
-    user_id: number;
-    org_id: number;
-    channel: ChannelType;
-}
 
 interface MessagesProps {
     message: ProjectChatTypes;
@@ -30,9 +21,6 @@ function MessageContent({ message, className, channel }: MessagesProps) {
     const [messageOptionMenu, setOptionMenu] = useState<boolean>(false);
     const session = useRecoilValue(userSessionAtom);
     const isCurrentUser = Number(session.user?.id) === Number(message.user_id);
-    console.log("session user id is : ", session.user?.id);
-    console.log("message is : ", message);
-    console.log("user is : ", message.org_user_id);
     return (
         <div className={`flex-shrink-0 flex items-start gap-x-1 ${isCurrentUser ? "flex-row-reverse" : "flex-row"}`}>
 
@@ -56,11 +44,6 @@ export default function ({ message, channel }: MessagesProps) {
 
     const handleEmojiClick = () => {
         setShowEmojiPicker(!showEmojiPicker);
-    };
-
-    const onEmojiClick = (emoji: MouseDownEvent) => {
-        console.log(emoji);
-        setShowEmojiPicker(false);
     };
 
     if (message.is_activity) {
@@ -98,7 +81,7 @@ export default function ({ message, channel }: MessagesProps) {
 
                 {showEmojiPicker && (
                     <div className="absolute bottom-full right-0 z-10">
-                        <EmojiPicker height={200} width={200} onEmojiClick={onEmojiClick} />
+                        <EmojiPicker height={200} width={200} />
                     </div>
                 )}
 

@@ -31,7 +31,6 @@ export const useWebSocket = () => {
 
   function unsubscribeFromBackend(channelId: string, organizationId: string, type: string) {
     if (!webSocketRef.current) return;
-    console.log("sending unsubscribe evnt");
     webSocketRef.current.unSubscribeToBackendWSS(channelId, organizationId, type);
   }
 

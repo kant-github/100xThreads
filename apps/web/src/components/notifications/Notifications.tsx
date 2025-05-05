@@ -22,7 +22,6 @@ export default function ({ open, setOpen }: OrganizationNotificationsRendererPro
     const organizationId = useRecoilValue(organizationIdAtom);
 
     function friendRequestAcceptHandler(newNotification: any) {
-        console.log("hello bbg");
         setNotifications(prev =>
             [
                 newNotification,
@@ -32,7 +31,6 @@ export default function ({ open, setOpen }: OrganizationNotificationsRendererPro
     }
 
     function newNotificationHandler(newMessage: any) {
-        console.log("message recieved kela is : ", newMessage);
         setNotifications(prev => [newMessage, ...prev]);
     }
 
@@ -40,7 +38,6 @@ export default function ({ open, setOpen }: OrganizationNotificationsRendererPro
 
     useEffect(() => {
         if (open) {
-            console.log("subscribing to handler");
             subscribeToBackend('global', 'accept-friend-request');
             const unsubscribeFriendRequestAcceptHandler = subscribeToHandler('accept-friend-request', friendRequestAcceptHandler);
             const unsubscribeSendFriendRequestHandler = subscribeToHandler('send-friend-request', friendRequestAcceptHandler);
@@ -67,7 +64,6 @@ export default function ({ open, setOpen }: OrganizationNotificationsRendererPro
 
     async function fetchNotifications() {
         if (!session.user?.token) return;
-        console.log("making backend call");
         const data = await axios.get(`${API_URL}/notifications`, {
             headers: {
                 authorization: `Bearer ${session.user.token}`,

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ChannelType } from "types/types";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { organizationAtom, organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
+import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import axios from "axios";
 import { API_URL } from "@/lib/apiAuthRoutes";
 import { userSessionAtom } from "@/recoil/atoms/atom";

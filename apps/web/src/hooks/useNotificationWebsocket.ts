@@ -42,7 +42,6 @@ export const useNotificationWebSocket = () => {
 
     const unsubscribeFromBackend = useCallback((key: string, type: string) => {
         if (!wsClientRef.current) return;
-        console.log("sending unsubscribe evnt");
         wsClientRef.current.unSubscribeToBackendWSS(key, type);
     }, [])
 

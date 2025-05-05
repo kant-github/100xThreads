@@ -31,9 +31,7 @@ export default function ({ notification }: EachNotificationProps) {
             key={notification.id}
             className="flex flex-col items-start p-4 hover:bg-[#1f1f1f] rounded-[6px] transition-colors cursor-pointer"
             onClick={() => {
-                if (notification.action_url) {
-                    console.log(`Navigate to: ${notification.action_url}`);
-                }
+                
             }}
         >
             <div className=" flex items-center w-full">
@@ -76,7 +74,6 @@ export default function ({ notification }: EachNotificationProps) {
                         className="px-4 py-2 bg-gray-200 text-gray-800 text-xs font-medium rounded-[4px] hover:bg-gray-300 transition-colors"
                         onClick={(e) => {
                             e.stopPropagation();
-                            console.log(`Decline action for ${notification.id}`);
                         }}
                     >
                         Decline

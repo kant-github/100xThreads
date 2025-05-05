@@ -10,7 +10,6 @@ export async function getUserNameDetails(req: Request, res: Response) {
     const username = req.query.username as string;
 
 
-    console.log("username is : ", username);
 
     try {
 

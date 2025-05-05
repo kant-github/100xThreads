@@ -184,11 +184,9 @@ export default class GeneralChannelManager {
             include: GeneralChannelManager.pollInclude
         })
 
-        console.log("new created poll is : ", poll);
         await this.publisher.publish(channelKey, JSON.stringify({
             payload: poll,
             type: message.type
-            // userId: tokenData.userId
         }))
     }
 

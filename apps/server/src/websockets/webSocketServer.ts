@@ -79,7 +79,6 @@ export default class WebSocketServerManager {
 
     private setupClientTracking(ws: WebSocket, tokenData: any) {
         const organizationId = tokenData.organizationId
-        console.log("organization id is : --------------------------------------------------------- >", organizationId);
         if (!this.clients.has(organizationId)) {
             this.clients.set(organizationId, new Set());
         }
@@ -124,7 +123,6 @@ export default class WebSocketServerManager {
 
     private handleRedisMessage(channelKey: string, message: string) {
         const parsedMessage = JSON.parse(message);
-        console.log("message cam e from subscriber : ", parsedMessage);
         const [organizationId] = channelKey.split(':');
 
         const clients = this.clients.get(organizationId!);

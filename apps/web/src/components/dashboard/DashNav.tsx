@@ -29,7 +29,6 @@ export default function Header({ groups }: Props) {
   const [open, setOpen] = useRecoilState(createOrganizationAtom);
   const [searchResultDialogBox, setSearchResultDialogBox] = useState<boolean>(false);
   const session = useRecoilValue(userSessionAtom);
-  const router = useRouter();
 
   async function getSearchInputChatGroups() {
     try {
@@ -38,7 +37,7 @@ export default function Header({ groups }: Props) {
           authorization: `Bearer ${session.user?.token}`,
         },
       });
-      console.log("response dot data is : ", response.data);
+
       setUsersList(response.data.users);
       setOrganizationsList(response.data.organizations);
     } catch (err) {
@@ -52,7 +51,7 @@ export default function Header({ groups }: Props) {
       if (searchInput) {
         getSearchInputChatGroups();
       }
-    }, 2000);
+    }, 1000);
 
     return () => {
       clearTimeout(debouncedTimeout);

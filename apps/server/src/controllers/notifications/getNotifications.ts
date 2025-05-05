@@ -6,11 +6,13 @@ export default async function getNotifications(req: Request, res: Response) {
         res.status(401).json({ message: "Unauthorized: User not authenticated." });
         return;
     }
-    console.log("hitted", req.user.id);
     try {
         const notifications = await prisma.notification.findMany({
             where: {
                 user_id: Number(req.user.id),
+            },
+            orderBy: {
+                created_at: "desc",
             },
         });
         res.status(200).json({

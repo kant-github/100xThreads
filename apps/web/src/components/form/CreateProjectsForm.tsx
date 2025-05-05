@@ -1,13 +1,9 @@
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import OpacityBackground from "../ui/OpacityBackground";
 import UtilityCard from "../utility/UtilityCard";
-import DashboardComponentHeading from "../dashboard/DashboardComponentHeading";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
 import InputBox from "../utility/InputBox";
-import axios from "axios";
-import { API_URL } from "@/lib/apiAuthRoutes";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import { userSessionAtom } from "@/recoil/atoms/atom";
@@ -33,11 +29,8 @@ type ProjectSchema = z.infer<typeof createProjectSchema>;
 
 export default function ({ open, setOpen, className, channel }: CreateProjectsFormProps) {
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-    const organization = useRecoilValue(organizationAtom);
-    const session = useRecoilValue(userSessionAtom);
     const organizationUser = useRecoilValue<OrganizationUsersType>(organizationUserAtom);
     const ref = useRef<HTMLDivElement>(null);
-    const setProjectChannelMessagesAtom = useSetRecoilState(projectChannelMessageAtom);
     const { sendMessage } = useWebSocket()
     const { handleSubmit, control, formState: { errors } } = useForm<ProjectSchema>({
         resolver: zodResolver(createProjectSchema),
@@ -60,29 +53,12 @@ export default function ({ open, setOpen, className, channel }: CreateProjectsFo
 
     }, [open])
 
-    async function submitHandler(formData: ProjectSchema) {
+    function submitHandler(formData: ProjectSchema) {
         sendMessage({ organizationUser, ...formData }, channel.id, 'new-project');
-        // try {
-        //     setIsSubmitting(true);
-        //     const { data } = await axios.post(`${API_URL}/organizations/${organization?.id}/channels/${channel.id}/project-channel`, formData, {
-        //         headers: {
-        //             authorization: `Bearer ${session.user?.token}`
-        //         }
-        //     })
-        //     setProjectChannelMessagesAtom(prev => [...prev, data.data]);
-        //     console.log("project data is : ", data);
-
-        // } catch (err) {
-        //     console.log("error in creation of anouncement in frontend ", err)
-        // } finally {
-        //     setIsSubmitting(false);
-        //     setOpen(false);
-        // }
     }
     return (
         <div className={`${className} absolute right-8 z-[100]`} ref={ref}>
             <UtilityCard open={open} setOpen={setOpen} className="px-[20px] py-4 dark:bg-neutral-900 dark:border-neutral-600 border" >
-                {/* <DashboardComponentHeading description="start creating the project">Create project</DashboardComponentHeading> */}
                 <form className="flex flex-col items-center justify-between gap-y-4" onSubmit={handleSubmit(submitHandler)}>
                     <Controller
                         name="title"

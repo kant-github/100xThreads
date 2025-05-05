@@ -66,7 +66,6 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
     const { subscribeToBackend, unsubscribeFromBackend, subscribeToHandler, sendMessage } = useWebSocket();
 
     function handleIncomingMessage(newMessage: MessageType) {
-        console.log("new chat message is ", newMessage);
         setMessages(prev => [...prev, newMessage]);
     }
 
@@ -83,12 +82,9 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
     }
 
     function handleIncomingDeleteMessage(newMessage: any) {
-        console.log("delete message is : ", newMessage);
         setMessages((prevMessage) => {
             return prevMessage.map((message) => {
                 if (message.id === newMessage.id) {
-                    console.log("message id is : ", message.id);
-                    console.log("new message id is : ", newMessage.id);
                     return {
                         ...message,
                         message: newMessage.message,
@@ -102,7 +98,6 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
     }
 
     function handleIncomingEditMessage(newMessage: any) {
-        console.log("new edited message recieved is : ", newMessage);
         setMessages((prevMessages) => {
             return prevMessages.map((message) => {
                 if (message.id === newMessage.id) {

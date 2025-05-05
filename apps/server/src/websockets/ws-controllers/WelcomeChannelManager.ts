@@ -19,7 +19,6 @@ export default class WelcomeChannelManager {
             type: message.payload.type
         })
 
-        console.log("channel key is : ", channelKey);
 
         try {
 

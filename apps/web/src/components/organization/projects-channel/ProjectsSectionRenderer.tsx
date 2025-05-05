@@ -173,7 +173,7 @@ export default function ({ channel }: ProjectsProps) {
             <div className='w-full flex flex-col flex-1 min-h-0'>
                 {
                     !selectedProject ? (
-                        <UtilityCard className='p-8 w-full flex-1 mt-4 dark:bg-neutral-800 flex flex-col min-h-0 shadow-lg shadow-black/20'>
+                        <UtilityCard className='p-8 w-full flex-1 mt-4 dark:bg-neutral-800 flex flex-col gap-y-4 min-h-0 shadow-lg shadow-black/20'>
                             {projectsChannelMessages.map((project) => (
                                 <Project channel={channel} key={project.id} project={project} setSelectedProject={setSelectedProject} />
                             ))}

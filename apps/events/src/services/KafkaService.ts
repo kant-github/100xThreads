@@ -77,12 +77,10 @@ export default class KafkaConsumerService {
       }
 
       const eventData = JSON.parse(message.value.toString());
+      console.log("data came from kafka : )))))))))", eventData);
       const payload: NotificationEvent = eventData.value;
       const userId = eventData.userId;
-      console.log(userId);
-      console.log("final event data : ", eventData);
       const notification = await this.storeNotification(payload, userId);
-      console.log("notification created by kafka service is : ----------------- >", notification);
       this.wsManager.sendToUser(String(userId), 'notifications', {
         id: notification.id,
         type: notification.type,

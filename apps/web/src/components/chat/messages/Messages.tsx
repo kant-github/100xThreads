@@ -6,19 +6,10 @@ import { userSessionAtom } from '@/recoil/atoms/atom';
 import { MdEmojiEmotions } from "react-icons/md";
 import { useState } from "react";
 import EmojiPicker from 'emoji-picker-react';
-import { MouseDownEvent } from "emoji-picker-react/dist/config/config";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import MessageOptionsMenu from "@/components/ui/MessageOptionsMenu";
 import OrganizationRolesTickerRenderer from "@/components/utility/tickers/organization_roles_tickers/OrganizationRolesTickerRenderer";
 import OptionImage from "@/components/ui/OptionImage";
-
-interface ReactionPayload {
-    message_id: string;
-    emoji: string;
-    user_id: number;
-    org_id: number;
-    channel: ChannelType;
-}
 
 interface MessagesProps {
     message: MessageType;
@@ -49,9 +40,6 @@ export default function ({ message, channel }: MessagesProps) {
     const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
     const session = useRecoilValue(userSessionAtom);
     const isCurrentUser = Number(session.user?.id) === Number(message.org_user_id);
-    const handleEmojiClick = () => {
-        setShowEmojiPicker(!showEmojiPicker);
-    };
 
     const onEmojiClick = () => {
         setShowEmojiPicker(false);

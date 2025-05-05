@@ -11,6 +11,7 @@ import { OrganizationUsersType, ProjectMemberRole, ProjectMemberType, ProjectTyp
 import OptionImage from "./OptionImage";
 import Image from "next/image";
 import SearchInput from "../utility/SearchInput";
+import { useWebSocket } from "@/hooks/useWebsocket";
 
 interface ProjectOptionMenuProps {
     open: boolean;
@@ -22,7 +23,7 @@ export default function ProjectOptionMenu({ open, setOpen, isAdmin = false }: Pr
     const [openProjectMemberMenu, setOpenProjectMemberMenu] = useState<boolean>(false);
     const [selectedProject, setSelectedProject] = useRecoilState<ProjectTypes | null>(projectSelectedAtom);
     const organizationUsers = useRecoilValue<OrganizationUsersType[]>(organizationUsersAtom);
-
+    const { sendMessage } = useWebSocket();
     // State to track selected members by org_user_id
     const [selectedMembers, setSelectedMembers] = useState<number[]>([]);
     const [hasChanges, setHasChanges] = useState<boolean>(false);
@@ -91,15 +92,26 @@ export default function ProjectOptionMenu({ open, setOpen, isAdmin = false }: Pr
                 };
             });
 
+            console.log("updated member is : ", updatedMembers);
+
             // Update the project with new members
             setSelectedProject({
                 ...selectedProject,
                 members: updatedMembers
             });
 
+            // from here data will be sent
+            const payload = {
+                channelId: selectedProject.channel_id,
+                project_id: selectedProject.id,
+                members: selectedMembers.map(id => ({ org_user_id: id })),
+                projectName: selectedProject.title
+            }
+            sendMessage(payload, selectedProject.channel_id, 'project-member-change');
+
             setHasChanges(false);
             // Optionally close the sidebar after saving
-            // setOpenProjectMemberMenu(false);
+            setOpenProjectMemberMenu(false);
         }
     };
 
@@ -144,9 +156,9 @@ export default function ProjectOptionMenu({ open, setOpen, isAdmin = false }: Pr
                         </DashboardComponentHeading>
 
                         <SearchInput
-                            // setSearchResultDialogBox={setSearchResultDialogBox}
-                            // input={searchInput}
-                            // setInput={setSearchInput}
+                        // setSearchResultDialogBox={setSearchResultDialogBox}
+                        // input={searchInput}
+                        // setInput={setSearchInput}
                         />
 
                         <div className="flex flex-col space-y-2 mt-2 max-h-[50vh] overflow-y-auto">
@@ -186,6 +198,7 @@ export default function ProjectOptionMenu({ open, setOpen, isAdmin = false }: Pr
                         {isAdmin && (
                             <div className="mt-auto pt-4 border-t border-neutral-200 dark:border-neutral-700 flex justify-end space-x-2">
                                 <button
+                                    type="button"
                                     onClick={handleCancel}
                                     className="px-4 py-2 text-sm rounded-md border border-neutral-300 dark:border-neutral-600 dark:text-neutral-300"
                                     disabled={!hasChanges}

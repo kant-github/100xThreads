@@ -23,7 +23,6 @@ export function useProjectPermission(project: ProjectTypes | null) {
 
   return {
     hasPermission: checkSpecificPermission,
-    // These will only be calculated when the properties are accessed
     get canView() { return checkSpecificPermission(ProjectPermission.VIEW); },
     get canEdit() { return checkSpecificPermission(ProjectPermission.EDIT); },
     get canManage() { return checkSpecificPermission(ProjectPermission.MANAGE); },

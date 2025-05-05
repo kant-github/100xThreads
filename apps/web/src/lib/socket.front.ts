@@ -82,7 +82,6 @@ export class WebSocketClient {
     public unSubscribeToBackendWSS(channelId: string, organizationId: string, type: string) {
         const channelKey = `${channelId}:${organizationId}:${type}`;
         if (this.subscribedChannels.has(channelKey)) {
-            console.log("finally sedning : ", channelKey);
             this.send('unsubscribe-channel', {
                 channelId,
                 organizationId,
@@ -93,7 +92,6 @@ export class WebSocketClient {
     }
 
     public handleMessage(message: any) {
-        console.log("chat message came in fe is : ", message);
         const handlers = this.MessageHandlers.get(message.type) || [];
 
         handlers.forEach(handler => {
