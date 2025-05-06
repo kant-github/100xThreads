@@ -23,6 +23,8 @@ import { getTaskForProject } from "../controllers/projects-channel/getTaskForPro
 import getNotifications from "../controllers/notifications/getNotifications";
 import { getUserNameDetails } from "../controllers/user/getUserNameDetails";
 import getOrganizationAndUserBySearch from "../controllers/organization/getOrganizationAndUserBySearch";
+import getP2pChats from "../controllers/p2p/getP2pChats";
+import caseJoinP2pChat from "../controllers/p2p/caseJoinP2pChat";
 
 const router: Router = Router();
 
@@ -65,5 +67,8 @@ router.get("/polls/:id/:channelId", authmiddleware, getPoll);
 //notification-controller
 router.get("/notifications", authmiddleware, getNotifications);
 
+//p2p-controller
+router.get("/p2p/case-join", authmiddleware, caseJoinP2pChat);
+router.get("/p2p/:username", authmiddleware, getP2pChats);
 
 export default router;

@@ -12,7 +12,7 @@ import { globalGroupId } from "./DashNav";
 import { useRouter } from "next/navigation";
 import { handleClickOutside } from "@/lib/handleClickOutside";
 
-export default function UserMenu() {
+export default function () {
     const [dropDown, setDropDown] = useState<boolean>(false);
     const [logoutDropdown, setLogoutDropDown] = useState<boolean>(false);
     const [accountInfoDropDown, setAccountInfoDropDown] = useState(false);

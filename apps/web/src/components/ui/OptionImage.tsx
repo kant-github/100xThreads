@@ -3,7 +3,7 @@ import Image from 'next/image';
 import UtilityMiniSideBar from '../utility/UtilityMiniSideBar';
 import axios from 'axios';
 import { USER_URL } from '@/lib/apiAuthRoutes';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { userSessionAtom } from '@/recoil/atoms/atom';
 import { OrganizationUsersType, UserRole } from 'types/types';
 import WhiteText from '../heading/WhiteText';
@@ -14,6 +14,11 @@ import OrganizationRolesTickerRenderer from '../utility/tickers/organization_rol
 import { useWebSocket } from '@/hooks/useWebsocket';
 import { useNotificationWebSocket } from '@/hooks/useNotificationWebsocket';
 import FriendsTicker from '../utility/tickers/FriendsTicker';
+import { userProfileAtom } from '@/recoil/atoms/users/userProfileAtom';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import { dashboardOptionsAtom, RendererOption } from '@/recoil/atoms/DashboardOptionsAtom';
+import { settingsOptionAtom, settingsOptionEnum } from '@/recoil/atoms/SettingsOptionAtom';
 
 interface OptionImageProps {
     content: any
@@ -25,11 +30,16 @@ interface OptionImageProps {
 const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, content }) => {
     const [open, setOpen] = useState(false);
     const session = useRecoilValue(userSessionAtom);
+    const userProfileData = useRecoilValue(userProfileAtom);
     const [organizationUser, setOrganizationUser] = useState<OrganizationUsersType>({} as OrganizationUsersType);
     const [friendshipStatus, setFriendshipStatus] = useState<string>("");
     const [friendRequestId, setFriendRequestId] = useState<string>("");
     const { subscribeToBackend, subscribeToHandler, unsubscribeFromBackend } = useWebSocket();
     const { sendMessage: sendNotificationMessage } = useNotificationWebSocket();
+    const setSettingsAtom = useSetRecoilState(settingsOptionAtom);
+    const setDashboardAtom = useSetRecoilState(dashboardOptionsAtom);
+
+    const router = useRouter();
     function handleImageClick(e: React.MouseEvent) {
         e.stopPropagation();
         setOpen(prev => !prev);
@@ -110,6 +120,40 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
         setFriendshipStatus('FRIENDS');
     }
 
+    function startchatHandler() {
+
+        if (!organizationUser.user.username && !userProfileData.username) {
+            toast(`Both users should set thier usernames`, {
+                action: {
+                    label: "Set yours now",
+                    onClick: () => {
+                        router.push("/dashboard");
+                        setDashboardAtom(RendererOption.Settings);
+                        setSettingsAtom(settingsOptionEnum.Profile)
+                    },
+                },
+            });
+        }
+        else if (!organizationUser.user.username) {
+            toast.error(`${organizationUser.user.name} has not set thier username`);
+        }
+        else if (!userProfileData.username) {
+            toast(`${userProfileData.name}, please set your username`, {
+                action: {
+                    label: "Set Now",
+                    onClick: () => {
+                        router.push("/dashboard");
+                        setDashboardAtom(RendererOption.Settings);
+                        setSettingsAtom(settingsOptionEnum.Profile)
+                    },
+                },
+            });
+        }
+        else {
+            router.push(`/chat/${organizationUser.user.username}`)
+        }
+    }
+
     return (
         <div className="relative">
             <div className="cursor-pointer" onClick={handleImageClick}>
@@ -145,7 +189,7 @@ const OptionImage: React.FC<OptionImageProps> = ({ organizationId, userId, conte
                             {friendshipStatus === "FRIENDS" ? (
                                 <div className="flex items-center justify-center gap-x-3">
                                     <FriendsTicker />
-                                    <DesignButton>Chat</DesignButton>
+                                    <DesignButton onClick={startchatHandler}>Chat</DesignButton>
                                 </div>
 
                             ) : friendshipStatus.startsWith("REQUEST_RECEIVED") ? (

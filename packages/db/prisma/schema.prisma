@@ -575,7 +575,7 @@ model ChatMessageOneToOne {
   senderId    Int
   receiverId  Int
   content     String
-  createdAt   DateTime    @default(now())
+  created_at   DateTime    @default(now())
   seenAt      DateTime? // When the receiver read the message
   messageType MessageType @default(TEXT)
 

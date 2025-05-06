@@ -1,11 +1,10 @@
 import { userSessionAtom } from "@/recoil/atoms/atom"
 import Image from "next/image";
-import { useRecoilState, useRecoilValue } from "recoil"
+import { useRecoilValue, useSetRecoilState } from "recoil"
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { PiSignOut } from "react-icons/pi";
 import { TiUser } from "react-icons/ti";
-import { handleClickOutside } from "@/lib/handleClickOutside";
 import LogOutDialogBox from "../utility/LogOutDialogBox";
 import { settingsOptionAtom, settingsOptionEnum } from "@/recoil/atoms/SettingsOptionAtom";
 import { dashboardOptionsAtom, RendererOption } from "@/recoil/atoms/DashboardOptionsAtom";
@@ -13,8 +12,8 @@ import { dashboardOptionsAtom, RendererOption } from "@/recoil/atoms/DashboardOp
 export default function () {
   const [open, setOpen] = useState<boolean>(false);
   const [logoutDropdown, setLogoutDropdown] = useState<boolean>(false);
-  const [settingsAtom, setSettingsAtom] = useRecoilState(settingsOptionAtom);
-  const [dashboardAtom, setDashboardAtom] = useRecoilState(dashboardOptionsAtom);
+  const setSettingsAtom = useSetRecoilState(settingsOptionAtom);
+  const setDashboardAtom = useSetRecoilState(dashboardOptionsAtom);
   const session = useRecoilValue(userSessionAtom);
   const ref = useRef<HTMLDivElement | null>(null);
 

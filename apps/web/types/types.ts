@@ -266,6 +266,30 @@ export type NotificationType = {
   action_url?: string | null;
 }
 
+export type OneToOneMessageType = "TEXT" | "IMAGE" | "VIDEO" | "FILE";
+
+export interface ChatMessageOneToOneType {
+  id: string;
+  senderId: number;
+  receiverId: number;
+  content: string;
+  created_at: string;
+  seenAt: string | null;
+  messageType: OneToOneMessageType;
+
+  sender: {
+    id: number;
+    name: string;
+    avatarUrl?: string;
+  };
+  receiver: {
+    id: number;
+    name: string;
+    avatarUrl?: string;
+  };
+}
+
+
 export type NotificationTypeEnum =
   | 'FRIEND_REQUEST_RECEIVED'
   | 'FRIEND_REQUEST_ACCEPTED'
