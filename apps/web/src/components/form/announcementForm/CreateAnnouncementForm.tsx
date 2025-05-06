@@ -91,8 +91,8 @@ export default function ({ createAnnoucementModal, setCreateAnnouncementModal, c
     }
 
     return (
-        <div ref={ref}>
-            <UtilityCard className="absolute z-[100] top-[4rem] right-0 w-[24rem] bg-white dark:bg-neutral-900 rounded-[14px] px-6 py-4 cursor-pointer border dark:border-neutral-700">
+        <div ref={ref} className="absolute right-0 top-12 z-[100]">
+            <UtilityCard className="top-[4rem] w-[24rem] bg-white dark:bg-neutral-900 rounded-[14px] px-6 py-4 cursor-pointer border dark:border-neutral-700">
                 <div className="text-sm dark:text-neutral-200 font-semibold tracking-wider">Create announcement</div>
                 <form className="w-full flex flex-col gap-y-2" onSubmit={handleSubmit(submitHandler)} >
                     <FormProgressBar className="mt-6 w-full" />

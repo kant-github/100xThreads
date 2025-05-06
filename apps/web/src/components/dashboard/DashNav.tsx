@@ -9,7 +9,6 @@ import SearchResultDialogBox from "../utility/SearchResultDialogBox";
 import AppLogo from "../heading/AppLogo";
 import { WhiteBtn } from "../buttons/WhiteBtn";
 import Version from "../buttons/Version";
-import { useRouter } from "next/navigation";
 import Greetings from "../utility/Greetings";
 import CreateRoomForm from "./CreateOrganizationForm";
 import { MdKeyboardControlKey } from "react-icons/md";
@@ -17,12 +16,9 @@ import { TbLetterK } from "react-icons/tb";
 import { createOrganizationAtom, userSessionAtom } from "@/recoil/atoms/atom";
 import { useRecoilState, useRecoilValue } from "recoil";
 
-interface Props {
-  groups: any;
-}
 
 export const globalGroupId: string = "d023e34a-3aaf-46f4-88b5-b38b2ec6cffe";
-export default function Header({ groups }: Props) {
+export default function Header() {
   const [searchInput, setSearchInput] = useState("");
   const [usersList, setUsersList] = useState<UserType[] | []>([]);
   const [organizationsList, setOrganizationsList] = useState<OrganizationType[]>([]);
@@ -106,7 +102,7 @@ export default function Header({ groups }: Props) {
             />
           )}
         </div>
-        <ProfileDropDown groups={groups} />
+        <ProfileDropDown />
         <CreateRoomForm open={open} setOpen={setOpen} />
       </div>
     </div>

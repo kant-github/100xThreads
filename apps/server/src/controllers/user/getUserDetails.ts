@@ -11,13 +11,50 @@ export async function getUserDetails(req: Request, res: Response) {
             return;
         }
 
+        const userId = Number(id);
 
         const user = await prisma.users.findFirst({
             where: {
-                id: Number(id)
+                id: userId
             },
+            include: {
+                Friends1: {
+                    include: {
+                        user2: {
+                            select: {
+                                id: true,
+                                name: true,
+                                username: true,
+                                image: true,
+                                isOnline: true,
+                                lastSeen: true
+                            }
+                        }
+                    }
+                },
+                Friends2: {
+                    include: {
+                        user1: {
+                            select: {
+                                id: true,
+                                name: true,
+                                username: true,
+                                image: true,
+                                isOnline: true,
+                                lastSeen: true
+                            }
+                        }
+                    }
+                },
+                Organizations: {
+                    include: {
+                        organization: true
+                    }
+                },
+                OwnedOrganizations: true,
+                Chats: true,
+            }
         });
-
 
         if (!user) {
             res.status(404).json({
@@ -26,14 +63,21 @@ export async function getUserDetails(req: Request, res: Response) {
             return;
         }
 
+        const responseData = {
+            ...user,
+
+        };
+
         res.status(200).json({
-            message: "Successfully fetched the user",
-            data: user,
+            message: "Successfully fetched the user details",
+            data: responseData,
         });
+        return;
     } catch (err) {
-        console.error("Error in backend:", err);
+        console.error("Error in fetching user details:", err);
         res.status(500).json({
-            message: "Error in finding the user",
+            message: "Error in finding the user details",
         });
+        return;
     }
 }

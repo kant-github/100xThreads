@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import DesignButton from "../buttons/DesignButton";
 import InputBoxCalls from "../utility/InputBoxCalls";
 import axios from "axios";
-import { API_URL } from "@/lib/apiAuthRoutes";
-import { useRecoilValue } from "recoil";
+import { API_URL, USER_URL } from "@/lib/apiAuthRoutes";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { userSessionAtom } from "@/recoil/atoms/atom";
-import UnclickableTicker from "../ui/UnclickableTicker";
+import { FaCopy } from "react-icons/fa";
+import { userProfileAtom } from "@/recoil/atoms/users/userProfileAtom";
 
 interface UserNameOptionProps {
     hasUserName: boolean;
@@ -19,7 +20,7 @@ export default function UserNameOption({ hasUserName, className, username }: Use
     const [checking, setChecking] = useState(false);
     const [isTaken, setIsTaken] = useState<boolean | null>(null);
     const session = useRecoilValue(userSessionAtom);
-
+    const setUserProfileData = useSetRecoilState(userProfileAtom);
     useEffect(() => {
         if (!newUsername) {
             setIsTaken(null);
@@ -35,15 +36,13 @@ export default function UserNameOption({ hasUserName, className, username }: Use
 
     const checkUsername = async (name: string) => {
         try {
-            console.log("checking for username : ", name);
             setChecking(true);
             const { data } = await axios.get(`${API_URL}/check-username?username=${name}`, {
                 headers: {
                     authorization: `Bearer ${session.user?.token}`,
                 },
             });
-            console.log("data is : ", data);
-            console.log(data.isTaken);
+
             setIsTaken(data.isTaken);
         } catch (err) {
             console.error("Error checking username", err);
@@ -56,8 +55,31 @@ export default function UserNameOption({ hasUserName, className, username }: Use
         setNewUsername(e.target.value);
     }
 
-    function addUserNameHandler() {
-        setAddUserNameActive(true);
+    async function addUserNameHandler() {
+        if (!addUserNameActive) {
+            setAddUserNameActive(true);
+            return;
+        }
+        try {
+            const { data } = await axios.put(`${USER_URL}`, {
+                username: newUsername
+            }, {
+                headers: {
+                    authorization: `Bearer ${session.user?.token}`,
+                },
+            })
+            console.log("setting the username", data.updatedUser.username);
+            if (data.updatedUser.username)
+                setUserProfileData(prev => ({
+                    ...prev!,
+                    username: data.updatedUser.username,
+                }));
+
+            setAddUserNameActive(false);
+            setNewUsername("");
+        } catch (err) {
+            console.error("Error in setting the username : ", err);
+        }
     }
 
     return (
@@ -65,9 +87,12 @@ export default function UserNameOption({ hasUserName, className, username }: Use
             {hasUserName ? (
                 <div>
                     {username &&
-                        <UnclickableTicker className="text-yellow-500">
-                            {username}
-                        </UnclickableTicker>}
+                        <div className="text-yellow-500 text-xs ml-1 flex items-center justify-center gap-x-2">
+                            <span>@{username}</span>
+                            <FaCopy className="text-yellow-500/70 cursor-pointer" onClick={() => {
+                                navigator.clipboard.writeText(username)
+                            }} />
+                        </div>}
                 </div>
             ) : (
                 <div className="flex items-center justify-center gap-x-3">

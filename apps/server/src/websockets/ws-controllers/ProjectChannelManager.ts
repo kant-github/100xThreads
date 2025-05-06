@@ -526,7 +526,7 @@ export default class ProjectChannelManager {
 
             const notificationData: NotificationType = {
                 user_id: orgUser.user_id,
-                type: 'PROJECT_ADDED',
+                type: 'PROJECT_MEMBER_ADDED',
                 title: 'Project Member',
                 message: `📽️ You are added to the project '${projectName}' posted in '${orgUser.organization.name}'`,
                 created_at: Date.now().toString(),

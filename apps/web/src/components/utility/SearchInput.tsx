@@ -30,7 +30,7 @@ export default function({ setInput, setSearchResultDialogBox }: SearchInputProps
     };
 
   return (
-    <div className="flex flex-col justify-center items-center w-full items-center px-4">
+    <div className="flex flex-col justify-center w-full items-center px-4">
       <PlaceholdersAndVanishInput
         placeholders={placeholders}
         onChange={handleInputChange}

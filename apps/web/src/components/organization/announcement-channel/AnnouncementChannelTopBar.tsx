@@ -15,7 +15,7 @@ interface AnnouncementChannelTopBarProps {
 
 export default function ({ channel, createAnnoucementModal, setCreateAnnouncementModal }: AnnouncementChannelTopBarProps) {
     return (
-        <div className="flex flex-row justify-between w-full">
+        <div className="flex flex-row relative justify-between w-full">
 
 
             <DashboardComponentHeading description={channel.description!}>{channel.title}</DashboardComponentHeading>

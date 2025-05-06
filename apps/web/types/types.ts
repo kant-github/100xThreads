@@ -12,9 +12,7 @@ export type ChannelType = {
   is_archived: boolean
   allowed_roles: UserRole
   description?: string
-  // Chats: 
   Announcements: AnnouncementType[]
-  // RecentlyJoinedGroups RecentlyJoinedGroups[]
 };
 
 export type GroupChatUserType = {
@@ -28,6 +26,7 @@ export type GroupChatUserType = {
 export type UserType = {
   id: number;
   name: string;
+  username?: string
   image: string;
   email: string;
   bio: string;
@@ -286,6 +285,7 @@ export type NotificationTypeEnum =
   | 'EVENT_UPDATED'
   | 'EVENT_CANCELLED'
   | 'PROJECT_ADDED'
+  | 'PROJECT_MEMBER_ADDED'
   | 'TASK_ASSIGNED'
   | 'TASK_DUE_SOON'
   | 'TASK_STATUS_CHANGED'

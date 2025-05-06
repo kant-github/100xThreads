@@ -7,11 +7,18 @@ import DashboardComponentHeading from "../dashboard/DashboardComponentHeading";
 import ProjectTasksTicker from "../utility/tickers/ProjectTasksTicker";
 import { LiaTasksSolid } from "react-icons/lia";
 import { organizationUsersAtom } from "@/recoil/atoms/organizationAtoms/organizationUsersAtom";
-import { OrganizationUsersType, ProjectMemberRole, ProjectMemberType, ProjectTypes } from "types/types";
+import {
+    OrganizationUsersType,
+    ProjectMemberRole,
+    ProjectMemberType,
+    ProjectTypes,
+} from "types/types";
 import OptionImage from "./OptionImage";
 import Image from "next/image";
 import SearchInput from "../utility/SearchInput";
 import { useWebSocket } from "@/hooks/useWebsocket";
+import InputBox from "../utility/InputBox";
+import { WhiteBtn } from "../buttons/WhiteBtn";
 
 interface ProjectOptionMenuProps {
     open: boolean;
@@ -19,110 +26,105 @@ interface ProjectOptionMenuProps {
     isAdmin?: boolean;
 }
 
-export default function ProjectOptionMenu({ open, setOpen, isAdmin = false }: ProjectOptionMenuProps) {
-    const [openProjectMemberMenu, setOpenProjectMemberMenu] = useState<boolean>(false);
-    const [selectedProject, setSelectedProject] = useRecoilState<ProjectTypes | null>(projectSelectedAtom);
-    const organizationUsers = useRecoilValue<OrganizationUsersType[]>(organizationUsersAtom);
+export default function ProjectOptionMenu({
+    open,
+    setOpen,
+    isAdmin = false,
+}: ProjectOptionMenuProps) {
+    const [openProjectMemberMenu, setOpenProjectMemberMenu] =
+        useState<boolean>(false);
+    const [selectedProject, setSelectedProject] = useRecoilState<ProjectTypes | null>(
+        projectSelectedAtom
+    );
+    const organizationUsers = useRecoilValue<OrganizationUsersType[]>(
+        organizationUsersAtom
+    );
     const { sendMessage } = useWebSocket();
-    // State to track selected members by org_user_id
+
     const [selectedMembers, setSelectedMembers] = useState<number[]>([]);
     const [hasChanges, setHasChanges] = useState<boolean>(false);
+    const [searchQuery, setSearchQuery] = useState<string>("");
 
-    // Initialize selected members when the sidebar opens or project changes
+    // Set selected members when sidebar opens or project changes
     useEffect(() => {
         if (openProjectMemberMenu && selectedProject?.members) {
-            // Extract org_user_id from project members
-            setSelectedMembers(selectedProject.members.map(member => member.org_user_id));
+            setSelectedMembers(
+                selectedProject.members.map((member) => member.org_user_id)
+            );
         }
     }, [openProjectMemberMenu, selectedProject]);
 
-    function addMemberController() {
+    const addMemberController = () => {
         setOpen(false);
         setOpenProjectMemberMenu(true);
-    }
-
-    // Check if a user is a member of the current project
-    const isMember = (orgUserId: number) => {
-        return selectedMembers.includes(orgUserId);
     };
 
-    // Handle checkbox change
-    const handleMemberToggle = (orgUserId: number) => {
-        let newSelectedMembers: number[];
+    const isMember = (orgUserId: number) => selectedMembers.includes(orgUserId);
 
-        if (isMember(orgUserId)) {
-            // Remove member
-            newSelectedMembers = selectedMembers.filter(id => id !== orgUserId);
-        } else {
-            // Add member
-            newSelectedMembers = [...selectedMembers, orgUserId];
-        }
+    const handleMemberToggle = (orgUserId: number) => {
+        const newSelectedMembers = isMember(orgUserId)
+            ? selectedMembers.filter((id) => id !== orgUserId)
+            : [...selectedMembers, orgUserId];
 
         setSelectedMembers(newSelectedMembers);
         setHasChanges(true);
     };
 
-    // Save changes
     const handleSaveChanges = () => {
-        // Here you would typically make an API call to update the project members
         if (selectedProject) {
-            // Create new project member objects for the selected org users
-            const updatedMembers: ProjectMemberType[] = selectedMembers.map(orgUserId => {
-                // Check if this member already exists in the project
+            const updatedMembers: ProjectMemberType[] = selectedMembers.map((orgUserId) => {
                 const existingMember = selectedProject.members?.find(
-                    member => member.org_user_id === orgUserId
+                    (member) => member.org_user_id === orgUserId
                 );
 
-                // If the member exists, keep their data
-                if (existingMember) {
-                    return existingMember;
-                }
+                if (existingMember) return existingMember;
 
-                // Find the org user to get their details
-                const orgUser = organizationUsers.find(user => user.id === orgUserId);
+                const orgUser = organizationUsers.find((user) => user.id === orgUserId);
 
-                // Create a new project member
                 return {
-                    id: 0, // This would be assigned by your backend
+                    id: 0,
                     project_id: selectedProject.id,
                     org_user_id: orgUserId,
-                    role: ProjectMemberRole.MEMBER, // Default role for new members
+                    role: ProjectMemberRole.MEMBER,
                     joined_at: new Date(),
-                    organization_user: orgUser as OrganizationUsersType
+                    organization_user: orgUser as OrganizationUsersType,
                 };
             });
 
-            console.log("updated member is : ", updatedMembers);
-
-            // Update the project with new members
             setSelectedProject({
                 ...selectedProject,
-                members: updatedMembers
+                members: updatedMembers,
             });
 
-            // from here data will be sent
             const payload = {
                 channelId: selectedProject.channel_id,
                 project_id: selectedProject.id,
-                members: selectedMembers.map(id => ({ org_user_id: id })),
-                projectName: selectedProject.title
-            }
-            sendMessage(payload, selectedProject.channel_id, 'project-member-change');
+                members: selectedMembers.map((id) => ({ org_user_id: id })),
+                projectName: selectedProject.title,
+            };
+
+            sendMessage(payload, selectedProject.channel_id, "project-member-change");
 
             setHasChanges(false);
-            // Optionally close the sidebar after saving
             setOpenProjectMemberMenu(false);
         }
     };
 
-    // Cancel changes
     const handleCancel = () => {
-        // Reset selected members to current project members
         if (selectedProject?.members) {
-            setSelectedMembers(selectedProject.members.map(member => member.org_user_id));
+            setSelectedMembers(
+                selectedProject.members.map((member) => member.org_user_id)
+            );
         }
         setHasChanges(false);
     };
+
+    const filteredUsers = organizationUsers.filter((orgUser) => {
+        const query = searchQuery.toLowerCase();
+        const name = orgUser.user.name?.toLowerCase() || "";
+        const email = orgUser.user.email?.toLowerCase() || "";
+        return name.includes(query) || email.includes(query);
+    });
 
     return (
         <>
@@ -135,7 +137,6 @@ export default function ProjectOptionMenu({ open, setOpen, isAdmin = false }: Pr
                     >
                         Manage members
                     </button>
-
                 </div>
             </UtilityOptionMenuCard>
 
@@ -155,40 +156,45 @@ export default function ProjectOptionMenu({ open, setOpen, isAdmin = false }: Pr
                             {selectedProject?.title}
                         </DashboardComponentHeading>
 
-                        <SearchInput
-                        // setSearchResultDialogBox={setSearchResultDialogBox}
-                        // input={searchInput}
-                        // setInput={setSearchInput}
-                        />
-
+                        <InputBox value={searchQuery} onChange={setSearchQuery} placeholder="Search for users" />
                         <div className="flex flex-col space-y-2 mt-2 max-h-[50vh] overflow-y-auto">
-                            {organizationUsers.map((orgUser) => (
-                                <div key={orgUser.id} className="flex items-center p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-md">
+                            {filteredUsers.map((orgUser) => (
+                                <div
+                                    key={orgUser.id}
+                                    className="flex items-center p-2 pl-4 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-[8px]"
+                                >
                                     <input
                                         type="checkbox"
                                         id={`user-${orgUser.id}`}
                                         checked={isMember(orgUser.id)}
                                         onChange={() => handleMemberToggle(orgUser.id)}
-                                        className="mr-3 h-4 w-4 cursor-pointer"
+                                        className="mr-3 cursor-pointer appearance-none h-4 w-4 rounded-md bg-gray-200 border border-gray-300 checked:bg-yellow-500 checked:border-yellow-500 checked:before:content-['✔'] checked:before:text-white checked:before:text-[10px] checked:before:font-bold checked:before:flex checked:before:justify-center checked:before:items-center transition-colors duration-200"
                                         disabled={!isAdmin}
                                     />
                                     <label
                                         htmlFor={`user-${orgUser.id}`}
                                         className="flex items-center gap-x-2 cursor-pointer"
                                     >
-                                        <OptionImage content={
-                                            <Image
-                                                className="rounded-full"
-                                                src={orgUser.user.image}
-                                                width={36}
-                                                height={36}
-                                                alt={orgUser.user.name}
-                                            />
-                                        }
-                                            userId={orgUser.user.id} organizationId={orgUser.organization_id} />
+                                        <OptionImage
+                                            content={
+                                                <Image
+                                                    className="rounded-full"
+                                                    src={orgUser.user.image}
+                                                    width={36}
+                                                    height={36}
+                                                    alt={orgUser.user.name}
+                                                />
+                                            }
+                                            userId={orgUser.user.id}
+                                            organizationId={orgUser.organization_id}
+                                        />
                                         <div>
-                                            <div className="text-sm font-medium">{orgUser.user?.name || "User"}</div>
-                                            <div className="text-xs text-neutral-500">{orgUser.user?.email}</div>
+                                            <div className="text-sm font-medium">
+                                                {orgUser.user?.name || "User"}
+                                            </div>
+                                            <div className="text-xs text-neutral-500">
+                                                {orgUser.user?.email}
+                                            </div>
                                         </div>
                                     </label>
                                 </div>
@@ -200,18 +206,18 @@ export default function ProjectOptionMenu({ open, setOpen, isAdmin = false }: Pr
                                 <button
                                     type="button"
                                     onClick={handleCancel}
-                                    className="px-4 py-2 text-sm rounded-md border border-neutral-300 dark:border-neutral-600 dark:text-neutral-300"
+                                    className="px-4 py-2 text-sm rounded-[8px] border border-neutral-300 dark:border-neutral-600 dark:text-neutral-300"
                                     disabled={!hasChanges}
                                 >
                                     Cancel
                                 </button>
-                                <button
+                                <WhiteBtn
                                     onClick={handleSaveChanges}
-                                    className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md disabled:opacity-50"
+                                    className="px-4 py-2 text-sm bg-blue-600 text-white rounded-[8px] disabled:opacity-50"
                                     disabled={!hasChanges}
                                 >
                                     Confirm Changes
-                                </button>
+                                </WhiteBtn>
                             </div>
                         )}
                     </div>

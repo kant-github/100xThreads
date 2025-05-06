@@ -27,12 +27,12 @@ export default function ({ channel }: ProjectsChannelTopBarProps) {
     const [projectSideBar, setProjectSideBar] = useState<boolean>(false);
     const [selectedProject, setSelectedProject] = useRecoilState(projectSelectedAtom);
     const [createTaskModal, setCreateTaskModal] = useState<boolean>(false);
-    const [users, setUsers] = useState<TaskAssigneeType[]>([]);
+    const [, setUsers] = useState<TaskAssigneeType[]>([]);
     const [openOptionMenuCard, setOpenOptionMenuCard] = useState<boolean>(false);
     const { canView, canManage } = useProjectPermission(selectedProject);
     const [createProjectsModal, setCreateProjectsModal] = useState<boolean>(false);
     const { subscribeToBackend, unsubscribeFromBackend, subscribeToHandler } = useWebSocket();
-    const [projectsChannelMessages, setProjectChannelMessages] = useRecoilState(projectChannelMessageAtom);
+    const [, setProjectChannelMessages] = useRecoilState(projectChannelMessageAtom);
     const organizationId = useRecoilValue(organizationIdAtom);
 
     useEffect(() => {
@@ -70,13 +70,10 @@ export default function ({ channel }: ProjectsChannelTopBarProps) {
     }
 
     function incomingNewProjectHandler(newMessage: any) {
-        console.log("new project is ", newMessage);
-        console.log("project channel messages are : ", projectsChannelMessages);
         setProjectChannelMessages(prev => [newMessage, ...prev]);
     }
 
-    function projectMemberChangeHandler(newMessage: any) {
-        console.log("new project members are : ", newMessage);
+    function projectMemberChangeHandler() {
     }
 
 

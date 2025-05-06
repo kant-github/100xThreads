@@ -25,6 +25,7 @@ export default function NotificationTitle({
     EVENT_CREATED: "text-violet-400",
     EVENT_REMINDER: "text-violet-500",
     EVENT_UPDATED: "text-violet-300",
+    PROJECT_MEMBER_ADDED: "text-violet-500",
     EVENT_CANCELLED: "text-red-500",
     PROJECT_ADDED: "text-emerald-400",
     TASK_ASSIGNED: "text-lime-500",

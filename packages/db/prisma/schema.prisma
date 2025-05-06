@@ -8,9 +8,9 @@ datasource db {
 }
 
 model Users {
-  id       Int     @id @default(autoincrement())
-  name     String
-  username String? @unique
+  id                     Int                       @id @default(autoincrement())
+  name                   String
+  username               String?                   @unique
   email                  String                    @unique
   bio                    String                    @default("")
   provider               String
@@ -40,6 +40,9 @@ model Users {
   Friends1               Friendship[]              @relation("UserFriends1")
   Friends2               Friendship[]              @relation("UserFriends2")
   Notification           Notification[]
+
+  SentMessages     ChatMessageOneToOne[] @relation("SentMessages")
+  ReceivedMessages ChatMessageOneToOne[] @relation("ReceivedMessages")
 
   @@map("users")
 }
@@ -567,6 +570,29 @@ model Notification {
   @@map("notifications")
 }
 
+model ChatMessageOneToOne {
+  id          String      @id @default(uuid()) @db.Uuid
+  senderId    Int
+  receiverId  Int
+  content     String
+  createdAt   DateTime    @default(now())
+  seenAt      DateTime? // When the receiver read the message
+  messageType MessageType @default(TEXT)
+
+  sender   Users @relation("SentMessages", fields: [senderId], references: [id])
+  receiver Users @relation("ReceivedMessages", fields: [receiverId], references: [id])
+
+  @@index([senderId])
+  @@index([receiverId])
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  FILE
+}
+
 enum NotificationType {
   // Friend System
   FRIEND_REQUEST_RECEIVED
@@ -598,6 +624,7 @@ enum NotificationType {
   TASK_ASSIGNED
   TASK_DUE_SOON
   TASK_STATUS_CHANGED
+  PROJECT_MEMBER_ADDED
 
   // Polls
   NEW_POLL
