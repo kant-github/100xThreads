@@ -575,9 +575,11 @@ model ChatMessageOneToOne {
   senderId    Int
   receiverId  Int
   content     String
-  created_at   DateTime    @default(now())
-  seenAt      DateTime? // When the receiver read the message
+  created_at  DateTime    @default(now())
+  seenAt      DateTime?
   messageType MessageType @default(TEXT)
+  is_deleted  Boolean     @default(false)
+  is_edited   Boolean     @default(false)
 
   sender   Users @relation("SentMessages", fields: [senderId], references: [id])
   receiver Users @relation("ReceivedMessages", fields: [receiverId], references: [id])

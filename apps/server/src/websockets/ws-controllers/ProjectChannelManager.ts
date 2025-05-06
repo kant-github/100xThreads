@@ -1,5 +1,5 @@
 import Redis from "ioredis";
-import { PrismaClient, ProjectMemberRole } from ".prisma/client";
+import {  PrismaClient, ProjectMemberRole } from ".prisma/client";
 import { ChannelSubscription, WebSocketMessage } from "../webSocketServer";
 import KafkaProducer from "../../kafka/KafkaProducer";
 import { NotificationType } from "../types";

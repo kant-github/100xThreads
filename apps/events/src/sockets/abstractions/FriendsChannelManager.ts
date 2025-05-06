@@ -1,6 +1,5 @@
-import Redis from "ioredis";
 import { PrismaClient } from ".prisma/client";
-import { NotificationType } from "../../types/types";
+
 
 export interface WebSocketMessage {
     type: string;

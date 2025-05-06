@@ -39,7 +39,6 @@ export default function Page({ params }: { params: { username: string } }) {
     async function fetchP2pChats() {
 
         try {
-            console.log("started chat fetching");
             const { data } = await axios.get(
                 `${P2P_URL}/${params.username}`,
                 {
@@ -48,10 +47,7 @@ export default function Page({ params }: { params: { username: string } }) {
                     },
                 }
             );
-            console.log("chats are : ", data.data);
             setP2pChats(data.data);
-            setP2pUser1(data.user1);
-            setP2pUser2(data.user2);
         } catch (error) {
             console.error('Failed to validate chat:', error);
             setStatus('user2_invalid');
@@ -60,14 +56,11 @@ export default function Page({ params }: { params: { username: string } }) {
 
     useEffect(() => {
         if (!session?.user?.id || !session?.user?.token || !params.username) {
-            console.log("returning");
             return
         };
-        console.log("making backend call");
 
         async function checkChatEligibility() {
             try {
-                console.log("done backend ca;;");
                 const { data } = await axios.get(
                     `${P2P_URL}/case-join?user_2_username=${params.username}`,
                     {
@@ -77,12 +70,12 @@ export default function Page({ params }: { params: { username: string } }) {
                     }
                 );
 
-                console.log("data.status : ", data.status);
-
                 if (data.status === 'redirect_to_dashboard') {
                     setStatus('redirect');
                 } else if (data.status === 'chat_allowed') {
                     setStatus('allowed');
+                    setP2pUser1(data.user1);
+                    setP2pUser2(data.user2);
                     fetchP2pChats();
                 } else if (data.status === 'user2_has_no_username') {
                     setStatus('user2_invalid');
@@ -108,13 +101,13 @@ export default function Page({ params }: { params: { username: string } }) {
             <div className="min-h-[60px] sm:min-h-[70px] md:min-h-20">
                 <P2pNavBar />
             </div>
-
             <div className="flex flex-row flex-1">
                 <P2pLeftComponent />
 
                 {isLoading && (
                     <div className="flex justify-center items-center h-screen">Loading...</div>
                 )}
+
                 {showUser2Invalid && (
                     <div className="flex justify-center items-center h-screen w-full">
                         User is not available for chat.

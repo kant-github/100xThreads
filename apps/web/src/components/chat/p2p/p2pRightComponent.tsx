@@ -10,6 +10,7 @@ import { p2pUser1Atom } from "@/recoil/atoms/p2p/p2pUser1Atom";
 import { p2pUser2Atom } from "@/recoil/atoms/p2p/p2pUser2Atom";
 import { messageEditingState } from "@/recoil/atoms/chats/messageEditingStateAtom";
 import { v4 as uuidv4 } from 'uuid'
+import { useNotificationWebSocket } from "@/hooks/useNotificationWebsocket";
 
 export default function () {
     const [p2pMessages, setP2pMessages] = useRecoilState(p2pChatAtom);
@@ -20,15 +21,49 @@ export default function () {
     const user2 = useRecoilValue(p2pUser2Atom);
     const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
+    const { subscribeToBackend, subscribeToHandler, unsubscribeFromBackend, sendMessage } = useNotificationWebSocket();
+    const key = `chat-${Math.min(Number(user1.id), Number(user2.id))}-${Math.max(Number(user1.id), Number(user2.id))}`
+
+    function handleIncomingMessage(newMessage: any) {
+        // console.log("incoming new Message : ", newMessage);
+        setP2pMessages(prev => [...prev, newMessage]);
+    }
+
+    function handleIncomingTypingEvents(newMessage: any) {
+        const { userName, typingEventType } = newMessage.payload;
+        setUsersTyping(prevUsers => {
+            if (typingEventType && !prevUsers.includes(userName)) {
+                return [...prevUsers, userName];
+            } else if (!typingEventType) {
+                return prevUsers.filter(user => user !== userName);
+            }
+            return prevUsers;
+        });
+    }
+
     useEffect(() => {
-        console.log("chat messages are : ", p2pMessages);
-    }, [])
+        if (user1.id && user2.id) {
+            subscribeToBackend(key, 'new-message-p2p');
+            subscribeToBackend(key, 'typing-event');
+            const unsubscribeIncomingMessage = subscribeToHandler('new-message-p2p', handleIncomingMessage);
+            const unsubscribeIncomingTypingEvents = subscribeToHandler('typing-event', handleIncomingTypingEvents);
+
+            return () => {
+                unsubscribeFromBackend(key, 'new-message-p2p');
+                unsubscribeFromBackend(key, 'typing-event');
+                unsubscribeIncomingMessage();
+                unsubscribeIncomingTypingEvents();
+            }
+        }
+    }, [user1, user2]);
 
     const groupedMessages = useMemo(() => {
         const grouped: { [key: string]: ChatMessageOneToOneType[] } = {};
 
         p2pMessages.forEach(message => {
+            // console.log("Raw created_at:", message.created_at);
             const date = new Date(message.created_at).toDateString();
+            // console.log("date us : ", date);
             if (!grouped[date]) {
                 grouped[date] = [];
             }
@@ -56,21 +91,19 @@ export default function () {
                 messageId: editingState.messageId,
                 message: message.trim()
             };
-            // sendMessage(editedMessage, channel.id, 'edit-message');
+            sendMessage('edit-message', key, editedMessage);
             setEditingState(null);
         } else {
             const newMessage: any = {
                 id: uuidv4(),
-                message: message,
-                name: user1.name,
-                is_deleted: false,
-                is_edited: false,
+                content: message,
+                senderId: user1.id,
+                receiverId: user2.id,
                 created_at: new Date(Date.now()),
-                LikedUsers: []
+                key
             };
-
-            // sendMessage(newMessage, channel.id, 'insert-general-channel-message');
-            // setMessages(prevChats => [...prevChats, newMessage]);
+            console.log("sent count ---------------------------------->",);
+            sendMessage('new-message-p2p', key, newMessage);
         }
         setMessage("");
     }
@@ -80,8 +113,10 @@ export default function () {
             user_id: user1.id,
             userName: user1.name,
             typingEventType: type,
+            key
         }
-        // sendMessage(newTypingdata, channel.id, 'typing-event');
+
+        sendMessage('typing-event', key, newTypingdata);
     }
 
     function handleTyping() {
@@ -106,7 +141,7 @@ export default function () {
     return (
         <div className="h-full flex flex-col relative px-4 py-2 flex-1 bg-neutral-800">
             <div className='flex-1 w-full overflow-y-auto scrollbar-hide'>
-                <div className='flex flex-col space-y-5 w-full'>
+                <div className='flex flex-col h-[70vh] space-y-5 w-full'>
                     <P2pGroupedByDateMessages groupedMessages={groupedMessages} />
                     <div ref={messagesEndRef} />
                 </div>

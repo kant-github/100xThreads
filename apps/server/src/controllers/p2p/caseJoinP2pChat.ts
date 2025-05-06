@@ -22,11 +22,9 @@ export default async function caseJoinP2pChat(req: Request, res: Response) {
         const [user1, user2] = await Promise.all([
             prisma.users.findUnique({
                 where: { id: user1Id },
-                select: { id: true, username: true },
             }),
             prisma.users.findUnique({
                 where: { username: user2Username },
-                select: { id: true, username: true },
             }),
         ]);
 
@@ -49,6 +47,8 @@ export default async function caseJoinP2pChat(req: Request, res: Response) {
             res.status(200).json({ status: 'user2_has_no_username' });
             return;
         }
+
+        console.log(user1);
 
         res.status(200).json({
             status: 'chat_allowed',

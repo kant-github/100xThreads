@@ -1,5 +1,6 @@
 import React from "react"
 import { ChatMessageOneToOneType } from "types/types"
+import P2pMessages from "./P2pMessages";
 
 interface GroupedByDateMessagesProps {
     groupedMessages: Array<[string, ChatMessageOneToOneType[]]>;
@@ -18,7 +19,7 @@ export default function ({ groupedMessages }: GroupedByDateMessagesProps) {
                 </span>
             </div>
             {dayMessages.map((message) => (
-                <div>hi</div>
+                <P2pMessages key={message.id} message={message} />
             ))}
         </React.Fragment>
     ))

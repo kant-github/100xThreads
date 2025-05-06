@@ -5,6 +5,7 @@ import { parse as parseUrl } from 'url';
 import { PrismaClient } from ".prisma/client";
 import prisma from '@repo/db/client';
 import FriendsChannelManager from './abstractions/FriendsChannelManager';
+import P2pChatsManager from './abstractions/P2pChatsManager';
 
 interface TokenData {
     userId: string;
@@ -40,6 +41,7 @@ export default class WebSocketServerManager {
     private channels: Map<string, Set<string>> = new Map(); // channelKey -> set<ws.id>
     private prisma: PrismaClient;
     private friendsChannelManager: FriendsChannelManager;
+    private p2pChatsManager: P2pChatsManager;
     private pingInterval: NodeJS.Timeout | null = null;
 
     constructor(server: Server) {
@@ -47,6 +49,7 @@ export default class WebSocketServerManager {
         this.prisma = prisma;
         this.initializeConnection();
         this.friendsChannelManager = new FriendsChannelManager(this.prisma);
+        this.p2pChatsManager = new P2pChatsManager(this.prisma);
     }
 
     private initializeConnection() {
@@ -78,8 +81,6 @@ export default class WebSocketServerManager {
             });
         });
     }
-
-
 
     private handleIncomingMessage(ws: WebSocketClient, rawData: any) {
         try {
@@ -164,8 +165,22 @@ export default class WebSocketServerManager {
                 if (data?.user1.userId) {
                     this.sendToUser(String(data.user1.userId), type, data.user1.data);
                 }
+                break;
             }
 
+            case 'new-message-p2p': {
+                const data = await this.p2pChatsManager.handleIncomingNewMessage(message);
+                const key = message.payload.key;
+                this.broadcastToChannel(key, type, data);
+                break;
+            }
+
+            case 'typing-event': {
+                const data = this.p2pChatsManager.handleIncomingTypingEvents(message);
+                const key = message.payload.key;
+                this.broadcastToChannel(key, type, data, ws.id);
+                break;
+            }
 
             default:
                 console.warn("Unknown message type:", type);
@@ -227,20 +242,31 @@ export default class WebSocketServerManager {
         return sentCount > 0;
     }
 
-    public broadcastToChannel(key: string, type: string, data: any) {
+    public broadcastToChannel(key: string, type: string, data: any, excludeSocketId?: string) {
+
+        console.log("data is ---------------------- >", data);
         const channelKey = `${key}:${type}`;
 
+        const messagePayload = {
+            type,
+            data
+        }
+
         const channelSubscribers = this.channels.get(channelKey);
+        console.log("length is : ", channelSubscribers?.size);
         if (!channelSubscribers || channelSubscribers.size === 0) {
             return false;
         }
 
-        const message = JSON.stringify(data);
+        const message = JSON.stringify(messagePayload);
         let sentCount = 0;
 
         channelSubscribers.forEach((socketId) => {
+            if (excludeSocketId && socketId === excludeSocketId) return;
             const client = this.clients.get(socketId);
             if (client && client.readyState === WebSocket.OPEN) {
+                console.log("message at last is : ", message);
+                console.log("and sent to user id : ", client.userId);
                 client.send(message);
                 sentCount++;
             }

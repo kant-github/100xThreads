@@ -42,6 +42,7 @@ export type NotificationTypeEnum =
     | 'EVENT_CANCELLED'
     | 'PROJECT_ADDED'
     | 'TASK_ASSIGNED'
+    | 'PROJECT_MEMBER_ADDED'
     | 'TASK_DUE_SOON'
     | 'TASK_STATUS_CHANGED'
     | 'NEW_POLL'

@@ -276,17 +276,11 @@ export interface ChatMessageOneToOneType {
   created_at: string;
   seenAt: string | null;
   messageType: OneToOneMessageType;
+  is_deleted: boolean;
+  is_edited: boolean;
 
-  sender: {
-    id: number;
-    name: string;
-    avatarUrl?: string;
-  };
-  receiver: {
-    id: number;
-    name: string;
-    avatarUrl?: string;
-  };
+  sender: UserType
+  receiver: UserType
 }
 
 
