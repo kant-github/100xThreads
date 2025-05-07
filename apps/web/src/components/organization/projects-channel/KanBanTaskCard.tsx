@@ -66,18 +66,18 @@ export default function KanbanTaskCard({ task, onStatusChange }: KanbanTaskCardP
                 key={assignees.id}
                 className="relative"
               >
-                {assignees.organization_user.user.image ? (
+                {assignees.project_member.organization_user.user.image ? (
                   <Image
                     width={24}
                     height={24}
-                    src={assignees.organization_user.user.image}
+                    src={assignees.project_member.organization_user.user.image}
                     alt={"user"}
                     className="w-6 h-6 rounded-full border-2 border-white dark:border-neutral-800"
                   />
                 ) : (
                   <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 border-2 border-white dark:border-neutral-800 flex items-center justify-center">
                     <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
-                      {assignees.organization_user.user.name[0]}
+                      {assignees.project_member.organization_user.user.name[0]}
                     </span>
                   </div>
                 )}
@@ -86,7 +86,7 @@ export default function KanbanTaskCard({ task, onStatusChange }: KanbanTaskCardP
           </div>
 
           <span className="text-xs text-gray-500 dark:text-gray-400">
-            {task.assignees.length} {task.assignees.length === 1 ? 'assignee' : 'assignees'}
+            {task.assignees?.length} {task.assignees?.length === 1 ? 'assignee' : 'assignees'}
           </span>
         </div>
       )}

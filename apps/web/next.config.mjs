@@ -6,7 +6,11 @@ const nextConfig = {
       "lh3.googleusercontent.com",
       "picsum.photos",
       "images.unsplash.com",
-      "aceternity.com"
+      "aceternity.com",
+      "www.instagram.com",
+      "harkirat.classx.co.in",
+      "github.com"
+
     ],
   },
   reactStrictMode: false,

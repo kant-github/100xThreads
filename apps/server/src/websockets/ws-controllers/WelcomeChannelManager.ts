@@ -36,8 +36,18 @@ export default class WelcomeChannelManager {
                 throw new Error('Welcome channel not found');
             }
 
-            const welcomeUser = await this.prisma.welcomedUser.create({
-                data: {
+            const welcomeUser = await this.prisma.welcomedUser.upsert({
+                where: {
+                    welcome_channel_id_user_id: {
+                        welcome_channel_id: welcomeChannel.id,
+                        user_id: Number(message.payload.userId)
+                    }
+                },
+                update: {
+                    message: `Welcome back ${user?.name}! We're delighted to have you again.`,
+                    welcomed_at: new Date()
+                },
+                create: {
                     welcome_channel_id: welcomeChannel.id,
                     user_id: Number(message.payload.userId),
                     message: `Welcome ${user?.name}! We're delighted to have you as part of our organization.`
@@ -45,10 +55,25 @@ export default class WelcomeChannelManager {
                 include: {
                     user: true
                 }
+            });
+
+            const orgUser = await this.prisma.organizationUsers.findUnique({
+                where: {
+                    organization_id_user_id: {
+                        organization_id: tokenData.organizationId,
+                        user_id: Number(message.payload.userId)
+                    }
+                },
+                include: {
+                    user: true
+                }
             })
 
+            console.log("org user is : ", orgUser);
+
+
             await this.publisher.publish(channelKey, JSON.stringify({
-                payload: welcomeUser,
+                payload: { welcomeUser, orgUser },
                 type: message.type
             }));
 

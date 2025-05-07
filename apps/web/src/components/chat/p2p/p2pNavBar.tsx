@@ -2,7 +2,6 @@ import Version from "@/components/buttons/Version";
 import ProfileDropDown from "@/components/dashboard/ProfileDropDown";
 import AppLogo from "@/components/heading/AppLogo";
 import Greetings from "@/components/utility/Greetings";
-import SearchInput from "@/components/utility/SearchInput";
 
 export default function () {
     return (
@@ -14,11 +13,11 @@ export default function () {
             <div className="flex flex-row justify-center items-center gap-x-6">
                 <Greetings />
                 <div className="w-[340px]">
-                    <SearchInput
-                        // setSearchResultDialogBox={setSearchResultDialogBox}
-                        // input={searchInput}
-                        // setInput={setSearchInput}
-                    />
+                    {/* <SearchInput
+                        setSearchResultDialogBox={setSearchResultDialogBox}
+                        input={searchInput}
+                        setInput={setSearchInput}
+                    /> */}
                 </div>
                 <ProfileDropDown />
             </div>

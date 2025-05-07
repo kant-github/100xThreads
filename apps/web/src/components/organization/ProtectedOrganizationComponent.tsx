@@ -71,6 +71,8 @@ export default function ({ metaData, organizationId, setFlag }: props) {
                     userId: session.user.id,
                     organizationId
                 }
+                
+
                 sendMessage(newMessage, metaData.WelcomeChannel.id, 'welcome-user');
                 const { organization, eventChannel, channels, welcomeChannel, organizationUsers } = data.data
                 console.log("Setting welcome channel in clickHandler:", welcomeChannel);

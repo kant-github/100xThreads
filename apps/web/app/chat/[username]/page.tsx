@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import P2pLeftComponent from '@/components/chat/p2p/p2pLeftComponent';
+import Image from "next/image";
 import P2pNavBar from '@/components/chat/p2p/p2pNavBar';
 import P2pRightComponent from '@/components/chat/p2p/p2pRightComponent';
 import axios from 'axios';
@@ -17,8 +17,26 @@ import DashboardComponentHeading from '@/components/dashboard/DashboardComponent
 import { p2pChatAtom } from '@/recoil/atoms/p2p/p2pChatAtom';
 import { p2pUser1Atom } from '@/recoil/atoms/p2p/p2pUser1Atom';
 import { p2pUser2Atom } from '@/recoil/atoms/p2p/p2pUser2Atom';
+import P2pChatSkeleton from '@/components/skeletons/P2pChatSkeleton';
 
 type ChatValidationStatus = 'loading' | 'redirect' | 'allowed' | 'user2_invalid';
+
+// Fixed width left component with image
+const P2pLeftComponent = () => {
+    return (
+        <div className="hidden md:flex w-1/2 h-full relative bg-gray-100 dark:bg-neutral-900">
+            <div className="absolute inset-0">
+                <Image
+                    src="/images/chat.webp"
+                    alt="Chat illustration"
+                    fill
+                    className="object-cover object-left"
+                    priority
+                />
+            </div>
+        </div>
+    );
+};
 
 export default function Page({ params }: { params: { username: string } }) {
     const router = useRouter();
@@ -37,7 +55,6 @@ export default function Page({ params }: { params: { username: string } }) {
     };
 
     async function fetchP2pChats() {
-
         try {
             const { data } = await axios.get(
                 `${P2P_URL}/${params.username}`,
@@ -89,43 +106,53 @@ export default function Page({ params }: { params: { username: string } }) {
         checkChatEligibility();
     }, [session?.user?.id, session?.user?.token, params.username]);
 
-
     const isLoading = status === 'loading';
     const isAllowed = status === 'allowed';
     const showRedirectCard = status === 'redirect';
     const showUser2Invalid = status === 'user2_invalid';
-
 
     return (
         <div className="h-[100dvh] w-full flex flex-col overflow-hidden">
             <div className="min-h-[60px] sm:min-h-[70px] md:min-h-20">
                 <P2pNavBar />
             </div>
-            <div className="flex flex-row flex-1">
+            <div className="flex flex-row flex-1 h-full">
+                {/* Left Component with Image - Fixed at exactly half width */}
                 <P2pLeftComponent />
 
-                {isLoading && (
-                    <div className="flex justify-center items-center h-screen">Loading...</div>
-                )}
+                {/* Right Content Area - Also fixed at exactly half width */}
+                <div className="w-1/2 flex justify-center items-center">
+                    {isLoading && (
+                        <div className="w-full h-full">
+                            <P2pChatSkeleton />
+                        </div>
+                    )}
 
-                {showUser2Invalid && (
-                    <div className="flex justify-center items-center h-screen w-full">
-                        User is not available for chat.
-                    </div>
-                )}
+                    {showUser2Invalid && (
+                        <div className="flex justify-center items-center p-6">
+                            <UtilityCard className="dark:bg-neutral-800 dark:border-neutral-600 border-[1px] max-w-lg p-6 relative">
+                                <DashboardComponentHeading description="This user is not available for chat at the moment">
+                                    User Not Available
+                                </DashboardComponentHeading>
+                            </UtilityCard>
+                        </div>
+                    )}
 
-                {showRedirectCard && (
-                    <UtilityCard className="dark:bg-neutral-800 dark:border-neutral-600 border-[1px] max-w-lg p-6 relative h-40">
-                        <DashboardComponentHeading description="Please set your username to start chatting with your friends">
-                            Username not found
-                        </DashboardComponentHeading>
-                        <WhiteBtn className="mt-4" onClick={redirectHandler}>
-                            Set username
-                        </WhiteBtn>
-                    </UtilityCard>
-                )}
+                    {showRedirectCard && (
+                        <div className="flex justify-center items-center p-6">
+                            <UtilityCard className="dark:bg-neutral-800 dark:border-neutral-600 border-[1px] max-w-lg p-6 relative">
+                                <DashboardComponentHeading description="Please set your username to start chatting with your friends">
+                                    Username not found
+                                </DashboardComponentHeading>
+                                <WhiteBtn className="mt-4" onClick={redirectHandler}>
+                                    Set username
+                                </WhiteBtn>
+                            </UtilityCard>
+                        </div>
+                    )}
 
-                {isAllowed && <P2pRightComponent />}
+                    {isAllowed && <P2pRightComponent />}
+                </div>
             </div>
         </div>
     );

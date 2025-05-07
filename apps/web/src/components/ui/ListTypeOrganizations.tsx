@@ -26,7 +26,7 @@ export default function ({ organizations }: ListTypeOrganizations) {
                                     className="rounded-[14px] w-8 h-8 md:w-12 md:h-12"
                                     width={50}
                                     height={40}
-                                    src={"/images/amazonlogo.png"}
+                                    src={"/images/100xDevs-logo.png"}
                                     alt="logo"
                                 />
                                 <div className="flex-col flex-1">

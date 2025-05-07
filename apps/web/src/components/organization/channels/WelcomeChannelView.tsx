@@ -12,6 +12,7 @@ import { userSessionAtom } from "@/recoil/atoms/atom";
 import { welcomeChannelMessagesAtom } from "@/recoil/atoms/organizationAtoms/welcomeChannelMessagesAtom";
 import { useWebSocket } from "@/hooks/useWebsocket";
 import { Barriecito } from "next/font/google";
+import { organizationUsersAtom } from "@/recoil/atoms/organizationAtoms/organizationUsersAtom";
 
 const font = Barriecito({ weight: "400", subsets: ["latin"] })
 
@@ -23,6 +24,7 @@ export default function ({ channel }: WelcomeChannelViewProps) {
     const organization = useRecoilValue(organizationAtom);
     const session = useRecoilValue(userSessionAtom);
     const setWelcomeChannelMessages = useSetRecoilState(welcomeChannelMessagesAtom);
+    const setOrganizationUsers = useSetRecoilState(organizationUsersAtom);
     const { subscribeToBackend, unsubscribeFromBackend, subscribeToHandler } = useWebSocket();
 
     useEffect(() => {
@@ -37,7 +39,9 @@ export default function ({ channel }: WelcomeChannelViewProps) {
     }, [channel.id, organization?.id]);
 
     function handleIncomingWelcomeMessages(newMessage: any) {
-        setWelcomeChannelMessages(prev => [...prev, newMessage]);
+        console.log("new welcome channel message : ", newMessage);
+        setWelcomeChannelMessages(prev => [newMessage.welcomeUser, ...prev]);
+        setOrganizationUsers(prev => [newMessage.orgUser, ...prev]);
     }
 
     async function getWelcomeMessages() {

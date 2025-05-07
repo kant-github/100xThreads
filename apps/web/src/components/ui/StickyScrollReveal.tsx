@@ -5,13 +5,14 @@ import Image from "next/image";
 
 const content = [
   {
-    title: "Business Innovation Hub",
-    description: "Connect and collaborate with global teams, partners, and stakeholders across Amazon's vast ecosystem. Drive impactful decisions with real-time document sharing, project tracking, and integrated workflows. From retail to cloud services, streamline your operations and accelerate business growth with our enterprise collaboration tools.",
+    title: "Mentorship by Harkirat Singh",
+    description:
+      "100xDevs is an initiative by Harkirat Singh to personally mentor individuals in the field of programming. The goal is to transform learners into 100x engineers through hands-on projects and real-world applications.",
     content: (
-      <div className="h-full w-full  flex items-center justify-center text-white">
+      <div className="h-full w-full flex items-center justify-center text-white">
         <Image
-          src="/images/featured.avif"
-          alt="Professional headshot 1"
+          src="https://www.instagram.com/p/DI8N8yATVPI/media/?size=l"
+          alt="Harkirat Singh mentoring"
           fill
           className="object-cover rounded-lg"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -20,14 +21,14 @@ const content = [
     ),
   },
   {
-    title: "Real time changes",
+    title: "Comprehensive Cohort Programs",
     description:
-      "See changes as they happen. With our platform, you can track every modification in real time. No more confusion about the latest version of your project. Say goodbye to the chaos of version control and embrace the simplicity of real-time updates.",
+      "100xDevs offers structured cohort programs covering Web Development, DevOps, and Blockchain. These programs are designed to provide a complete learning journey from basics to advanced topics.",
     content: (
-      <div className="h-full w-full  flex items-center justify-center text-white">
+      <div className="h-full w-full flex items-center justify-center text-white">
         <Image
-          src="https://images.unsplash.com/photo-1599566150163-29194dcaad36"
-          alt="Professional headshot 1"
+          src="/images/100xSport-logo.webp"
+          alt="Cohort program overview"
           fill
           className="object-cover rounded-lg"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -36,14 +37,14 @@ const content = [
     ),
   },
   {
-    title: "Version control",
+    title: "Hands-on Projects and Assignments",
     description:
-      "Experience real-time updates and never stress about version control again. Our platform ensures that you're always working on the most recent version of your project, eliminating the need for constant manual updates. Stay in the loop, keep your team aligned, and maintain the flow of your work without any interruptions.",
+      "Learners engage in practical assignments and projects, such as building a Second Brain App, to apply their knowledge and gain real-world experience.",
     content: (
-      <div className="h-full w-full  flex items-center justify-center text-white">
+      <div className="h-full w-full flex items-center justify-center text-white">
         <Image
-          src="https://images.unsplash.com/photo-1580489944761-15a19d654956"
-          alt="Professional headshot 1"
+          src="/images/100xEvent-logo.webp"
+          alt="Project screenshot"
           fill
           className="object-cover rounded-lg"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -52,22 +53,23 @@ const content = [
     ),
   },
   {
-    title: "Running out of content",
+    title: "Community and Networking",
     description:
-      "Experience real-time updates and never stress about version control again. Our platform ensures that you're always working on the most recent version of your project, eliminating the need for constant manual updates. Stay in the loop, keep your team aligned, and maintain the flow of your work without any interruptions.",
+      "Join a vibrant community of learners and professionals. Participate in discussions, share knowledge, and grow together in a supportive environment.",
     content: (
-      <div className="h-full w-full rounded-[8px] overflow-hidden flex items-center justify-center text-white">
+      <div className="h-full w-full flex items-center justify-center text-white">
         <Image
-          src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80"
-          alt="Professional headshot 1"
+          src="/images/100xSuperlabs-logo.webp"
+          alt="Community event"
           fill
-          className="object-cover rounded-[8px]"
+          className="object-cover rounded-lg"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </div>
     ),
   },
 ];
+
 export function StickyScrollRevealDemo() {
   return (
     <div className="mt-4">

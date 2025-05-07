@@ -40,7 +40,7 @@ export default function SearchResultDialogBox({ searchResultDialogBox, setSearch
             {
                 organizationsList.length > 0 && (
                     <div>
-                        <span className="text-xs font-light ml-4">organizations</span>
+                        <span className="text-xs font-light ml-4 mb-1">organizations</span>
                         {
                             organizationsList.map((organization, index) => (
                                 <div
@@ -50,7 +50,7 @@ export default function SearchResultDialogBox({ searchResultDialogBox, setSearch
 
                                     }}
                                     key={index}
-                                    className="hover:bg-gray-100 dark:hover:bg-yellow-600/30 px-4 py-2 text-xs font-thin flex items-center justify-start gap-x-3"
+                                    className="hover:bg-gray-100 dark:hover:bg-yellow-600/30 px-4 py-2.5 text-xs font-thin flex items-center justify-start gap-x-3"
                                 >
                                     {
                                         organization.image && (

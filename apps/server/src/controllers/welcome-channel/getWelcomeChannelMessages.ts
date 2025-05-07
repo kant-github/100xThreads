@@ -16,6 +16,9 @@ export async function getWelcomeChannelMessages(req: Request, res: Response) {
             },
             include: {
                 user: true,
+            },
+            orderBy: {
+                welcomed_at: 'desc'
             }
         })
 

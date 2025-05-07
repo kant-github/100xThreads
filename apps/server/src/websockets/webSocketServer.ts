@@ -149,7 +149,6 @@ export default class WebSocketServerManager {
                 break;
             }
         }
-
         if (!hasOtherSubscribers) {
             await this.subscriber.unsubscribe(channelKey);
         }

@@ -139,7 +139,7 @@ export default function () {
     }, [p2pMessages]);
 
     return (
-        <div className="h-full flex flex-col relative px-4 py-2 flex-1 bg-neutral-800">
+        <div className="h-full flex flex-col relative px-4 py-2 flex-1 bg-neutral-800 rounded-[6px]">
             <div className='flex-1 w-full overflow-y-auto scrollbar-hide'>
                 <div className='flex flex-col h-[70vh] space-y-5 w-full'>
                     <P2pGroupedByDateMessages groupedMessages={groupedMessages} />

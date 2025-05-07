@@ -27,7 +27,7 @@ export default function () {
                 <div className="flex justify-between items-center">
                     <div className="flex items-center gap-x-3">
                         <span className="relative">
-                            <Image src={"/images/amazonlogo.png"} alt="user-image" width={30} height={32} className="rounded-full" />
+                            <Image src={"/images/100xDevs-logo.png"} alt="user-image" width={30} height={32} className="rounded-full" />
                         </span>
                         <span className="text-[14px] text-neutral-100 font-medium mt-0.5 tracking-wide">
                             {organization?.name}

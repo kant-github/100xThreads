@@ -48,9 +48,12 @@ export default function ({ message }: MessagesProps) {
     return (
         <div className={`flex gap-x-2 text-neutral-100 relative select-none ${isCurrentUser ? 'flex-row-reverse' : 'flex-row'} w-full`}>
             <div className="flex-shrink-0 gap-x-1">
-                <Image
-                    src={imageUrl}
-                    width={39} height={39} className="rounded-full" alt="user-image" />
+                <OptionImage
+                    userId={message.senderId}
+                    content={<Image
+                        src={imageUrl}
+                        width={39} height={39} className="rounded-full" alt="user-image" />}
+                />
             </div>
             <div className={`flex flex-col max-w-[70%] ${isCurrentUser ? 'items-end' : 'items-start'}`}>
                 <div className={`flex items-center justify-start gap-x-2 ${isCurrentUser ? 'flex-row-reverse' : 'flex-row'}`}>

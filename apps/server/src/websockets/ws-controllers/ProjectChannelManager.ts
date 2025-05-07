@@ -1,5 +1,5 @@
 import Redis from "ioredis";
-import {  PrismaClient, ProjectMemberRole } from ".prisma/client";
+import { PrismaClient, ProjectMemberRole } from ".prisma/client";
 import { ChannelSubscription, WebSocketMessage } from "../webSocketServer";
 import KafkaProducer from "../../kafka/KafkaProducer";
 import { NotificationType } from "../types";
@@ -153,7 +153,7 @@ export default class ProjectChannelManager {
             where: {
                 id: message.payload.projectId
             },
-            select: { title: true }
+            select: { title: true, id: true }
         })
 
 
@@ -168,9 +168,11 @@ export default class ProjectChannelManager {
                 user: {
                     select: {
                         name: true,
-                        id: true
+                        id: true,
+                        image: true
                     }
-                }
+                },
+                organization: true
             }
         })
 
@@ -237,6 +239,23 @@ export default class ProjectChannelManager {
                             }
                         }
                     });
+
+                    // ---------------------------------------- >
+
+                    const notificationData: NotificationType = {
+                        user_id: projectMember.organization_user.user_id,
+                        type: 'PROJECT_MEMBER_ADDED',
+                        title: 'Project Member',
+                        message: `📽️ You are added to the project '${project}' posted in '${orgUser?.organization.name}'`,
+                        created_at: Date.now().toString(),
+                        sender_id: Number(message.payload.userId),
+                        reference_id: project?.id,
+                        metadata: {
+                            image: orgUser?.user.image || ''
+                        }
+                    };
+
+                    this.kafkaProducer.sendMessage('notifications', notificationData, projectMember.org_user_id);
 
                     const newProjectMemberActivity = await this.prisma.projectChat.create({
                         data: {
@@ -561,9 +580,6 @@ export default class ProjectChannelManager {
         //     this.kafkaProducer.sendMessage('notifications', notificationData, orgUser.user_id);
         // }
     }
-
-
-
 
     public getChannelKey(subscription: ChannelSubscription): string {
         return `${subscription.organizationId}:${subscription.channelId}:${subscription.type}`
