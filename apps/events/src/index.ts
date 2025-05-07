@@ -14,91 +14,28 @@ const wsManager = new WebSocketServerManager(server);
 app.use(cors());
 app.use(express.json());
 
-
-app.get("/store", async (req, res) => {
-    const announcement = await prisma.announcement.create({
-        data: {
-            channel_id: '9af56c66-3a3c-4b83-af53-bdf5ec075a58',
-            title: "Checkssss",
-            content: "checksssss",
-            priority: 'URGENT',
-            tags: ['fee', 'checks', 'tags'],
-            creator_org_user_id: 1,
-        }
-    })
-    res.json({
-        message: "created",
-        data: announcement
-    })
-})
-
 const kafka = new Kafka({
     clientId: 'notification-producer',
     brokers: ['13.53.234.218:9092'],
 });
 
-const producer = kafka.producer();
 
-async function produceTestNotification() {
-    await producer.connect();
+const kafkaConsumerService = new KafkaConsumerService(
+    ['13.53.234.218:9092'],
+    'notification-service-group',
+    wsManager,
+    ['notifications'] // Topics to subscribe to
+);
 
-    const message = {
-        type: 'NEW_MESSAGE',
-        recipientUserId: '1',
-        title: 'Test Notification',
-        message: 'Hello from Kafka!',
-        metadata: { source: 'test-script' },
-        referenceId: 'xyz123',
-        organizationId: 'org_1',
-        channelId: 'general',
-        senderId: 101,
-        actionUrl: '/dashboard',
-    };
-
-    await producer.send({
-        topic: 'notifications',
-        messages: [
-            { value: JSON.stringify(message) }
-        ],
-    });
-
-    await producer.disconnect();
-}
-
-app.get("/produce", (req, res) => {
-    produceTestNotification().catch(console.error);
-    res.json({
-        message: "produced"
-    });
-
-    return;
-})
-
-
-app.get("/consume", (req, res) => {
-
-    const kafkaConsumerService = new KafkaConsumerService(
-        ['13.53.234.218:9092'],
-        'notification-service-group',
-        wsManager,
-        ['notifications'] // Topics to subscribe to
-    );
-    
-
-    (async () => {
-        try {
-            await kafkaConsumerService.initialize(['notifications']);
-            await kafkaConsumerService.start();
-        } catch (error) {
-            console.error('Failed to start notification service:', error);
-            process.exit(1);
-        }
-    })();
-    res.json({
-        message: 'started consuming'
-    })
-    return;
-})
+(async () => {
+    try {
+        await kafkaConsumerService.initialize(['notifications']);
+        await kafkaConsumerService.start();
+    } catch (error) {
+        console.error('Failed to start notification service:', error);
+        process.exit(1);
+    }
+})();
 
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });

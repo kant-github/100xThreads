@@ -58,7 +58,7 @@ export default function ({ task, channel }: TaskProps) {
     const { control, handleSubmit, reset, formState: { errors } } = useForm<ChooseAssigneeSchemaType>({
         resolver: zodResolver(chooseTaskAssigneesSchema),
         defaultValues: {
-            assignees: task.assignees?.map((assignee) => assignee?.org_user_id)
+            assignees: task.assignees?.map((assignee) => assignee.project_member.org_user_id)
         }
     })
 

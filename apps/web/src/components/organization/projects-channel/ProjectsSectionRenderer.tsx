@@ -90,7 +90,7 @@ export default function ({ channel }: ProjectsProps) {
                     if (task.id === task_id) {
                         if (action === 'add' && assignee) {
                             // Make sure assignee has the organization_user property
-                            if (!task.assignees?.some(a => a.org_user_id === org_user_id)) {
+                            if (!task.assignees?.some(a => a.project_member.org_user_id === org_user_id)) {
                                 return {
                                     ...task,
                                     assignees: [
@@ -102,7 +102,7 @@ export default function ({ channel }: ProjectsProps) {
                         } else if (action === 'remove') {
                             return {
                                 ...task,
-                                assignees: task.assignees?.filter(a => a.org_user_id !== org_user_id) || []
+                                assignees: task.assignees?.filter(a => a.project_member.org_user_id !== org_user_id) || []
                             };
                         }
                     }
@@ -124,7 +124,7 @@ export default function ({ channel }: ProjectsProps) {
                     if (task.id === task_id) {
                         if (action === 'add' && assignee) {
                             // Make sure assignee has the organization_user property
-                            if (!task.assignees?.some(a => a.org_user_id === org_user_id)) {
+                            if (!task.assignees?.some(a => a.project_member.org_user_id === org_user_id)) {
                                 return {
                                     ...task,
                                     assignees: [
@@ -136,7 +136,7 @@ export default function ({ channel }: ProjectsProps) {
                         } else if (action === 'remove') {
                             return {
                                 ...task,
-                                assignees: task.assignees?.filter(a => a.org_user_id !== org_user_id) || []
+                                assignees: task.assignees?.filter(a => a.project_member.org_user_id !== org_user_id) || []
                             };
                         }
                     }

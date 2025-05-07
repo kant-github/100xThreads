@@ -55,7 +55,7 @@ export default function ({ channel }: ProjectsChannelTopBarProps) {
     useEffect(() => {
         if (selectedProject) {
             const allUsers = selectedProject.tasks?.flatMap((task) =>
-                (task.assignees || []).filter(assignee => assignee && assignee.organization_user)
+                (task.assignees || []).filter(assignee => assignee && assignee.project_member.organization_user)
             );
             setUsers(allUsers || []);
         }

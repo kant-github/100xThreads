@@ -103,7 +103,7 @@ export default function ({
               </div>
               <div
                 onClick={() => {
-                  navigator.clipboard.writeText(msg.message);
+                  navigator.clipboard.writeText(msg.message!);
                   toast.success("Message copied to clipboard");
                   setIsOpen(false);
                 }}
