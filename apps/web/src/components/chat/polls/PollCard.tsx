@@ -56,7 +56,8 @@ export default function PollCreation({ pollCreationCard, setPollCreationCard, ch
         setPollOptionCard(true);
     }
 
-    function pollVoteHandler(updatedPoll: PollTypes) {
+    function activePollHandler(updatedPoll: PollTypes) {
+        console.log("poll with new votes : ", updatedPoll);
         setPoll(updatedPoll);
     }
 
@@ -65,7 +66,7 @@ export default function PollCreation({ pollCreationCard, setPollCreationCard, ch
             subscribeToBackend(channel.id, organization?.id, 'new-poll');
             subscribeToBackend(channel.id, organization?.id, 'active-poll');
             const unSubscribeNewPoll = subscribeToHandler('new-poll', newPollHandler);
-            const unsubscribeActivePoll = subscribeToHandler('active-poll', pollVoteHandler);
+            const unsubscribeActivePoll = subscribeToHandler('active-poll', activePollHandler);
 
             return () => {
                 unSubscribeNewPoll();
@@ -82,7 +83,7 @@ export default function PollCreation({ pollCreationCard, setPollCreationCard, ch
                 <PollCreationCard channel={channel} pollCreationCard={pollCreationCard} setPollCreationCard={setPollCreationCard} />
             )}
             {pollOptionCard && (
-                <PollOptionsAndResultsCard channel={channel} poll={poll}  setPollOptionCard={setPollOptionCard} />
+                <PollOptionsAndResultsCard channel={channel} poll={poll} setPollOptionCard={setPollOptionCard} />
             )}
         </>
     );

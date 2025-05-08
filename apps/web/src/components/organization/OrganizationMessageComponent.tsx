@@ -199,7 +199,7 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
     }
 
     return (
-        <div className="w-full h-full flex flex-col relative px-4 py-2">
+        <div className="w-full h-full flex flex-col px-4 py-2">
             <div className='flex-1 w-full overflow-y-auto scrollbar-hide'>
                 <div className='flex flex-col space-y-5 w-full'>
                     <GroupedByDateMessages channel={channel} groupedMessages={groupedMessages} />

@@ -39,8 +39,6 @@ export default class GeneralChannelManager {
     }
 
     public async insertGeneralChannelMessage(message: WebSocketMessage, tokenData: any) {
-        console.log("message data : ", message.payload);
-        console.log("tokenData is : ", tokenData);
         const chat = await this.prisma.chats.create({
             data: {
                 id: message.payload.id,
@@ -185,6 +183,8 @@ export default class GeneralChannelManager {
             include: GeneralChannelManager.pollInclude
         })
 
+
+
         await this.publisher.publish(channelKey, JSON.stringify({
             payload: poll,
             type: message.type
@@ -197,6 +197,8 @@ export default class GeneralChannelManager {
             channelId: message.payload.channelId,
             type: message.payload.type
         })
+
+        console.log("message payload is : ", message.payload);
 
         try {
             const existingVote = await this.prisma.pollVote.findUnique({

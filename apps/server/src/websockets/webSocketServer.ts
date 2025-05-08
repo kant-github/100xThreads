@@ -30,9 +30,9 @@ export default class WebSocketServerManager {
     constructor(server: Server) {
         this.wss = new WSServer({ server });
 
-        this.publisher = new Redis("rediss://default:ASs3AAIjcDFjNWI1ZjVmYzQ1ZDU0MDE1ODc4ZmQ3NjRmNDQ0YjhmM3AxMA@faithful-hound-11063.upstash.io:6379")
+        this.publisher = new Redis(process.env.LOCAL_REDIS_URL || "redis://localhost:6379")
 
-        this.subscriber = new Redis("rediss://default:ASs3AAIjcDFjNWI1ZjVmYzQ1ZDU0MDE1ODc4ZmQ3NjRmNDQ0YjhmM3AxMA@faithful-hound-11063.upstash.io:6379")
+        this.subscriber = new Redis(process.env.LOCAL_REDIS_URL || "redis://localhost:6379")
 
         this.databaseManager = new WebSocketDatabaseManager(prisma, this.publisher);
         this.initialize();

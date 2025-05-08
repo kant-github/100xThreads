@@ -211,14 +211,14 @@ export type WelcomedUserTypes = {
 
 export interface PollTypes {
   id: string;
-  channelId: string;
+  channel_id: string;
   question: string;
   options: PollOptionTypes[];
-  creatorId: number;
+  creator_id: number;
   creator: UserType;
-  createdAt: string; // ISO string format
-  expiresAt?: string; // Optional, ISO string format
-  isAnonymous: boolean;
+  created_at: string; // ISO string format
+  expires_at?: string; // Optional, ISO string format
+  is_anonymous: boolean;
   multipleChoice: boolean;
   status: PollStatus;
   votes: PollVoteTypes[];
@@ -226,18 +226,18 @@ export interface PollTypes {
 
 export interface PollOptionTypes {
   id: string;
-  pollId: string;
+  poll_id: string;
   text: string;
   votes: PollVoteTypes[];
-  createdAt: string; // ISO string format
+  created_at: string;
 }
 
 export interface PollVoteTypes {
   id: number;
-  pollId: string;
-  optionId: string;
-  userId: number;
-  createdAt: string; // ISO string format
+  poll_id: string;
+  option_id: string;
+  user_id: number;
+  created_at: string; 
 }
 
 export type RoleRequest = {

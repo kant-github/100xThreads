@@ -22,7 +22,7 @@ export default class WebSocketDatabaseManager {
     constructor(prisma: PrismaClient, publisher: Redis) {
         this.prisma = prisma;
         this.publisher = publisher;
-        this.kafkaProducer = new KafkaProducer(['13.53.234.218:9092'], 'notification-producer');
+        this.kafkaProducer = new KafkaProducer([process.env.KAFKA_URL || ''], 'notification-producer');
         this.generalchannelManager = new GeneralChannelManager(prisma, publisher);
         this.welcomeChannelManager = new WelcomeChannelManager(prisma, publisher);
         this.announcementchannelManager = new AnnouncementchannelManager(prisma, publisher, this.kafkaProducer);
