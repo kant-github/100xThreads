@@ -46,7 +46,7 @@ export type MessageType = {
   is_edited: boolean;
   edited_at?: Date | null
   org_user_id: number;
-  organization_user?: OrganizationUsersType;
+  organization_user: OrganizationUsersType;
   channel?: ChannelType;
   LikedUsers: LikedUser[];
 }

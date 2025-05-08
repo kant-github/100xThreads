@@ -38,10 +38,11 @@ export default function ({ params }: { params: { id: string } }) {
     const [flag, setFlag] = useState<'PROTECTED' | 'ALLOWED' | 'INIT'>('INIT')
     const [data, setData] = useState<protectedOrganizationMetadata>({} as protectedOrganizationMetadata)
 
-    
-    
+
+
     const updateChannels = useCallback((channelData: any) => {
         const { organization, eventChannel, channels, welcomeChannel, organizationUsers, organizationUser } = channelData
+        console.log("organiztion user ate page.stsx is : ", organizationUser);
         setOrganization(organization);
         setEventChannel(eventChannel);
         setChannels(channels);

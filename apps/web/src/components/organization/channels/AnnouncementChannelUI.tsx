@@ -9,6 +9,7 @@ import { announcementChannelMessgaes } from "@/recoil/atoms/organizationAtoms/an
 import AnnouncementChannelTopBar from "../announcement-channel/AnnouncementChannelTopBar";
 import { useWebSocket } from "@/hooks/useWebsocket";
 import AnnouncementChannelREnderer from "../announcement-channel/AnnouncementChannelRenderer";
+import AnnouncementSkeleton from "@/components/skeletons/AnnouncementChannelSkeleton";
 
 interface RegularChannelViewProps {
     channel: ChannelType;
@@ -20,6 +21,7 @@ export default function ({ channel }: RegularChannelViewProps) {
     const organizationId = useRecoilValue(organizationIdAtom);
     const [createAnnoucementModal, setCreateAnnouncementModal] = useState<boolean>(false);
     const { subscribeToBackend, unsubscribeFromBackend, subscribeToHandler } = useWebSocket();
+    const [loading, setLoading] = useState<boolean>(false);
 
     function handleNewAnnouncement(newMessage: any) {
         setAnnouncementChannelMessages(prev => [newMessage, ...prev]);
@@ -62,6 +64,7 @@ export default function ({ channel }: RegularChannelViewProps) {
 
     async function getWelcomeMessages() {
         try {
+            setLoading(true);
             const data = await axios.get(`${API_URL}/organizations/${organizationId}/channels/${channel.id}/announcement-channel`, {
                 headers: {
                     authorization: `Bearer ${session.user?.token}`,
@@ -72,6 +75,8 @@ export default function ({ channel }: RegularChannelViewProps) {
             }
         } catch (err) {
             console.log("Error in fetching the welcome channel messages");
+        } finally {
+            setLoading(false);
         }
 
     }
@@ -82,7 +87,7 @@ export default function ({ channel }: RegularChannelViewProps) {
     return (
         <div className="dark:bg-neutral-900 h-full flex flex-col items-start w-full p-6 relative">
             <AnnouncementChannelTopBar createAnnoucementModal={createAnnoucementModal} setCreateAnnouncementModal={setCreateAnnouncementModal} channel={channel} />
-            <AnnouncementChannelREnderer setCreateAnnouncementModal={setCreateAnnouncementModal} channel={channel} />
+            {loading ? <AnnouncementSkeleton /> : (<AnnouncementChannelREnderer setCreateAnnouncementModal={setCreateAnnouncementModal} channel={channel} />)}
         </div>
     );
 }

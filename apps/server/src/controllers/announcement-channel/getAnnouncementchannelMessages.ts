@@ -17,6 +17,9 @@ export async function getAnnouncementChannelMessages(req: Request, res: Response
                     select: {user: true}
                 },
                 AckStatus: true
+            }, 
+            orderBy: {
+                created_at: 'desc'
             }
         })
 

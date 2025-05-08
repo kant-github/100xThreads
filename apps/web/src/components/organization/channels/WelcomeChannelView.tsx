@@ -5,14 +5,15 @@ import { WelcomeChannel } from "types/types";
 import WelcomeChannelMessages from "../welcome-channel/WelcomeChannelMessages";
 import axios from "axios";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { organizationAtom, organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
+import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import { API_URL } from "@/lib/apiAuthRoutes";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import { welcomeChannelMessagesAtom } from "@/recoil/atoms/organizationAtoms/welcomeChannelMessagesAtom";
 import { useWebSocket } from "@/hooks/useWebsocket";
 import { Barriecito } from "next/font/google";
 import { organizationUsersAtom } from "@/recoil/atoms/organizationAtoms/organizationUsersAtom";
+import Welcomechannelskeleton from "@/components/skeletons/Welcomechannelskeleton";
 
 const font = Barriecito({ weight: "400", subsets: ["latin"] })
 
@@ -26,6 +27,7 @@ export default function ({ channel }: WelcomeChannelViewProps) {
     const setWelcomeChannelMessages = useSetRecoilState(welcomeChannelMessagesAtom);
     const setOrganizationUsers = useSetRecoilState(organizationUsersAtom);
     const { subscribeToBackend, unsubscribeFromBackend, subscribeToHandler } = useWebSocket();
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         if (organization?.id && channel.id) {
@@ -39,25 +41,27 @@ export default function ({ channel }: WelcomeChannelViewProps) {
     }, [channel.id, organization?.id]);
 
     function handleIncomingWelcomeMessages(newMessage: any) {
-        console.log("new welcome channel message : ", newMessage);
         setWelcomeChannelMessages(prev => [newMessage.welcomeUser, ...prev]);
         setOrganizationUsers(prev => [newMessage.orgUser, ...prev]);
     }
 
     async function getWelcomeMessages() {
         try {
+            setLoading(true);
             const data = await axios.get(`${API_URL}/organizations/${organization?.id}/channels/${channel.id}/welcome-channel`, {
                 headers: {
                     authorization: `Bearer ${session.user?.token}`,
                 }
             })
+
             if (data.data.data) {
                 setWelcomeChannelMessages(data.data.data)
             }
         } catch (err) {
             console.log("Error in fetching the welcome channel messages");
+        } finally {
+            setLoading(false);
         }
-
     }
 
     useEffect(() => {
@@ -81,7 +85,7 @@ export default function ({ channel }: WelcomeChannelViewProps) {
                         WELCOME CHANNEL
                     </div>
                 </div>
-                <WelcomeChannelMessages className="flex-1" />
+                {loading ? <Welcomechannelskeleton /> : <WelcomeChannelMessages className="flex-1" />}
             </UtilityCard>
         </div>
     );

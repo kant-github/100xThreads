@@ -4,7 +4,7 @@ let socketClient: WebSocketClient | null = null;
 
 export function getWebSocketClient(token: string): WebSocketClient {
     if (!socketClient) {
-        socketClient = new WebSocketClient(`ws://localhost:7001?token=${token}`);
+        socketClient = new WebSocketClient(`ws://localhost:7001/ws-server?token=${token}`);
     }
     return socketClient;
 }

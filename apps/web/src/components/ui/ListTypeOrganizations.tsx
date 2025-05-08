@@ -5,6 +5,7 @@ import { SlOptions } from "react-icons/sl";
 import { OrganizationType } from "types/types";
 import Link from "next/link";
 import { format } from 'date-fns'
+import OptionImage from "./OptionImage";
 
 interface ListTypeOrganizations {
     organizations: OrganizationType[] | [];
@@ -35,9 +36,15 @@ export default function ({ organizations }: ListTypeOrganizations) {
                                 </div>
                             </div>
                             <div className="flex flex-row items-center gap-x-4 w-full sm:w-auto justify-end">
-                                <div className="text-xs dark:text-zinc-200 font-semibold border-[0.5px] border-zinc-600 py-1 px-2 md:px-3 rounded-[8px] dark:bg-zinc-800/20 dark:hover:bg-zinc-500/40 truncate max-w-[120px] sm:max-w-none cursor-pointer">
-                                    {organization.owner.name}
-                                </div>
+                                <OptionImage
+                                    userId={organization.owner.id}
+                                    organizationId={organization.id}
+                                    content={
+                                        <div className="text-xs dark:text-zinc-200 font-semibold border-[0.5px] border-zinc-600 py-1 px-2 md:px-3 rounded-[8px] dark:bg-zinc-800/20 dark:hover:bg-zinc-500/40 truncate max-w-[120px] sm:max-w-none cursor-pointer">
+                                            {organization.owner.name}
+                                        </div>
+                                    }
+                                />
                                 <SlOptions className="border-[0.5px] rounded-[7px] border-zinc-600 dark:text-zinc-300 p-1.5 text-xl md:text-2xl cursor-pointer dark:bg-zinc-800/20 dark:hover:bg-zinc-500/40 " />
                             </div>
                         </div>

@@ -22,10 +22,17 @@ function MessageContent({ message, className, channel }: MessagesProps) {
     const session = useRecoilValue(userSessionAtom);
     const isCurrentUser = Number(session.user?.id) === Number(message.user_id);
     return (
-        <div className={`flex-shrink-0 flex items-start gap-x-1 ${isCurrentUser ? "flex-row-reverse" : "flex-row"}`}>
+        <div className={`flex-shrink-0 flex items-start w-[70%] gap-x-1 ${isCurrentUser ? "flex-row-reverse" : "flex-row"}`}>
 
-            <div className={`space-y-2 mt-1 py-1.5 px-4 z-10 rounded-bl-[8px] rounded-br-[8px] ${isCurrentUser ? "bg-neutral-900 rounded-tl-[8px] text-neutral-300" : "bg-neutral-700 rounded-tr-[8px]"} ${className}`}>
-                <p className={` font-light tracking-wider whitespace-pre-wrap break-words ${message.is_deleted ? "text-neutral-400 italic select-none text-[12px]" : "text-[13px]"}`}>
+            <div className={`space-y-2 mt-1 py-1.5 px-4 z-10 rounded-bl-[8px] rounded-br-[8px] ${isCurrentUser ? "bg-neutral-900 rounded-tl-[8px] text-neutral-300" : "bg-neutral-700 rounded-tr-[8px]"} ${className} max-w-full w-fit`}
+            >
+                <p
+                    className={`font-light tracking-wider whitespace-pre-wrap break-words ${message.is_deleted
+                        ? "text-neutral-400 italic select-none text-[12px]"
+                        : "text-[13px]"
+                        }`}
+                >
+
                     {message.message}
                 </p>
             </div>
@@ -51,7 +58,7 @@ export default function ({ message, channel }: MessagesProps) {
     }
 
     return (
-        <div className={`flex gap-x-2 relative select-none ${isCurrentUser ? 'flex-row-reverse' : 'flex-row'} w-full`}>
+        <div className={`flex gap-x-2  relative select-none ${isCurrentUser ? 'flex-row-reverse' : 'flex-row'} w-full`}>
             <div className="flex-shrink-0 gap-x-1">
                 <Image
                     src={message.organization_user?.user.image || "/default-avatar.png"}

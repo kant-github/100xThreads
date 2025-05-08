@@ -8,6 +8,7 @@ import { TiUser } from "react-icons/ti";
 import LogOutDialogBox from "../utility/LogOutDialogBox";
 import { settingsOptionAtom, settingsOptionEnum } from "@/recoil/atoms/SettingsOptionAtom";
 import { dashboardOptionsAtom, RendererOption } from "@/recoil/atoms/DashboardOptionsAtom";
+import { useRouter } from "next/navigation";
 
 export default function () {
   const [open, setOpen] = useState<boolean>(false);
@@ -16,6 +17,7 @@ export default function () {
   const setDashboardAtom = useSetRecoilState(dashboardOptionsAtom);
   const session = useRecoilValue(userSessionAtom);
   const ref = useRef<HTMLDivElement | null>(null);
+  const router = useRouter();
 
   return (
     <div ref={ref} className="px-2 py-1 dark:bg-neutral-800 bg-secondLight rounded-[8px] cursor-pointer select-none">
@@ -41,6 +43,7 @@ export default function () {
         <div className="flex flex-col">
           <div
             onClick={() => {
+              router.push("/dashboard");
               setDashboardAtom(RendererOption.Settings);
               setSettingsAtom(settingsOptionEnum.Profile)
             }}

@@ -8,11 +8,14 @@ import ProgressBarButtons from "../ProgressBarButtons";
 import CreateAnnouncementFormOne from "./CreateAnnouncementFormOne";
 import CreateAnnouncementFormTwo from "./CreateAnnouncementFormTwo";
 import CreateAnnouncementFormThree from "./CreateAnnouncementFormThree";
-import { ChannelType } from "types/types";
-import { useRecoilValue } from "recoil";
+import { AnnouncementType, ChannelType, Priority } from "types/types";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import { progressBarAtom } from "@/recoil/atoms/progressBarAtom";
 import { useWebSocket } from "@/hooks/useWebsocket";
+import { announcementChannelMessgaes } from "@/recoil/atoms/organizationAtoms/announcementChannelMessagesAtom";
+import { v4 as uuidv4 } from 'uuid';
+import { organizationUserAtom } from "@/recoil/atoms/organizationAtoms/organizationUserAtom";
 
 const PriorityEnum = z.enum(["LOW", "NORMAL", "HIGH", "URGENT"]);
 
@@ -39,6 +42,8 @@ export default function ({ createAnnoucementModal, setCreateAnnouncementModal, c
     const ref = useRef<HTMLDivElement | null>(null);
     const currentStep = useRecoilValue(progressBarAtom);
     const session = useRecoilValue(userSessionAtom);
+    const setAnnouncementMessages = useSetRecoilState(announcementChannelMessgaes);
+    const organizationUser = useRecoilValue(organizationUserAtom);
     const { sendMessage } = useWebSocket();
     const { control, reset, handleSubmit, formState: { errors } } = useForm<CreateAnnouncementFormSchemaType>({
         resolver: zodResolver(createAnnouncementFormSchema),
@@ -69,12 +74,44 @@ export default function ({ createAnnoucementModal, setCreateAnnouncementModal, c
     }, [createAnnoucementModal])
 
     function submitHandler(formData: CreateAnnouncementFormSchemaType) {
-        const newMessage = {
-            ...formData,
-            userId: session.user?.id,
-        }
-        sendMessage(newMessage, channel.id, 'new-announcement');
+
+        const tempId = uuidv4();
+        const optimisticAnnouncement: AnnouncementType = {
+            id: tempId,
+            channel_id: channel.id,
+            title: formData.title,
+            content: formData.content,
+            priority: formData.priority as Priority,
+            tags: formData.tags,
+            creator_org_user_id: organizationUser.id,
+            creator: {
+                id: organizationUser.id,
+                organization_id: organizationUser.organization_id,
+                user_id: Number(session.user!.id),
+                role: organizationUser.role,
+                user: {
+                    id: Number(session.user!.id),
+                    name: session.user!.name!,
+                    username: session.user!.username || "",
+                    image: session.user!.image!,
+                    email: session.user!.email!,
+                    provider: session.user!.provider!,
+                    bio: "",
+                    created_at: "",
+                    oauth_id: ""
+                },
+            },
+            created_at: new Date(),
+            expires_at: new Date(formData.expires_at),
+            is_pinned: false,
+            requires_ack: false,
+            AckStatus: []
+        };
+
+        setAnnouncementMessages(prev => [optimisticAnnouncement, ...prev]);
+        sendMessage({ optimisticAnnouncement, userId: session.user?.id, }, channel.id, 'new-announcement');
         reset();
+        setCreateAnnouncementModal(false);
     }
 
     function renderComponent() {

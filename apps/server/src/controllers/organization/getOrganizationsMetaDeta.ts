@@ -38,7 +38,8 @@ export async function getOrganizationsMetaDeta(organizationId: string, userId: n
                         user_id: Number(userId),
                         organization_id: organizationId!
                     }
-                }
+                },
+                include: { user: true }
             })
         ]);
 

@@ -30,7 +30,7 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
     const [usersTyping, setUsersTyping] = useState<string[]>([]);
     const [pollCreationCard, setPollCreationCard] = useState<boolean>(false);
     const [editingState, setEditingState] = useRecoilState(messageEditingState);
-
+    console.log("organizayion user is : ", organizationUser);
     useEffect(() => {
         if (editingState) {
             setMessage(editingState.originalMessage);
@@ -154,20 +154,21 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
             sendMessage(editedMessage, channel.id, 'edit-message');
             setEditingState(null);
         } else {
-            const newMessage: any = {
+            const newMessage: MessageType = {
                 id: uuidv4(),
-                org_user_id: organizationUser.user_id,
-                organization_id: organization?.id!,
                 message: message,
-                name: session.user?.name || "User",
+                name: session.user?.name!,
+                created_at: new Date(Date.now()),
+                channel_id: channel.id,
                 is_deleted: false,
                 is_edited: false,
-                created_at: new Date(Date.now()),
+                org_user_id: organizationUser.user_id,
+                organization_user: organizationUser,
                 LikedUsers: []
             };
 
+            setMessages(prev => [...prev, newMessage]);
             sendMessage(newMessage, channel.id, 'insert-general-channel-message');
-            // setMessages(prevChats => [...prevChats, newMessage]);
         }
         setMessage("");
     }

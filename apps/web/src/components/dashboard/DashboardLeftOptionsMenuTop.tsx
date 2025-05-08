@@ -78,7 +78,7 @@ export default function () {
                 open={friendOptionMenu}
                 setOpen={setFriendOptionMenu}
                 content={
-                    <DashboardComponentHeading className="pt-4 sm:pt-6 pl-4 sm:pl-8" description="check list of friends you made" >
+                    <DashboardComponentHeading className="pt-4 sm:pt-6 pl-4 sm:pl-8" description="All of your friends here">
                         Friends
                     </DashboardComponentHeading>
                 }

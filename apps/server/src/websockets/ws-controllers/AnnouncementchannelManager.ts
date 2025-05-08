@@ -16,21 +16,24 @@ export default class AnnouncementchannelManager {
 
 
     public async announcementHandler(message: WebSocketMessage, tokenData: any) {
+
         const channelKey = this.getChannelKey({
             organizationId: tokenData.organizationId,
             channelId: message.payload.channelId,
             type: message.payload.type
         })
 
+
+
         try {
             const announcement = await this.prisma.announcement.create({
                 data: {
                     channel_id: message.payload.channelId,
-                    title: message.payload.title,
-                    content: message.payload.content,
-                    priority: message.payload.priority,
-                    tags: message.payload.tags,
-                    creator_org_user_id: Number(message.payload.userId)
+                    title: message.payload.optimisticAnnouncement.title,
+                    content: message.payload.optimisticAnnouncement.content,
+                    priority: message.payload.optimisticAnnouncement.priority,
+                    tags: message.payload.optimisticAnnouncement.tags,
+                    creator_org_user_id: Number(message.payload.optimisticAnnouncement.creator_org_user_id)
                 },
                 include: {
                     creator: {
@@ -57,20 +60,19 @@ export default class AnnouncementchannelManager {
                     title: 'New Announcement',
                     message: `📢 "${announcement.title}" posted in ${orgUser.organization.name}`,
                     created_at: Date.now().toString(),
-                    sender_id: Number(message.payload.userId),
+                    sender_id: Number(tokenData.userId),
                     reference_id: announcement.id,
                     metadata: {
                         image: announcement.creator?.user?.image || ''
                     }
                 };
 
-                console.log("sending this data to kafka stream : ", notificationData);
-
                 this.kafkaProducer.sendMessage('notifications', notificationData, Number(orgUser.user_id))
             }
 
             await this.publisher.publish(channelKey, JSON.stringify({
                 payload: announcement,
+                userId: tokenData.userId,
                 type: message.payload.type
             }))
 
