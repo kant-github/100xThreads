@@ -5,7 +5,6 @@ import cors from 'cors';
 import config from './config';
 import WebSocketServerManager from './sockets/WebSocketServer';
 import KafkaConsumerService from './services/KafkaService';
-import prisma from '@repo/db/client';
 const app = express();
 const server = createServer(app);
 const wsManager = new WebSocketServerManager(server);
@@ -14,17 +13,12 @@ const wsManager = new WebSocketServerManager(server);
 app.use(cors());
 app.use(express.json());
 
-const kafka = new Kafka({
-    clientId: 'notification-producer',
-    brokers: ['13.53.234.218:9092'],
-});
-
 
 const kafkaConsumerService = new KafkaConsumerService(
     ['13.53.234.218:9092'],
     'notification-service-group',
     wsManager,
-    ['notifications'] // Topics to subscribe to
+    ['notifications']
 );
 
 (async () => {

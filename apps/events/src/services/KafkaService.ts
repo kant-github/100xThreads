@@ -33,7 +33,6 @@ export default class KafkaConsumerService {
     this.wsManager = wsManager;
     this.consumer = kafka.consumer({ groupId });
     this.prisma = prisma;
-    // this.initialize(topics);
   }
 
   public async initialize(topics: string[]): Promise<void> {
@@ -77,10 +76,10 @@ export default class KafkaConsumerService {
       }
 
       const eventData = JSON.parse(message.value.toString());
-      console.log("data came from kafka : )))))))))", eventData);
       const payload: NotificationEvent = eventData.value;
       const userId = eventData.userId;
       const notification = await this.storeNotification(payload, userId);
+      console.log("sending notification is : ", notification);
       this.wsManager.sendToUser(String(userId), 'notifications', {
         id: notification.id,
         type: notification.type,
@@ -110,7 +109,7 @@ export default class KafkaConsumerService {
         message: event.message,
         reference_id: event.reference_id,
         organization_id: event.organizationId,
-        channel_id: '0f7940bb-b639-4292-a718-5ad9a554f3a1',
+        channel_id: event.channelId,
         sender_id: Number(event.sender_id),
         action_url: event.actionUrl,
         metadata: {

@@ -217,12 +217,12 @@ export default class WebSocketServerManager {
     }
 
     public sendToUser(userId: string, type: string, data: any) {
-
+        console.log("sending");
         const userConnections = this.userSockets.get(userId);
+        console.log("user connected for the user id " + userId + " is : ", userConnections?.size);
         if (!userConnections || userConnections.size === 0) {
             return false;
         }
-
         const messagePayload = {
             type,
             data
