@@ -61,6 +61,8 @@ export default class KafkaProducer {
                 userId
             };
 
+            console.log("sending final message ----------> ", kafkaMessage)
+            console.log("topic is : ", topic);
             return await this.producer.send({
                 topic,
                 messages: [{

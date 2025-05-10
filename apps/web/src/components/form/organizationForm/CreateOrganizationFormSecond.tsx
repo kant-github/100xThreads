@@ -1,44 +1,40 @@
 import { Control, Controller, FieldErrors } from "react-hook-form";
-import { FormValues } from "../dashboard/CreateOrganizationForm";
-import ErrorMessage from "../utility/ErrorMessage";
 import { KeyboardEvent, useState } from "react";
 import { X } from "lucide-react";
+import ErrorMessage from "@/components/utility/ErrorMessage";
+import { FormValues } from "@/components/dashboard/CreateOrganizationForm";
+import InputBox from "@/components/utility/InputBox";
+import { FileUpload } from "@/components/ui/file-upload";
 
 export const presetChannels = [
     {
         id: 'announcements',
         name: 'Announcements',
-        description: 'Official announcements and important updates',
         defaultEnabled: true,
     },
     {
         id: 'general',
         name: 'General Chat',
-        description: 'General discussion and conversations',
         defaultEnabled: true,
     },
     {
         id: 'resources',
         name: 'Resources',
-        description: 'Knowledge sharing and resources',
         defaultEnabled: true,
     },
     {
         id: 'help-desk',
         name: 'Help Desk',
-        description: 'Support and assistance',
         defaultEnabled: true,
     },
     {
         id: 'projects',
         name: 'Projects',
-        description: 'Project management and updates',
         defaultEnabled: true,
     },
     {
         id: 'learning',
         name: 'Learning',
-        description: 'Educational content and resources',
         defaultEnabled: true,
     }
 ];
@@ -70,52 +66,53 @@ export default function ({
     };
 
     return (
-        <div>
-            <div className="relative">
-                <ErrorMessage error={errors?.presetChannels?.message} />
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-4">
-                    Select Preset Channels
-                </label>
+        <div className="">
+            <div className="flex flex-row gap-x-4 w-full">
                 <Controller
-                    name="presetChannels"
+                    name="image"
                     control={control}
-                    defaultValue={presetChannels.map(channel => channel.id)}
-                    render={({ field: { onChange, value = [] } }) => (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {presetChannels.map((channel) => (
-                                <label key={channel.id} className="flex items-start space-x-3 cursor-pointer group dark:bg-zinc-900/80 py-3 px-4 rounded-[8px] select-none hover:bg-zinc-50 dark:hover:bg-zinc-700/90 transition-colors duration-200 h-full">
-                                    <div className="flex items-center h-5 flex-shrink-0">
-                                        <input
-                                            type="checkbox"
-                                            checked={value.includes(channel.id)}
-                                            onChange={(e) => {
-                                                if (e.target.checked) {
-                                                    onChange([...value, channel.id]);
-                                                } else {
-                                                    onChange(value.filter((id: string) => id !== channel.id));
-                                                }
-                                            }}
-                                            className="appearance-none h-4 w-4 rounded-md bg-gray-200 border border-gray-300 checked:bg-yellow-500 checked:border-yellow-500 checked:before:content-['✔'] checked:before:text-white checked:before:text-[10px] checked:before:font-bold checked:before:flex checked:before:justify-center checked:before:items-center transition-colors duration-200"
-                                        />
-                                    </div>
-                                    <div className="flex flex-col flex-1">
-                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white">
-                                            {channel.name}
-                                        </span>
-                                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                                            {channel.description}
-                                        </span>
-                                    </div>
-                                </label>
-                            ))}
-                        </div>
+                    render={({ field: { onChange, value } }) => (
+                        <FileUpload
+                        className="mt-8"
+                            value={value}
+                            onChange={onChange}
+                            error={errors.image?.message}
+                        />
                     )}
                 />
+                <div className="flex-col w-full">
+                    <Controller
+                        name="organizationName"
+                        control={control}
+                        render={({ field }) => (
+                            <InputBox
+                                className="mt-4"
+                                label="Organization name"
+                                value={field.value}
+                                onChange={field.onChange}
+                                error={errors.ownerName?.message}
+                            />
+                        )}
+                    />
+                    <Controller
+                        name="organizationDescription"
+                        control={control}
+                        render={({ field }) => (
+                            <InputBox
+                                className="mt-4"
+                                label="Choose description"
+                                value={field.value}
+                                onChange={field.onChange}
+                                error={errors.ownerName?.message}
+                            />
+                        )}
+                    />
+                </div>
             </div>
-            <div className="mt-4">
+            <div className="mt-6">
                 <div className="relative">
                     <ErrorMessage error={errors?.organizationTags?.message} />
-                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-4">
+                    <label className="text-[12px] ml-1 font-light tracking-wider text-gray-700 dark:text-gray-200 mb-1">
                         Add Organization Tags
                     </label>
                     <Controller
@@ -147,7 +144,7 @@ export default function ({
                                         onChange={(e) => setTagInput(e.target.value)}
                                         onKeyDown={(e) => handleKeyDown(e, value, onChange)}
                                         placeholder={value.length === 0 ? "Type tags and press Enter..." : "Add more tags..."}
-                                        className="flex-1 min-w-[120px] outline-none bg-transparent text-sm placeholder:text-[12px]"
+                                        className="flex-1 min-w-[120px] outline-none rounded-[8px] bg-transparent text-sm dark:bg-neutral-900 dark:text-gray-200 placeholder:text-[12px] placeholder:text-neutral-400 border-zinc-400 dark:border-zinc-600"
                                     />
                                 </div>
                                 <p className="text-xs text-gray-500 dark:text-gray-400">

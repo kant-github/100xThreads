@@ -11,7 +11,9 @@ const passwordValidation = z.string()
 
 export const formSchema = z.object({
     ownerName: z.string().min(1, "Can't be empty").default("John Doe"),
+    ownerEmail: z.string().min(1, "Can't be empty").default("John@example.com"),
     organizationName: z.string().min(1, "Can't be empty"),
+    organizationDescription: z.string().min(1, "Please add description"),
     image: z
         .custom<FileList>()
         .optional()
@@ -25,7 +27,7 @@ export const formSchema = z.object({
     ),
     presetChannels: z.array(z.string()).min(1, 'Select at least one channel'),
     isPrivate: z.boolean().default(false),
-    hasPassword: z.boolean().default(false),
+    hasPassword: z.boolean().default(true),
     password: z.string().optional(),
     organizationTags: z.array(z.string())
         .min(1, "Add at least one tag")
@@ -44,16 +46,3 @@ export const formSchema = z.object({
         path: ["password"],
     }
 );
-
-
-
-
-
-
-
-// Let me help you implement the private organization flow. First, let's understand the secure way to handle passwords and then implement both frontend and backend.
-// Password Handling Flow:
-
-// When creating organization: Frontend should hash the password before sending it to the server
-// Server should add additional salt and rehash before storing
-// When joining: Frontend sends password attempt, server verifies against stored hash

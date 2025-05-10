@@ -1,6 +1,7 @@
 import UtilityCard from "@/components/utility/UtilityCard";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import FormProgressBar from "../FormProgressBar";
@@ -9,9 +10,9 @@ import CreateAnnouncementFormOne from "./CreateAnnouncementFormOne";
 import CreateAnnouncementFormTwo from "./CreateAnnouncementFormTwo";
 import CreateAnnouncementFormThree from "./CreateAnnouncementFormThree";
 import { AnnouncementType, ChannelType, Priority } from "types/types";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { userSessionAtom } from "@/recoil/atoms/atom";
-import { progressBarAtom } from "@/recoil/atoms/progressBarAtom";
+import { announcementFormProgressBarAtom } from "@/recoil/atoms/progressBarAtom";
 import { useWebSocket } from "@/hooks/useWebsocket";
 import { announcementChannelMessgaes } from "@/recoil/atoms/organizationAtoms/announcementChannelMessagesAtom";
 import { v4 as uuidv4 } from 'uuid';
@@ -29,7 +30,11 @@ const createAnnouncementFormSchema = z.object({
 })
 
 export type CreateAnnouncementFormSchemaType = z.infer<typeof createAnnouncementFormSchema>;
-
+const steps = [
+    { id: "0", title: "creator" },
+    { id: "1", title: "tags / priority" },
+    { id: "2", title: "metadata" },
+];
 interface CreateAnnouncementFormProps {
     className?: string;
     createAnnoucementModal: boolean;
@@ -40,9 +45,10 @@ interface CreateAnnouncementFormProps {
 
 export default function ({ createAnnoucementModal, setCreateAnnouncementModal, channel }: CreateAnnouncementFormProps) {
     const ref = useRef<HTMLDivElement | null>(null);
-    const currentStep = useRecoilValue(progressBarAtom);
+    const [currentStep, setCurrentStep] = useRecoilState(announcementFormProgressBarAtom);
     const session = useRecoilValue(userSessionAtom);
     const setAnnouncementMessages = useSetRecoilState(announcementChannelMessgaes);
+
     const organizationUser = useRecoilValue(organizationUserAtom);
     const { sendMessage } = useWebSocket();
     const { control, reset, handleSubmit, formState: { errors } } = useForm<CreateAnnouncementFormSchemaType>({
@@ -51,10 +57,6 @@ export default function ({ createAnnoucementModal, setCreateAnnouncementModal, c
             creator_name: session.user?.name!
         }
     })
-
-    useEffect(() => {
-
-    }, [])
 
     useEffect(() => {
         function handleClickOutside(e: MouseEvent) {
@@ -116,11 +118,11 @@ export default function ({ createAnnoucementModal, setCreateAnnouncementModal, c
 
     function renderComponent() {
         switch (currentStep) {
-            case 1:
+            case 0:
                 return <CreateAnnouncementFormOne control={control} errors={errors} />;
-            case 2:
+            case 1:
                 return <CreateAnnouncementFormTwo control={control} errors={errors} />;
-            case 3:
+            case 2:
                 return <CreateAnnouncementFormThree control={control} errors={errors} />;
             default:
                 return null;
@@ -130,11 +132,23 @@ export default function ({ createAnnoucementModal, setCreateAnnouncementModal, c
     return (
         <div ref={ref} className="absolute right-0 top-12 z-[100]">
             <UtilityCard className="top-[4rem] w-[24rem] bg-white dark:bg-neutral-900 rounded-[14px] px-6 py-4 cursor-pointer border dark:border-neutral-700">
-                <div className="text-sm dark:text-neutral-200 font-semibold tracking-wider">Create announcement</div>
+                {/* <div className="text-sm dark:text-neutral-200 font-semibold tracking-wider">Create announcement</div> */}
                 <form className="w-full flex flex-col gap-y-2" onSubmit={handleSubmit(submitHandler)} >
-                    <FormProgressBar className="mt-6 w-full" />
-                    {renderComponent()}
-                    <ProgressBarButtons className="flex flex-row w-full justify-end" />
+                    <FormProgressBar setCurrentStep={setCurrentStep} currentStep={currentStep} totalLevels={2} steps={steps} className="mt-6 w-full" />
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
+                        className="mt-4"
+                    >
+                        {renderComponent()}
+                    </motion.div>
+                    <ProgressBarButtons
+                        setCurrentLevel={setCurrentStep}
+                        currentLevel={currentStep}
+                        totalLevels={2}
+                        className="flex flex-row w-full justify-end"
+                    />
                 </form>
             </UtilityCard>
         </div>

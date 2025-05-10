@@ -21,6 +21,7 @@ export async function storeOrganization(req: Request, res: Response) {
 
     const {
         organizationName,
+        organizationDescription,
         image,
         organizationColor,
         presetChannels,
@@ -70,7 +71,7 @@ export async function storeOrganization(req: Request, res: Response) {
                 data: {
                     name: organizationName,
                     owner_id: Number(req.user?.id),
-                    description: "This is the default description for your organization 🌻",
+                    description: organizationDescription,
                     privateFlag: isPrivate === 'true',
                     access_type: hasPassword === 'true' ? 'PRIVATE' : 'PUBLIC',
                     passwordHash: finalHash,

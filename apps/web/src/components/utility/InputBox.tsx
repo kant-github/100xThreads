@@ -34,7 +34,7 @@ export default function ({ label, onChange, type, value, placeholder, error, dis
                     placeholder={placeholder}
                     id="input"
                     type={type ? showPassword ? 'text' : 'password' : "text"}
-                    className="px-4 py-[12px] text-xs font-medium border-[1px] border-zinc-400 dark:border-zinc-600 text-black shadow-sm focus:outline-none rounded-[4px] w-full pr-10 dark:bg-neutral-900 dark:text-gray-200 placeholder:text-[12px] placeholder:text-neutral-400"
+                    className="px-4 py-[12px] text-xs font-medium border-[1px] border-zinc-400 dark:border-zinc-600 text-black shadow-sm focus:outline-none rounded-[8px] w-full pr-10 dark:bg-neutral-900 dark:text-gray-200 placeholder:text-[12px] placeholder:text-neutral-400"
                 />{
                     type === "password" && (
                         <ShowPassword showPassword={showPassword} setShowPassword={setShowPassword} type={type} />

@@ -18,9 +18,10 @@ interface FileUploadProps {
   onChange: Dispatch<SetStateAction<FileList>>;
   value?: FileList;
   error?: string;
+  className?: string
 }
 
-export const FileUpload: React.FC<FileUploadProps> = ({ onChange, value, error }) => {
+export const FileUpload: React.FC<FileUploadProps> = ({ onChange, value, error, className }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (newFiles: File[]) => {
@@ -49,7 +50,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onChange, value, error }
   const file = value?.[0];
 
   return (
-    <div className="w-28">
+    <div className={`w-28 ${className}`}>
       <div {...getRootProps()}>
         <motion.div
           onClick={handleClick}
@@ -75,7 +76,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onChange, value, error }
                 <motion.div
                   layoutId="file-upload"
                   className={cn(
-                    "relative overflow-hidden z-40 bg-white dark:bg-neutral-900 flex flex-col items-start justify-start md:h-24 p-4 mt-4 w-full mx-auto rounded-md",
+                    "relative overflow-hidden z-40 bg-white dark:bg-neutral-950 flex flex-col items-start justify-start md:h-24 p-4 mt-4 w-full mx-auto rounded-[8px]",
                     "shadow-sm"
                   )}
                 >
@@ -101,7 +102,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onChange, value, error }
                       damping: 20,
                     }}
                     className={cn(
-                      "relative group-hover/file:shadow-2xl z-40  bg-white dark:bg-zinc-900/80  flex items-center justify-center h-20 w-20 mt-4 rounded-md",
+                      "relative group-hover/file:shadow-2xl z-40  bg-white dark:bg-zinc-950  flex items-center justify-center h-20 w-20 mt-4 rounded-[8px]",
                       "shadow-[0px_10px_50px_rgba(0,0,0,0.1)]"
                     )}
                   >
@@ -121,7 +122,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onChange, value, error }
 
                   <motion.div
                     variants={secondaryVariant}
-                    className="absolute opacity-0 border border-dashed border-sky-500 inset-0 z-30 bg-transparent flex items-center justify-center mt-4 w-20 h-20 rounded-md"
+                    className="absolute opacity-0 border border-dashed border-sky-500 inset-0 z-30 bg-transparent flex items-center justify-center mt-4 w-20 h-20 rounded-[8px]"
                   ></motion.div>
                 </>
               )}

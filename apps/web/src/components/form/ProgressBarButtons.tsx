@@ -1,17 +1,15 @@
-import { progressBarAtom, progressBarTotalLevelAtom } from "@/recoil/atoms/progressBarAtom";
-import { useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { MdChevronRight, MdChevronLeft } from "react-icons/md";
-import { useRecoilState, useRecoilValue } from "recoil";
 import BlackBtn from "../buttons/BlackBtn";
 
 interface ProgressBarButtonsProps {
-    className?: string
+    className?: string;
+    totalLevels: number;
+    currentLevel: number;
+    setCurrentLevel: Dispatch<SetStateAction<number>>
 }
 
-export default function ({ className }: ProgressBarButtonsProps) {
-    const totalLevels = useRecoilValue(progressBarTotalLevelAtom);
-    const [currentLevel, setCurrentLevel] = useRecoilState(progressBarAtom);
-
+export default function ({ className, totalLevels, currentLevel, setCurrentLevel }: ProgressBarButtonsProps) {
     useEffect(() => {
         const handleKeyPress = (event: KeyboardEvent) => {
             if (event.key === 'ArrowLeft') {
@@ -20,7 +18,6 @@ export default function ({ className }: ProgressBarButtonsProps) {
                 handleNext();
             }
         };
-
         window.addEventListener('keydown', handleKeyPress);
         return () => {
             window.removeEventListener('keydown', handleKeyPress);
@@ -34,29 +31,32 @@ export default function ({ className }: ProgressBarButtonsProps) {
     };
 
     const handleBack = () => {
-        if (currentLevel > 1) {
+        if (currentLevel > 0) {
             setCurrentLevel(prev => prev - 1);
         }
     };
 
     return (
         <div className={`gap-4 ${className}`}>
-            <button aria-label="left"
+            <button 
+                aria-label="left"
                 type="button"
                 onClick={handleBack}
-                disabled={currentLevel === 1}
-                className={`px-4 py-2 rounded-[6px] transition-colors ${currentLevel === 1
-                    ? 'bg-zinc-700 cursor-not-allowed'
-                    : 'bg-neutral-950 text-white hover:bg-black'
-                    }`}
+                disabled={currentLevel === 0}
+                className={`px-4 py-2 rounded-[6px] transition-colors ${
+                    currentLevel === 0
+                        ? 'bg-zinc-700 cursor-not-allowed'
+                        : 'bg-neutral-950 text-white hover:bg-black'
+                }`}
             >
-                <MdChevronLeft className={`${currentLevel === 1 ? "text-zinc-300" : "text-white"}`} />
+                <MdChevronLeft className={`${currentLevel === 0 ? "text-zinc-300" : "text-white"}`} />
             </button>
-
+            
             {currentLevel === totalLevels ? (
-                <BlackBtn onClick={() => console.log("pressing")} type="submit" >Submit</BlackBtn>
+                <BlackBtn type="submit">Submit</BlackBtn>
             ) : (
-                <button aria-label="right"
+                <button 
+                    aria-label="right"
                     type="button"
                     onClick={handleNext}
                     className="px-4 py-2 rounded-[6px] bg-neutral-950 text-white hover:bg-black transition-colors"

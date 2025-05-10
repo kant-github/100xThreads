@@ -131,7 +131,7 @@ export default class ProjectChannelManager {
             type: message.payload.type
         });
 
-
+        console.log("hitted ------------------------------------------------- >");
 
         const activityLogchannelKey = `${tokenData.organizationId}:${message.payload.channelId}:project-channel-chat-messages`
 
@@ -254,6 +254,7 @@ export default class ProjectChannelManager {
                             image: orgUser?.user.image || ''
                         }
                     };
+                    console.log("notification data to send to kafka stream : ", notificationData);
 
                     this.kafkaProducer.sendMessage('notifications', notificationData, projectMember.org_user_id);
 

@@ -29,8 +29,8 @@ app.get("/health-check", (req, res) => {
 
 app.use("/api", Routes);
 
-server.listen(PORT, () => {
-  console.log(`App is listening on port ${PORT}`);
+server.listen(7001, () => {
+  console.log(`App is listening on port ${7001}`);
 }).on("error", (err) => {
   console.error(`Server failed to start on port ${PORT}:`, err.message);
 });

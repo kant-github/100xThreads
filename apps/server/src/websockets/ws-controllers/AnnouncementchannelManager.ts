@@ -44,6 +44,12 @@ export default class AnnouncementchannelManager {
                 }
             })
 
+            await this.publisher.publish(channelKey, JSON.stringify({
+                payload: announcement,
+                userId: tokenData.userId,
+                type: message.payload.type
+            }))
+
             const organizationUsers = await this.prisma.organizationUsers.findMany({
                 where: {
                     organization_id: tokenData.organizationId
@@ -51,7 +57,7 @@ export default class AnnouncementchannelManager {
                     organization: true
                 }
             })
-
+            
 
             for (const orgUser of organizationUsers) {
                 const notificationData: NotificationType = {
@@ -70,11 +76,6 @@ export default class AnnouncementchannelManager {
                 this.kafkaProducer.sendMessage('notifications', notificationData, Number(orgUser.user_id))
             }
 
-            await this.publisher.publish(channelKey, JSON.stringify({
-                payload: announcement,
-                userId: tokenData.userId,
-                type: message.payload.type
-            }))
 
         } catch (err) {
             console.log("Error in creating annoucement", err);

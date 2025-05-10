@@ -1,39 +1,69 @@
 import { progressBarAtom, progressBarTotalLevelAtom } from '@/recoil/atoms/progressBarAtom';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { motion } from "framer-motion"
+import { cn } from "@/lib/utils"
+import { Dispatch, SetStateAction } from 'react';
 
 interface FormProgressBarProps {
-  className?: string;
+  className?: string
+  steps: {
+    id: string,
+    title: string
+  }[];
+  currentStep: number;
+  setCurrentStep: Dispatch<SetStateAction<number>>;
+  totalLevels: number
+
 }
 
-export default function ({ className }: FormProgressBarProps) {
-  const [currentLevel, setCurrentLevel] = useRecoilState(progressBarAtom);
-  const totalLevels = useRecoilValue(progressBarTotalLevelAtom);
+
+
+export default function ({ className, steps, currentStep, setCurrentStep, totalLevels }: FormProgressBarProps) {
 
   return (
-    <div className={`max-w-md mx-auto  ${className}`}>
-      <div className="relative mb-4">
-        <div className="h-2 bg-zinc-700 rounded-full">
-          <div
-            className="h-full bg-[#f5a331] rounded-full transition-all duration-500 ease-out"
-            style={{ width: `${((currentLevel - 1) / (totalLevels - 1)) * 100}%` }}
-          />
-        </div>
-        <div className="absolute top-0 left-0 w-full flex justify-between -mt-2">
-          {[1, 2, 3].map((level) => (
-            <button
-              type='button'
-              onClick={() => setCurrentLevel(level)}
-              key={level}
-              className={`cursor-pointer w-6 h-6 rounded-full flex items-center justify-center text-sm
-                transition-colors duration-300 border-2
-                ${level <= currentLevel
-                  ? 'bg-[#f5a331] border-[#f5a331] text-white'
-                  : 'bg-zinc-700 border-zinc-600 text-zinc-300'}`}
+    <div className={`${className}`}>
+      <div className="flex justify-between mb-2 ">
+        {steps.map((step, index) => (
+          <motion.div
+            key={index}
+            className="flex flex-col items-center"
+            whileHover={{ scale: 1.1 }}
+          >
+            <motion.div
+              className={cn(
+                "w-4 h-4 rounded-full cursor-pointer transition-colors duration-300",
+                index < currentStep
+                  ? "bg-primary"
+                  : index === currentStep
+                    ? "bg-primary ring-4 ring-primary/20"
+                    : "bg-neutral-700"
+              )}
+              onClick={() => {
+
+                if (index <= currentStep) {
+                  setCurrentStep(index)
+                }
+              }}
+              whileTap={{ scale: 0.95 }}
+            />
+            <motion.span
+              className={cn(
+                "text-xs mt-1.5 hidden sm:block",
+                index === currentStep ? "text-primary font-medium" : "text-muted-foreground"
+              )}
             >
-              {level}
-            </button>
-          ))}
-        </div>
+              {step.title}
+            </motion.span>
+          </motion.div>
+        ))}
+      </div>
+      <div className="w-full bg-muted h-1.5 rounded-full overflow-hidden mt-2 bg-neutral-700">
+        <motion.div
+          className="h-full bg-primary"
+          initial={{ width: 0 }}
+          animate={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
+          transition={{ duration: 0.3 }}
+        />
       </div>
     </div>
   );

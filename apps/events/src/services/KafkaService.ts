@@ -58,6 +58,7 @@ export default class KafkaConsumerService {
     try {
       await this.consumer.run({
         eachMessage: async ({ topic, partition, message }) => {
+          console.log("message is : ", message);
           await this.processMessage(message);
         }
       });
@@ -77,9 +78,12 @@ export default class KafkaConsumerService {
 
       const eventData = JSON.parse(message.value.toString());
       const payload: NotificationEvent = eventData.value;
+      console.log("payload recieved from kafka stream : ", payload);
       const userId = eventData.userId;
       const notification = await this.storeNotification(payload, userId);
       console.log("sending notification is : ", notification);
+
+
       this.wsManager.sendToUser(String(userId), 'notifications', {
         id: notification.id,
         type: notification.type,
