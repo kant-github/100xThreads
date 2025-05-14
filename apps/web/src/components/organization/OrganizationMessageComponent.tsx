@@ -30,7 +30,6 @@ export default function ChatInterface({ channel, initialChats }: OrganizationMes
     const [usersTyping, setUsersTyping] = useState<string[]>([]);
     const [pollCreationCard, setPollCreationCard] = useState<boolean>(false);
     const [editingState, setEditingState] = useRecoilState(messageEditingState);
-    console.log("organizayion user is : ", organizationUser);
     useEffect(() => {
         if (editingState) {
             setMessage(editingState.originalMessage);

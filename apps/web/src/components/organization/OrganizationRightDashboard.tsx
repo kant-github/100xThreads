@@ -80,7 +80,7 @@ function Option({ isSelected, onClick, user, isExpanded }: {
                         } hover:[background-color:var(--hover-color)]`} >
                     <div className={`flex items-center ${isExpanded ? 'gap-x-2' : ''}`}>
                         <span className="relative">
-                            <span className="bg-green-500 absolute bottom-1.5 right-1.5 transform translate-x-1/4 translate-y-1/4 rounded-full border-2 border-zinc-800 z-20 h-2.5 w-2.5"></span>
+                            <span className="bg-green-500 absolute bottom-1.5 right-1.5 transform translate-x-1/4 translate-y-1/4 rounded-full border-2 border-zinc-800 z-10 h-2.5 w-2.5"></span>
                             <Image
                                 src={user.user.image || '/default-avatar.png'}
                                 alt={`${user.user.name}'s profile picture`}

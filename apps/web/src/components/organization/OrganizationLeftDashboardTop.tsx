@@ -74,7 +74,7 @@ export default function () {
 const disabledChannelTypes: ChannelTypeType[] = [
     ChannelTypeType.RESOURCE,
     ChannelTypeType.HELP_DESK,
-    ChannelTypeType.EVENT
+    // ChannelTypeType.EVENT
 ];
 
 

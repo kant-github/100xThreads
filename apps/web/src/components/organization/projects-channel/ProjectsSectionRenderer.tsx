@@ -28,11 +28,7 @@ export default function ({ channel }: ProjectsProps) {
         const taskId = active.id.toString();
         const newStatus = over.id.toString() as TaskStatus;
 
-        console.log("task id is : ", taskId);
-        console.log("newStatus is : ", newStatus);
-
         if (selectedProject) {
-            console.log("selected project is true");
             const updatedTasks = selectedProject.tasks?.map((task: TaskTypes) => {
                 if (task.id === taskId) {
                     return {
@@ -42,7 +38,7 @@ export default function ({ channel }: ProjectsProps) {
                 }
                 return task;
             })
-            console.log("task ti update is : ", updatedTasks);
+
 
             setSelectedProject((prev): ProjectTypes | null => {
                 if (!prev) return null;
@@ -115,7 +111,6 @@ export default function ({ channel }: ProjectsProps) {
             return project;
         }));
 
-        // Also update the selectedProject if it's the one being modified
         setSelectedProject((prev) => {
             if (prev && prev.id === project_id) {
                 const updatedTasks = prev.tasks?.map(task => {
@@ -168,10 +163,10 @@ export default function ({ channel }: ProjectsProps) {
 
     return (
         <DndContext onDragEnd={handleDragEnd}>
-            <div className='w-full flex flex-col flex-1 min-h-0'>
+            <div className='w-full flex flex-col flex-1 min-h-0 '>
                 {
                     !selectedProject ? (
-                        <UtilityCard className='p-8 w-full flex-1 mt-4 dark:bg-neutral-800 gap-y-4 min-h-0 shadow-lg shadow-black/20 grid grid-cols-1 md:grid-cols-2'>
+                        <UtilityCard className='p-8 w-full flex-1 mt-4 dark:bg-neutral-800 min-h-0 shadow-lg shadow-black/20 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4'>
                             {projectsChannelMessages.map((project) => (
                                 <Project channel={channel} key={project.id} project={project} setSelectedProject={setSelectedProject} />
                             ))}

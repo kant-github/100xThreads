@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { ChannelType, ProjectTypes } from "types/types"
 import { LiaTasksSolid } from "react-icons/lia";
 import ProjectTimespan from "@/components/utility/ProjectTimespan";
@@ -16,11 +16,17 @@ interface ProjectProps {
 }
 
 export default function ({ project, setSelectedProject, channel }: ProjectProps) {
+    console.log("project created is : ", project.members);
     const [projectSideBar, setProjectSideBar] = useState(false);
     const { canView } = useProjectPermission(project);
+    useEffect(() => {
+    }, [project])
+    console.log(" ------------------------------ >");
+    console.log("can view is : ", canView);
+    console.log("for the project is : ", project.title);
 
     return (
-        <div key={project.id} className="flex flex-col items-start bg-white bg-gradient-to-br from-neutral-900 via-neutral-900 to-neutral-950 rounded-[14px] px-6 py-4 cursor-pointer hover:shadow-lg transition-shadow group relative max-h-48">
+        <div key={project.id} className="flex flex-col items-start bg-white bg-gradient-to-br from-neutral-900 via-neutral-900 to-neutral-950 rounded-[14px] px-6 py-4 cursor-pointer hover:shadow-lg transition-shadow group relative h-48">
             {
                 canView ? (
                     <MdChat className="absolute right-4 top-4 text-neutral-200" onClick={(e) => {

@@ -1,5 +1,5 @@
+import { presetColors } from "@/components/form/organizationForm/CreateOrganizationFormOne";
 import { z } from "zod";
-import { presetColors } from "@/components/form/FirstComponent";
 
 
 const passwordValidation = z.string()

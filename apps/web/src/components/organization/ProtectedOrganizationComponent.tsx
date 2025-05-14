@@ -41,7 +41,7 @@ export default function ({ metaData, organizationId, setFlag }: props) {
     const date = metaData.created_at ? format(new Date(metaData.created_at), 'MMMM dd, yyyy') : null;
 
     const { subscribeToBackend, sendMessage } = useWebSocket();
-
+    console.log("protected component rendered");
     useEffect(() => {
         if (metaData.WelcomeChannel.id) {
             subscribeToBackend(metaData.WelcomeChannel.id, organizationId, 'welcome-user');
@@ -71,7 +71,7 @@ export default function ({ metaData, organizationId, setFlag }: props) {
                     userId: session.user.id,
                     organizationId
                 }
-                
+
 
                 sendMessage(newMessage, metaData.WelcomeChannel.id, 'welcome-user');
                 const { organization, eventChannel, channels, welcomeChannel, organizationUsers } = data.data

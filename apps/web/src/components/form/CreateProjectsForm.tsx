@@ -4,11 +4,8 @@ import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
 import InputBox from "../utility/InputBox";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
-import { userSessionAtom } from "@/recoil/atoms/atom";
+import { useRecoilValue } from "recoil";
 import { ChannelType, OrganizationUsersType } from "types/types";
-import { projectChannelMessageAtom } from "@/recoil/atoms/organizationAtoms/projectChannelMessageAtom";
 import { useWebSocket } from "@/hooks/useWebsocket";
 import { organizationUserAtom } from "@/recoil/atoms/organizationAtoms/organizationUserAtom";
 
@@ -32,7 +29,7 @@ export default function ({ open, setOpen, className, channel }: CreateProjectsFo
     const organizationUser = useRecoilValue<OrganizationUsersType>(organizationUserAtom);
     const ref = useRef<HTMLDivElement>(null);
     const { sendMessage } = useWebSocket()
-    const { handleSubmit, control, formState: { errors } } = useForm<ProjectSchema>({
+    const { handleSubmit, control, reset, formState: { errors } } = useForm<ProjectSchema>({
         resolver: zodResolver(createProjectSchema),
         defaultValues: {
             dueDate: new Date().toISOString().split('T')[0]
@@ -54,7 +51,10 @@ export default function ({ open, setOpen, className, channel }: CreateProjectsFo
     }, [open])
 
     function submitHandler(formData: ProjectSchema) {
+
         sendMessage({ organizationUser, ...formData }, channel.id, 'new-project');
+        setOpen(false);
+        reset();
     }
     return (
         <div className={`${className} absolute right-0 top-12 z-[100]`} ref={ref}>
@@ -96,7 +96,7 @@ export default function ({ open, setOpen, className, channel }: CreateProjectsFo
                         }}
                     />
                     <button type='submit' className="flex items-center justify-center gap-2 mt-3 bg-yellow-600 hover:bg-yellow-600/90 disabled:bg-yellow-600/90 disabled:cursor-not-allowed text-neutral-900 font-medium px-4 py-3 rounded-[8px] mx-auto w-full text-center text-xs" >
-                        {isSubmitting ? 'Creating...' : 'Create Project'}
+                        Create Project
                     </button>
                 </form>
             </UtilityCard>

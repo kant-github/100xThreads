@@ -77,7 +77,9 @@ export default function CreateOrganization({ open, setOpen }: CreateRoomProps) {
         }
     };
 
-    const onSubmit = async (data: FormValues) => {
+    async function onSubmit(data: FormValues) {
+        console.log(" called -- >");
+        console.log(isSubmitting);
         if (isSubmitting) return;
         setIsSubmitting(true);
 
@@ -132,13 +134,12 @@ export default function CreateOrganization({ open, setOpen }: CreateRoomProps) {
             <UtilityCard
                 open={open}
                 setOpen={setOpen}
-                className="w-5/12 px-12 relative pb-20 pt-8 dark:bg-neutral-900 dark:border-neutral-600 border-[1px]"
+                className="w-5/12 px-12 relative pt-8 pb-5 dark:bg-neutral-900 dark:border-neutral-600 border-[1px]"
             >
                 <DashboardComponentHeading description="Start creating organization with your preferred choice">
                     Create Organization
                 </DashboardComponentHeading>
                 <form key={open.toString()} onSubmit={handleSubmit(onSubmit)}>
-                    <ProgressBarButtons currentLevel={currentStep} setCurrentLevel={setCurrentStep} totalLevels={3} className="absolute bottom-6 right-8 flex justify-center items-center" />
                     <FormProgressBar currentStep={currentStep} setCurrentStep={setCurrentStep} totalLevels={3} steps={steps} className="mt-8" />
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -148,6 +149,7 @@ export default function CreateOrganization({ open, setOpen }: CreateRoomProps) {
                     >
                         {renderComponent()}
                     </motion.div>
+                    <ProgressBarButtons isSubmitting={isSubmitting} currentLevel={currentStep} setCurrentLevel={setCurrentStep} totalLevels={3} className="w-full" />
                 </form>
             </UtilityCard>
         </OpacityBackground>

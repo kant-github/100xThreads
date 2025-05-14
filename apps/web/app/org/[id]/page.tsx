@@ -63,7 +63,7 @@ export default function ({ params }: { params: { id: string } }) {
                     },
                 }
             )
-
+            console.log("response flag is : ", response.data.flag);
             if (response.data.flag === 'ALLOWED') {
                 setFlag('ALLOWED')
                 updateChannels(response.data.data)

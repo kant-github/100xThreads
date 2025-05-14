@@ -20,12 +20,12 @@ export const announcementFormTotalLevelBarAtom = atom({
     default: 2
 })
 
-export const TaskFormProgressBarAtom = atom({
-    key: "progressBarAtom",
+export const taskFormProgressBarAtom = atom({
+    key: "taskFormProgressBarAtom",
     default: 0
 })
 
-export const TaskFormTotalLevelBarAtom = atom({
-    key: " progressBarTotalLevelAtom",
-    default: 3
+export const taskFormTotalLevelBarAtom = atom({
+    key: "taskFormTotalLevelBarAtom",
+    default: 2
 })

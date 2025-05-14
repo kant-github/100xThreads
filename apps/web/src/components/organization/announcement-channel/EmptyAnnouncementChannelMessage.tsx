@@ -1,3 +1,4 @@
+import DesignButton from "@/components/buttons/DesignButton";
 import Image from "next/image";
 import { Dispatch, SetStateAction } from "react";
 
@@ -14,13 +15,12 @@ export default function ({ setCreateAnnouncementModal }: EmpytyAnnouncementChann
             <div className="flex flex-col items-center justify-center">
                 <h1 className="text-xl font-semibold tracking-wide text-zinc-400">Currently no announcement</h1>
                 <p className="text-xs font-normal tracking-wide text-zinc-400">Start creating announcement to be more .</p>
-                <button
+                <DesignButton
                     onClick={() => setCreateAnnouncementModal(true)}
-                    type="button"
-                    className="bg-zinc-500/30 text-xs px-4 py-1.5 text-[#f5a331] rounded-[6px] shadow-md shadow-zinc-900/40 hover:shadow-lg active:scale-95 transition-all duration-200 hover:-translate-y-0.5 mt-2">
+                    type="button">
                     Create announcement
-                </button>
+                </DesignButton>
             </div>
-        </div>
+        </div >
     );
 };

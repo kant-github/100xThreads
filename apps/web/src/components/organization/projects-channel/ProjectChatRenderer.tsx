@@ -75,7 +75,7 @@ export default function ({ channel, open, setOpen, project }: ProjectMessagesPro
             open={open}
             setOpen={setOpen}
             content={
-                <div className="h-full flex flex-col px-4 py-2 min-w-[300px]">
+                <div className="h-full flex flex-col px-4 py-2 min-w-[300px] z-[100]">
                     <div className="h-16 flex flex-row justify-between items-center">
                         <DashboardComponentHeading className="ml-2" description={project?.description!}>
                             {project?.title}

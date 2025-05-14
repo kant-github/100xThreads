@@ -25,19 +25,19 @@ export default function ({
 }: OrganizationDetailsSectionProps) {
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-3">
             <div className="flex flex-row items-start justify-center gap-x-6">
                 <Controller
                     name="ownerName"
                     control={control}
                     render={({ field }) => (
-                            <InputBox
-                                disable={true}
-                                label="Owner's Name"
-                                value={field.value}
-                                onChange={field.onChange}
-                                error={errors.ownerName?.message}
-                            />
+                        <InputBox
+                            disable={true}
+                            label="Owner's Name"
+                            value={field.value}
+                            onChange={field.onChange}
+                            error={errors.ownerName?.message}
+                        />
                     )}
                 />
             </div>

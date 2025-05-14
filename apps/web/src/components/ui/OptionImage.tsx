@@ -79,6 +79,7 @@ export default function ({ organizationId, userId, content }: OptionImageProps) 
 
 
     function incomingFriendRequestHandler() {
+
     }
 
     useEffect(() => {
@@ -107,6 +108,7 @@ export default function ({ organizationId, userId, content }: OptionImageProps) 
                 userId: Number(session.user.id)
             }
             sendNotificationMessage('send-friend-request', 'global', payload);
+            setFriendshipStatus('REQUEST_SENT');
         }
     }
 

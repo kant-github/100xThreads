@@ -1,0 +1,88 @@
+Base calendar background and text
+.rbc-calendar {
+  background-color: #171717; /* neutral-900 */
+  color: #f5f5f5; /* light text for contrast */
+  font-size: 0.875rem; /* text-sm */
+}
+
+/* Toolbar container */
+.rbc-toolbar {
+  background-color: #171717;
+  color: #f5f5f5;
+  border-bottom: 1px solid #262626; /* subtle border */
+  padding: 0.5rem 1rem;
+}
+
+/* Toolbar label (month/week/day title) */
+.rbc-toolbar-label {
+  font-weight: 700;
+  font-size: 1.25rem; /* text-xl */
+  color: #fafafa; /* almost white */
+}
+
+/* Header cells (days of the week) */
+.rbc-header {
+  background-color: #262626; /* neutral-800 */
+  color: #e5e5e5;
+  font-weight: 500;
+  border-bottom: 1px solid #404040; /* neutral-700 */
+  padding: 0.5rem;
+  text-align: center;
+}
+
+/* Time gutter (hours) */
+.rbc-time-gutter {
+  background-color: #1f1f1f;
+  color: #d4d4d4;
+  border-right: 1px solid #333;
+}
+
+/* Time slot lines */
+.rbc-time-slot {
+  border-top: 1px solid #2a2a2a;
+}
+
+/* Today's date cell */
+.rbc-today {
+  background-color: #1f2937; /* neutral-800 / slate-800 */
+}
+
+/* Day slot background (e.g. week view) */
+.rbc-day-slot .rbc-time-slot {
+  background-color: #171717;
+}
+
+/* Event items */
+.rbc-event {
+  background-color: #4f46e5; /* indigo-600 */
+  color: white;
+  border-radius: 0.375rem; /* rounded-md */
+  padding: 2px 6px;
+  font-size: 0.875rem;
+  border: none;
+}
+
+/* Event hover */
+.rbc-event:hover {
+  background-color: #4338ca; /* indigo-700 */
+  cursor: pointer;
+}
+
+/* Selected time slot highlight */
+.rbc-slot-selection {
+  background-color: rgba(79, 70, 229, 0.2); /* indigo-600 with opacity */
+}
+
+/* Toolbar buttons (if any) */
+.rbc-btn {
+  background-color: #262626;
+  border: 1px solid #3f3f3f;
+  color: #e5e5e5;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s;
+}
+
+.rbc-btn:hover {
+  background-color: #3f3f3f;
+}

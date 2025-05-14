@@ -4,8 +4,8 @@ import { projectSelectedAtom } from "@/recoil/atoms/projects/projectSelectedAtom
 import { z } from 'zod';
 import { ChannelType, Priority, TaskStatus } from "types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import { progressBarAtom } from "@/recoil/atoms/progressBarAtom";
+import { Dispatch, SetStateAction, useEffect, useRef } from "react";
+import { taskFormProgressBarAtom } from "@/recoil/atoms/progressBarAtom";
 import CreateTaskFormOne from "./CreateTaskFormOne";
 import CreateTaskFormTwo from "./CreateTaskFormTwo";
 import CreateTaskFormThree from "./CreateTaskFormThree";
@@ -13,13 +13,19 @@ import UtilityCard from "@/components/utility/UtilityCard";
 import FormProgressBar from "../FormProgressBar";
 import ProgressBarButtons from "../ProgressBarButtons";
 import { useWebSocket } from "@/hooks/useWebsocket";
-import { presetColors } from "../FirstComponent";
+import { presetColors } from "../organizationForm/CreateOrganizationFormOne";
 
 interface CreateTaskFormProps {
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
     channel: ChannelType;
 }
+
+const steps = [
+    { id: "0", title: "Task metadata" },
+    { id: "1", title: "Priority & checks" },
+    { id: "2", title: "Select assignees" },
+];
 
 const createTaskFormSchema = z.object({
     title: z.string().min(1, 'Title is missing').max(28, 'Max 28 characters'),
@@ -38,7 +44,7 @@ const createTaskFormSchema = z.object({
 export type CreateTaskFormType = z.infer<typeof createTaskFormSchema>
 
 export default function ({ open, setOpen, channel }: CreateTaskFormProps) {
-    const [currentStep, setCurrentStep] = useRecoilState(progressBarAtom);
+    const [currentStep, setCurrentStep] = useRecoilState(taskFormProgressBarAtom);
     const selectedProject = useRecoilValue(projectSelectedAtom);
     const { sendMessage } = useWebSocket();
     const ref = useRef<HTMLDivElement | null>(null);
@@ -70,17 +76,17 @@ export default function ({ open, setOpen, channel }: CreateTaskFormProps) {
         }
         sendMessage(payload, channel.id, 'new-created-task');
         reset();
-        setCurrentStep(1);
+        setCurrentStep(0);
         setOpen(false);
     }
 
     function renderComponent() {
         switch (currentStep) {
-            case 1:
+            case 0:
                 return <CreateTaskFormOne control={control} errors={errors} />;
-            case 2:
+            case 1:
                 return <CreateTaskFormTwo control={control} errors={errors} />;
-            case 3:
+            case 2:
                 return <CreateTaskFormThree control={control} errors={errors} />;
             default:
                 return null;
@@ -92,9 +98,9 @@ export default function ({ open, setOpen, channel }: CreateTaskFormProps) {
             <UtilityCard className="absolute top-[4rem] right-0 w-[24rem] bg-white dark:bg-neutral-900 rounded-[14px] px-6 py-4 cursor-pointer border dark:border-neutral-700">
                 <div className="text-sm dark:text-neutral-200 font-semibold tracking-wider">Add task to <span className="text-amber-500 font-light">`{selectedProject?.title}`</span>...</div>
                 <form className="w-full flex flex-col gap-y-2" onSubmit={handleSubmit(submitHandler)} >
-                    <FormProgressBar className="mt-6 w-full" />
+                    <FormProgressBar currentStep={currentStep} setCurrentStep={setCurrentStep} totalLevels={2} steps={steps} className="mt-6 w-full" />
                     {renderComponent()}
-                    <ProgressBarButtons className="flex flex-row w-full justify-end" />
+                    <ProgressBarButtons currentLevel={currentStep} setCurrentLevel={setCurrentStep} totalLevels={2} className="w-full" />
                 </form>
             </UtilityCard>
         </div>

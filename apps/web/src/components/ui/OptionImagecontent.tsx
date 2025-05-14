@@ -46,7 +46,7 @@ export default function ({ friendshipStatus, sendFriendRequestHandler, organizat
                     </div>
 
                 ) : friendshipStatus.startsWith("REQUEST_RECEIVED") ? (
-                    <div className="mt-2 flex w-full space-x-3">
+                    <div className="mt-2 flex items-center justify-center w-full space-x-3">
                         <button type="button" className="px-4 py-2 bg-yellow-600 text-white text-xs font-medium rounded-[4px] hover:bg-yellow-600/80 transition-colors" onClick={friendRequestAcceptHandler}>
                             Accept
                         </button>

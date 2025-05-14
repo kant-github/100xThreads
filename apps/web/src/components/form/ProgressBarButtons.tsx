@@ -1,15 +1,18 @@
 import { Dispatch, SetStateAction, useEffect } from "react";
-import { MdChevronRight, MdChevronLeft } from "react-icons/md";
-import BlackBtn from "../buttons/BlackBtn";
+import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { Button } from "../ui/button";
+import { Check, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 
 interface ProgressBarButtonsProps {
     className?: string;
     totalLevels: number;
     currentLevel: number;
+    isSubmitting?: boolean;
     setCurrentLevel: Dispatch<SetStateAction<number>>
 }
 
-export default function ({ className, totalLevels, currentLevel, setCurrentLevel }: ProgressBarButtonsProps) {
+export default function ({ className, totalLevels, currentLevel, isSubmitting, setCurrentLevel }: ProgressBarButtonsProps) {
     useEffect(() => {
         const handleKeyPress = (event: KeyboardEvent) => {
             if (event.key === 'ArrowLeft') {
@@ -37,33 +40,41 @@ export default function ({ className, totalLevels, currentLevel, setCurrentLevel
     };
 
     return (
-        <div className={`gap-4 ${className}`}>
-            <button 
-                aria-label="left"
-                type="button"
-                onClick={handleBack}
-                disabled={currentLevel === 0}
-                className={`px-4 py-2 rounded-[6px] transition-colors ${
-                    currentLevel === 0
-                        ? 'bg-zinc-700 cursor-not-allowed'
-                        : 'bg-neutral-950 text-white hover:bg-black'
-                }`}
-            >
-                <MdChevronLeft className={`${currentLevel === 0 ? "text-zinc-300" : "text-white"}`} />
-            </button>
-            
-            {currentLevel === totalLevels ? (
-                <BlackBtn type="submit">Submit</BlackBtn>
-            ) : (
-                <button 
-                    aria-label="right"
+        <div className={`flex justify-between pt-6 pb-4 ${className}`}>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
                     type="button"
-                    onClick={handleNext}
-                    className="px-4 py-2 rounded-[6px] bg-neutral-950 text-white hover:bg-black transition-colors"
+                    variant="outline"
+                    onClick={handleBack}
+                    disabled={currentLevel === 0}
+                    className="flex items-center gap-1 transition-all duration-300 rounded-2xl"
                 >
-                    <MdChevronRight />
-                </button>
-            )}
+                    <ChevronLeft className="h-4 w-4" /> Back
+                </Button>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                    variant={"default"}
+                    type="submit"
+                    onClick={handleNext}
+                    disabled={isSubmitting}
+                    className={cn(
+                        "flex items-center gap-1 transition-all duration-300 rounded-2xl",
+                        currentLevel === totalLevels ? "bg-yellow-600 text-neutral-900" : "",
+                    )}
+                >
+                    {isSubmitting ? (
+                        <>
+                            <Loader2 className="h-4 w-4 animate-spin" /> Submitting...
+                        </>
+                    ) : (
+                        <>
+                            {currentLevel === totalLevels ? "Submit" : "Next"}
+                            {currentLevel === totalLevels ? <Check className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                        </>
+                    )}
+                </Button>
+            </motion.div>
         </div>
     );
 }

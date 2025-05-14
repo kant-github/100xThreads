@@ -3,18 +3,21 @@ import { UserRole, ProjectMemberRole, ProjectMemberType } from "types/types";
 export enum ProjectPermission {
   VIEW = "view",
   EDIT = "edit",
-  MANAGE = "manage"
+  MANAGE = "manage",
+  DELETE = 'delete'
 }
 
 const PROJECT_PERMISSIONS = {
   [ProjectMemberRole.ADMIN]: [
     ProjectPermission.VIEW,
     ProjectPermission.EDIT,
-    ProjectPermission.MANAGE
+    ProjectPermission.MANAGE,
+    ProjectPermission.DELETE
   ],
   [ProjectMemberRole.MEMBER]: [
     ProjectPermission.VIEW,
-    ProjectPermission.EDIT
+    ProjectPermission.EDIT,
+    ProjectPermission.MANAGE,
   ]
 };
 
@@ -36,6 +39,10 @@ export function checkProjectPermission(
   // if (ORG_ROLE_OVERRIDES[userOrgRole]?.includes(permission)) {
   //   return true;
   // }
+
+  console.log("organization user id : ", organizationUserId);
+  console.log("permission is : ", permission);
+  console.log("project members are : ", projectMembers);
 
   const userProjectMember = projectMembers.find(member => member.org_user_id === organizationUserId);
 

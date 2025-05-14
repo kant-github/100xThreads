@@ -6,8 +6,6 @@ import { ProjectTypes } from "types/types";
 
 export function useProjectPermission(project: ProjectTypes | null) {
   const organizationUser = useRecoilValue(organizationUserAtom);
-  
-  // Function to check specific permissions only when needed
   const checkSpecificPermission = (permission: ProjectPermission): boolean => {
     if (!organizationUser.id || !project || !organizationUser.role) {
       return false;
@@ -26,5 +24,6 @@ export function useProjectPermission(project: ProjectTypes | null) {
     get canView() { return checkSpecificPermission(ProjectPermission.VIEW); },
     get canEdit() { return checkSpecificPermission(ProjectPermission.EDIT); },
     get canManage() { return checkSpecificPermission(ProjectPermission.MANAGE); },
+    get canDelete() { return checkSpecificPermission(ProjectPermission.DELETE) }
   };
 }

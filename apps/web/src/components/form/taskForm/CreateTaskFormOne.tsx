@@ -1,8 +1,7 @@
-
 import { Control, Controller, FieldErrors } from "react-hook-form";
 import { CreateTaskFormType } from "./CreateTaskForm";
 import InputBox from "@/components/utility/InputBox";
-import { presetColors } from "../FirstComponent";
+import { presetColors } from "../organizationForm/CreateOrganizationFormOne";
 
 interface CreateTaskFormOneProps {
     control: Control<CreateTaskFormType>;

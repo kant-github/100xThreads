@@ -7,8 +7,8 @@ import { dashboardOptionsAtom, RendererOption } from "@/recoil/atoms/DashboardOp
 import { FaUserFriends } from "react-icons/fa";
 import { useState } from "react";
 import UtilitySideBar from "../utility/UtilitySideBar";
-import DashboardComponentHeading from "./DashboardComponentHeading";
 import OrganizationNotificationsRenderer from "../notifications/Notifications";
+import FriendsRenderer from "../utility/FriendsRenderer";
 
 export const baseDivStyles = "flex items-center justify-start gap-x-2 sm:gap-x-3 py-1.5 sm:py-2 px-2 sm:px-3 rounded-[8px] cursor-pointer select-none";
 const textStyles = "text-[12px] sm:text-[13px] text-lightText dark:text-neutral-100 font-normal mt-0.5 tracking-wide hidden sm:block";
@@ -78,9 +78,7 @@ export default function () {
                 open={friendOptionMenu}
                 setOpen={setFriendOptionMenu}
                 content={
-                    <DashboardComponentHeading className="pt-4 sm:pt-6 pl-4 sm:pl-8" description="All of your friends here">
-                        Friends
-                    </DashboardComponentHeading>
+                    <FriendsRenderer open={friendOptionMenu} />
                 }
             />
             <OrganizationNotificationsRenderer open={notificationMenu} setOpen={setNotificationMenu} />

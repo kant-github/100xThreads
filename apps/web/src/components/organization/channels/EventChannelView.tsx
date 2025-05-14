@@ -1,6 +1,5 @@
 import Calendar from "@/components/calendar/Calendar";
 import DashboardComponentHeading from "@/components/dashboard/DashboardComponentHeading";
-import UtilityCard from "@/components/utility/UtilityCard";
 import { EventChannelType } from "types/types";
 
 interface EventChannelViewProps {
