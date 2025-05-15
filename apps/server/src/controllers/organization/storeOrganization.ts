@@ -14,7 +14,7 @@ const channelTypeMap: Record<string, 'ANNOUNCEMENT' | 'GENERAL' | 'RESOURCE' | '
 
 export async function storeOrganization(req: Request, res: Response) {
 
-    if (!req.user) {
+    if (!req.user && !req.user) {
         res.status(401).json({ message: "You are not authorized" });
         return;
     }
@@ -65,6 +65,7 @@ export async function storeOrganization(req: Request, res: Response) {
             res.status(400).json({ message: "An organization with this name already exists" });
             return;
         }
+        console.log("creating org for : ", req.user.id);
 
         const newOrganization = await prisma.$transaction(async (tx) => {
             const org = await tx.organization.create({

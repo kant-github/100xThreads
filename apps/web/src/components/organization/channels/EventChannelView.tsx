@@ -1,6 +1,7 @@
-import Calendar from "@/components/calendar/Calendar";
-import DashboardComponentHeading from "@/components/dashboard/DashboardComponentHeading";
+
 import { EventChannelType } from "types/types";
+import EventChannelTopBar from "../events-channel/EventChannelTopBar";
+import EventsChannelrenderer from "../events-channel/EventsChannelrenderer";
 
 interface EventChannelViewProps {
     channel: EventChannelType;
@@ -10,8 +11,8 @@ export default function ({ channel }: EventChannelViewProps) {
     console.log(channel);
     return (
         <div className="bg-neutral-900 w-full p-4">
-            <DashboardComponentHeading description={channel.description}>{channel.title}</DashboardComponentHeading>
-            <Calendar />
+            <EventChannelTopBar channel={channel} />
+            <EventsChannelrenderer />
         </div>
     );
 }

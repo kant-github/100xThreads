@@ -43,6 +43,9 @@ export async function caseJoinOrganization(req: Request, res: Response) {
 
         })
 
+        console.log("organization type is : ", organization?.access_type);
+
+
         if (organization?.access_type === 'PUBLIC') {
             const data = await getOrganizationsMetaDeta(organizationId, user.id);
             res.status(200).json({

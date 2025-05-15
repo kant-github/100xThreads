@@ -34,30 +34,54 @@ export default class ProjectChannelManager {
             type: message.payload.type
         })
 
-        const project = await this.prisma.project.create({
+        const createdProject = await this.prisma.project.create({
             data: {
                 creator_id: message.payload.organizationUser.id,
                 channel_id: message.payload.channelId!,
                 title: message.payload.title,
                 description: message.payload.description,
-                due_date: new Date(message.payload.dueDate)
+                due_date: new Date(message.payload.dueDate),
+                members: {
+                    create: {
+                        org_user_id: message.payload.organizationUser.id,
+                        role: 'ADMIN',
+                    },
+                },
             },
             include: {
-                tasks: true
-            }
-        })
+                members: {
+                    include: {
+                        organization_user: {
+                            include: {
+                                user: true,
+                            },
+                        },
+                    },
+                },
+                tasks: {
+                    include: {
+                        assignees: {
+                            include: {
+                                project_member: {
+                                    include: {
+                                        organization_user: {
+                                            include: {
+                                                user: true,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        });
 
-        await this.prisma.projectMember.create({
-            data: {
-                project_id: project.id,
-                org_user_id: message.payload.organizationUser.id,
-                role: 'ADMIN'
-            }
-        })
 
         await this.publisher.publish(channelKey, JSON.stringify({
             type: message.type,
-            payload: project
+            payload: createdProject
         }))
     }
 

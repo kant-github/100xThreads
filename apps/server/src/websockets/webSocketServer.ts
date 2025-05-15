@@ -1,4 +1,4 @@
-import { createServer, Server } from "http";
+import { Server } from "http";
 import { WebSocket, WebSocketServer as WSServer } from "ws";
 import { parse as parseUrl } from 'url';
 import Redis from "ioredis";

@@ -25,6 +25,7 @@ import { getUserNameDetails } from "../controllers/user/getUserNameDetails";
 import getOrganizationAndUserBySearch from "../controllers/organization/getOrganizationAndUserBySearch";
 import getP2pChats from "../controllers/p2p/getP2pChats";
 import caseJoinP2pChat from "../controllers/p2p/caseJoinP2pChat";
+import getFriends from "../controllers/friends/getFriends";
 
 const router: Router = Router();
 
@@ -70,5 +71,8 @@ router.get("/notifications", authmiddleware, getNotifications);
 //p2p-controller
 router.get("/p2p/case-join", authmiddleware, caseJoinP2pChat);
 router.get("/p2p/:username", authmiddleware, getP2pChats);
+
+//friends-controller
+router.get("/friends", authmiddleware, getFriends);
 
 export default router;

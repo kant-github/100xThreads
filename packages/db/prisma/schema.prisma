@@ -47,6 +47,21 @@ model Users {
   @@map("users")
 }
 
+model Friendship {
+  id              String    @id @default(uuid()) @db.Uuid
+  user_id_1       Int // Always the lower user_id to prevent duplicates
+  user_id_2       Int // Always the higher user_id to prevent duplicates
+  user1           Users     @relation("UserFriends1", fields: [user_id_1], references: [id], onDelete: Cascade)
+  user2           Users     @relation("UserFriends2", fields: [user_id_2], references: [id], onDelete: Cascade)
+  created_at      DateTime  @default(now())
+  last_message_at DateTime? // For sorting friends list by recent interaction
+
+  @@unique([user_id_1, user_id_2])
+  @@index([user_id_1])
+  @@index([user_id_2])
+  @@map("friendships")
+}
+
 model Organization {
   id                String                    @id @default(uuid()) @db.Uuid
   name              String                    @db.VarChar(191)
@@ -525,21 +540,6 @@ model FriendRequest {
   @@index([reciever_id])
   @@index([status])
   @@map("friend_requests")
-}
-
-model Friendship {
-  id              String    @id @default(uuid()) @db.Uuid
-  user_id_1       Int // Always the lower user_id to prevent duplicates
-  user_id_2       Int // Always the higher user_id to prevent duplicates
-  user1           Users     @relation("UserFriends1", fields: [user_id_1], references: [id], onDelete: Cascade)
-  user2           Users     @relation("UserFriends2", fields: [user_id_2], references: [id], onDelete: Cascade)
-  created_at      DateTime  @default(now())
-  last_message_at DateTime? // For sorting friends list by recent interaction
-
-  @@unique([user_id_1, user_id_2])
-  @@index([user_id_1])
-  @@index([user_id_2])
-  @@map("friendships")
 }
 
 model Notification {
