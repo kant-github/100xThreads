@@ -3,7 +3,7 @@ import { organizationUsersAtom } from "@/recoil/atoms/organizationAtoms/organiza
 import { CiAlignRight } from "react-icons/ci";
 import { MdAirplanemodeActive } from "react-icons/md";
 import { IoIosNotifications } from "react-icons/io";
-import { GrTasks } from "react-icons/gr";
+import { IoMdSettings } from "react-icons/io";
 import { useRecoilValue } from "recoil";
 import { OrganizationUsersType } from "types/types"
 import ProfileOption from "../ui/ProfileOption";
@@ -39,7 +39,7 @@ export default function () {
                         onClick={toggleSidebar}
                     />
                     {isExpanded && <IoIosNotifications onClick={notificationPanelHandler} size={20} className="text-neutral-100 cursor-pointer" />}
-                    {isExpanded && <GrTasks size={15} className="text-neutral-100" />}
+                    {isExpanded && <IoMdSettings size={18} className="text-neutral-100" />}
                     {isExpanded && <MdAirplanemodeActive size={18} className="text-neutral-100" />}
                 </div>
 

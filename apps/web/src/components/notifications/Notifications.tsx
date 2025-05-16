@@ -80,8 +80,8 @@ export default function ({ open, setOpen }: OrganizationNotificationsRendererPro
     return (
 
         <UtilitySideBar
-            width="4/12"
-            blob={true}
+            width="[400px]"
+            blob={false}
             open={open}
             setOpen={setOpen}
             content={

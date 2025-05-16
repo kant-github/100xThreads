@@ -83,6 +83,7 @@ model Organization {
   WelcomeChannel    WelcomeChannel?
   JoinRequests      OrganizationJoinRequest[]
   Invites           OrganizationInvite[]
+  OrganizationTags  OrganizationTag[] // Add this relation
 
   @@unique([name, owner_id])
   @@map("organizations")
@@ -121,20 +122,47 @@ model OrganizationInvite {
   @@map("organization_invites")
 }
 
+model OrganizationTag {
+  id              String                @id @default(uuid()) @db.Uuid
+  name            String                @db.VarChar(50)
+  organization    Organization          @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  organization_id String                @db.Uuid
+  color           String?               @db.VarChar(7)
+  description     String?
+  created_at      DateTime              @default(now())
+  UserTags        OrganizationUserTag[]
+
+  @@unique([name, organization_id])
+  @@map("organization_tags")
+}
+
+model OrganizationUserTag {
+  id                   String            @id @default(uuid()) @db.Uuid
+  organization_user    OrganizationUsers @relation(fields: [organization_user_id], references: [id], onDelete: Cascade)
+  organization_user_id Int
+  tag                  OrganizationTag   @relation(fields: [tag_id], references: [id], onDelete: Cascade)
+  tag_id               String            @db.Uuid
+  assigned_at          DateTime          @default(now())
+
+  @@unique([organization_user_id, tag_id])
+  @@map("organization_user_tags")
+}
+
 model OrganizationUsers {
-  id                   Int             @id @default(autoincrement())
-  organization         Organization    @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  organization_id      String          @db.Uuid
-  user                 Users           @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  id                   Int                   @id @default(autoincrement())
+  organization         Organization          @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  organization_id      String                @db.Uuid
+  user                 Users                 @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id              Int
-  role                 UserRole        @default(MEMBER)
-  joined_at            DateTime        @default(now())
+  role                 UserRole              @default(MEMBER)
+  joined_at            DateTime              @default(now())
   CreatedAnnouncements Announcement[]
   Chats                Chats[]
   Issues               Issues[]
-  CreatedProjects      Project[]       @relation("ProjectCreator")
+  CreatedProjects      Project[]             @relation("ProjectCreator")
   ProjectMemberships   ProjectMember[]
   ProjectChat          ProjectChat[]
+  Tags                 OrganizationUserTag[]
 
   @@unique([organization_id, user_id])
   @@map("organization_users")
@@ -213,6 +241,7 @@ model Project {
   description String?
   created_at  DateTime          @default(now())
   due_date    DateTime          @default(now())
+  image       String?
   // Add creator information
   creator     OrganizationUsers @relation("ProjectCreator", fields: [creator_id], references: [id], onDelete: Cascade)
   creator_id  Int
