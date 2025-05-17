@@ -4,7 +4,6 @@ import GeneralChatChannelUI from "./GeneralChatChannelUI";
 import ResourcesChannelUI from "./ResourcesChannelUI";
 import HelpDeskChannelUI from "./HelpDeskChannelUI";
 import ProjectsChannelUI from "./ProjectsChannelUI";
-import LearningChannelUI from "./LearningChannelUI";
 
 interface RegularChannelViewProps {
     channel: ChannelType;

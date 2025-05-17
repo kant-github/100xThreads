@@ -77,6 +77,7 @@ export class WebSocketClient {
             })
             this.subscribedChannels.add(channelKey);
         }
+        console.log("subscribed")
     }
 
     public unSubscribeToBackendWSS(channelId: string, organizationId: string, type: string) {
@@ -89,6 +90,7 @@ export class WebSocketClient {
             })
             this.subscribedChannels.delete(channelKey);
         }
+        console.log("unsubscribed")
     }
 
     public handleMessage(message: any) {

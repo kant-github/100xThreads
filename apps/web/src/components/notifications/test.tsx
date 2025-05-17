@@ -1,349 +1,303 @@
-import { Dispatch, SetStateAction, useState, useMemo } from "react";
-import UtilitySideBar from "../utility/UtilitySideBar";
-import DashboardComponentHeading from "../dashboard/DashboardComponentHeading";
-import { useNotificationWebSocket } from "@/hooks/useNotificationWebsocket";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { NotificationAtom } from "@/recoil/atoms/notifications/NotificationsAtom";
-import { Bell, Calendar, CheckCircle, Clock, MessageCircle, Users, UserPlus, Briefcase, Hash, BellRing, PenTool, List, AlertCircle, Heart } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useRecoilValue } from "recoil";
+import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
+import DashboardComponentHeading from "@/components/dashboard/DashboardComponentHeading";
+import { IoMdAdd } from "react-icons/io";
+import { FiEdit2, FiTrash2 } from "react-icons/fi";
+import { IoClose } from "react-icons/io5";
 
-// Types imported from your code
-import type { NotificationType, NotificationTypeEnum } from "@/types/notifications";
+// Mock for demonstration - replace with your actual API calls
+const mockTags = [
+    { id: "1", name: "Developer", color: "#FF5733", description: "Technical team members" },
+    { id: "2", name: "Design", color: "#33FF57", description: "UI/UX designers" },
+    { id: "3", name: "Management", color: "#3357FF", description: "Team leaders and managers" },
+];
 
-interface OrganizationNotificationsRendererProps {
-    open: boolean;
-    setOpen: Dispatch<SetStateAction<boolean>>;
-}
+export default function OrganizationTagsSettings() {
+    const organization = useRecoilValue(organizationAtom);
+    const [tags, setTags] = useState([]);
+    const [isAddingTag, setIsAddingTag] = useState(false);
+    const [isEditingTag, setIsEditingTag] = useState(null);
+    const [newTag, setNewTag] = useState({
+        name: "",
+        color: "#6366F1", // Default color
+        description: "",
+    });
+    const [error, setError] = useState("");
 
-export default function NotificationsRenderer({
-    open,
-    setOpen
-}: OrganizationNotificationsRendererProps) {
-    const notifications = useRecoilValue(NotificationAtom);
-    const setNotifications = useSetRecoilState(NotificationAtom);
-    const [activeFilter, setActiveFilter] = useState<'all' | 'unread'>('all');
+    // Mock API fetch - replace with actual API call
+    useEffect(() => {
+        // In production, fetch from API
+        // const fetchTags = async () => {
+        //   const response = await fetch(`/api/organizations/${organization.id}/tags`);
+        //   const data = await response.json();
+        //   setTags(data);
+        // };
+        // fetchTags();
 
-    // Filter notifications based on the active filter
-    const filteredNotifications = useMemo(() => {
-        if (activeFilter === 'unread') {
-            return notifications.filter(notification => !notification.is_read);
+        // Using mock data for now
+        setTags(mockTags);
+    }, [organization?.id]);
+
+    const handleTagChange = (e) => {
+        const { name, value } = e.target;
+        setNewTag((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleAddTag = async () => {
+        // Validation
+        if (!newTag.name.trim()) {
+            setError("Tag name is required");
+            return;
         }
-        return notifications;
-    }, [notifications, activeFilter]);
 
-    // Helper functions for date checks
-    const isToday = (dateStr: string) => {
-        const date = new Date(dateStr);
-        const today = new Date();
-        return date.getDate() === today.getDate() &&
-            date.getMonth() === today.getMonth() &&
-            date.getFullYear() === today.getFullYear();
-    };
+        // In production, send to API
+        // const response = await fetch(`/api/organizations/${organization.id}/tags`, {
+        //   method: "POST",
+        //   headers: { "Content-Type": "application/json" },
+        //   body: JSON.stringify(newTag),
+        // });
+        // const data = await response.json();
 
-    const isYesterday = (dateStr: string) => {
-        const date = new Date(dateStr);
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        return date.getDate() === yesterday.getDate() &&
-            date.getMonth() === yesterday.getMonth() &&
-            date.getFullYear() === yesterday.getFullYear();
-    };
-
-    const isThisWeek = (dateStr: string) => {
-        const date = new Date(dateStr);
-        const today = new Date();
-        const dayOfWeek = today.getDay();
-        const startOfWeek = new Date(today);
-        startOfWeek.setDate(today.getDate() - dayOfWeek);
-        startOfWeek.setHours(0, 0, 0, 0);
-
-        return date >= startOfWeek && !isToday(dateStr) && !isYesterday(dateStr);
-    };
-
-    const isThisMonth = (dateStr: string) => {
-        const date = new Date(dateStr);
-        const today = new Date();
-        return date.getMonth() === today.getMonth() &&
-            date.getFullYear() === today.getFullYear() &&
-            !isToday(dateStr) && !isYesterday(dateStr) && !isThisWeek(dateStr);
-    };
-
-    // Group notifications by date
-    const groupedNotifications = useMemo(() => {
-        const groups = {
-            today: [] as NotificationType[],
-            yesterday: [] as NotificationType[],
-            thisWeek: [] as NotificationType[],
-            thisMonth: [] as NotificationType[],
-            older: [] as NotificationType[]
+        // Mock API response
+        const mockResponse = {
+            ...newTag,
+            id: Date.now().toString(),
         };
 
-        filteredNotifications.forEach(notification => {
-            if (isToday(notification.created_at)) {
-                groups.today.push(notification);
-            } else if (isYesterday(notification.created_at)) {
-                groups.yesterday.push(notification);
-            } else if (isThisWeek(notification.created_at)) {
-                groups.thisWeek.push(notification);
-            } else if (isThisMonth(notification.created_at)) {
-                groups.thisMonth.push(notification);
-            } else {
-                groups.older.push(notification);
-            }
-        });
-
-        return groups;
-    }, [filteredNotifications]);
-
-    // Mark notification as read
-    const markAsRead = (id: string) => {
-        setNotifications(prev =>
-            prev.map(notification =>
-                notification.id === id
-                    ? { ...notification, is_read: true }
-                    : notification
-            )
-        );
-
-        // Here you would also send an API request to update on the server
-        // e.g. fetch('/api/notifications/mark-read', { method: 'POST', body: JSON.stringify({ id }) })
+        setTags((prev) => [...prev, mockResponse]);
+        setNewTag({ name: "", color: "#6366F1", description: "" });
+        setIsAddingTag(false);
+        setError("");
     };
 
-    // Mark all notifications as read
-    const markAllAsRead = () => {
-        setNotifications(prev =>
-            prev.map(notification => ({ ...notification, is_read: true }))
-        );
-
-        // Here you would also send an API request to update on the server
-        // e.g. fetch('/api/notifications/mark-all-read', { method: 'POST' })
+    const handleEditTag = (tag) => {
+        setIsEditingTag(tag.id);
+        setNewTag(tag);
     };
 
-    // Get icon for notification type
-    const getNotificationIcon = (type: NotificationTypeEnum) => {
-        switch (type) {
-            case 'FRIEND_REQUEST_RECEIVED':
-            case 'FRIEND_REQUEST_ACCEPTED':
-            case 'FRIEND_REQUEST_REJECTED':
-            case 'FRIEND_ONLINE':
-                return <UserPlus className="w-5 h-5 text-blue-500" />;
-
-            case 'FRIEND_MESSAGE_RECEIVED':
-            case 'NEW_CHANNEL_MESSAGE':
-            case 'CHANNEL_MENTION':
-                return <MessageCircle className="w-5 h-5 text-green-500" />;
-
-            case 'ORG_INVITE_RECEIVED':
-            case 'ORG_JOIN_REQUEST_RESPONSE':
-            case 'ORG_ROLE_CHANGED':
-            case 'ORG_JOIN_REQUEST_RECEIVED':
-                return <Briefcase className="w-5 h-5 text-purple-500" />;
-
-            case 'NEW_ANNOUNCEMENT':
-            case 'ANNOUNCEMENT_REQUIRING_ACK':
-                return <BellRing className="w-5 h-5 text-yellow-500" />;
-
-            case 'EVENT_CREATED':
-            case 'EVENT_REMINDER':
-            case 'EVENT_UPDATED':
-            case 'EVENT_CANCELLED':
-                return <Calendar className="w-5 h-5 text-indigo-500" />;
-
-            case 'PROJECT_ADDED':
-                return <PenTool className="w-5 h-5 text-teal-500" />;
-
-            case 'TASK_ASSIGNED':
-            case 'TASK_DUE_SOON':
-            case 'TASK_STATUS_CHANGED':
-                return <List className="w-5 h-5 text-orange-500" />;
-
-            case 'NEW_POLL':
-            case 'POLL_ENDING_SOON':
-            case 'POLL_RESULTS':
-                return <Users className="w-5 h-5 text-violet-500" />;
-
-            case 'ISSUE_ASSIGNED':
-            case 'ISSUE_STATUS_CHANGED':
-                return <AlertCircle className="w-5 h-5 text-red-500" />;
-
-            case 'CHAT_REACTION':
-            case 'LIKED_MESSAGE':
-                return <Heart className="w-5 h-5 text-pink-500" />;
-
-            default:
-                return <Bell className="w-5 h-5 text-gray-500" />;
+    const handleUpdateTag = async () => {
+        // Validation
+        if (!newTag.name.trim()) {
+            setError("Tag name is required");
+            return;
         }
-    };
 
-    // Format date for display
-    const formatNotificationTime = (dateString: string) => {
-        const date = new Date(dateString);
+        // In production, send to API
+        // const response = await fetch(`/api/organizations/${organization.id}/tags/${isEditingTag}`, {
+        //   method: "PUT",
+        //   headers: { "Content-Type": "application/json" },
+        //   body: JSON.stringify(newTag),
+        // });
+        // const data = await response.json();
 
-        if (isToday(dateString)) {
-            return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-        } else if (isYesterday(dateString)) {
-            return "Yesterday";
-        } else if (isThisWeek(dateString)) {
-            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            return days[date.getDay()];
-        } else {
-            const month = date.toLocaleString('default', { month: 'short' });
-            return `${month} ${date.getDate()}, ${date.getFullYear()}`;
-        }
-    };
-
-    // Helper to render a single notification
-    const renderNotification = (notification: NotificationType) => {
-        return (
-            <div
-                key={notification.id}
-                className={`flex items-start p-3 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer ${!notification.is_read ? 'bg-blue-50' : ''}`}
-                onClick={() => {
-                    markAsRead(notification.id);
-                    if (notification.action_url) {
-                        // Here you would navigate to the action URL
-                        // e.g. router.push(notification.action_url)
-                        console.log(`Navigate to: ${notification.action_url}`);
-                    }
-                }}
-            >
-                <div className="flex-shrink-0">
-                    {getNotificationIcon(notification.type)}
-                </div>
-                <div className="ml-3 flex-1">
-                    <div className="flex justify-between">
-                        <p className={`text-sm font-medium ${!notification.is_read ? 'text-blue-900' : 'text-gray-900'}`}>{notification.title}</p>
-                        <span className="text-xs text-gray-500">{formatNotificationTime(notification.created_at)}</span>
-                    </div>
-                    <p className={`text-sm ${!notification.is_read ? 'text-blue-800' : 'text-gray-600'}`}>{notification.message}</p>
-
-                    {/* Conditionally show action button based on notification type */}
-                    {notification.type.includes('REQUEST') && !notification.is_read && (
-                        <div className="mt-2 flex space-x-2">
-                            <button
-                                className="px-3 py-1 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700 transition-colors"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    console.log(`Accept action for ${notification.id}`);
-                                    markAsRead(notification.id);
-                                }}
-                            >
-                                Accept
-                            </button>
-                            <button
-                                className="px-3 py-1 bg-gray-200 text-gray-800 text-xs rounded-md hover:bg-gray-300 transition-colors"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    console.log(`Decline action for ${notification.id}`);
-                                    markAsRead(notification.id);
-                                }}
-                            >
-                                Decline
-                            </button>
-                        </div>
-                    )}
-                </div>
-                {!notification.is_read && (
-                    <div className="flex-shrink-0 ml-2">
-                        <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                    </div>
-                )}
-            </div>
+        setTags((prev) =>
+            prev.map((tag) => (tag.id === isEditingTag ? newTag : tag))
         );
+
+        setIsEditingTag(null);
+        setNewTag({ name: "", color: "#6366F1", description: "" });
+        setError("");
     };
 
-    // Render notification group
-    const renderNotificationGroup = (title: string, notifications: NotificationType[]) => {
-        if (notifications.length === 0) return null;
+    const handleDeleteTag = async (id) => {
+        // In production, send to API
+        // await fetch(`/api/organizations/${organization.id}/tags/${id}`, {
+        //   method: "DELETE",
+        // });
 
-        return (
-            <div className="mb-4">
-                <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider px-3 py-2">{title}</h3>
-                <div className="space-y-1">
-                    {notifications.map(renderNotification)}
-                </div>
-            </div>
-        );
+        setTags((prev) => prev.filter((tag) => tag.id !== id));
     };
 
-    // Empty state when no notifications
-    const renderEmptyState = () => (
-        <div className="flex flex-col items-center justify-center h-64 text-center">
-            <Bell className="w-12 h-12 text-gray-300 mb-2" />
-            <h3 className="text-lg font-medium text-gray-900">No notifications</h3>
-            <p className="text-sm text-gray-500 max-w-sm">
-                {activeFilter === 'unread'
-                    ? "You've read all your notifications. Switch to 'All' to see previous notifications."
-                    : "You don't have any notifications yet."}
-            </p>
-        </div>
-    );
+    const cancelTagOperation = () => {
+        setIsAddingTag(false);
+        setIsEditingTag(null);
+        setNewTag({ name: "", color: "#6366F1", description: "" });
+        setError("");
+    };
 
     return (
-        <UtilitySideBar
-            width="4/12"
-            blob={true}
-            open={open}
-            setOpen={setOpen}
-            content={
-                <div className="h-full flex flex-col px-5 py-3 min-w-[300px]">
-                    <div className="flex justify-between items-center">
-                        <DashboardComponentHeading description="See all your notifications">
-                            Notifications
-                        </DashboardComponentHeading>
+        <div className="w-full py-6 px-8 text-zinc-100">
+            <DashboardComponentHeading description="Control tags over your organization">
+                Tags
+            </DashboardComponentHeading>
 
-                        {filteredNotifications.length > 0 && (
-                            <button
-                                onClick={markAllAsRead}
-                                className="text-sm text-blue-600 hover:text-blue-800"
-                            >
-                                Mark all as read
-                            </button>
-                        )}
-                    </div>
-
-                    {/* Filter tabs */}
-                    <div className="flex border-b border-gray-200 mb-4">
+            <div className="mt-6">
+                <div className="flex justify-between items-center mb-4">
+                    <p className="text-sm text-zinc-300">
+                        Tags help you categorize users and control content visibility within your organization.
+                    </p>
+                    {!isAddingTag && !isEditingTag && (
                         <button
-                            className={`px-4 py-2 text-sm font-medium ${activeFilter === 'all'
-                                ? 'text-blue-600 border-b-2 border-blue-600'
-                                : 'text-gray-500 hover:text-gray-700'
-                                }`}
-                            onClick={() => setActiveFilter('all')}
+                            onClick={() => setIsAddingTag(true)}
+                            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-md text-sm transition-colors"
                         >
-                            All
+                            <IoMdAdd size={16} />
+                            Add Tag
                         </button>
-                        <button
-                            className={`px-4 py-2 text-sm font-medium ${activeFilter === 'unread'
-                                ? 'text-blue-600 border-b-2 border-blue-600'
-                                : 'text-gray-500 hover:text-gray-700'
-                                }`}
-                            onClick={() => setActiveFilter('unread')}
-                        >
-                            Unread
-                            {notifications.filter(n => !n.is_read).length > 0 && (
-                                <span className="ml-1 bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">
-                                    {notifications.filter(n => !n.is_read).length}
-                                </span>
-                            )}
-                        </button>
-                    </div>
-
-                    {/* Notifications list */}
-                    <div className="overflow-y-auto flex-1">
-                        {filteredNotifications.length === 0 ? (
-                            renderEmptyState()
-                        ) : (
-                            <>
-                                {renderNotificationGroup("Today", groupedNotifications.today)}
-                                {renderNotificationGroup("Yesterday", groupedNotifications.yesterday)}
-                                {renderNotificationGroup("This Week", groupedNotifications.thisWeek)}
-                                {renderNotificationGroup("This Month", groupedNotifications.thisMonth)}
-                                {renderNotificationGroup("Older", groupedNotifications.older)}
-                            </>
-                        )}
-                    </div>
+                    )}
                 </div>
-            }
-        />
+
+                {(isAddingTag || isEditingTag) && (
+                    <div className="bg-zinc-800 rounded-lg p-4 mb-6 border border-zinc-700">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="font-medium">
+                                {isEditingTag ? "Edit Tag" : "Add New Tag"}
+                            </h3>
+                            <button
+                                onClick={cancelTagOperation}
+                                className="text-zinc-400 hover:text-zinc-200"
+                            >
+                                <IoClose size={20} />
+                            </button>
+                        </div>
+
+                        {error && (
+                            <div className="text-red-500 text-sm mb-4">{error}</div>
+                        )}
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-zinc-400 mb-1">
+                                    Tag Name*
+                                </label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={newTag.name}
+                                    onChange={handleTagChange}
+                                    className="w-full bg-zinc-900 border border-zinc-700 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    placeholder="e.g., Developer, Designer"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-zinc-400 mb-1">
+                                    Color
+                                </label>
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="color"
+                                        name="color"
+                                        value={newTag.color}
+                                        onChange={handleTagChange}
+                                        className="h-9 w-9 bg-transparent border-0 rounded cursor-pointer"
+                                    />
+                                    <input
+                                        type="text"
+                                        name="color"
+                                        value={newTag.color}
+                                        onChange={handleTagChange}
+                                        className="flex-1 bg-zinc-900 border border-zinc-700 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        placeholder="#FFFFFF"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-zinc-400 mb-1">
+                                    Description
+                                </label>
+                                <textarea
+                                    name="description"
+                                    value={newTag.description}
+                                    onChange={handleTagChange}
+                                    className="w-full bg-zinc-900 border border-zinc-700 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    placeholder="What is this tag for?"
+                                    rows={2}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end mt-4 gap-3">
+                            <button
+                                onClick={cancelTagOperation}
+                                className="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 rounded-md text-sm transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={isEditingTag ? handleUpdateTag : handleAddTag}
+                                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-md text-sm transition-colors"
+                            >
+                                {isEditingTag ? "Update Tag" : "Add Tag"}
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* Tag List */}
+                <div className="overflow-hidden bg-zinc-800 rounded-lg border border-zinc-700">
+                    <table className="min-w-full divide-y divide-zinc-700">
+                        <thead className="bg-zinc-900">
+                            <tr>
+                                <th
+                                    scope="col"
+                                    className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider"
+                                >
+                                    Tag Name
+                                </th>
+                                <th
+                                    scope="col"
+                                    className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider"
+                                >
+                                    Description
+                                </th>
+                                <th
+                                    scope="col"
+                                    className="px-6 py-3 text-right text-xs font-medium text-zinc-400 uppercase tracking-wider"
+                                >
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-zinc-700">
+                            {tags.length === 0 ? (
+                                <tr>
+                                    <td colSpan={3} className="px-6 py-8 text-center text-zinc-400">
+                                        No tags have been created yet. Add your first tag to start organizing users.
+                                    </td>
+                                </tr>
+                            ) : (
+                                tags.map((tag) => (
+                                    <tr key={tag.id} className="hover:bg-zinc-750">
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex items-center">
+                                                <div
+                                                    className="w-4 h-4 rounded-full mr-3"
+                                                    style={{ backgroundColor: tag.color }}
+                                                ></div>
+                                                <div className="text-sm font-medium">{tag.name}</div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="text-sm text-zinc-300">
+                                                {tag.description || "No description"}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                                            <div className="flex justify-end gap-3">
+                                                <button
+                                                    onClick={() => handleEditTag(tag)}
+                                                    className="text-indigo-400 hover:text-indigo-300 transition-colors"
+                                                >
+                                                    <FiEdit2 size={16} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDeleteTag(tag.id)}
+                                                    className="text-red-400 hover:text-red-300 transition-colors"
+                                                >
+                                                    <FiTrash2 size={16} />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     );
 }

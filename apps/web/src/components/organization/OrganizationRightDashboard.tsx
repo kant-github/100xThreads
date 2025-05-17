@@ -4,7 +4,7 @@ import { CiAlignRight } from "react-icons/ci";
 import { MdAirplanemodeActive } from "react-icons/md";
 import { IoIosNotifications } from "react-icons/io";
 import { IoMdSettings } from "react-icons/io";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { OrganizationUsersType } from "types/types"
 import ProfileOption from "../ui/ProfileOption";
 import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
@@ -12,6 +12,7 @@ import OrganizationRolesTickerRenderer from "../utility/tickers/organization_rol
 import OptionImage from "../ui/OptionImage";
 import Image from 'next/image';
 import OrganizationNotificationsRenderer from '../notifications/Notifications';
+import { selectedChannelIdAtom } from '@/recoil/atoms/organizationAtoms/organizationDashboardManagement';
 
 const baseDivStyles = "flex items-center justify-between gap-x-2 sm:gap-x-3 py-1.5 sm:py-1 px-2 sm:px-3 rounded-[8px] cursor-pointer select-none";
 const textStyles = "text-[12px] sm:text-[12px] text-gray-100 dark:text-[#d6d6d6] font-semibold mt-0.5 tracking-wide hidden sm:block";
@@ -20,13 +21,18 @@ export default function () {
     const [isExpanded, setIsExpanded] = useState(true);
     const [notificatioPanel, setNotificationPanel] = useState<boolean>(false);
     const organizationUsers = useRecoilValue<OrganizationUsersType[]>(organizationUsersAtom);
-
+    const setSelectedChannelId = useSetRecoilState(selectedChannelIdAtom);
     function toggleSidebar() {
         setIsExpanded(!isExpanded);
     };
 
     function notificationPanelHandler() {
         setNotificationPanel(true);
+    }
+
+    function openSettingHandler() {
+        console.log("tapped");
+        setSelectedChannelId('org_settings');
     }
 
     return (
@@ -39,7 +45,7 @@ export default function () {
                         onClick={toggleSidebar}
                     />
                     {isExpanded && <IoIosNotifications onClick={notificationPanelHandler} size={20} className="text-neutral-100 cursor-pointer" />}
-                    {isExpanded && <IoMdSettings size={18} className="text-neutral-100" />}
+                    {isExpanded && <IoMdSettings onClick={openSettingHandler} size={18} className="text-neutral-100 cursor-pointer" />}
                     {isExpanded && <MdAirplanemodeActive size={18} className="text-neutral-100" />}
                 </div>
 

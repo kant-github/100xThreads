@@ -1,6 +1,5 @@
 import DashboardComponentHeading from "../dashboard/DashboardComponentHeading";
 import { PiDotsThreeBold } from "react-icons/pi";
-import ActiveButton from "../utility/ActiveTicker";
 import WhiteText from "../heading/WhiteText";
 import ActiveTicker from "../utility/ActiveTicker";
 import CancelTicker from "../utility/CancelTicker";
@@ -15,7 +14,6 @@ export default function ({ className }: UserEventCardsProps) {
             <DashboardComponentHeading description="See all upcoming events">Events</DashboardComponentHeading>
 
             <div className="flex flex-row items-center gap-x-6 justify-start mt-4">
-                {/* card-1 */}
                 <div className="border-[1px] dark:bg-zinc-700 border-zinc-600 rounded-[8px] w-3/12 px-6 py-4 flex flex-col gap-y-1">
                     <div className="flex flex-row justify-between">
                         <ActiveTicker />

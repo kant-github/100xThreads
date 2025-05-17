@@ -10,11 +10,11 @@ export default function () {
     const toggle = () => setIsToggled(!isToggled);
 
     return (
-        <div className="bg-light dark:bg-dark h-full">
+        <div className="bg-light dark:bg-dark h-full ">
             <DashboardComponentHeading className="pt-4 pl-12" description="Manage your preferences and account settings">Settings</DashboardComponentHeading>
             <div className="pt-8 mx-12">
                 <SettingsToggle />
-                <SettingsRenderer/>
+                <SettingsRenderer />
             </div>
         </div>
     )

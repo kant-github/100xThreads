@@ -9,7 +9,7 @@ type GuardComponentProps = {
     children: React.ReactNode
 }
 
-export default function ({
+export default function GuardComponent({
     action,
     subject,
     context = {},

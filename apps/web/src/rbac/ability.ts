@@ -189,7 +189,10 @@ export class Ability {
             // Manage events for organization activities
             { action: Action.CREATE, subject: Subject.EVENT },
             { action: Action.UPDATE, subject: Subject.EVENT },
-            { action: Action.DELETE, subject: Subject.EVENT }
+            { action: Action.DELETE, subject: Subject.EVENT },
+
+            { action: Action.CREATE, subject: Subject.TAGS },
+            { action: Action.UPDATE, subject: Subject.TAGS },
         );
     }
 

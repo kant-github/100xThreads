@@ -74,6 +74,7 @@ export type OrganizationType = {
   organization_type: string;
   created_at: string;
   tags: string[];
+  OrganizationTags: OrganizationTagType
 };
 
 export type OrganizationUsersType = {
@@ -84,7 +85,27 @@ export type OrganizationUsersType = {
   user_id: number
   role: UserRole
   joined_at?: Date
+  Tags: OrganizationUserTagType
 }
+
+export type OrganizationTagType = {
+  id: string;
+  name: string;
+  organization_id: string;
+  color?: string | null;
+  description?: string | null;
+  created_at: string;
+  UserTags: OrganizationUserTagType[];
+};
+
+export type OrganizationUserTagType = {
+  id: string;
+  organization_user_id: number;
+  tag_id: string;
+  assigned_at: string;
+  tag?: OrganizationTagType;
+};
+
 
 export interface AnnouncementType {
   id: string;
@@ -237,7 +258,7 @@ export interface PollVoteTypes {
   poll_id: string;
   option_id: string;
   user_id: number;
-  created_at: string; 
+  created_at: string;
 }
 
 export type RoleRequest = {

@@ -11,7 +11,7 @@ export default function ({ channel }: EventChannelTopBarProps) {
     return (
         <div className="flex items-center justify-between">
             <DashboardComponentHeading description={channel.description}>{channel.title}</DashboardComponentHeading>
-            <Button className="bg-neutral-700/70 rounded-[6px] px-4" variant={"ghost"}>
+            <Button className="bg-neutral-700/70 rounded-[6px] px-4 w-fit flex items-center gap-x-3" variant={"ghost"}>
                 <Image
                     src={"/images/google-calendar.png"}
                     height={18}

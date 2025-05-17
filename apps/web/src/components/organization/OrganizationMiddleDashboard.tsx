@@ -6,18 +6,22 @@ import EventChannelView from './channels/EventChannelView';
 import RegularChannelView from './channels/RegularChannelView';
 import { ChannelType, EventChannelType, WelcomeChannel } from 'types/types';
 import DefaultOrganizationDashboardUI from './channels/DefaultOrganizationDashboardUI';
+import OrganizationSettingsChannelUI from './channels/OrganizationSettingsChannelUI';
 
 
 
 
 export default function ChannelContent() {
     const selectedChannel = useRecoilValue(selectedChannelSelector);
+    console.log("selected channel is : ", selectedChannel);
 
     if (!selectedChannel) {
         return <div className="bg-[#171717] w-full p-4">Select a channel</div>;
     }
 
     switch (selectedChannel.type) {
+        case 'org_settings':
+            return <OrganizationSettingsChannelUI />
         case 'default':
             return <DefaultOrganizationDashboardUI />
         case 'regular':

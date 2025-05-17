@@ -49,6 +49,7 @@ export default function ({ channel }: RegularChannelViewProps) {
             const unsubNew = subscribeToHandler('new-announcement', handleNewAnnouncement);
             const unsubUpdate = subscribeToHandler('update-announcement', handleUpdateAnnouncement);
             const unsubDelete = subscribeToHandler('delete-announcement', handleDeleteAnnouncement);
+
             return () => {
                 unsubNew();
                 unsubUpdate();
@@ -58,7 +59,7 @@ export default function ({ channel }: RegularChannelViewProps) {
                 unsubscribeFromBackend(channel.id, organizationId, 'delete-announcement');
             }
         }
-    })
+    }, [organizationId, channel.id, session.user?.id])
 
 
 
