@@ -5,6 +5,12 @@ import { IoMdAdd } from "react-icons/io";
 import TagContent from "./TagContent";
 import { OrganizationTagType } from "types/types";
 import TagSettingsUpdateForm from "./TagSettingsUpdateForm";
+import axios from "axios";
+import { API_URL } from "@/lib/apiAuthRoutes";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
+import { userSessionAtom } from "@/recoil/atoms/atom";
+import { organizationTagsAtom } from "@/recoil/atoms/tags/organizationTagsAtom";
 
 export type NewTagType = {
     name: string;
@@ -12,94 +18,13 @@ export type NewTagType = {
     description: string;
 };
 
-const mockTags: OrganizationTagType[] = [
-    {
-        id: "1",
-        name: "Developer",
-        color: "#FF5733",
-        description: "Technical team members",
-        organization_id: "org-1",
-        created_at: new Date().toISOString(),
-        UserTags: []
-    },
-    {
-        id: "2",
-        name: "Design",
-        color: "#33FF57",
-        description: "UI/UX designers",
-        organization_id: "org-1",
-        created_at: new Date().toISOString(),
-        UserTags: []
-    },
-    {
-        id: "3",
-        name: "Management",
-        color: "#3357FF",
-        description: "Team leaders and managers",
-        organization_id: "org-1",
-        created_at: new Date().toISOString(),
-        UserTags: []
-    },
-    {
-        id: "1",
-        name: "Developer",
-        color: "#FF5733",
-        description: "Technical team members",
-        organization_id: "org-1",
-        created_at: new Date().toISOString(),
-        UserTags: []
-    },
-    {
-        id: "2",
-        name: "Design",
-        color: "#33FF57",
-        description: "UI/UX designers",
-        organization_id: "org-1",
-        created_at: new Date().toISOString(),
-        UserTags: []
-    },
-    {
-        id: "3",
-        name: "Management",
-        color: "#3357FF",
-        description: "Team leaders and managers",
-        organization_id: "org-1",
-        created_at: new Date().toISOString(),
-        UserTags: []
-    },
-    {
-        id: "1",
-        name: "Developer",
-        color: "#FF5733",
-        description: "Technical team members",
-        organization_id: "org-1",
-        created_at: new Date().toISOString(),
-        UserTags: []
-    },
-    {
-        id: "2",
-        name: "Design",
-        color: "#33FF57",
-        description: "UI/UX designers",
-        organization_id: "org-1",
-        created_at: new Date().toISOString(),
-        UserTags: []
-    },
-    {
-        id: "3",
-        name: "Management",
-        color: "#3357FF",
-        description: "Team leaders and managers",
-        organization_id: "org-1",
-        created_at: new Date().toISOString(),
-        UserTags: []
-    },
-];
-
 export default function TagSettingsUI() {
+    const organizationId = useRecoilValue(organizationIdAtom);
+    const session = useRecoilValue(userSessionAtom);
     const [isAddingTag, setIsAddingTag] = useState<boolean>(false);
     const [isEditingTag, setIsEditingTag] = useState<string | null>(null);
-    const [tags, setTags] = useState<OrganizationTagType[]>(mockTags);
+    const [tags, setTags] = useRecoilState(organizationTagsAtom);
+    const [deleteTagModal, setDeleteTagModal] = useState<boolean>(false);
     const [error, setError] = useState<string>("");
     const [newTag, setNewTag] = useState<NewTagType>({
         name: "",
@@ -120,6 +45,7 @@ export default function TagSettingsUI() {
     }
 
     function handleEditTag(tag: OrganizationTagType) {
+        console.log("editing tag is : ", tag);
         setIsEditingTag(tag.id);
         setNewTag({
             name: tag.name,
@@ -128,86 +54,88 @@ export default function TagSettingsUI() {
         });
     }
 
-    function handleDeleteTag(id: string) {
-        // In production, send to API
-        // await fetch(`/api/organizations/${organization.id}/tags/${id}`, {
-        //   method: "DELETE",
-        // });
+    async function handleDeleteTag(id: string) {
+        try {
+            await axios.delete(`${API_URL}/organization/tags/${organizationId}/${id}`,
+                {
+                    headers: {
+                        authorization: `Bearer ${session.user?.token}`
+                    }
+                }
+            )
+            setDeleteTagModal(false);
+        } catch (err) {
+            console.error("Error in deleting tags");
+        }
 
         setTags((prev) => prev.filter((tag) => tag.id !== id));
     }
 
     async function handleAddTag() {
-        // Validation
+        if (!session.user?.token) return;
         if (!newTag.name.trim()) {
             setError("Tag name is required");
             return;
         }
 
-        // In production, send to API
-        // const response = await fetch(`/api/organizations/${organization.id}/tags`, {
-        //   method: "POST",
-        //   headers: { "Content-Type": "application/json" },
-        //   body: JSON.stringify(newTag),
-        // });
-        // const data = await response.json();
+        const { data } = await axios.post(`${API_URL}/organization/tags/${organizationId}`,
+            { ...newTag },
+            {
+                headers: {
+                    Authorization: `Bearer ${session.user.token}`,
+                },
+            }
+        );
 
-        // Mock API response
-        const mockResponse: OrganizationTagType = {
-            ...newTag,
-            id: Date.now().toString(),
-            organization_id: "org-1", // In production, this would come from context or props
-            created_at: new Date().toISOString(),
-            UserTags: [],
-        };
-
-        setTags((prev) => [...prev, mockResponse]);
+        setTags(prev => [data.data, ...prev]);
         setNewTag({ name: "", color: "#6366F1", description: "" });
         setIsAddingTag(false);
         setError("");
     }
 
     async function handleUpdateTag() {
-        // Validation
+        if (!session.user?.token || !organizationId || !isEditingTag) return;
+
         if (!newTag.name.trim()) {
             setError("Tag name is required");
             return;
         }
 
-        if (!isEditingTag) return;
+        console.log("isediting tag : ", isEditingTag);
 
-        // In production, send to API
-        // const response = await fetch(`/api/organizations/${organization.id}/tags/${isEditingTag}`, {
-        //   method: "PUT",
-        //   headers: { "Content-Type": "application/json" },
-        //   body: JSON.stringify(newTag),
-        // });
-        // const data = await response.json();
-
-        setTags((prev) =>
-            prev.map((tag) => {
-                if (tag.id === isEditingTag) {
-                    return {
-                        ...tag,
-                        name: newTag.name,
-                        color: newTag.color,
-                        description: newTag.description,
-                    };
+        try {
+            const { data } = await axios.put(`${API_URL}/organization/tags/${organizationId}/${isEditingTag}`,
+                { ...newTag },
+                {
+                    headers: {
+                        Authorization: `Bearer ${session.user.token}`,
+                    },
                 }
-                return tag;
-            })
-        );
+            );
 
-        setIsEditingTag(null);
-        setNewTag({ name: "", color: "#6366F1", description: "" });
-        setError("");
-    };
+            setTags((prev) =>
+                prev.map((tag) => {
+                    if (tag.id === isEditingTag) {
+                        return data.data;
+                    }
+                    return tag;
+                })
+            );
+
+            setIsEditingTag(null);
+            setNewTag({ name: "", color: "#6366F1", description: "" });
+            setError("");
+        } catch (error) {
+            console.error("Error updating tag:", error);
+            setError("Failed to update tag. Please try again.");
+        }
+    }
 
     return (
-        <div className="w-full flex flex-col h-full">
-            <div className="px-8 pt-6 pb-2 relative flex-shrink-0">
+        <div className="w-full flex flex-col h-full py-4 relative">
+            <div className="px-8 flex-shrink-0">
                 <DashboardComponentHeading description="Tags help you categorize users and control content visibility within your organization.">Tags</DashboardComponentHeading>
-                <div className="absolute top-6 right-6 mb-4">
+                <div className="absolute top-6 right-6 ">
                     {!isAddingTag && !isEditingTag && (
                         <Button variant={"default"} onClick={() => setIsAddingTag(true)} className="flex items-center gap-2 px-4 py-2 rounded-[8px] text-sm transition-colors text-neutral-900">
                             <IoMdAdd size={16} />
@@ -227,6 +155,8 @@ export default function TagSettingsUI() {
                     tags={tags}
                     handleDeleteTag={handleDeleteTag}
                     handleEditTag={handleEditTag}
+                    setDeleteTagModal={setDeleteTagModal}
+                    deleteTagModal={deleteTagModal}
                 />
             </div>
         </div>

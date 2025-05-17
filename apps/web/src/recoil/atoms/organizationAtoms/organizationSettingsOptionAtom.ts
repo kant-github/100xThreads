@@ -1,7 +1,8 @@
 import { atom } from "recoil";
 
 export enum OrganizationSettingsOptionEnum {
-    TAGS = 'tags'
+    TAGS = 'tags',
+    USERS = 'users'
 }
 
 export const organizationSettingsOptionAtom = atom<OrganizationSettingsOptionEnum>({

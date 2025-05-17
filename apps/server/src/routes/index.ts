@@ -26,6 +26,9 @@ import getOrganizationAndUserBySearch from "../controllers/organization/getOrgan
 import getP2pChats from "../controllers/p2p/getP2pChats";
 import caseJoinP2pChat from "../controllers/p2p/caseJoinP2pChat";
 import getFriends from "../controllers/friends/getFriends";
+import storeTagHandler from "../controllers/settings-channel/tags/storeTagHandler";
+import updateTagHandler from "../controllers/settings-channel/tags/updateTagHandler";
+import deleteTagHandler from "../controllers/settings-channel/tags/deleteTagHandler";
 
 const router: Router = Router();
 
@@ -74,5 +77,11 @@ router.get("/p2p/:username", authmiddleware, getP2pChats);
 
 //friends-controller
 router.get("/friends", authmiddleware, getFriends);
+
+//organization-tags-controller
+router.post("/organization/tags/:organizationId", authmiddleware, storeTagHandler);
+router.get("/organization/tags/:organizationId", authmiddleware, storeTagHandler);
+router.put("/organization/tags/:organizationId/:tagId", authmiddleware, updateTagHandler);
+router.delete("/organization/tags/:organizationId/:tagId", authmiddleware, deleteTagHandler);
 
 export default router;

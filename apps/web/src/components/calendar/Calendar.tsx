@@ -56,6 +56,19 @@ export default function ({ className }: CalendarProps) {
     setCurrentMonth(format(firstDayNextMonth, "MMM-yyyy"));
   }
 
+  function handleAddSubscription(newSubscription: Omit<Subscription, "id">) {
+    const subscription = { ...newSubscription, id: Date.now().toString() };
+    setSubscriptions([...subscriptions, subscription]);
+  };
+
+  function handleRemoveSubscription(id: string) {
+    setSubscriptions(subscriptions.filter((sub) => sub.id !== id));
+  };
+
+  function tapOnDateHandler(date: any) {
+    console.log(date);
+  }
+
   return (
     <UtilityCard className={`p-4 mx-auto max-w-xl bg-neutral-800 rounded-[12px] ${className}`}>
       <CalendarHeader previousMonthHandler={previousMonthHandler} nextMonthHandler={nextMonthHandler} firstDayCurrentMonth={firstDayCurrentMonth} currentMonth={currentMonth} setIsAddModalOpen={setIsAddModalOpen} />
@@ -118,3 +131,4 @@ export default function ({ className }: CalendarProps) {
     </UtilityCard>
   );
 }
+

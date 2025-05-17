@@ -22,7 +22,7 @@ export default function ({ label, input, onChange, type, value, name, placeholde
             <div className="relative">
                 <input
                     name={name}
-                    value={input!}
+                    value={value}
                     onChange={onChange}
                     placeholder={placeholder}
                     id="input"

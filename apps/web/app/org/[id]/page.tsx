@@ -12,6 +12,7 @@ import { organizationUsersAtom } from '@/recoil/atoms/organizationAtoms/organiza
 import { organizationAtom } from '@/recoil/atoms/organizationAtoms/organizationAtom'
 import { useWebSocket } from '@/hooks/useWebsocket'
 import { organizationUserAtom } from '@/recoil/atoms/organizationAtoms/organizationUserAtom'
+import { organizationTagsAtom } from '@/recoil/atoms/tags/organizationTagsAtom'
 
 export type protectedOrganizationMetadata = {
     name: string,
@@ -35,13 +36,14 @@ export default function ({ params }: { params: { id: string } }) {
     const setOrganizationUsers = useSetRecoilState(organizationUsersAtom);
     const setOrganization = useSetRecoilState(organizationAtom);
     const setOrganizationUser = useSetRecoilState(organizationUserAtom);
+    const setOrganizationTags = useSetRecoilState(organizationTagsAtom);
     const [flag, setFlag] = useState<'PROTECTED' | 'ALLOWED' | 'INIT'>('INIT')
     const [data, setData] = useState<protectedOrganizationMetadata>({} as protectedOrganizationMetadata)
 
 
 
     const updateChannels = useCallback((channelData: any) => {
-        const { organization, eventChannel, channels, welcomeChannel, organizationUsers, organizationUser } = channelData
+        const { organization, eventChannel, channels, welcomeChannel, organizationUsers, organizationUser, organizationTags } = channelData
         console.log("organiztion user ate page.stsx is : ", organizationUser);
         setOrganization(organization);
         setEventChannel(eventChannel);
@@ -49,6 +51,7 @@ export default function ({ params }: { params: { id: string } }) {
         setWelcomeChannel(welcomeChannel);
         setOrganizationUsers(organizationUsers);
         setOrganizationUser(organizationUser);
+        setOrganizationTags(organizationTags);
     }, [setEventChannel, setChannels, setWelcomeChannel, setOrganizationUsers, params.id, useWebSocket])
 
     const fetchOrgMetadata = useCallback(async () => {

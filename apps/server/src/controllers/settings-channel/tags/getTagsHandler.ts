@@ -1,13 +1,12 @@
 import prisma from "@repo/db/client";
 import { Request, Response } from "express";
 
-export default async function storeTagHandler(req: Request, res: Response) {
+export default async function getTagsHandler(req: Request, res: Response) {
     if (!req.user) {
         res.status(401).json({ message: "You are not authorized" });
         return;
     }
 
-    const { name, description, color } = req.body;
     const { organizationId } = req.params;
 
     if (!organizationId) {
@@ -17,32 +16,28 @@ export default async function storeTagHandler(req: Request, res: Response) {
         return;
     }
     try {
-        const tag = await prisma.organizationTag.create({
-            data: {
-                name: name,
-                description: description,
-                color: color,
-                created_at: new Date(),
-                organization_id: organizationId!
+        const tags = await prisma.organizationTag.findMany({
+            where: {
+                organization_id: organizationId
             }
         })
 
-        if (!tag) {
+        if (!tags) {
             res.json({
-                message: "Unable to create tag"
+                message: "Unable to get tags"
             })
             return;
         }
         res.status(200).json({
-            message: "Successfully created tag",
-            data: tag
+            message: "Successfully fetched all tags",
+            data: tags
         })
         return;
     } catch (err) {
-        console.error("Error in storing tags : ", err);
+        console.error("Error in getting all tags : ", err);
         res.status(500).json({
             message: "Error in creating tags"
         });
+        return;
     }
-
 }
