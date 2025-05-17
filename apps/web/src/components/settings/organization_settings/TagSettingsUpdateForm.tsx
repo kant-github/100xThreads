@@ -15,9 +15,8 @@ interface TagSettingsUpdateFormProps {
 }
 
 export default function ({ isEditingTag, cancelTagOperation, handleTagChange, newTag, error, handleUpdateTag, handleAddTag }: TagSettingsUpdateFormProps) {
-    console.log("new tag came is : ", newTag);
     return (
-        <UtilityCard className="bg-neutral-900 px-8 py-4 mb-4">
+        <UtilityCard className="bg-neutral-900 border border-neutral-800 px-8 py-4 mb-4">
             <div className="flex justify-between items-center mb-4">
                 <h3 className="font-medium">
                     {isEditingTag ? "Edit Tag" : "Add New Tag"}

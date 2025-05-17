@@ -18,7 +18,7 @@ export default function OrganizationSettingsOptionRenderer() {
     }
 
     return (
-        <div className="dark:bg-neutral-800 bg-secondLight w-full mt-6 rounded-[8px] shadow-lg shadow-black/40 flex-grow overflow-hidden">
+        <div className="dark:bg-neutral-900 bg-secondLight w-full mt-6 rounded-[8px] shadow-lg shadow-black/40 flex-grow overflow-hidden">
             {renderComponent()}
         </div>
     );

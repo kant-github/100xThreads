@@ -25,7 +25,7 @@ export default function TagContent({ tags, handleDeleteTag, handleEditTag, delet
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="bg-neutral-800 rounded-[10px] border border-neutral-700 mt-4 h-full overflow-y-auto scrollbar-hide"
+            className="bg-neutral-900 rounded-[10px] border border-neutral-800 h-full overflow-y-auto scrollbar-hide"
         >
             {tags.length === 0 ? (
                 <div className="h-full w-full flex items-center justify-center">
@@ -34,7 +34,7 @@ export default function TagContent({ tags, handleDeleteTag, handleEditTag, delet
                     </p>
                 </div>
             ) : (
-                <table className="min-w-full divide-y divide-neutral-700">
+                <table className="min-w-full divide-y divide-neutral-800">
                     <thead className="sticky top-0 bg-neutral-900 z-10">
                         <tr>
                             <th
@@ -57,16 +57,14 @@ export default function TagContent({ tags, handleDeleteTag, handleEditTag, delet
                             </th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-neutral-700">
+                    <tbody className="divide-y divide-neutral-800">
                         {tags.map((tag) => (
                             <tr key={tag.id} className="hover:bg-neutral-750">
                                 <td className="px-6 py-2 whitespace-nowrap">
                                     <OrganizationTagTicker tag={tag} />
                                 </td>
-                                <td className="px-6 py-2 flex items-center justify-center">
-                                    <div className="text-xs text-neutral-200">
-                                        {tag.description || "No description"}
-                                    </div>
+                                 <td className="px-6 py-2 text-xs dark:text-neutral-100 text-neutral-900 text-center align-middle">
+                                    {tag.description || "No description"}
                                 </td>
                                 <td className="px-6 py-2 whitespace-nowrap text-right text-sm">
                                     <div className="flex justify-end gap-3">

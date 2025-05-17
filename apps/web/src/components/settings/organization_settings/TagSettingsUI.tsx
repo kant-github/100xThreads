@@ -1,4 +1,3 @@
-import DashboardComponentHeading from "@/components/dashboard/DashboardComponentHeading";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { IoMdAdd } from "react-icons/io";
@@ -11,6 +10,10 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import { organizationTagsAtom } from "@/recoil/atoms/tags/organizationTagsAtom";
+import ToolTipComponent from "@/components/ui/ToolTipComponent";
+import { HiOutlineInformationCircle } from "react-icons/hi2";
+
+
 
 export type NewTagType = {
     name: string;
@@ -132,20 +135,19 @@ export default function TagSettingsUI() {
     }
 
     return (
-        <div className="w-full flex flex-col h-full py-4 relative">
-            <div className="px-8 flex-shrink-0">
-                <DashboardComponentHeading description="Tags help you categorize users and control content visibility within your organization.">Tags</DashboardComponentHeading>
-                <div className="absolute top-6 right-6 ">
-                    {!isAddingTag && !isEditingTag && (
+        <div className="w-full flex flex-col h-full">
+            <div className=" flex-shrink-0">
+                {
+                    !(isAddingTag && isEditingTag) && <div className="absolute top-6 right-6 flex flex-row items-center justify-center gap-x-2">
                         <Button variant={"default"} onClick={() => setIsAddingTag(true)} className="flex items-center gap-2 px-4 py-2 rounded-[8px] text-sm transition-colors text-neutral-900">
                             <IoMdAdd size={16} />
                             Add Tag
                         </Button>
-                    )}
-                </div>
+                    </div>
+                }
             </div>
 
-            <div className="px-8 pb-6 flex-grow overflow-hidden">
+            <div className="flex-grow overflow-hidden">
                 {
                     (!!isEditingTag || isAddingTag) && (
                         <TagSettingsUpdateForm newTag={newTag} handleAddTag={handleAddTag} handleTagChange={handleTagChange} handleUpdateTag={handleUpdateTag} cancelTagOperation={cancelTagOperation} error={error} isEditingTag={isEditingTag} />
