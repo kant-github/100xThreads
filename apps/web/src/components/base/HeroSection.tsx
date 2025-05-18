@@ -4,8 +4,6 @@ import ContainerScrollAnimation from '../ui/ContainerScrollAnimation';
 import UnclickableTicker from '../ui/UnclickableTicker';
 import FeatureSection from './FeatureSection';
 import Footer from '../footer/Footer';
-import StarsBackground from '../ui/StarsBackground';
-import ShootingStars from '../ui/ShootingStars';
 import HomeCards from '../dashboard/HomeCards';
 import Image from 'next/image';
 

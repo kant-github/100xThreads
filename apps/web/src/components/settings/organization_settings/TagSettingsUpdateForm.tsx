@@ -3,8 +3,10 @@ import InputBoxCalls from "@/components/utility/InputBoxCalls";
 import UtilityCard from "@/components/utility/UtilityCard";
 import { IoClose } from "react-icons/io5";
 import { NewTagType } from "./TagSettingsUI";
+import Spinner from "@/components/loaders/Spinner";
 
 interface TagSettingsUpdateFormProps {
+    loading: boolean;
     isEditingTag: string | null;
     cancelTagOperation: () => void;
     handleTagChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
@@ -14,7 +16,7 @@ interface TagSettingsUpdateFormProps {
     handleAddTag: () => void
 }
 
-export default function ({ isEditingTag, cancelTagOperation, handleTagChange, newTag, error, handleUpdateTag, handleAddTag }: TagSettingsUpdateFormProps) {
+export default function ({ loading, isEditingTag, cancelTagOperation, handleTagChange, newTag, error, handleUpdateTag, handleAddTag }: TagSettingsUpdateFormProps) {
     return (
         <UtilityCard className="bg-neutral-900 border border-neutral-800 px-8 py-4 mb-4">
             <div className="flex justify-between items-center mb-4">
@@ -86,7 +88,8 @@ export default function ({ isEditingTag, cancelTagOperation, handleTagChange, ne
                     onClick={isEditingTag ? handleUpdateTag : handleAddTag}
                     className="px-4 py-2 rounded-[8px] text-sm text-neutral-900"
                 >
-                    {isEditingTag ? "Update Tag" : "Add Tag"}
+                    {loading ? (<Spinner />) : (isEditingTag ? 'Edit Tag' : 'Add Tag')}
+
                 </Button>
             </div>
         </UtilityCard>

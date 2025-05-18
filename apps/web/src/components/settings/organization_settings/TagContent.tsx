@@ -9,8 +9,10 @@ import UtilityCard from "@/components/utility/UtilityCard";
 import DashboardComponentHeading from "@/components/dashboard/DashboardComponentHeading";
 import BigWhiteBtn from "@/components/buttons/BigWhiteBtn";
 import { RedBtn } from "@/components/buttons/RedBtn";
+import Spinner from "@/components/loaders/Spinner";
 
 interface TagContentProps {
+    loading: boolean;
     tags: OrganizationTagType[];
     handleEditTag: (tag: OrganizationTagType) => void;
     handleDeleteTag: (id: string) => void;
@@ -18,14 +20,14 @@ interface TagContentProps {
     setDeleteTagModal: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function TagContent({ tags, handleDeleteTag, handleEditTag, deleteTagModal, setDeleteTagModal }: TagContentProps) {
+export default function TagContent({ loading, tags, handleDeleteTag, handleEditTag, deleteTagModal, setDeleteTagModal }: TagContentProps) {
 
     const [deleteTagId, setDeleteTagId] = useState("");
     return (
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="bg-neutral-900 rounded-[10px] border border-neutral-800 h-full overflow-y-auto scrollbar-hide"
+            className="bg-secDark rounded-[10px] border border-neutral-800 h-full overflow-y-auto scrollbar-hide"
         >
             {tags.length === 0 ? (
                 <div className="h-full w-full flex items-center justify-center">
@@ -35,7 +37,7 @@ export default function TagContent({ tags, handleDeleteTag, handleEditTag, delet
                 </div>
             ) : (
                 <table className="min-w-full divide-y divide-neutral-800">
-                    <thead className="sticky top-0 bg-neutral-900 z-10">
+                    <thead className="sticky top-0 dark:bg-secDark z-10">
                         <tr>
                             <th
                                 scope="col"
@@ -63,7 +65,7 @@ export default function TagContent({ tags, handleDeleteTag, handleEditTag, delet
                                 <td className="px-6 py-2 whitespace-nowrap">
                                     <OrganizationTagTicker tag={tag} />
                                 </td>
-                                 <td className="px-6 py-2 text-xs dark:text-neutral-100 text-neutral-900 text-center align-middle">
+                                <td className="px-6 py-2 text-xs dark:text-neutral-100 text-neutral-900 text-center align-middle">
                                     {tag.description || "No description"}
                                 </td>
                                 <td className="px-6 py-2 whitespace-nowrap text-right text-sm">
@@ -104,7 +106,9 @@ export default function TagContent({ tags, handleDeleteTag, handleEditTag, delet
                             </div>
                             <div className="w-full grid grid-cols-2 gap-x-4 max-w-sm mx-auto pt-2">
                                 <BigWhiteBtn className="bg-neutral-800" onClick={() => setDeleteTagModal(false)}>Cancel</BigWhiteBtn>
-                                <RedBtn onClick={() => handleDeleteTag(deleteTagId)}>Delete Tag</RedBtn>
+                                <RedBtn className="flex items-center justify-center" onClick={() => handleDeleteTag(deleteTagId)}>
+                                    {loading ? (<Spinner />) : ('Delete Tag')}
+                                </RedBtn>
                             </div>
                         </UtilityCard>
                     </OpacityBackground>

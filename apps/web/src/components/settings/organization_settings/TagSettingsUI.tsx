@@ -10,10 +10,6 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import { organizationTagsAtom } from "@/recoil/atoms/tags/organizationTagsAtom";
-import ToolTipComponent from "@/components/ui/ToolTipComponent";
-import { HiOutlineInformationCircle } from "react-icons/hi2";
-
-
 
 export type NewTagType = {
     name: string;
@@ -25,6 +21,7 @@ export default function TagSettingsUI() {
     const organizationId = useRecoilValue(organizationIdAtom);
     const session = useRecoilValue(userSessionAtom);
     const [isAddingTag, setIsAddingTag] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
     const [isEditingTag, setIsEditingTag] = useState<string | null>(null);
     const [tags, setTags] = useRecoilState(organizationTagsAtom);
     const [deleteTagModal, setDeleteTagModal] = useState<boolean>(false);
@@ -58,6 +55,7 @@ export default function TagSettingsUI() {
     }
 
     async function handleDeleteTag(id: string) {
+        setLoading(true);
         try {
             await axios.delete(`${API_URL}/organization/tags/${organizationId}/${id}`,
                 {
@@ -66,9 +64,12 @@ export default function TagSettingsUI() {
                     }
                 }
             )
+            await new Promise(t => setTimeout(t, 5000));
             setDeleteTagModal(false);
         } catch (err) {
             console.error("Error in deleting tags");
+        } finally {
+            setLoading(false);
         }
 
         setTags((prev) => prev.filter((tag) => tag.id !== id));
@@ -80,20 +81,26 @@ export default function TagSettingsUI() {
             setError("Tag name is required");
             return;
         }
+        setLoading(true);
+        try {
+            const { data } = await axios.post(`${API_URL}/organization/tags/${organizationId}`,
+                { ...newTag },
+                {
+                    headers: {
+                        Authorization: `Bearer ${session.user.token}`,
+                    },
+                }
+            );
 
-        const { data } = await axios.post(`${API_URL}/organization/tags/${organizationId}`,
-            { ...newTag },
-            {
-                headers: {
-                    Authorization: `Bearer ${session.user.token}`,
-                },
-            }
-        );
-
-        setTags(prev => [data.data, ...prev]);
-        setNewTag({ name: "", color: "#6366F1", description: "" });
-        setIsAddingTag(false);
-        setError("");
+            setTags(prev => [data.data, ...prev]);
+            setNewTag({ name: "", color: "#6366F1", description: "" });
+            setIsAddingTag(false);
+            setError("");
+        } catch (err) {
+            console.error('Error in adding new tag ', err);
+        } finally {
+            setLoading(false);
+        }
     }
 
     async function handleUpdateTag() {
@@ -104,9 +111,8 @@ export default function TagSettingsUI() {
             return;
         }
 
-        console.log("isediting tag : ", isEditingTag);
-
         try {
+            setLoading(true);
             const { data } = await axios.put(`${API_URL}/organization/tags/${organizationId}/${isEditingTag}`,
                 { ...newTag },
                 {
@@ -131,6 +137,8 @@ export default function TagSettingsUI() {
         } catch (error) {
             console.error("Error updating tag:", error);
             setError("Failed to update tag. Please try again.");
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -150,10 +158,11 @@ export default function TagSettingsUI() {
             <div className="flex-grow overflow-hidden">
                 {
                     (!!isEditingTag || isAddingTag) && (
-                        <TagSettingsUpdateForm newTag={newTag} handleAddTag={handleAddTag} handleTagChange={handleTagChange} handleUpdateTag={handleUpdateTag} cancelTagOperation={cancelTagOperation} error={error} isEditingTag={isEditingTag} />
+                        <TagSettingsUpdateForm loading={loading} newTag={newTag} handleAddTag={handleAddTag} handleTagChange={handleTagChange} handleUpdateTag={handleUpdateTag} cancelTagOperation={cancelTagOperation} error={error} isEditingTag={isEditingTag} />
                     )
                 }
                 <TagContent
+                    loading={loading}
                     tags={tags}
                     handleDeleteTag={handleDeleteTag}
                     handleEditTag={handleEditTag}

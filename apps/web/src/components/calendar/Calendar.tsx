@@ -70,7 +70,7 @@ export default function ({ className }: CalendarProps) {
   }
 
   return (
-    <UtilityCard className={`p-4 mx-auto max-w-xl bg-neutral-800 rounded-[12px] ${className}`}>
+    <UtilityCard className={`p-4 mx-auto max-w-xl bg-secDark rounded-[12px] ${className}`}>
       <CalendarHeader previousMonthHandler={previousMonthHandler} nextMonthHandler={nextMonthHandler} firstDayCurrentMonth={firstDayCurrentMonth} currentMonth={currentMonth} setIsAddModalOpen={setIsAddModalOpen} />
       <div className="grid grid-cols-7 gap-px bg-muted rounded-lg overflow-hidden">
         <AnimatePresence mode="wait">

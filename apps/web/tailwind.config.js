@@ -2,7 +2,7 @@ const defaultTheme = require("tailwindcss/defaultTheme");
 const svgToDataUri = require("mini-svg-data-uri");
 const colors = require("tailwindcss/colors");
 const {
-  default: flattenColorPalette,
+    default: flattenColorPalette,
 } = require("tailwindcss/lib/util/flattenColorPalette");
 
 /** @type {import('tailwindcss').Config} */
@@ -27,6 +27,7 @@ module.exports = {
             },
             colors: {
                 primary: '#f5a331',
+                secDark: '#212121',
                 light: '#f7f5f2',
                 secondLight: '#e0ddda',
                 dark: '#171717',
