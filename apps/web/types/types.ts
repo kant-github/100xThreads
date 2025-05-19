@@ -405,3 +405,6 @@ enum ProjectActivityType {
   PROJECT_UPDATED = 'PROJECT_UPDATED',
   OTHER = 'OTHER'
 }
+
+
+export const UserRoleArray = Object.values(UserRole);

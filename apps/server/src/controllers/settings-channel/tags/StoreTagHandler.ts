@@ -9,6 +9,7 @@ export default async function storeTagHandler(req: Request, res: Response) {
 
     const { name, description, color } = req.body;
     const { organizationId } = req.params;
+    console.log(req.body);
 
     if (!organizationId) {
         res.json({

@@ -7,5 +7,5 @@ export enum OrganizationSettingsOptionEnum {
 
 export const organizationSettingsOptionAtom = atom<OrganizationSettingsOptionEnum>({
     key: 'organizationSettingsOptionAtom',
-    default: OrganizationSettingsOptionEnum.TAGS
+    default: OrganizationSettingsOptionEnum.USERS
 })

@@ -24,15 +24,6 @@ export default function OrganizationSettingsOptions() {
         <div className="flex items-center justify-between mt-4 mx-1">
 
             <div className="flex items-center gap-x-12 select-none">
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 1 * 0.01 }}
-                    onClick={() => setOrgSettingsAtom(OrganizationSettingsOptionEnum.TAGS)}
-                    className={`cursor-pointer text-md font-light text-lightText dark:text-darkText 
-                ${orgSettingsAtom === OrganizationSettingsOptionEnum.TAGS && "underline decoration-blue-500 decoration-4 underline-offset-4 space-y-[20px]"}`}>
-                    Tags
-                </motion.div>
 
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
@@ -43,6 +34,17 @@ export default function OrganizationSettingsOptions() {
                 ${orgSettingsAtom === OrganizationSettingsOptionEnum.USERS && "underline decoration-blue-500 decoration-4 underline-offset-4 space-y-[4 underline-offset-4px]"}`}>
                     Users
                 </motion.div>
+
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 1 * 0.01 }}
+                    onClick={() => setOrgSettingsAtom(OrganizationSettingsOptionEnum.TAGS)}
+                    className={`cursor-pointer text-md font-light text-lightText dark:text-darkText 
+                ${orgSettingsAtom === OrganizationSettingsOptionEnum.TAGS && "underline decoration-blue-500 decoration-4 underline-offset-4 space-y-[20px]"}`}>
+                    Tags
+                </motion.div>
+
             </div>
             <ToolTipComponent content={<span>{activeTooltip(orgSettingsAtom)}</span>}><IoIosInformationCircleOutline size={25} className="hover:text-primary/70 p-[3px] rounded-[4px] text-primary transition-colors ease-in" /></ToolTipComponent>
         </div>

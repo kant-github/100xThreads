@@ -53,7 +53,7 @@ const sampleRoles: Role[] = [
     { id: 'MODERATOR', name: 'Moderator' }
 ];
 
-export default function OrganizationSettingsUsersUI() {
+export default function Tester() {
     const [organizationUsers, setOrganizationUsers] = useRecoilState<OrganizationUser[]>(organizationUsersAtom);
     const [selectedUsers, setSelectedUsers] = useState<Set<number>>(new Set());
     const [selectAll, setSelectAll] = useState(false);
