@@ -4,7 +4,7 @@ let wsClient: WebSocketNotificationClient | null = null;
 
 export function getWebSocketClient(token: string) {
     if (!wsClient) {
-        wsClient = new WebSocketNotificationClient(`ws://localhost:7002/ws-events?token=${token}`);
+        wsClient = new WebSocketNotificationClient(`wss://shelvr.kantbuilds.com/ws-events?token=${token}`);
     }
     return wsClient;
 }

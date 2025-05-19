@@ -14,7 +14,7 @@ app.use(express.json());
 
 
 const kafkaConsumerService = new KafkaConsumerService(
-    ['localhost:9092'],
+    ['13.53.234.218:9092'],
     'notification-service-group',
     wsManager,
     ['notifications']

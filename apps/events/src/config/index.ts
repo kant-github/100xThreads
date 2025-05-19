@@ -7,7 +7,7 @@ export default {
         env: process.env.NODE_ENV || 'development',
     },
     kafka: {
-        brokers: (process.env.KAFKA_BROKERS || 'localhost:9092').split(','),
+        brokers: (process.env.KAFKA_BROKERS || '13.53.234.218:9092').split(','),
         groupId: process.env.KAFKA_GROUP_ID || 'notification-service',
         topics: {
             notifications: process.env.KAFKA_NOTIFICATION_TOPIC || 'notifications',
