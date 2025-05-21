@@ -62,7 +62,7 @@ export const authOption: AuthOptions = {
                         id: myUser.id,
                     };
 
-                    const token = jwt.sign(jwtPayload, process.env.JWT_SECRET || "default_secret", {
+                    const token = jwt.sign(jwtPayload, "default_secret", {
                         expiresIn: "365d",
                     });
                     user.id = myUser?.id?.toString();

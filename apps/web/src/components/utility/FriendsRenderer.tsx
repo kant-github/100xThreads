@@ -5,8 +5,6 @@ import { useEffect, useState } from "react"
 import { useRecoilValue } from "recoil"
 import { UserType } from "types/types"
 import DashboardComponentHeading from "../dashboard/DashboardComponentHeading"
-import { Option } from "../organization/OrganizationRightDashboard"
-import OptionImage from "../ui/OptionImage"
 import Image from "next/image"
 
 interface FriendsRendererProps {
@@ -16,10 +14,11 @@ interface FriendsRendererProps {
 export default function ({ open }: FriendsRendererProps) {
     const [friends, setfriends] = useState<UserType[]>();
     const session = useRecoilValue(userSessionAtom);
+
     async function getFriends() {
         console.log("making backend call");
         try {
-            const { data } = await axios.get(`${API_URL}/friends`, {
+            const { data } = await axios.get(`/api/friends`, {
                 headers: {
                     authorization: `Bearer ${session.user?.token}`
                 }
@@ -31,7 +30,7 @@ export default function ({ open }: FriendsRendererProps) {
     }
 
     useEffect(() => {
-        if (open) {
+        if (open === true) {
             getFriends();
         }
     }, [open])

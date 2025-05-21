@@ -50,7 +50,6 @@ export default class WebSocketNotificationClient {
 
     private processMessage(message: any) {
         const { type, data } = message;
-        console.log("message at abstraction is : ", data);
         const handlers = this.messageHandlers.get(type) || [];
         handlers.forEach(handler => {
             try {

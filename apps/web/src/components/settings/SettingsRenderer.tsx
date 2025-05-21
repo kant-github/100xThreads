@@ -16,13 +16,13 @@ export default function () {
             case settingsOptionEnum.Profile:
                 return <SettingsProfileComponent />;
             default:
-                console.warn(`No matching component for: ${settingsOption}`); // Optional: log warning
+                console.warn(`No matching component for: ${settingsOption}`);
                 return <div>No matching component found!</div>;
         }
     };
 
     return (
-        <div className="flex items-center gap-x-24 dark:bg-neutral-800 bg-secondLight w-full mt-6 rounded-[8px] shadow-lg shadow-black/40 ">
+        <div className="flex items-center gap-x-24 dark:bg-secDark bg-secondLight w-full mt-6 rounded-[8px] shadow-lg shadow-black/40 ">
             {renderComponent()}
         </div>
     );

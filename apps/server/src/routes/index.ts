@@ -4,7 +4,6 @@ import { getOrganizations } from "../controllers/organization/getOrganizations";
 import { caseJoinOrganization } from "../controllers/organization/caseJoinOrganization";
 import { storeOrganization } from "../controllers/organization/storeOrganization";
 import { deleteOrganizations } from "../controllers/organization/deleteOrganizations";
-import getOrganizationBySearch from "../controllers/organization/getOrganizationAndUserBySearch";
 import alreadyUserMiddleware from "../middlewares/alreadyUserMiddleware";
 import { getUserDetails } from "../controllers/user/getUserDetails";
 import { updateUserDetails } from "../controllers/user/updateUserDetails";
@@ -29,6 +28,8 @@ import getFriends from "../controllers/friends/getFriends";
 import storeTagHandler from "../controllers/settings-channel/tags/storeTagHandler";
 import updateTagHandler from "../controllers/settings-channel/tags/updateTagHandler";
 import deleteTagHandler from "../controllers/settings-channel/tags/deleteTagHandler";
+import assignTagsHandler from "../controllers/organization-settings/assignTagsHandler";
+import assignRolesHandler from "../controllers/organization-settings/assignRolesHandler";
 
 const router: Router = Router();
 
@@ -47,6 +48,10 @@ router.post("/organizations", authmiddleware, storeOrganization);
 router.delete("/organizations/:organizationId", authmiddleware, deleteOrganizations);
 router.get("/organizations-and-user-by-search", authmiddleware, getOrganizationAndUserBySearch);
 router.get("/organizations-all", authmiddleware, getAllOrganizations);
+
+// organization-settings controller
+router.post("/organizations/settings/users/assign-tags", authmiddleware, assignTagsHandler);
+router.post("/organizations/settings/users/assign-roles", authmiddleware, assignRolesHandler);
 
 // chats-controller
 router.get("/organizations/:organizationId/channels/:channelId/chats", authmiddleware, getChats);

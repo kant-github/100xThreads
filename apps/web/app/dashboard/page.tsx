@@ -1,5 +1,4 @@
 'use client';
-
 import Dashboard from "@/components/dashboard/Dashboard";
 import DashNav from "@/components/dashboard/DashNav";
 import { USER_URL } from "@/lib/apiAuthRoutes";

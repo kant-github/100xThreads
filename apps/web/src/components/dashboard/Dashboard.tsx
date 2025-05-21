@@ -2,7 +2,7 @@ import DashboardLeftOptions from "./DashboardLeftOptions";
 import DashboardRightOptions from "./DashboardRightOptions";
 
 export default function Dashboard() {
-    
+
     return (
         <div className="flex flex-col md:flex-row h-full">
             <DashboardLeftOptions />

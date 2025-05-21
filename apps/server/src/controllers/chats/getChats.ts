@@ -114,6 +114,6 @@ export default async function getChats(req: Request, res: Response) {
             nextCursor: hasMore ? chats[chats.length - 1]!.id : undefined
         })
     } catch (err) {
-
+        console.error("Error in fetching chats")
     }
 }

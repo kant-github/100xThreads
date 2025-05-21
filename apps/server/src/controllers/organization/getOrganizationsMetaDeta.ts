@@ -27,7 +27,14 @@ export async function getOrganizationsMetaDeta(organizationId: string, userId: n
             }),
             prisma.organizationUsers.findMany({
                 where: { organization_id: organizationId },
-                include: { user: true }
+                include: {
+                    user: true,
+                    tags: {
+                        include: {
+                            tag: true
+                        }
+                    }
+                }
             }),
             prisma.welcomeChannel.findFirst({
                 where: { organization_id: organizationId }
@@ -39,7 +46,6 @@ export async function getOrganizationsMetaDeta(organizationId: string, userId: n
                         organization_id: organizationId!
                     }
                 },
-                include: { user: true }
             }),
             prisma.organizationTag.findMany({
                 where: {
@@ -58,6 +64,8 @@ export async function getOrganizationsMetaDeta(organizationId: string, userId: n
             organizationTags
         };
 
+
+        console.log(organizationUsers);
         return data;
 
     } catch (error) {

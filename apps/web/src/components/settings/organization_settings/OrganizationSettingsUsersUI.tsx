@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
 import { organizationUsersAtom } from "@/recoil/atoms/organizationAtoms/organizationUsersAtom";
 import { organizationTagsAtom } from "@/recoil/atoms/tags/organizationTagsAtom";
 import { useEffect, useRef, useState } from "react";
-import { useRecoilValue } from "recoil";
-import { UserRoleArray } from "types/types";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { OrganizationTagType, UserRole, UserRoleArray } from "types/types";
 import OrganizationRolesTickerRenderer from "@/components/utility/tickers/organization_roles_tickers/OrganizationRolesTickerRenderer";
 import { ChevronDown, Clock, Filter, Shield, Tag, UserPlus } from "lucide-react";
 import { RxCross1 } from "react-icons/rx";
@@ -14,13 +14,25 @@ import { Input } from "@/components/ui/input";
 import OptionImage from "@/components/ui/OptionImage";
 import Image from "next/image";
 import Checkbox from "@/components/utility/CheckBox";
+import axios from "axios";
+import { ORGANIZATION_SETTINGS } from "@/lib/apiAuthRoutes";
+import { userSessionAtom } from "@/recoil/atoms/atom";
+import { toast } from "sonner";
+import Spinner from "@/components/loaders/Spinner";
 
 
 export default function OrganizationSettingsUsersUI() {
-    const organizationUsers = useRecoilValue(organizationUsersAtom);
+    const session = useRecoilValue(userSessionAtom);
+    const [organizationUsers, setOrganizationUsers] = useRecoilState(organizationUsersAtom);
+    console.log("organization user tags", organizationUsers[0]?.tags);
     const organizationTags = useRecoilValue(organizationTagsAtom);
     const [selectedMembers, setSelectedMembers] = useState<Set<number>>(new Set());
     const [selectAll, setSelectAll] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
+
+    const [assignedTags, setAssignedTags] = useState<Set<string>>(new Set());
+    const [previousTagMenuState, setPreviousTagMenuState] = useState<boolean>(false);
+
 
     const [roleFilter, setRoleFilter] = useState<string | null>(null);
     const [dateFilter, setDateFilter] = useState<string | null>(null);
@@ -63,6 +75,14 @@ export default function OrganizationSettingsUsersUI() {
         }
     }, [isTagMenuOpen, isRoleMenuOpen, roleFilterMenuRef, dateFilterMenuRef, tagFilterMenuRef])
 
+
+    useEffect(() => {
+        if (previousTagMenuState && !isTagMenuOpen && assignedTags.size > 0 && selectedMembers.size > 0) {
+            injectNewTagsHandler();
+        }
+        setPreviousTagMenuState(isTagMenuOpen);
+    }, [isTagMenuOpen, assignedTags, selectedMembers]);
+
     useEffect(() => {
         if (selectAll) {
             const allUserIds = organizationUsers.map(orgUser => orgUser.id);
@@ -99,7 +119,7 @@ export default function OrganizationSettingsUsersUI() {
             }
 
             if (tagFilter) {
-                if (!orgUser.Tags || !orgUser.Tags.some(tag => tag.id === tagFilter)) return false;
+                if (!orgUser.tags || !orgUser.tags.some(tag => tag.id === tagFilter)) return false;
             }
             return true;
 
@@ -142,6 +162,75 @@ export default function OrganizationSettingsUsersUI() {
         setSelectAll(newSelectedUsers.size === filteredUsers.length && filteredUsers.length > 0);
     };
 
+    async function injectNewTagsHandler() {
+
+        try {
+            const { data } = await axios.post(`${ORGANIZATION_SETTINGS}/users/assign-tags`, {
+                selectedUsers: Array.from(selectedMembers),
+                assignedTags: Array.from(assignedTags)
+            }, {
+                headers: {
+                    Authorization: `Bearer ${session.user?.token}`
+                }
+            })
+
+            if (data.flag === 'SUCCESS') {
+                toast.success("successfully assigned tags");
+            }
+        } catch (err) {
+            console.error("Error in assigning tags");
+        } finally {
+            setAssignedTags(new Set());
+        }
+    }
+
+
+
+    function assignTagHandler(tag: OrganizationTagType) {
+        const newAssigneeTags = new Set(assignedTags);
+        if (newAssigneeTags.has(tag.id)) {
+            newAssigneeTags.delete(tag.id)
+        } else {
+            newAssigneeTags.add(tag.id)
+        }
+        setAssignedTags(newAssigneeTags);
+    }
+
+    async function injectNewRolesHandler(role: UserRole) {
+        setLoading(true);
+        try {
+            const { data } = await axios.post(`${ORGANIZATION_SETTINGS}/users/assign-roles`, {
+                selectedUsers: Array.from(selectedMembers),
+                role
+            }, {
+                headers: {
+                    Authorization: `Bearer ${session.user?.token}`
+                }
+            })
+
+            if (data.flag === 'SUCCESS') {
+                toast.success("successfully assigned tags");
+            }
+
+            setOrganizationUsers(prev => prev.map((orgUser) => {
+                if (selectedMembers.has(orgUser.id)) {
+                    return {
+                        ...orgUser,
+                        role: role
+                    };
+                }
+                return orgUser;
+            }));
+
+        } catch (err) {
+            console.error("Error in assigning tags");
+        }
+        finally {
+            setIsRoleMenuOpen(false);
+            setLoading(false);
+        }
+    }
+
     return (
         <div className="w-full flex flex-col gap-y-2 h-full">
 
@@ -152,7 +241,6 @@ export default function OrganizationSettingsUsersUI() {
                             className="flex items-center justify-center border-[1px] border-neutral-700 text-xs rounded-[8px] text-neutral-300"
                             onClick={() => {
                                 setIsTagMenuOpen(prev => !prev);
-                                setIsRoleMenuOpen(false);
                             }}
                             disabled={selectedMembers.size === 0}
                             variant={"outline"}
@@ -166,19 +254,29 @@ export default function OrganizationSettingsUsersUI() {
                                 <motion.div
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
-                                    ref={tagMenuRef} className="absolute z-10 top-full left-0 mt-1 w-48 max-h-[10rem] overflow-y-auto px-4 flex flex-col gap-y-1 pt-2 pb-1 dark:bg-neutral-900 dark:border-neutral-600 border-[1px] rounded-[8px] scrollbar-hide"
+                                    ref={tagMenuRef}
+                                    className="absolute z-10 top-full left-0 mt-1 w-48 max-h-[14rem] overflow-y-auto px-4 flex flex-col gap-y-2 pt-2 pb-2 dark:bg-neutral-900 dark:border-neutral-600 border-[1px] rounded-[8px] scrollbar-hide"
                                 >
                                     {organizationTags.map((tag, index) => (
-                                        <div key={tag.id} className={cn(
-                                            "text-xs w-full pb-1 cursor-pointer",
-                                            index !== organizationTags.length - 1 && "border-b border-neutral-700"
-                                        )}>
+                                        <div
+                                            key={tag.id}
+                                            className={cn(
+                                                "text-xs w-full pb-1 cursor-pointer",
+                                                "flex items-center justify-start gap-x-2",
+                                                index !== organizationTags.length - 1 && "border-b border-neutral-700"
+                                            )}
+                                        >
+                                            <Checkbox
+                                                checked={assignedTags.has(tag.id)}
+                                                onChange={() => assignTagHandler(tag)}
+                                            />
                                             <OrganizationTagTicker tag={tag} />
                                         </div>
                                     ))}
                                 </motion.div>
                             )
                         }
+
                     </div>
 
                     <div className="relative">
@@ -204,8 +302,12 @@ export default function OrganizationSettingsUsersUI() {
                                     {UserRoleArray.map((role, index) => (
                                         <div
                                             key={index}
+                                            onClick={() => {
+                                                injectNewRolesHandler(role);
+                                            }}
                                             className={cn(
                                                 "text-xs w-full pb-1 cursor-pointer",
+                                                "flex items-center justify-start gap-x-2",
                                                 index !== UserRoleArray.length - 1 && "border-b border-neutral-700"
                                             )}>
                                             <OrganizationRolesTickerRenderer tickerText={role} />
@@ -373,10 +475,10 @@ export default function OrganizationSettingsUsersUI() {
                                     onChange={toggleSelectAll}
                                 />
                             </th>
-                            <th scope="col" className="px-3 py-4 text-left text-[12px] dark:text-neutral-100 text-neutral-900 font-normal">User</th>
-                            <th scope="col" className="px-3 py-4 text-left text-[12px] dark:text-neutral-100 text-neutral-900 font-normal">Role</th>
-                            <th scope="col" className="px-3 py-4 text-left text-[12px] dark:text-neutral-100 text-neutral-900 font-normal">Joined at</th>
-                            <th scope="col" className="px-3 py-4 text-left text-[12px] dark:text-neutral-100 text-neutral-900 font-normal">Tags</th>
+                            <th scope="col" className="px-4 py-4 text-left text-[12px] dark:text-neutral-100 text-neutral-900 font-normal">User</th>
+                            <th scope="col" className="px-4 py-4 text-left text-[12px] dark:text-neutral-100 text-neutral-900 font-normal">Role</th>
+                            <th scope="col" className="px-4 py-4 text-left text-[12px] dark:text-neutral-100 text-neutral-900 font-normal">Joined at</th>
+                            <th scope="col" className="px-4 py-4 text-left text-[12px] dark:text-neutral-100 text-neutral-900 font-normal">Tags</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-neutral-700">
@@ -416,29 +518,35 @@ export default function OrganizationSettingsUsersUI() {
                                         </div>
                                     </td>
                                     <td className="whitespace-nowrap px-3 text-sm text-neutral-500">
-                                        <OrganizationRolesTickerRenderer tickerText={orgUser.role} />
+                                        {
+                                            loading && selectedMembers.has(orgUser.id) ? (
+                                                <Spinner />
+                                            ) : (
+                                                <OrganizationRolesTickerRenderer tickerText={orgUser.role} />
+                                            )
+                                        }
                                     </td>
                                     <td className="whitespace-nowrap px-3 text-xs text-neutral-300">
                                         {formatDate(orgUser.joined_at)}
                                     </td>
                                     <td className="whitespace-nowrap px-3 text-sm text-neutral-500">
                                         <div className="flex flex-wrap gap-1">
-                                            {orgUser.Tags && orgUser.Tags.length > 0 ? (
-                                                orgUser.Tags.map((userTag) => (
-                                                    <span
-                                                        key={userTag.id}
-                                                        className="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
-                                                        style={{
-                                                            backgroundColor: `${userTag.tag?.color}20` || '#F3F4F6',
-                                                            color: userTag.tag?.color || '#374151',
-                                                            borderColor: `${userTag.tag?.color}40` || '#E5E7EB'
-                                                        }}
-                                                    >
-                                                        {userTag.tag?.name || 'Unknown Tag'}
-                                                    </span>
-                                                ))
+                                            {orgUser.tags && orgUser.tags.length > 0 ? (
+                                                <>
+                                                    {orgUser.tags.slice(0, 2).map((userTag, index) => (
+                                                        <span key={userTag.tag?.id || index}>
+                                                            <OrganizationTagTicker tag={userTag.tag!} />
+                                                        </span>
+                                                    ))}
+
+                                                    {orgUser.tags.length > 2 && (
+                                                        <span className="text-[11px] text-primary font-light">
+                                                            +{orgUser.tags.length - 2} more
+                                                        </span>
+                                                    )}
+                                                </>
                                             ) : (
-                                                <span className="text-neutral-500 text-xs">No tags</span>
+                                                <span className="text-neutral-500 text-[11px] italic">No tags</span>
                                             )}
                                         </div>
                                     </td>
@@ -460,7 +568,7 @@ export default function OrganizationSettingsUsersUI() {
                                             <button
                                                 type="button"
                                                 onClick={clearFilters}
-                                                className="mt-2 text-sm font-medium text-primary hover:text-primary/70 transition-colors ease-in"
+                                                className="mt-2 text-xs font-light text-yellow-500 hover:text-yellow-500/70 transition-colors ease-in"
                                             >
                                                 Clear filters
                                             </button>

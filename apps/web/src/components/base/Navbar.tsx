@@ -32,7 +32,7 @@ export default function () {
           <div className="flex flex-row items-center justify-center gap-x-6">
             {
               session?.user ? (
-                <WhiteBtn className="z-[100]" onClick={handleDashboardClick}>Dashboard</WhiteBtn>
+                <WhiteBtn className="z-[100]" onClick={handleDashboardClick}>Go to App</WhiteBtn>
               ) : (
                 <WhiteBtn className="z-[100]" onClick={handleGettingStartedClick}>Getting Started</WhiteBtn>
               )

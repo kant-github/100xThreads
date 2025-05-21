@@ -25,7 +25,7 @@ export default function ({ isOpen, setIsOpen }: CalendarEventFormProps) {
                 <DashboardComponentHeading description="Add events to this particular date">
                     Add New Event
                 </DashboardComponentHeading>
-                <InputBox placeholder="choose event title" label="Title" />
+                {/* <InputBox placeholder="choose event title" label="Title" /> */}
             </UtilityCard>
         </OpacityBackground>
     )

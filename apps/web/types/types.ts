@@ -85,7 +85,7 @@ export type OrganizationUsersType = {
   user_id: number
   role: UserRole
   joined_at?: Date
-  Tags: OrganizationUserTagType[]
+  tags: OrganizationUserTagType[]
 }
 
 export type OrganizationTagType = {

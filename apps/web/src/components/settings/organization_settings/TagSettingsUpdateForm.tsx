@@ -4,6 +4,7 @@ import UtilityCard from "@/components/utility/UtilityCard";
 import { IoClose } from "react-icons/io5";
 import { NewTagType } from "./TagSettingsUI";
 import Spinner from "@/components/loaders/Spinner";
+import { ChangeEvent } from "react";
 
 interface TagSettingsUpdateFormProps {
     loading: boolean;

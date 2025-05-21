@@ -162,7 +162,7 @@ model OrganizationUsers {
   CreatedProjects      Project[]             @relation("ProjectCreator")
   ProjectMemberships   ProjectMember[]
   ProjectChat          ProjectChat[]
-  Tags                 OrganizationUserTag[]
+  tags                 OrganizationUserTag[]
 
   @@unique([organization_id, user_id])
   @@map("organization_users")
