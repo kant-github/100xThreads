@@ -26,7 +26,7 @@ export default function ({ project, setSelectedProject, channel }: ProjectProps)
     console.log("for the project is : ", project.title);
 
     return (
-        <div key={project.id} className="flex flex-col items-start bg-neutral-800 rounded-[14px] px-6 py-4 cursor-pointer hover:shadow-lg transition-shadow group relative h-48">
+        <div key={project.id} className="flex flex-col items-start bg-terDark rounded-[14px] px-6 py-4 cursor-pointer hover:shadow-lg transition-shadow group relative h-48 border-[1px] border-neutral-700">
             {
                 canView ? (
                     <MdChat className="absolute right-4 top-4 text-neutral-200" onClick={(e) => {

@@ -31,7 +31,7 @@ export default async function assignRolesHandler(req: Request, res: Response) {
                     },
                     include: {
                         user: true,
-                        Tags: true
+                        tags: true
                     }
 
                 })
@@ -54,5 +54,4 @@ export default async function assignRolesHandler(req: Request, res: Response) {
         });
         return;
     }
-
 }

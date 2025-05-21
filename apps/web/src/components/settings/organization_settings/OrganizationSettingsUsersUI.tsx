@@ -19,12 +19,15 @@ import { ORGANIZATION_SETTINGS } from "@/lib/apiAuthRoutes";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import { toast } from "sonner";
 import Spinner from "@/components/loaders/Spinner";
+import AssignTagButtonAndMenu from "./AssignTagButtonAndMenu";
+import GuardComponent from "@/rbac/GuardComponent";
+import { Action, Subject } from "types/permission";
+import AssignRoleButtonAndMenu from "./AssignRoleButtonAndMenu";
 
 
 export default function OrganizationSettingsUsersUI() {
     const session = useRecoilValue(userSessionAtom);
     const [organizationUsers, setOrganizationUsers] = useRecoilState(organizationUsersAtom);
-    console.log("organization user tags", organizationUsers[0]?.tags);
     const organizationTags = useRecoilValue(organizationTagsAtom);
     const [selectedMembers, setSelectedMembers] = useState<Set<number>>(new Set());
     const [selectAll, setSelectAll] = useState<boolean>(false);
@@ -119,7 +122,9 @@ export default function OrganizationSettingsUsersUI() {
             }
 
             if (tagFilter) {
-                if (!orgUser.tags || !orgUser.tags.some(tag => tag.id === tagFilter)) return false;
+                console.log("tag filter is : ", tagFilter);
+                console.log("org user is : ", orgUser);
+                if (!orgUser.tags || !orgUser.tags.some(tag => tag.tag?.id === tagFilter)) return false;
             }
             return true;
 
@@ -236,87 +241,15 @@ export default function OrganizationSettingsUsersUI() {
 
             <div className="flex flex-row w-full items-center justify-between">
                 <div className="flex gap-2">
-                    <div className="relative">
-                        <Button
-                            className="flex items-center justify-center border-[1px] border-neutral-700 text-xs rounded-[8px] text-neutral-300"
-                            onClick={() => {
-                                setIsTagMenuOpen(prev => !prev);
-                            }}
-                            disabled={selectedMembers.size === 0}
-                            variant={"outline"}
-                        >
-                            <Tag className="h-4 w-4 mr-2" />
-                            Assign Tag
-                            <ChevronDown className="h-4 w-4 ml-1" />
-                        </Button>
-                        {
-                            isTagMenuOpen && (
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    ref={tagMenuRef}
-                                    className="absolute z-10 top-full left-0 mt-1 w-48 max-h-[14rem] overflow-y-auto px-4 flex flex-col gap-y-2 pt-2 pb-2 dark:bg-neutral-900 dark:border-neutral-600 border-[1px] rounded-[8px] scrollbar-hide"
-                                >
-                                    {organizationTags.map((tag, index) => (
-                                        <div
-                                            key={tag.id}
-                                            className={cn(
-                                                "text-xs w-full pb-1 cursor-pointer",
-                                                "flex items-center justify-start gap-x-2",
-                                                index !== organizationTags.length - 1 && "border-b border-neutral-700"
-                                            )}
-                                        >
-                                            <Checkbox
-                                                checked={assignedTags.has(tag.id)}
-                                                onChange={() => assignTagHandler(tag)}
-                                            />
-                                            <OrganizationTagTicker tag={tag} />
-                                        </div>
-                                    ))}
-                                </motion.div>
-                            )
-                        }
 
-                    </div>
+                    <GuardComponent action={Action.MANAGE} subject={Subject.USER_SETTINGS}>
+                        <AssignTagButtonAndMenu organizationTags={organizationTags} assignTagHandler={assignTagHandler} assignedTags={assignedTags} setIsTagMenuOpen={setIsTagMenuOpen} tagMenuRef={tagMenuRef} selectedMembers={selectedMembers} isTagMenuOpen={isTagMenuOpen} />
+                    </GuardComponent>
 
-                    <div className="relative">
-                        <Button
-                            className="flex items-center justify-center border-[1px] border-neutral-700 text-xs rounded-[8px] text-neutral-300"
-                            onClick={() => {
-                                setIsRoleMenuOpen(prev => !prev);
-                                setIsTagMenuOpen(false);
-                            }}
-                            disabled={selectedMembers.size === 0}
-                            variant={"outline"}
-                        >
-                            <Shield className="h-4 w-4 mr-2" />
-                            Assign Role
-                            <ChevronDown className="h-4 w-4 ml-1" />
-                        </Button>
-                        {
-                            isRoleMenuOpen && (
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    ref={roleMenuRef} className="absolute z-10 top-full left-0 mt-1 w-48 max-h-[10rem] overflow-y-auto px-4 flex flex-col gap-y-1 pt-2 pb-1 dark:bg-neutral-900 dark:border-neutral-600 border-[1px] rounded-[8px] scrollbar-hide">
-                                    {UserRoleArray.map((role, index) => (
-                                        <div
-                                            key={index}
-                                            onClick={() => {
-                                                injectNewRolesHandler(role);
-                                            }}
-                                            className={cn(
-                                                "text-xs w-full pb-1 cursor-pointer",
-                                                "flex items-center justify-start gap-x-2",
-                                                index !== UserRoleArray.length - 1 && "border-b border-neutral-700"
-                                            )}>
-                                            <OrganizationRolesTickerRenderer tickerText={role} />
-                                        </div>
-                                    ))}
-                                </motion.div>
-                            )
-                        }
-                    </div>
+
+                    <GuardComponent action={Action.MANAGE} subject={Subject.USER_SETTINGS}>
+                        <AssignRoleButtonAndMenu setIsRoleMenuOpen={setIsRoleMenuOpen} setIsTagMenuOpen={setIsTagMenuOpen} isRoleMenuOpen={isRoleMenuOpen} selectedMembers={selectedMembers} roleMenuRef={roleMenuRef} injectNewRolesHandler={injectNewRolesHandler} />
+                    </GuardComponent>
                 </div>
 
                 {/* FILTERS */}
@@ -424,8 +357,8 @@ export default function OrganizationSettingsUsersUI() {
                                 >
                                     {organizationTags.map((tag, index) => (
                                         <div key={tag.id} onClick={() => {
-                                            setIsTagFilterMenuOpen(false)
                                             setTagFilter(tag.id)
+                                            setIsTagFilterMenuOpen(false)
                                         }
                                         } className={cn(
                                             "text-xs w-full pb-1 cursor-pointer",

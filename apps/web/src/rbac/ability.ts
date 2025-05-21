@@ -146,7 +146,8 @@ export class Ability {
             { action: Action.CREATE, subject: Subject.ANNOUNCEMENT },
             { action: Action.UPDATE, subject: Subject.ANNOUNCEMENT, conditions: { isAuthor: true } },
             { action: Action.CREATE, subject: Subject.PROJECT },
-            { action: Action.UPDATE, subject: Subject.PROJECT, conditions: { isCreator: true } }
+            { action: Action.UPDATE, subject: Subject.PROJECT, conditions: { isCreator: true } },
+            { action: Action.MANAGE, subject: Subject.USER_SETTINGS }
         );
     }
 

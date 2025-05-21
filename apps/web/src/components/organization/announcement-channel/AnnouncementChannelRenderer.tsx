@@ -16,7 +16,7 @@ export default function ({ channel, setCreateAnnouncementModal }: AnnouncementCh
 
     return (
         <div className="w-full flex flex-col flex-1 min-h-0">
-            <UtilityCard className='p-8 w-full flex-1 mt-4 dark:bg-secDark flex flex-col min-h-0 shadow-lg shadow-black/20'>
+            <UtilityCard className='p-8 w-full flex-1 mt-4 dark:bg-terDark flex flex-col min-h-0 shadow-lg shadow-black/20'>
                 <div className='w-full h-full overflow-y-auto scrollbar-hide'>
                     {!announcementChannelMessages.length ? (
                         <div className="h-full flex items-center justify-center">
