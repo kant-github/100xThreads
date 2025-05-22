@@ -57,7 +57,7 @@ export default class AnnouncementchannelManager {
                     organization: true
                 }
             })
-            
+
 
             for (const orgUser of organizationUsers) {
                 const notificationData: NotificationType = {

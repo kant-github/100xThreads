@@ -29,6 +29,7 @@ module.exports = {
                 primary: '#f5a331',
                 secDark: '#1c1c1c',
                 terDark: '#1f1f1f',
+                forDark: '#262626',
                 light: '#f7f5f2',
                 secondLight: '#e0ddda',
                 dark: '#171717',

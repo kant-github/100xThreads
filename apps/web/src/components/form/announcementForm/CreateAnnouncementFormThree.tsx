@@ -19,6 +19,7 @@ export default function ({ errors, control }: CreateAnnouncementFormOneProps) {
                                 Due Date
                             </label>
                             <input id="date" type="date"
+                                placeholder="choose date"
                                 className="w-full px-3 py-2 border rounded-[8px] text-sm dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-200 outline-none select-none"
                                 onChange={field.onChange}
                                 value={field.value}

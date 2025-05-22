@@ -36,7 +36,7 @@ export default function () {
     }
 
     return (
-        <div className={`transition-all duration-300 ease-in-out ${isExpanded ? 'w-[30%]' : 'w-[120px]'} h-screen overflow-hidden bg-white dark:bg-[#171717] border-b-[1px] md:border-b-0 md:border-l-[1px] dark:border-zinc-800 flex flex-col justify-between`}>
+        <div className={`transition-all duration-300 ease-in-out ${isExpanded ? 'w-[30%]' : 'w-[120px]'} h-screen overflow-hidden bg-white dark:bg-neutral-900  border-b-[1px] md:border-b-0 md:border-l-[1px] dark:border-zinc-800 flex flex-col justify-between`}>
             <div className='flex flex-col gap-y-2 px-4 pt-4'>
                 <div className={`flex flex-row items-center ${isExpanded ? 'justify-between px-4' : 'justify-center'} pb-2`}>
                     <CiAlignRight
@@ -50,7 +50,7 @@ export default function () {
                 </div>
 
                 {isExpanded && <ProfileOption />}
-                <div className={`flex flex-col justify-start gap-y-2 rounded-[14px] bg-neutral-800 overflow-hidden`}>
+                <div className={`flex flex-col justify-start gap-y-2 rounded-[14px] bg-forDark overflow-hidden`}>
                     {
                         organizationUsers.map((user) => (
                             <Option

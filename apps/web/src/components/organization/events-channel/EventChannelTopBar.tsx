@@ -8,10 +8,18 @@ interface EventChannelTopBarProps {
 }
 
 export default function ({ channel }: EventChannelTopBarProps) {
+
+    function handleConnect() {
+        const currentUrl = window.location.href;
+        const authUrl = `http://localhost:7001/api/auth/google?returnUrl=${encodeURIComponent(currentUrl)}`;
+        console.log(authUrl);
+        window.location.href = authUrl;
+    }
+
     return (
         <div className="flex items-center justify-between">
             <DashboardComponentHeading description={channel.description}>{channel.title}</DashboardComponentHeading>
-            <Button className="bg-neutral-700/70 rounded-[6px] px-4 w-fit flex items-center gap-x-3" variant={"ghost"}>
+            <Button onClick={handleConnect} className="bg-neutral-700/70 rounded-[6px] px-4 w-fit flex items-center gap-x-3" variant={"ghost"}>
                 <Image
                     src={"/images/google-calendar.png"}
                     height={18}

@@ -90,7 +90,7 @@ export default function ({ createAnnoucementModal, setCreateAnnouncementModal, c
             creator: {
                 id: organizationUser.id,
                 organization_id: organizationUser.organization_id,
-                Tags: [],
+                tags: [],
                 user_id: Number(session.user!.id),
                 role: organizationUser.role,
                 user: {

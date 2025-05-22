@@ -30,6 +30,8 @@ import updateTagHandler from "../controllers/settings-channel/tags/updateTagHand
 import deleteTagHandler from "../controllers/settings-channel/tags/deleteTagHandler";
 import assignTagsHandler from "../controllers/organization-settings/assignTagsHandler";
 import assignRolesHandler from "../controllers/organization-settings/assignRolesHandler";
+import googleAuthController from "../controllers/user/googleAuthController";
+import googleAuthCallbackController from "../controllers/user/googleAuthCallbackController";
 
 const router: Router = Router();
 
@@ -38,6 +40,8 @@ router.get("/user/:id", authmiddleware, getUserDetails);
 router.put("/user", authmiddleware, updateUserDetails);
 router.get("/user/profile-data/:organizationId/:userId", authmiddleware, getUserProfileData);
 router.get("/check-username", authmiddleware, getUserNameDetails);
+router.get('/auth/google', googleAuthController);
+router.get('/auth/google/callback', googleAuthCallbackController);
 
 
 // organizations controller
@@ -88,5 +92,6 @@ router.post("/organization/tags/:organizationId", authmiddleware, storeTagHandle
 router.get("/organization/tags/:organizationId", authmiddleware, storeTagHandler);
 router.put("/organization/tags/:organizationId/:tagId", authmiddleware, updateTagHandler);
 router.delete("/organization/tags/:organizationId/:tagId", authmiddleware, deleteTagHandler);
+
 
 export default router;

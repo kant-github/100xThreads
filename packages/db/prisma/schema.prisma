@@ -8,13 +8,19 @@ datasource db {
 }
 
 model Users {
-  id                     Int                       @id @default(autoincrement())
-  name                   String
-  username               String?                   @unique
-  email                  String                    @unique
-  bio                    String                    @default("")
-  provider               String
-  oauth_id               String
+  id       Int     @id @default(autoincrement())
+  name     String
+  username String? @unique
+  email    String  @unique
+  bio      String  @default("")
+  provider String
+  oauth_id String
+
+  access_token     String?
+  refresh_token    String?
+  token_expires_at DateTime?
+  id_token         String?
+
   image                  String?
   created_at             DateTime                  @default(now())
   isOnline               Boolean                   @default(false)

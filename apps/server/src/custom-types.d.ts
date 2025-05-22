@@ -4,7 +4,6 @@ interface AuthUser {
   email: string;
   google_id: string;
   image?: string;
-  // Add other relevant user properties here
 }
 
 declare namespace Express {

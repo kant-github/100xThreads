@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { OrganizationTagType, UserRole, UserRoleArray } from "types/types";
 import OrganizationRolesTickerRenderer from "@/components/utility/tickers/organization_roles_tickers/OrganizationRolesTickerRenderer";
-import { ChevronDown, Clock, Filter, Shield, Tag, UserPlus } from "lucide-react";
+import { Clock, Filter, Tag, UserPlus } from "lucide-react";
 import { RxCross1 } from "react-icons/rx";
 import { Input } from "@/components/ui/input";
 import OptionImage from "@/components/ui/OptionImage";
@@ -96,6 +96,7 @@ export default function OrganizationSettingsUsersUI() {
     }, [selectAll, organizationUsers])
 
 
+
     function getFilteredUsers() {
         return organizationUsers.filter(orgUser => {
 
@@ -104,13 +105,15 @@ export default function OrganizationSettingsUsersUI() {
             }
 
             if (dateFilter) {
-                const joinedDate = orgUser.joined_at;
+                const joinedDate = new Date(orgUser.joined_at!);
                 const now = new Date();
+                console.log("joined date : ", joinedDate);
 
                 if (!joinedDate) return false;
 
                 if (dateFilter === 'last7days') {
                     const sevenDayAgo = new Date(now.setDate(now.getDate() - 7));
+                    console.log("seven days ago : ", sevenDayAgo);
                     if (joinedDate < sevenDayAgo) return false;
                 } else if (dateFilter === 'last30days') {
                     const thirtyDaysAgo = new Date(now.setDate(now.getDate() - 30));
@@ -237,7 +240,10 @@ export default function OrganizationSettingsUsersUI() {
     }
 
     return (
-        <div className="w-full flex flex-col gap-y-2 h-full">
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="w-full flex flex-col gap-y-2 h-full">
 
             <div className="flex flex-row w-full items-center justify-between">
                 <div className="flex gap-2">
@@ -395,19 +401,20 @@ export default function OrganizationSettingsUsersUI() {
             </div>
 
             <div className="mt-4 flex flex-col bg-secDark rounded-[10px] border-[1px] dark:border-neutral-700 overflow-hidden">
-
                 <table className="min-w-full divide-y divide-neutral-700">
                     <thead>
                         <tr className="dark:bg-neutral-900">
-                            <th scope="col" className="relative py-4 px-4 sm:w-16 sm:px-8">
-                                <span className="sr-only">Select</span>
-                                <Checkbox
-                                    aria-label="checkbox"
-                                    className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-neutral-300 text-indigo-600 focus:ring-indigo-500"
-                                    checked={selectAll && filteredUsers.length > 0}
-                                    onChange={toggleSelectAll}
-                                />
-                            </th>
+                            <GuardComponent action={Action.MANAGE} subject={Subject.USER_SETTINGS}>
+                                <th scope="col" className="relative py-4 px-4 sm:w-16 sm:px-8">
+                                    <span className="sr-only">Select</span>
+                                    <Checkbox
+                                        aria-label="checkbox"
+                                        className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-neutral-300 text-indigo-600 focus:ring-indigo-500"
+                                        checked={selectAll && filteredUsers.length > 0}
+                                        onChange={toggleSelectAll}
+                                    />
+                                </th>
+                            </GuardComponent>
                             <th scope="col" className="px-4 py-4 text-left text-[12px] dark:text-neutral-100 text-neutral-900 font-normal">User</th>
                             <th scope="col" className="px-4 py-4 text-left text-[12px] dark:text-neutral-100 text-neutral-900 font-normal">Role</th>
                             <th scope="col" className="px-4 py-4 text-left text-[12px] dark:text-neutral-100 text-neutral-900 font-normal">Joined at</th>
@@ -418,15 +425,17 @@ export default function OrganizationSettingsUsersUI() {
                         {filteredUsers.length > 0 ? (
                             filteredUsers.map((orgUser) => (
                                 <tr key={orgUser.id} className={`${selectedMembers.has(orgUser.id) ? 'bg-primary/10' : undefined}`}>
-                                    <td className="relative px-4 sm:w-16 sm:px-8">
-                                        <div className="absolute inset-y-0 left-0 w-0.5" style={{ visibility: selectedMembers.has(orgUser.id) ? 'visible' : 'hidden' }}></div>
-                                        <Checkbox
-                                            aria-label="checkbox"
-                                            className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-neutral-900 bg-neutral-900 "
-                                            checked={selectedMembers.has(orgUser.id)}
-                                            onChange={() => toggleSelectUser(orgUser.id)}
-                                        />
-                                    </td>
+                                    <GuardComponent action={Action.MANAGE} subject={Subject.USER_SETTINGS}>
+                                        <td className="relative px-4 sm:w-16 sm:px-8">
+                                            <div className="absolute inset-y-0 left-0 w-0.5" style={{ visibility: selectedMembers.has(orgUser.id) ? 'visible' : 'hidden' }}></div>
+                                            <Checkbox
+                                                aria-label="checkbox"
+                                                className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-neutral-900 bg-neutral-900 "
+                                                checked={selectedMembers.has(orgUser.id)}
+                                                onChange={() => toggleSelectUser(orgUser.id)}
+                                            />
+                                        </td>
+                                    </GuardComponent>
                                     <td className="whitespace-nowrap px-3 py-2.5 text-sm">
                                         <div className="flex items-center justify-start gap-x-2">
                                             <div className="h-4 w-10 flex-shrink-0 flex items-center justify-start">
@@ -513,6 +522,6 @@ export default function OrganizationSettingsUsersUI() {
                     </tbody>
                 </table>
             </div>
-        </div >
+        </motion.div >
     );
 }

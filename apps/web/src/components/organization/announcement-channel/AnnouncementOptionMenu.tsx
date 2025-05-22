@@ -20,6 +20,7 @@ export default function ({ announcement, open, setOpen }: AnnouncementOptionMenu
         const newMessage = {
             announcementId: announcement.id
         }
+
         sendMessage(newMessage, announcement.channel_id, "delete-announcement")
     }
 

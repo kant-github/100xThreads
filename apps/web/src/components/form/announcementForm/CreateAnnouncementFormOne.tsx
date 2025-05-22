@@ -1,6 +1,7 @@
 import { Control, Controller, FieldErrors } from "react-hook-form";
 import { CreateAnnouncementFormSchemaType } from "./CreateAnnouncementForm";
 import InputBox from "@/components/utility/InputBox";
+import React from "react";
 
 interface CreateAnnouncementFormOneProps {
     control: Control<CreateAnnouncementFormSchemaType>;
@@ -9,7 +10,7 @@ interface CreateAnnouncementFormOneProps {
 
 export default function ({ errors, control }: CreateAnnouncementFormOneProps) {
     return (
-        <>
+        <div className="flex flex-col gap-y-3">
             <Controller
                 name="creator_name"
                 control={control}
@@ -36,6 +37,6 @@ export default function ({ errors, control }: CreateAnnouncementFormOneProps) {
                     />
                 )}
             />
-        </>
+        </div>
     )
 }

@@ -59,8 +59,7 @@ export default function ({ className, totalLevels, currentLevel, isSubmitting, s
                     onClick={handleNext}
                     disabled={isSubmitting}
                     className={cn(
-                        "flex items-center gap-1 transition-all duration-300 rounded-2xl",
-                        currentLevel === totalLevels ? "bg-yellow-600 text-neutral-900" : "",
+                        "flex items-center gap-1 transition-all duration-300 rounded-2xl bg-yellow-600 text-neutral-900",
                     )}
                 >
                     {isSubmitting ? (

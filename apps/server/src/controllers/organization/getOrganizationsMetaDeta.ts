@@ -63,11 +63,7 @@ export async function getOrganizationsMetaDeta(organizationId: string, userId: n
             organizationUser,
             organizationTags
         };
-
-
-        console.log(organizationUsers);
         return data;
-
     } catch (error) {
         console.log("error in catching metadata");
     }
