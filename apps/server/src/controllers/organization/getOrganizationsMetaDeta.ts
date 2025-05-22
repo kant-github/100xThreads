@@ -46,6 +46,7 @@ export async function getOrganizationsMetaDeta(organizationId: string, userId: n
                         organization_id: organizationId!
                     }
                 },
+                include: { user: true }
             }),
             prisma.organizationTag.findMany({
                 where: {

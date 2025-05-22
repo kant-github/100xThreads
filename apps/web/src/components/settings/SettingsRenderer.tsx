@@ -3,6 +3,7 @@ import { useRecoilValue } from "recoil"
 import SettingsAppearanceComponent from "./SettingsAppearanceComponent";
 import SettingsVisibilityComponent from "./SettingsVisibilityComponent";
 import SettingsProfileComponent from "./SettingsProfileComponent";
+import UtilityCard from "../utility/UtilityCard";
 
 export default function () {
     const settingsOption = useRecoilValue(settingsOptionAtom);
@@ -22,8 +23,8 @@ export default function () {
     };
 
     return (
-        <div className="flex items-center gap-x-24 dark:bg-secDark bg-secondLight w-full mt-6 rounded-[8px] shadow-lg shadow-black/40 ">
+        <UtilityCard className="flex items-center gap-x-24 dark:bg-terDark bg-secondLight w-full mt-6 rounded-[8px] shadow-lg shadow-black/40 ">
             {renderComponent()}
-        </div>
+        </UtilityCard>
     );
 }

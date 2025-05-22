@@ -200,15 +200,16 @@ model Channel {
 }
 
 model EventChannel {
-  id              String       @id @default(uuid()) @db.Uuid
-  organization    Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  organization_id String       @db.Uuid
-  title           String       @db.VarChar(191)
-  description     String?
-  created_at      DateTime     @default(now())
-  created_by      Int?
-  creator         Users?       @relation(fields: [created_by], references: [id])
-  events          Event[]
+  id                 String       @id @default(uuid()) @db.Uuid
+  organization       Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  organization_id    String       @db.Uuid
+  title              String       @db.VarChar(191)
+  description        String?
+  google_calendar_id String?
+  created_at         DateTime     @default(now())
+  created_by         Int?
+  creator            Users?       @relation(fields: [created_by], references: [id])
+  events             Event[]
 
   @@index([organization_id])
   @@map("event_rooms")
@@ -528,18 +529,20 @@ model RecentlyJoinedGroups {
 }
 
 model Event {
-  id            String       @id @default(uuid()) @db.Uuid
-  event_room    EventChannel @relation(fields: [event_room_id], references: [id], onDelete: Cascade)
-  event_room_id String       @db.Uuid
-  title         String       @db.VarChar(191)
-  description   String?
-  start_time    DateTime
-  end_time      DateTime?
-  location      String?
-  status        EventStatus  @default(PENDING)
-  rsvp_count    Int          @default(0)
-  created_at    DateTime     @default(now())
-  created_by    Int
+  id              String       @id @default(uuid()) @db.Uuid
+  event_room      EventChannel @relation(fields: [event_room_id], references: [id], onDelete: Cascade)
+  event_room_id   String       @db.Uuid
+  title           String       @db.VarChar(191)
+  description     String?
+  start_time      DateTime
+  end_time        DateTime?
+  location        String?
+  status          EventStatus  @default(PENDING)
+  rsvp_count      Int          @default(0)
+  created_at      DateTime     @default(now())
+  google_event_id String?
+  meet_link       String?
+  created_by      Int
 
   attendees EventAttendee[]
 

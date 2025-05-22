@@ -33,6 +33,11 @@ export type UserType = {
   provider: string;
   oauth_id: string;
   created_at: string;
+
+  access_token?: string;
+  refresh_token?: string
+  token_expires_at?: string;
+  id_token?: string;
 };
 
 export type MessageType = {

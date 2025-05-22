@@ -1,16 +1,19 @@
 'use client';
 import Dashboard from "@/components/dashboard/Dashboard";
 import DashNav from "@/components/dashboard/DashNav";
+import GoogleCalendarConnectionDialog from "@/components/utility/GoogleCalendarConnectionDialog";
 import { USER_URL } from "@/lib/apiAuthRoutes";
+import isExpiredtoken from "@/lib/isExpiredToken";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import { userProfileAtom } from "@/recoil/atoms/users/userProfileAtom";
 import axios from "axios";
-import { useEffect, useCallback } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useEffect, useCallback, useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 export default function DashboardPageClient() {
     const session = useRecoilValue(userSessionAtom);
-    const setUserProfileData = useSetRecoilState(userProfileAtom);
+    const [userProfileData, setUserProfileData] = useRecoilState(userProfileAtom);
+    const [show, setShow] = useState<boolean>(false);
     const fetchUserDetails = useCallback(async (userId: string) => {
         try {
             const { data } = await axios.get(`${USER_URL}/${userId}`, {
@@ -30,8 +33,22 @@ export default function DashboardPageClient() {
         }
     }, [session.user?.id, fetchUserDetails]);
 
+    useEffect(() => {
+        const shouldShowDialog = !userProfileData.token_expires_at ||
+            isExpiredtoken(userProfileData.token_expires_at);
+
+        if (shouldShowDialog) {
+            console.log("Token expired or doesn't exist");
+            setShow(true);
+        } else {
+            setShow(false);
+        }
+    }, [userProfileData.token_expires_at]);
+
+
     return (
-        <div className="h-[100dvh] w-full flex flex-col overflow-hidden">
+        <div className="h-[100dvh] w-full flex flex-col overflow-hidden relative">
+            {show && <GoogleCalendarConnectionDialog />}
             <div className="min-h-[60px] sm:min-h-[70px] md:min-h-20">
                 <DashNav />
             </div>

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { GOOGLE_CONFIG, oauth2Client } from "../../config/google";
+import { oauth2Client } from "../../config/google";
+import { GOOGLE_CONFIG } from "../../calendar/googleCalendarService";
 
 export default function googleAuthController(req: Request, res: Response) {
 

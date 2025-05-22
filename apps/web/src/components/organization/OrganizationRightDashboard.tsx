@@ -85,18 +85,19 @@ function Option({ isSelected, onClick, user, isExpanded }: {
                         : "transition-colors duration-200"
                         } hover:[background-color:var(--hover-color)]`} >
                     <div className={`flex items-center ${isExpanded ? 'gap-x-2' : ''}`}>
-                        <span className="relative">
-                            <span className="bg-green-500 absolute bottom-1.5 right-1.5 transform translate-x-1/4 translate-y-1/4 rounded-full border-2 border-zinc-800 z-10 h-2.5 w-2.5"></span>
+                        <span className="relative shrink-0 w-8 h-8">
+                            <span className="bg-green-500 absolute bottom-1 right-1 translate-x-1/4 translate-y-1/4 rounded-full border-2 border-zinc-800 z-10 h-2.5 w-2.5"/>
                             <Image
                                 src={user.user.image || '/default-avatar.png'}
                                 alt={`${user.user.name}'s profile picture`}
-                                width={36}
-                                height={36}
-                                className='rounded-full'
+                                fill
+                                className="rounded-full object-cover"
                             />
                         </span>
+
                         {isExpanded && <span className={`${textStyles}`}>{user.user.name}</span>}
                     </div>
+
                     {isExpanded && <OrganizationRolesTickerRenderer tickerText={user.role} />}
                 </div>
             }

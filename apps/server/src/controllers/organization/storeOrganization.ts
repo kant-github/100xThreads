@@ -1,7 +1,9 @@
 import prisma from "@repo/db/client";
 import { Request, Response } from "express";
-import bcrypt from 'bcryptjs';
-
+import bcrypt from "bcryptjs";
+import { google } from "googleapis";
+import GoogleCalendarService from "../../calendar/googleCalendarService";
+import isExpiredtoken from "../../config/isExpiredtoken";
 
 const channelTypeMap: Record<string, 'ANNOUNCEMENT' | 'GENERAL' | 'RESOURCE' | 'HELP_DESK' | 'PROJECT' | 'LEARNING'> = {
     'announcements': 'ANNOUNCEMENT',
@@ -13,8 +15,7 @@ const channelTypeMap: Record<string, 'ANNOUNCEMENT' | 'GENERAL' | 'RESOURCE' | '
 };
 
 export async function storeOrganization(req: Request, res: Response) {
-
-    if (!req.user && !req.user) {
+    if (!req.user) {
         res.status(401).json({ message: "You are not authorized" });
         return;
     }
@@ -36,15 +37,12 @@ export async function storeOrganization(req: Request, res: Response) {
         return;
     }
 
-
     let finalHash = "";
     let finalSalt = "";
-
 
     if (hasPassword === 'true' && password) {
         const [clientSalt, clientHash] = password.split(":");
         finalHash = await bcrypt.hash(clientHash + clientSalt, 10);
-
         finalSalt = clientSalt;
     }
 
@@ -65,7 +63,17 @@ export async function storeOrganization(req: Request, res: Response) {
             res.status(400).json({ message: "An organization with this name already exists" });
             return;
         }
-        console.log("creating org for : ", req.user.id);
+
+        const user = await prisma.users.findUnique({
+            where: { id: Number(req.user.id) }
+        });
+
+        let googleCalendarService;
+        let calendarId: string | undefined | null;
+        if (user?.token_expires_at && !isExpiredtoken(user.token_expires_at.toString())) {
+            googleCalendarService = new GoogleCalendarService(user.access_token!, user.access_token!);
+            calendarId = await googleCalendarService.createGoogleCalendar(organizationName);
+        }
 
         const newOrganization = await prisma.$transaction(async (tx) => {
             const org = await tx.organization.create({
@@ -88,9 +96,10 @@ export async function storeOrganization(req: Request, res: Response) {
             await tx.eventChannel.create({
                 data: {
                     organization_id: org.id,
-                    title: 'Events',
-                    description: 'Welcome to Events! Create, manage, and discover upcoming events.',
-                }
+                    title: "Events",
+                    description: "Welcome to Events! Create, manage, and discover upcoming events.",
+                    google_calendar_id: calendarId,
+                },
             });
 
             await tx.organizationUsers.create({
@@ -104,20 +113,21 @@ export async function storeOrganization(req: Request, res: Response) {
             await tx.welcomeChannel.create({
                 data: {
                     organization_id: org.id,
-                    welcome_message: "Welcome to our organization!"
-                }
+                    welcome_message: "Welcome to our organization!",
+                },
             });
 
             await tx.channel.createMany({
                 data: presetChannels.map((channelId: string) => ({
                     organization_id: org.id,
-                    title: channelId.charAt(0).toUpperCase() + channelId.slice(1).replace(/-/g, ' '),
-                    type: channelTypeMap[channelId] || 'GENERAL',
+                    title: channelId.charAt(0).toUpperCase() + channelId.slice(1).replace(/-/g, " "),
+                    type: channelTypeMap[channelId] || "GENERAL",
                     created_by: Number(req.user?.id),
                     allowed_roles: ["MEMBER"],
-                    description: `Channel for ${channelId.replace(/-/g, ' ')}`
+                    description: `Channel for ${channelId.replace(/-/g, " ")}`,
                 })),
             });
+
             return org;
         });
 
