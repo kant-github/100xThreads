@@ -13,8 +13,7 @@ import OrganizationSettingsChannelUI from './channels/OrganizationSettingsChanne
 
 export default function ChannelContent() {
     const selectedChannel = useRecoilValue(selectedChannelSelector);
-    console.log("selected channel is : ", selectedChannel);
-
+    
     if (!selectedChannel) {
         return <div className="bg-[#171717] w-full p-4">Select a channel</div>;
     }

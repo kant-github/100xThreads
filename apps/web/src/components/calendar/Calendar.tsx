@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import CalendarHeader from "./CalendarHeader";
 import { add, eachDayOfInterval, endOfMonth, format, isEqual, isSameMonth, isToday, parse, startOfMonth, startOfWeek, endOfWeek, } from "date-fns";
 import UtilityCard from "../utility/UtilityCard";
-import CalendarEventForm from "./CalendarEventForm";
+import CalendarEventForm from "./event-form/CalendarEventForm";
 
 interface Subscription {
   id: string;

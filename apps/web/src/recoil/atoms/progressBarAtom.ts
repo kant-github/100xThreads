@@ -29,3 +29,13 @@ export const taskFormTotalLevelBarAtom = atom({
     key: "taskFormTotalLevelBarAtom",
     default: 2
 })
+
+export const eventFormProgressBarAtom = atom({
+    key: "eventFormProgressBarAtom",
+    default: 0
+})
+
+export const eventFormTotalLevelBarAtom = atom({
+    key: "eventFormTotalLevelBarAtom",
+    default: 2
+})

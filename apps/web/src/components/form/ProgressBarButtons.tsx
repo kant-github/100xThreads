@@ -28,6 +28,7 @@ export default function ({ className, totalLevels, currentLevel, isSubmitting, s
     }, [currentLevel, totalLevels]);
 
     const handleNext = () => {
+        console.log("next")
         if (currentLevel < totalLevels) {
             setCurrentLevel(prev => prev + 1);
         }

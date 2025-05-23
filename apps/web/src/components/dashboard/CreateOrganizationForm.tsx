@@ -78,8 +78,6 @@ export default function CreateOrganization({ open, setOpen }: CreateRoomProps) {
     };
 
     async function onSubmit(data: FormValues) {
-        console.log(" called -- >");
-        console.log(isSubmitting);
         if (isSubmitting) return;
         setIsSubmitting(true);
 
