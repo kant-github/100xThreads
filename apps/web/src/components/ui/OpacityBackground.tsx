@@ -13,7 +13,7 @@ export default function OpacityBackground({ children, className, onBackgroundCli
 
     return (
         <div 
-            className={`fixed w-screen h-screen inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30 ${className}`}
+            className={`fixed w-screen h-screen inset-0 bg-black bg-opacity-70 flex items-center justify-center z-30 ${className}`}
             onClick={handleBackgroundClick}
         >
             {children}

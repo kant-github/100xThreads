@@ -6,6 +6,7 @@ import CalendarHeader from "./CalendarHeader";
 import { add, eachDayOfInterval, endOfMonth, format, isEqual, isSameMonth, isToday, parse, startOfMonth, startOfWeek, endOfWeek, } from "date-fns";
 import UtilityCard from "../utility/UtilityCard";
 import CalendarEventForm from "./event-form/CalendarEventForm";
+import { EventChannelType } from "types/types";
 
 interface Subscription {
   id: string;
@@ -21,14 +22,16 @@ interface SubscriptionDay {
 }
 
 interface CalendarProps {
-  className?: string
+  className?: string;
+  channel: EventChannelType;
 }
-export default function ({ className }: CalendarProps) {
+export default function ({ className, channel }: CalendarProps) {
   const [subscriptions, setSubscriptions] = React.useState<Subscription[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [currentMonth, setCurrentMonth] = React.useState(
+  const [currentMonth, setCurrentMonth] = useState(
     format(new Date(), "MMM-yyyy")
   );
+
   const firstDayCurrentMonth = parse(currentMonth, "MMM-yyyy", new Date());
 
   const days = useMemo(() => {
@@ -125,7 +128,7 @@ export default function ({ className }: CalendarProps) {
       </div>
       {
         isAddModalOpen && (
-          <CalendarEventForm isOpen={isAddModalOpen} setIsOpen={setIsAddModalOpen} />
+          <CalendarEventForm channel={channel} isOpen={isAddModalOpen} setIsOpen={setIsAddModalOpen} />
         )
       }
     </UtilityCard>

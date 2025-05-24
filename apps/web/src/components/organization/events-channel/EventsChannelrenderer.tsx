@@ -1,9 +1,15 @@
 import CalendarRenderer from "@/components/calendar/CalendarRenderer";
+import { EventChannelType } from "types/types";
 
-export default function () {
+
+interface EventsChannelrendererProps {
+    channel: EventChannelType
+}
+
+export default function EventsChannelrenderer({ channel }: EventsChannelrendererProps) {
     return (
         <>
-            <CalendarRenderer className="mt-32" />
+            <CalendarRenderer channel={channel} className="mt-32" />
         </>
     )
 }

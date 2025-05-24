@@ -1,13 +1,15 @@
-import Calendar from "./Calendar";
+import { EventChannelType } from "types/types";
+import EventCalendar from "./EventCalendar";
 
 interface CalendarRenderedProps {
+    channel: EventChannelType
     className?: string
 }
 
-export default function ({ className }: CalendarRenderedProps) {
+export default function ({ className, channel }: CalendarRenderedProps) {
     return (
         <div className={`${className}`}>
-            <Calendar />
+            <EventCalendar channel={channel} />
         </div>
     )
 }

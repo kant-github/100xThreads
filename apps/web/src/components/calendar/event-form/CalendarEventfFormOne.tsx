@@ -5,7 +5,7 @@ import { CreateEventFormSchema } from "./CalendarEventForm";
 
 interface CalendarEventfFormOneProps {
     control: Control<CreateEventFormSchema>;
-    errors: FieldErrors<CreateEventFormSchema>;
+    errors: FieldErrors<CreateEventFormSchema>
 }
 
 export default function CalendarEventfFormOne({ control, errors }: CalendarEventfFormOneProps) {
@@ -18,6 +18,7 @@ export default function CalendarEventfFormOne({ control, errors }: CalendarEvent
                 render={({ field }) => (
                     <InputBox
                         label="Event title"
+                        placeholder="choose event title"
                         value={field.value}
                         onChange={field.onChange}
                         error={errors.title?.message}

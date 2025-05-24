@@ -35,9 +35,9 @@ export default function ({ channel }: EventChannelViewProps) {
     }, [organizationUser.user.token_expires_at]);
     return (
         <div className="bg-neutral-900 w-full p-4">
-            {show && <GoogleCalendarConnectionDialog />}
+            {show && <GoogleCalendarConnectionDialog setOpen={setShow} />}
             <EventChannelTopBar channel={channel} />
-            <EventsChannelrenderer />
+            <EventsChannelrenderer channel={channel} />
         </div>
     );
 }

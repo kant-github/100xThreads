@@ -48,7 +48,7 @@ export default function DashboardPageClient() {
 
     return (
         <div className="h-[100dvh] w-full flex flex-col overflow-hidden relative">
-            {show && <GoogleCalendarConnectionDialog />}
+            {show && <GoogleCalendarConnectionDialog setOpen={setShow} />}
             <div className="min-h-[60px] sm:min-h-[70px] md:min-h-20">
                 <DashNav />
             </div>
