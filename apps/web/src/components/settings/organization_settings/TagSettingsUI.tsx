@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { IoMdAdd } from "react-icons/io";
 import TagContent from "./TagContent";
 import { OrganizationTagType } from "types/types";
 import TagSettingsUpdateForm from "./TagSettingsUpdateForm";
@@ -10,6 +9,10 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import { organizationTagsAtom } from "@/recoil/atoms/tags/organizationTagsAtom";
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { Plus } from "lucide-react";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 
 export type NewTagType = {
     name: string;
@@ -143,16 +146,29 @@ export default function TagSettingsUI() {
     }
 
     return (
-        <div className="w-full flex flex-col h-full">
-            <div className=" flex-shrink-0">
-                {
-                    !(isAddingTag && isEditingTag) && <div className="absolute top-6 right-6 flex flex-row items-center justify-center gap-x-2">
-                        <Button variant={"default"} onClick={() => setIsAddingTag(true)} className="flex items-center gap-2 px-4 py-2 rounded-[8px] text-sm transition-colors text-neutral-900">
-                            <IoMdAdd size={16} />
-                            Add Tag
-                        </Button>
+        <div className="w-full flex flex-col gap-y-2 h-full">
+            <div className='flex justify-end w-full'>
+                <div className='flex items-center justify-center gap-x-4'>
+                    <Button
+                        className="flex items-center justify-center gap-x-2 border-[1px] border-neutral-700 text-xs rounded-[8px] text-neutral-300"
+                        onClick={() => setIsAddingTag(true)}
+                        variant={"outline"}
+                    >
+                        <Plus className="h-4 w-4 mr-1" />
+                        Add Tag
+                    </Button>
+                    <div className="relative w-full max-w-xs">
+                        <MagnifyingGlassIcon className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+                        <Input
+                            className={cn(
+                                `pl-8 pr-2 py-1 text-xs font-light text-neutral-100 placeholder:text-neutral-100 placeholder:text-xs`,
+                                `outline-none border border-neutral-700 rounded-[8px]`,
+                                `w-full`
+                            )}
+                            placeholder="Search location"
+                        />
                     </div>
-                }
+                </div>
             </div>
 
             <div className="flex-grow overflow-hidden">

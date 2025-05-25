@@ -11,6 +11,8 @@ function activeTooltip(option: OrganizationSettingsOptionEnum) {
             return "Tags help you categorize users and control content visibility within your organization. ";
         case OrganizationSettingsOptionEnum.USERS:
             return "user informaiom";
+        case OrganizationSettingsOptionEnum.LOCATION:
+            return "choose location of your organization to add events to that location";
         default:
             return "";
     }
@@ -43,6 +45,16 @@ export default function OrganizationSettingsOptions() {
                     className={`cursor-pointer text-md font-light text-lightText dark:text-darkText 
                 ${orgSettingsAtom === OrganizationSettingsOptionEnum.TAGS && "underline decoration-blue-500 decoration-4 underline-offset-4 space-y-[20px]"}`}>
                     Tags
+                </motion.div>
+
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 1 * 0.01 }}
+                    onClick={() => setOrgSettingsAtom(OrganizationSettingsOptionEnum.LOCATION)}
+                    className={`cursor-pointer text-md font-light text-lightText dark:text-darkText 
+                ${orgSettingsAtom === OrganizationSettingsOptionEnum.LOCATION && "underline decoration-blue-500 decoration-4 underline-offset-4 space-y-[20px]"}`}>
+                    Locations
                 </motion.div>
 
             </div>

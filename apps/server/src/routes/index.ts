@@ -25,13 +25,17 @@ import getOrganizationAndUserBySearch from "../controllers/organization/getOrgan
 import getP2pChats from "../controllers/p2p/getP2pChats";
 import caseJoinP2pChat from "../controllers/p2p/caseJoinP2pChat";
 import getFriends from "../controllers/friends/getFriends";
-import storeTagHandler from "../controllers/settings-channel/tags/storeTagHandler";
 import updateTagHandler from "../controllers/settings-channel/tags/updateTagHandler";
 import deleteTagHandler from "../controllers/settings-channel/tags/deleteTagHandler";
 import assignTagsHandler from "../controllers/organization-settings/assignTagsHandler";
 import assignRolesHandler from "../controllers/organization-settings/assignRolesHandler";
 import googleAuthController from "../controllers/user/googleAuthController";
 import googleAuthCallbackController from "../controllers/user/googleAuthCallbackController";
+import storeOrgLocation from "../controllers/organization-settings/storeOrgLocation";
+import getOrgLocations from "../controllers/organization-settings/getOrgLocation";
+import { updateOrgLocation } from "../controllers/organization-settings/updateOrgLoction";
+import { deleteOrgLocation } from "../controllers/organization-settings/deleteOrgLocation";
+import storeTagHandler from "../controllers/settings-channel/tags/StoreTagHandler";
 
 const router: Router = Router();
 
@@ -92,6 +96,13 @@ router.post("/organization/tags/:organizationId", authmiddleware, storeTagHandle
 router.get("/organization/tags/:organizationId", authmiddleware, storeTagHandler);
 router.put("/organization/tags/:organizationId/:tagId", authmiddleware, updateTagHandler);
 router.delete("/organization/tags/:organizationId/:tagId", authmiddleware, deleteTagHandler);
+
+//organization-location-controller
+router.post("/organization/settings/location/:organizationId", authmiddleware, storeOrgLocation);
+router.get("/organization/settings/location/:organizationId", authmiddleware, getOrgLocations);
+router.put("/organization/settings/location/:organizationId/:tagId", authmiddleware, updateOrgLocation);
+router.delete("/organization/settings/location/:organizationId/:tagId", authmiddleware, deleteOrgLocation);
+
 
 
 export default router;

@@ -32,7 +32,7 @@ export default function ({ channel }: EventChannelViewProps) {
 
     useEffect(() => {
         handleDialogBoxCheck();
-    }, [organizationUser.user.token_expires_at]);
+    }, [organizationUser.user?.token_expires_at]);
     return (
         <div className="bg-neutral-900 w-full p-4">
             {show && <GoogleCalendarConnectionDialog setOpen={setShow} />}

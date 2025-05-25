@@ -69,27 +69,28 @@ model Friendship {
 }
 
 model Organization {
-  id                String                    @id @default(uuid()) @db.Uuid
-  name              String                    @db.VarChar(191)
-  description       String?                   @default("This is the default description for your organization 🌻")
-  owner             Users                     @relation(fields: [owner_id], references: [id], onDelete: Cascade)
-  owner_id          Int
-  access_type       OrganizationAccessType    @default(PRIVATE)
-  privateFlag       Boolean                   @default(false)
-  passwordHash      String?                   @db.VarChar(191)
-  passwordSalt      String?
-  image             String?                   @db.VarChar(191)
-  organizationColor String?                   @db.VarChar(7)
-  organization_type OrganizationType
-  created_at        DateTime                  @default(now())
-  tags              String[]                  @default([]) @db.VarChar(50)
-  Channels          Channel[]
-  EventChannel      EventChannel[]
-  OrganizationUsers OrganizationUsers[]
-  WelcomeChannel    WelcomeChannel?
-  JoinRequests      OrganizationJoinRequest[]
-  Invites           OrganizationInvite[]
-  OrganizationTags  OrganizationTag[] // Add this relation
+  id                    String                    @id @default(uuid()) @db.Uuid
+  name                  String                    @db.VarChar(191)
+  description           String?                   @default("This is the default description for your organization 🌻")
+  owner                 Users                     @relation(fields: [owner_id], references: [id], onDelete: Cascade)
+  owner_id              Int
+  access_type           OrganizationAccessType    @default(PRIVATE)
+  privateFlag           Boolean                   @default(false)
+  passwordHash          String?                   @db.VarChar(191)
+  passwordSalt          String?
+  image                 String?                   @db.VarChar(191)
+  organizationColor     String?                   @db.VarChar(7)
+  organization_type     OrganizationType
+  created_at            DateTime                  @default(now())
+  tags                  String[]                  @default([]) @db.VarChar(50)
+  Channels              Channel[]
+  EventChannel          EventChannel[]
+  OrganizationUsers     OrganizationUsers[]
+  WelcomeChannel        WelcomeChannel?
+  JoinRequests          OrganizationJoinRequest[]
+  Invites               OrganizationInvite[]
+  OrganizationTags      OrganizationTag[] // Add this relation
+  OrganizationLocations OrganizationLocations[]
 
   @@unique([name, owner_id])
   @@map("organizations")
@@ -126,6 +127,21 @@ model OrganizationInvite {
 
   @@index([code])
   @@map("organization_invites")
+}
+
+model OrganizationLocations {
+  id              String       @id @default(uuid()) @db.Uuid
+  mode            LocationMode
+  organization    Organization @relation(references: [id], fields: [organization_id], onDelete: Cascade)
+  organization_id String       @db.Uuid
+  name            String
+  description     String
+  address         String?
+  city            String?
+  created_at      DateTime     @default(now())
+  updated_at      DateTime?
+
+  @@index([organization_id])
 }
 
 model OrganizationTag {
@@ -529,22 +545,22 @@ model RecentlyJoinedGroups {
 }
 
 model Event {
-  id              String       @id @default(uuid()) @db.Uuid
-  event_room      EventChannel @relation(fields: [event_room_id], references: [id], onDelete: Cascade)
-  event_room_id   String       @db.Uuid
-  title           String       @db.VarChar(191)
+  id              String          @id @default(uuid()) @db.Uuid
+  event_room      EventChannel    @relation(fields: [event_room_id], references: [id], onDelete: Cascade)
+  event_room_id   String          @db.Uuid
+  title           String          @db.VarChar(191)
   description     String?
   start_time      DateTime
   end_time        DateTime?
   location        String?
-  status          EventStatus  @default(PENDING)
-  rsvp_count      Int          @default(0)
-  created_at      DateTime     @default(now())
+  status          EventStatus     @default(PENDING)
+  rsvp_count      Int             @default(0)
+  created_at      DateTime        @default(now())
   google_event_id String?
   meet_link       String?
   created_by      Int
-
-  attendees EventAttendee[]
+  linkedTags      String[]        @db.Uuid
+  attendees       EventAttendee[]
 
   @@index([event_room_id, start_time])
   @@map("events")
@@ -772,4 +788,9 @@ enum FriendRequestStatus {
   ACCEPTED
   REJECTED
   BLOCKED
+}
+
+enum LocationMode {
+  ONLINE
+  OFFLINE
 }

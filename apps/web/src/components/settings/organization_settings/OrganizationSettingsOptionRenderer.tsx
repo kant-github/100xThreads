@@ -2,6 +2,7 @@ import { organizationSettingsOptionAtom, OrganizationSettingsOptionEnum } from "
 import { useRecoilValue } from "recoil";
 import TagSettingsUI from "./TagSettingsUI";
 import OrganizationSettingsUsersUI from "./OrganizationSettingsUsersUI";
+import OrganizationSettingsLocationUI from "./OrganizationSettingsLocationUI";
 
 export default function OrganizationSettingsOptionRenderer() {
     const organizationSettingsOption = useRecoilValue(organizationSettingsOptionAtom);
@@ -12,6 +13,8 @@ export default function OrganizationSettingsOptionRenderer() {
                 return <TagSettingsUI />;
             case OrganizationSettingsOptionEnum.USERS:
                 return <OrganizationSettingsUsersUI />;
+            case OrganizationSettingsOptionEnum.LOCATION:
+                return <OrganizationSettingsLocationUI />
             default:
                 return null;
         }

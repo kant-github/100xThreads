@@ -128,6 +128,19 @@ export async function storeOrganization(req: Request, res: Response) {
                 })),
             });
 
+            if (user?.token_expires_at && !isExpiredtoken(user.token_expires_at.toString())) {
+                console.log("creating");
+                await tx.organizationLocations.create({
+                    data: {
+                        mode: 'ONLINE',
+                        organization_id: org.id,
+                        name: 'Google Meet',
+                        description: 'Virtual meeting room hosted via Google Meet for remote attendees'
+                    }
+                });
+
+            }
+
             return org;
         });
 

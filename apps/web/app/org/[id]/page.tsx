@@ -13,6 +13,7 @@ import { organizationAtom } from '@/recoil/atoms/organizationAtoms/organizationA
 import { useWebSocket } from '@/hooks/useWebsocket'
 import { organizationUserAtom } from '@/recoil/atoms/organizationAtoms/organizationUserAtom'
 import { organizationTagsAtom } from '@/recoil/atoms/tags/organizationTagsAtom'
+import { organizationLocationsAtom } from '@/recoil/atoms/organizationAtoms/organizationLocation/organizationLocationsAtom'
 
 export type protectedOrganizationMetadata = {
     name: string,
@@ -37,13 +38,14 @@ export default function ({ params }: { params: { id: string } }) {
     const setOrganization = useSetRecoilState(organizationAtom);
     const setOrganizationUser = useSetRecoilState(organizationUserAtom);
     const setOrganizationTags = useSetRecoilState(organizationTagsAtom);
+    const setOrganizationLocations = useSetRecoilState(organizationLocationsAtom);
     const [flag, setFlag] = useState<'PROTECTED' | 'ALLOWED' | 'INIT'>('INIT')
     const [data, setData] = useState<protectedOrganizationMetadata>({} as protectedOrganizationMetadata)
 
 
 
     const updateChannels = useCallback((channelData: any) => {
-        const { organization, eventChannel, channels, welcomeChannel, organizationUsers, organizationUser, organizationTags } = channelData
+        const { organization, eventChannel, channels, welcomeChannel, organizationUsers, organizationUser, organizationTags, organizationLocations } = channelData
         console.log("organiztion user ate page.stsx is : ", organizationUser);
         setOrganization(organization);
         setEventChannel(eventChannel);
@@ -52,7 +54,8 @@ export default function ({ params }: { params: { id: string } }) {
         setOrganizationUsers(organizationUsers);
         setOrganizationUser(organizationUser);
         setOrganizationTags(organizationTags);
-    }, [setEventChannel, setChannels, setWelcomeChannel, setOrganizationUsers, params.id, useWebSocket])
+        setOrganizationLocations(organizationLocations);
+    }, [setEventChannel, setChannels, setWelcomeChannel, setOrganizationUsers, setOrganizationLocations, params.id, useWebSocket])
 
     const fetchOrgMetadata = useCallback(async () => {
         if (!session.user?.token || !params.id) return

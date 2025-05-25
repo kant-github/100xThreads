@@ -2,7 +2,7 @@ import prisma from "@repo/db/client";
 
 export async function getOrganizationsMetaDeta(organizationId: string, userId: number) {
     try {
-        const [organization, eventChannel, channels, organizationUsers, welcomeChannel, organizationUser, organizationTags] = await Promise.all([
+        const [organization, eventChannel, channels, organizationUsers, welcomeChannel, organizationUser, organizationTags, organizationLocations] = await Promise.all([
             prisma.organization.findFirst({
                 where: { id: organizationId },
                 select: {
@@ -52,6 +52,9 @@ export async function getOrganizationsMetaDeta(organizationId: string, userId: n
                 where: {
                     organization_id: organizationId
                 }
+            }),
+            prisma.organizationLocations.findMany({
+                where: { organization_id: organizationId }
             })
         ]);
 
@@ -62,7 +65,8 @@ export async function getOrganizationsMetaDeta(organizationId: string, userId: n
             organizationUsers,
             welcomeChannel,
             organizationUser,
-            organizationTags
+            organizationTags,
+            organizationLocations
         };
         return data;
     } catch (error) {

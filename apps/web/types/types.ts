@@ -23,6 +23,21 @@ export type GroupChatUserType = {
   user: UserType;
 };
 
+
+export type OrganizationLocationTypes = {
+  id: string;
+  mode: LocationMode;
+  organization: OrganizationType;
+  organization_id: string;
+  name: string;
+  description: string;
+  address?: string;
+  city?: string;
+  created_at: Date;
+  updated_at?: Date;
+};
+
+
 export type UserType = {
   id: number;
   name: string;
@@ -409,6 +424,11 @@ enum ProjectActivityType {
   TASK_STATUS_CHANGED = 'TASK_STATUS_CHANGED',
   PROJECT_UPDATED = 'PROJECT_UPDATED',
   OTHER = 'OTHER'
+}
+
+export enum LocationMode {
+  ONLINE = 'ONLINE',
+  OFFLINE = 'OFFLINE'
 }
 
 

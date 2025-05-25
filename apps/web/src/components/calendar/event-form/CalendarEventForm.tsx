@@ -22,7 +22,7 @@ interface CalendarEventFormProps {
 
 const steps = [
     { id: "0", title: "Event metedata" },
-    { id: "1", title: "Org metadata" },
+    { id: "1", title: "Timings" },
     { id: "2", title: "Preset channels" },
 ];
 
@@ -40,7 +40,7 @@ export default function ({ isOpen, setIsOpen, channel }: CalendarEventFormProps)
             location: "",
             meet_link: "",
             created_by: 1,
-            event_room_id: "", // Provide a valid UUID here
+            event_room_id: "",
             status: "PENDING"
         }
     })

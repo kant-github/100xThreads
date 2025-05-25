@@ -27,7 +27,7 @@ export default function TagContent({ loading, tags, handleDeleteTag, handleEditT
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="bg-secDark rounded-[10px] border border-neutral-800 h-full overflow-y-auto scrollbar-hide"
+            className="bg-secDark rounded-[10px] border-[1px] dark:border-neutral-700 h-full overflow-y-auto scrollbar-hide"
         >
             {tags.length === 0 ? (
                 <div className="h-full w-full flex items-center justify-center">

@@ -23,6 +23,7 @@ import AssignTagButtonAndMenu from "./AssignTagButtonAndMenu";
 import GuardComponent from "@/rbac/GuardComponent";
 import { Action, Subject } from "types/permission";
 import AssignRoleButtonAndMenu from "./AssignRoleButtonAndMenu";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 
 
 export default function OrganizationSettingsUsersUI() {
@@ -393,11 +394,17 @@ export default function OrganizationSettingsUsersUI() {
             </div>
             <div className="flex items-center justify-between">
                 <div className="text-neutral-100 text-xs ml-1">{selectedMembers.size} of {filteredUsers.length} selected</div>
-                <Input className={cn(
-                    `text-xs font-light text-neutral-100 placeholder:text-xs placeholder:text-neutral-100`,
-                    `outline-none border-neutral-700 rounded-[8px] placeholder:px-2`,
-                    `w-fit`
-                )} placeholder="search users" />
+                <div className="relative max-w-xs">
+                    <MagnifyingGlassIcon className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+                    <Input
+                        className={cn(
+                            `pl-8 pr-2 py-1 text-xs font-light text-neutral-100 placeholder:text-neutral-100 placeholder:text-xs`,
+                            `outline-none border border-neutral-700 rounded-[8px]`,
+                            `w-full`
+                        )}
+                        placeholder="Search location"
+                    />
+                </div>
             </div>
 
             <div className="mt-4 flex flex-col bg-secDark rounded-[10px] border-[1px] dark:border-neutral-700 overflow-hidden">

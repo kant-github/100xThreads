@@ -38,8 +38,6 @@ export default async function assignRolesHandler(req: Request, res: Response) {
             )
         )
 
-        console.log("result is : ", result);
-
         res.status(200).json({
             message: "Role assigned successfully",
             flag: 'SUCCESS',
