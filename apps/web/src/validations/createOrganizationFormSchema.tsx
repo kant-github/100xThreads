@@ -10,8 +10,8 @@ const passwordValidation = z.string()
     .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character");
 
 export const formSchema = z.object({
-    ownerName: z.string().min(1, "Can't be empty").default("John Doe"),
-    ownerEmail: z.string().min(1, "Can't be empty").default("John@example.com"),
+    ownerName: z.string().min(1, "Can't be empty"),
+    ownerEmail: z.string().min(1, "Can't be empty"),
     organizationName: z.string().min(1, "Can't be empty"),
     organizationDescription: z.string().min(1, "Please add description"),
     image: z
@@ -26,8 +26,8 @@ export const formSchema = z.object({
         "Invalid color selection"
     ),
     presetChannels: z.array(z.string()).min(1, 'Select at least one channel'),
-    isPrivate: z.boolean().default(false),
-    hasPassword: z.boolean().default(true),
+    isPrivate: z.boolean(),
+    hasPassword: z.boolean(),
     password: z.string().optional(),
     organizationTags: z.array(z.string())
         .min(1, "Add at least one tag")

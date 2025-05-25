@@ -44,7 +44,7 @@ export default function ({ params }: { params: { id: string } }) {
 
 
 
-    const updateChannels = useCallback((channelData: any) => {
+    const updateChannels: any = useCallback((channelData: any) => {
         const { organization, eventChannel, channels, welcomeChannel, organizationUsers, organizationUser, organizationTags, organizationLocations } = channelData
         console.log("organiztion user ate page.stsx is : ", organizationUser);
         setOrganization(organization);
@@ -61,15 +61,13 @@ export default function ({ params }: { params: { id: string } }) {
         if (!session.user?.token || !params.id) return
 
         try {
-            const response = await axios.get(
-                `${ORGANIZATION}/join/${params.id}`,
+            const response = await axios.get(`${ORGANIZATION}/join/${params.id}`,
                 {
                     headers: {
                         authorization: `Bearer ${session.user.token}`,
                     },
                 }
             )
-            console.log("response flag is : ", response.data.flag);
             if (response.data.flag === 'ALLOWED') {
                 setFlag('ALLOWED')
                 updateChannels(response.data.data)

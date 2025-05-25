@@ -21,8 +21,8 @@ interface CalendarEventFormProps {
 }
 
 const steps = [
-    { id: "0", title: "Event metedata" },
-    { id: "1", title: "Timings" },
+    { id: "0", title: "Timings" },
+    { id: "1", title: "Event metedata" },
     { id: "2", title: "Preset channels" },
 ];
 
@@ -57,9 +57,9 @@ export default function ({ isOpen, setIsOpen, channel }: CalendarEventFormProps)
     function renderComponent() {
         switch (currentStep) {
             case 0:
-                return <CalendarEventfFormOne control={control} errors={errors} />
-            case 1:
                 return <CalendarEventfFormTwo control={control} errors={errors} />
+            case 1:
+                return <CalendarEventfFormOne control={control} errors={errors} />
         }
     }
 

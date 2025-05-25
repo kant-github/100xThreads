@@ -31,6 +31,7 @@ interface CreateRoomProps {
 
 
 export type FormValues = z.infer<typeof formSchema>;
+const presetChannels = ['announcements', 'general', 'resources', 'help-desk', 'projects', 'learning']
 
 
 const steps = [
@@ -55,6 +56,25 @@ export default function CreateOrganization({ open, setOpen }: CreateRoomProps) {
         }
     });
 
+    useEffect(() => {
+        if (open && session.user?.name && session.user?.email) {
+            reset({
+                ownerName: session.user.name,
+                ownerEmail: session.user.email,
+                hasPassword: true,
+                isPrivate: false,
+                organizationName: "",
+                organizationDescription: "",
+                presetChannels: presetChannels,
+                organizationTags: [],
+                organizationColor: undefined,
+                image: undefined,
+                password: undefined
+            });
+            setCurrentStep(0);
+        }
+    }, [open, session.user?.name, session.user?.email, reset, setCurrentStep]);
+
 
     useEffect(() => {
         if (session.user?.name && session.user?.email) {
@@ -76,6 +96,8 @@ export default function CreateOrganization({ open, setOpen }: CreateRoomProps) {
                 return null;
         }
     };
+
+
 
     async function onSubmit(data: FormValues) {
         if (isSubmitting) return;

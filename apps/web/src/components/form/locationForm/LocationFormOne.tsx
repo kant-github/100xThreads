@@ -1,27 +1,24 @@
 import InputBox from "@/components/utility/InputBox";
-import { CreateEventFormSchema } from "@/validations/createEventFormSchema";
+import { CreateLocationFormSchema } from "@/validations/createLocationFormSchema";
 import { Control, Controller, FieldErrors } from "react-hook-form";
 
-
-interface CalendarEventfFormOneProps {
-    control: Control<CreateEventFormSchema>;
-    errors: FieldErrors<CreateEventFormSchema>
+interface LocationEventfFormOneProps {
+    control: Control<CreateLocationFormSchema>;
+    errors: FieldErrors<CreateLocationFormSchema>
 }
 
-export default function CalendarEventfFormOne({ control, errors }: CalendarEventfFormOneProps) {
-
+export default function LocationFormOne({ control, errors }: LocationEventfFormOneProps) {
     return (
         <>
             <Controller
-                name="title"
                 control={control}
+                name="name"
                 render={({ field }) => (
                     <InputBox
-                        label="Event title"
-                        placeholder="Choose Event Title"
+                        label="Choose a name"
+                        placeholder="name for location"
                         value={field.value}
                         onChange={field.onChange}
-                        error={errors.title?.message}
                     />
                 )}
             />
@@ -38,7 +35,7 @@ export default function CalendarEventfFormOne({ control, errors }: CalendarEvent
                             <textarea
                                 {...field}
                                 className={`mt-2 px-3 py-2 placeholder:text-sm placeholder:text-neutral-400 w-full text-xs min-h-[120px] rounded-[6px] border dark:bg-neutral-900 dark:text-white focus:outline-none ${error ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500' : 'border-gray-300 dark:border-neutral-600 focus:border-gray-300 focus:ring-1 focus:ring-gray-300'}`}
-                                placeholder="Enter event description"
+                                placeholder="Enter announcement content..."
                             />
                         </>
                     )}

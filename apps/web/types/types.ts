@@ -38,6 +38,22 @@ export type OrganizationLocationTypes = {
 };
 
 
+// model OrganizationLocations {
+//   id              String       @id @default(uuid()) @db.Uuid
+//   mode            LocationMode
+//   organization    Organization @relation(references: [id], fields: [organization_id], onDelete: Cascade)
+//   organization_id String       @db.Uuid
+//   name            String
+//   description     String
+//   address         String?
+//   city            String?
+//   created_at      DateTime     @default(now())
+//   updated_at      DateTime?
+
+//   @@index([organization_id])
+// }
+
+
 export type UserType = {
   id: number;
   name: string;

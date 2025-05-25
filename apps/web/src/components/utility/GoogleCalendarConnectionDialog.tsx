@@ -3,6 +3,7 @@ import Image from "next/image";
 import { ExternalLink } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 import { RxCross1 } from "react-icons/rx";
+import UtilityCard from "./UtilityCard";
 
 interface GoogleCalendarConnectionDialogProps {
     setOpen: Dispatch<SetStateAction<boolean>>;
@@ -20,7 +21,7 @@ export default function GoogleCalendarConnectionDialog({
     }
 
     return (
-        <div className="fixed bottom-6 right-6 z-50 max-w-sm shadow-lg border dark:border-neutral-700 rounded-[9px] bg-white dark:bg-secDark animate-in slide-in-from-bottom fade-in duration-700">
+        <UtilityCard className="fixed bottom-6 right-6 z-50 max-w-sm shadow-lg border dark:border-neutral-700 rounded-[10px] bg-white dark:bg-secDark animate-in slide-in-from-bottom fade-in duration-700">
             <button
                 type="button"
                 onClick={() => setOpen(false)}
@@ -30,7 +31,6 @@ export default function GoogleCalendarConnectionDialog({
                 <RxCross1 className="w-3 h-3 text-gray-700 dark:text-gray-200" />
             </button>
 
-            {/* Main content */}
             <div className="p-5">
                 <div className="mb-4">
                     <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
@@ -60,6 +60,6 @@ export default function GoogleCalendarConnectionDialog({
                     </Button>
                 </div>
             </div>
-        </div>
+        </UtilityCard>
     );
 }

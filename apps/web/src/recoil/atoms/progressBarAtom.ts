@@ -39,3 +39,13 @@ export const eventFormTotalLevelBarAtom = atom({
     key: "eventFormTotalLevelBarAtom",
     default: 2
 })
+
+export const locationFormProgressBarAtom = atom({
+    key: "locationFormProgressBarAtom",
+    default: 0
+})
+
+export const locationtFormTotalLevelBarAtom = atom({
+    key: "locationtFormTotalLevelBarAtom",
+    default: 2
+})
