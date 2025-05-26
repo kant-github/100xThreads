@@ -13,6 +13,10 @@ import { locationFormProgressBarAtom } from "@/recoil/atoms/progressBarAtom";
 import LocationFormOne from "./LocationFormOne";
 import LocationFormTwo from "./LocationFormTwo";
 import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
+import axios from "axios";
+import { ORGANIZATION_SETTINGS } from "@/lib/apiAuthRoutes";
+import { userSessionAtom } from "@/recoil/atoms/atom";
+import { organizationLocationsAtom } from "@/recoil/atoms/organizationAtoms/organizationLocation/organizationLocationsAtom";
 
 interface LocationFormProps {
     open: boolean;
@@ -25,13 +29,17 @@ const steps = [
 ];
 
 export default function LocationForm({ setOpen, open }: LocationFormProps) {
+    const session = useRecoilValue(userSessionAtom);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-    const organizationId = useRecoilValue(organizationIdAtom)
+    const organizationId = useRecoilValue(organizationIdAtom);
     const [currentStep, setCurrentStep] = useRecoilState(locationFormProgressBarAtom);
+    const [orgLocations, setOrgLocations] = useRecoilState(organizationLocationsAtom);
+
     const { reset, handleSubmit, control, formState: { errors } } = useForm<CreateLocationFormSchema>({
         resolver: zodResolver(createLocationFormSchema),
         defaultValues: {
-            organization_id: organizationId!
+            organization_id: organizationId!,
+            mode: 'OFFLINE'
         }
     })
 
@@ -44,9 +52,19 @@ export default function LocationForm({ setOpen, open }: LocationFormProps) {
         }
     }
 
-    async function onSubmit(data: CreateLocationFormSchema) {
+    async function onSubmit(payload: CreateLocationFormSchema) {
         try {
-            
+            const { data } = await axios.post(`${ORGANIZATION_SETTINGS}/location/${organizationId}`, payload, {
+                headers: {
+                    Authorization: `Bearer ${session.user?.token}`
+                }
+            })
+            setOrgLocations(prev => [data.data, ...prev]);
+            setOpen(false);
+            reset();
+            console.log(data.data);
+        } catch (err) {
+            console.error("Error while storing locations");
         }
     }
 
@@ -64,7 +82,7 @@ export default function LocationForm({ setOpen, open }: LocationFormProps) {
                     <FormProgressBar
                         currentStep={currentStep}
                         setCurrentStep={setCurrentStep}
-                        totalLevels={2}
+                        totalLevels={1}
                         steps={steps}
                         className="mt-8"
                     />
@@ -80,7 +98,7 @@ export default function LocationForm({ setOpen, open }: LocationFormProps) {
                         isSubmitting={isSubmitting}
                         currentLevel={currentStep}
                         setCurrentLevel={setCurrentStep}
-                        totalLevels={2}
+                        totalLevels={1}
                         className="w-full"
                     />
                 </form>

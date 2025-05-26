@@ -98,10 +98,10 @@ router.put("/organization/tags/:organizationId/:tagId", authmiddleware, updateTa
 router.delete("/organization/tags/:organizationId/:tagId", authmiddleware, deleteTagHandler);
 
 //organization-location-controller
-router.post("/organization/settings/location/:organizationId", authmiddleware, storeOrgLocation);
-router.get("/organization/settings/location/:organizationId", authmiddleware, getOrgLocations);
-router.put("/organization/settings/location/:organizationId/:tagId", authmiddleware, updateOrgLocation);
-router.delete("/organization/settings/location/:organizationId/:tagId", authmiddleware, deleteOrgLocation);
+router.post("/organizations/settings/location/:organizationId", authmiddleware, storeOrgLocation);
+router.get("/organizations/settings/location/:organizationId", authmiddleware, getOrgLocations);
+router.put("/organizations/settings/location/:organizationId/:tagId", authmiddleware, updateOrgLocation);
+router.delete("/organizations/settings/location/:organizationId/:tagId", authmiddleware, deleteOrgLocation);
 
 
 

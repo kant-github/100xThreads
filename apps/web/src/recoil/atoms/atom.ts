@@ -1,7 +1,7 @@
 import { CustomSession } from "app/api/auth/[...nextauth]/options";
 import { atom } from "recoil";
 
-export const userSessionAtom = atom({
+export const userSessionAtom = atom<CustomSession>({
     key: "userSessionAtom",
     default: {} as CustomSession,
 })

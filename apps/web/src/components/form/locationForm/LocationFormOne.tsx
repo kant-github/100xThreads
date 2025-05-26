@@ -19,6 +19,7 @@ export default function LocationFormOne({ control, errors }: LocationEventfFormO
                         placeholder="name for location"
                         value={field.value}
                         onChange={field.onChange}
+                        error={errors.name?.message}
                     />
                 )}
             />
