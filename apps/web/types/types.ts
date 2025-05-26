@@ -30,7 +30,6 @@ export type OrganizationLocationTypes = {
   organization: OrganizationType;
   organization_id: string;
   name: string;
-  description: string;
   address?: string;
   city?: string;
   created_at: Date;

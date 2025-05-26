@@ -101,7 +101,7 @@ router.delete("/organization/tags/:organizationId/:tagId", authmiddleware, delet
 router.post("/organizations/settings/location/:organizationId", authmiddleware, storeOrgLocation);
 router.get("/organizations/settings/location/:organizationId", authmiddleware, getOrgLocations);
 router.put("/organizations/settings/location/:organizationId/:tagId", authmiddleware, updateOrgLocation);
-router.delete("/organizations/settings/location/:organizationId/:tagId", authmiddleware, deleteOrgLocation);
+router.delete("/organizations/settings/location/:organizationId/:id", authmiddleware, deleteOrgLocation);
 
 
 

@@ -135,11 +135,11 @@ model OrganizationLocations {
   organization    Organization @relation(references: [id], fields: [organization_id], onDelete: Cascade)
   organization_id String       @db.Uuid
   name            String
-  description     String
   address         String?
   city            String?
   created_at      DateTime     @default(now())
   updated_at      DateTime?
+  events          Event[]
 
   @@index([organization_id])
 }
@@ -545,21 +545,22 @@ model RecentlyJoinedGroups {
 }
 
 model Event {
-  id              String          @id @default(uuid()) @db.Uuid
-  event_room      EventChannel    @relation(fields: [event_room_id], references: [id], onDelete: Cascade)
-  event_room_id   String          @db.Uuid
-  title           String          @db.VarChar(191)
+  id              String                 @id @default(uuid()) @db.Uuid
+  event_room      EventChannel           @relation(fields: [event_room_id], references: [id], onDelete: Cascade)
+  event_room_id   String                 @db.Uuid
+  title           String                 @db.VarChar(191)
   description     String?
   start_time      DateTime
   end_time        DateTime?
-  location        String?
-  status          EventStatus     @default(PENDING)
-  rsvp_count      Int             @default(0)
-  created_at      DateTime        @default(now())
+  location        OrganizationLocations? @relation(references: [id], fields: [location_id], onDelete: Cascade)
+  location_id     String?                @db.Uuid
+  status          EventStatus            @default(PENDING)
+  rsvp_count      Int                    @default(0)
+  created_at      DateTime               @default(now())
   google_event_id String?
   meet_link       String?
   created_by      Int
-  linkedTags      String[]        @db.Uuid
+  linkedTags      String[]               @db.Uuid
   attendees       EventAttendee[]
 
   @@index([event_room_id, start_time])

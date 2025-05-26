@@ -9,13 +9,15 @@ export async function deleteOrgLocation(req: Request, res: Response) {
         }
 
         const { id } = req.params;
+        console.log(req.params.id);
 
         await prisma.organizationLocations.delete({
             where: { id }
         });
 
         res.status(200).json({
-            message: "Organization location deleted successfully"
+            message: "Organization location deleted successfully",
+            flag: 'SUCCESS'
         });
 
     } catch (error) {

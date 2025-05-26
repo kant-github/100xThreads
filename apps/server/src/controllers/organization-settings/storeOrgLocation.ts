@@ -15,7 +15,6 @@ export default async function storeOrgLocation(req: Request, res: Response) {
                 organization_id,
                 mode,
                 name,
-                description,
                 address,
                 city,
             }

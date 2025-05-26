@@ -20,7 +20,6 @@ export const createEventFormSchema = z.object({
     status: z.enum(["PENDING", "CONFIRMED", "CANCELLED"]),
 
     description: z.string().optional(),
-
     end_time: z.date().nullable().optional(),
 
     location: z.string().optional(),

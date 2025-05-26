@@ -28,6 +28,7 @@ interface CalendarProps {
 export default function ({ className, channel }: CalendarProps) {
   const [subscriptions, setSubscriptions] = React.useState<Subscription[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null); // Add selected date state
   const [currentMonth, setCurrentMonth] = useState(
     format(new Date(), "MMM-yyyy")
   );
@@ -68,9 +69,11 @@ export default function ({ className, channel }: CalendarProps) {
     setSubscriptions(subscriptions.filter((sub) => sub.id !== id));
   };
 
-  function tapOnDateHandler(date: any) {
-    console.log(date);
+  function tapOnDateHandler(date: Date) {
+    setSelectedDate(date); // Set the selected date
+    setIsAddModalOpen(true); // Open the modal
   }
+
 
   return (
     <UtilityCard className={`p-4 mx-auto max-w-xl bg-secDark border-[1px] dark:border-neutral-700 rounded-[12px] ${className}`}>
@@ -93,7 +96,7 @@ export default function ({ className, channel }: CalendarProps) {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: dayIdx * 0.01 }}
-              onClick={() => setIsAddModalOpen(true)}
+              onClick={() => tapOnDateHandler(day.date)}
               className={cn(
                 "relative min-h-[65px] flex items-center justify-center cursor-pointer rounded-[10px]",
                 !day.isCurrentMonth && "bg-muted/50",
@@ -128,7 +131,7 @@ export default function ({ className, channel }: CalendarProps) {
       </div>
       {
         isAddModalOpen && (
-          <CalendarEventForm channel={channel} isOpen={isAddModalOpen} setIsOpen={setIsAddModalOpen} />
+          <CalendarEventForm channel={channel} isOpen={isAddModalOpen} setIsOpen={setIsAddModalOpen} selectedDate={selectedDate} />
         )
       }
     </UtilityCard>

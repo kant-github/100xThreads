@@ -25,7 +25,6 @@ interface LocationFormProps {
 
 const steps = [
     { id: "0", title: "Owner info" },
-    { id: "1", title: "Org metadata" },
 ];
 
 export default function LocationForm({ setOpen, open }: LocationFormProps) {
@@ -79,13 +78,6 @@ export default function LocationForm({ setOpen, open }: LocationFormProps) {
                     Create New Location
                 </DashboardComponentHeading>
                 <form key={open.toString()} onSubmit={handleSubmit(onSubmit)}>
-                    <FormProgressBar
-                        currentStep={currentStep}
-                        setCurrentStep={setCurrentStep}
-                        totalLevels={1}
-                        steps={steps}
-                        className="mt-8"
-                    />
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -98,7 +90,7 @@ export default function LocationForm({ setOpen, open }: LocationFormProps) {
                         isSubmitting={isSubmitting}
                         currentLevel={currentStep}
                         setCurrentLevel={setCurrentStep}
-                        totalLevels={1}
+                        totalLevels={0}
                         className="w-full"
                     />
                 </form>

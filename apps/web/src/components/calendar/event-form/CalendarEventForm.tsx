@@ -13,20 +13,38 @@ import CalendarEventfFormOne from "./CalendarEventfFormOne";
 import { CreateEventFormSchema, createEventFormSchema } from "@/validations/createEventFormSchema";
 import CalendarEventfFormTwo from "./CalendarEventfFormTwo";
 import { EventChannelType } from "types/types";
+import CalendarEventfFormThree from "./CalendarEventfFormThree";
 
 interface CalendarEventFormProps {
     isOpen: boolean;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
     channel: EventChannelType;
+    selectedDate: Date | null
 }
 
 const steps = [
     { id: "0", title: "Timings" },
     { id: "1", title: "Event metedata" },
-    { id: "2", title: "Preset channels" },
+    { id: "2", title: "location / users" },
 ];
 
-export default function ({ isOpen, setIsOpen, channel }: CalendarEventFormProps) {
+export default function ({ isOpen, setIsOpen, channel, selectedDate }: CalendarEventFormProps) {
+
+    function getDefaultstartTime() {
+        if (selectedDate) {
+            const startTime = new Date(selectedDate);
+            const now = new Date();
+            startTime.setHours(now.getHours(), 0, 0, 0);
+            return startTime;
+        }
+        return new Date();
+    }
+
+    function getDefaultendTime() {
+        const startTime = getDefaultstartTime();
+        const endTime = new Date(startTime.getTime() + 60 * 60 * 1000);
+        return endTime;
+    }
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [currentStep, setCurrentStep] = useRecoilState(eventFormProgressBarAtom);
@@ -35,8 +53,8 @@ export default function ({ isOpen, setIsOpen, channel }: CalendarEventFormProps)
         defaultValues: {
             title: "",
             description: "",
-            start_time: new Date(),
-            end_time: new Date(Date.now() + 60 * 60 * 1000),
+            start_time: getDefaultstartTime(),
+            end_time: getDefaultendTime(),
             location: "",
             meet_link: "",
             created_by: 1,
@@ -56,10 +74,12 @@ export default function ({ isOpen, setIsOpen, channel }: CalendarEventFormProps)
 
     function renderComponent() {
         switch (currentStep) {
-            case 0:
-                return <CalendarEventfFormTwo control={control} errors={errors} />
             case 1:
                 return <CalendarEventfFormOne control={control} errors={errors} />
+            case 0:
+                return <CalendarEventfFormTwo control={control} errors={errors} />
+            case 2:
+                return <CalendarEventfFormThree control={control} errors={errors} />
         }
     }
 

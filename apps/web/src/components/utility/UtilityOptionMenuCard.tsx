@@ -34,7 +34,7 @@ export default function ({ open, setOpen, children, className }: UtilityOptionMe
                 open && (
                     <motion.div
                         ref={ref}
-                        className={`${className} relative z-[100]`}
+                        className={`${className} relative z-[100] bg-secDark`}
                         initial={{ opacity: 0, scale: 0.9, y: -5 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.9, y: -5 }}

@@ -11,7 +11,6 @@ export const createLocationFormSchema = z.object({
     mode: LocationModeEnum,
     organization_id: z.string().uuid("Invalid organization ID"),
     name: z.string().min(1, "Location name is required"),
-    description: z.string().min(1, "Description is required"),
     address: z.string().optional(),
     city: z.string().optional(),
 });
