@@ -174,6 +174,26 @@ export type EventChannelType = {
   created_by: number;
 }
 
+export type EventType = {
+  id: string;
+  event_room: EventChannelType;
+  event_room_id: string;
+  title: string;
+  description?: string;
+  start_time: string;
+  end_time?: string;
+  location?: OrganizationLocationTypes;
+  location_id?: string;
+  status: EventStatus;
+  rsvp_count: number;
+  created_at: string;
+  google_event_id?: string;
+  meet_link?: string;
+  created_by: number;
+  linkedTags: string[];
+  // attendees: EventAttendee[];
+}
+
 export type ProjectTypes = {
   id: string;
   channel_id: string;
@@ -446,5 +466,12 @@ export enum LocationMode {
   OFFLINE = 'OFFLINE'
 }
 
+
+enum EventStatus {
+  PENDING = 'PENDING',
+  LIVE = 'LIVE',
+  COMPLETED = 'COMPLETED',
+  CANCELED = 'CANCELED'
+}
 
 export const UserRoleArray = Object.values(UserRole);

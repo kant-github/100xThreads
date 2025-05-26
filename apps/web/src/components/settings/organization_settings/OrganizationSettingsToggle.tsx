@@ -33,7 +33,7 @@ export default function OrganizationSettingsOptions() {
                     transition={{ delay: 2 * 0.01 }}
                     onClick={() => setOrgSettingsAtom(OrganizationSettingsOptionEnum.USERS)}
                     className={`cursor-pointer text-md font-light text-lightText dark:text-darkText
-                ${orgSettingsAtom === OrganizationSettingsOptionEnum.USERS && "underline decoration-blue-500 decoration-4 underline-offset-4 space-y-[4 underline-offset-4px]"}`}>
+                ${orgSettingsAtom === OrganizationSettingsOptionEnum.USERS && "underline decoration-[#ff4a4a] decoration-4 underline-offset-4 space-y-[4 underline-offset-4px]"}`}>
                     Users
                 </motion.div>
 
@@ -43,7 +43,7 @@ export default function OrganizationSettingsOptions() {
                     transition={{ delay: 1 * 0.01 }}
                     onClick={() => setOrgSettingsAtom(OrganizationSettingsOptionEnum.TAGS)}
                     className={`cursor-pointer text-md font-light text-lightText dark:text-darkText 
-                ${orgSettingsAtom === OrganizationSettingsOptionEnum.TAGS && "underline decoration-blue-500 decoration-4 underline-offset-4 space-y-[20px]"}`}>
+                ${orgSettingsAtom === OrganizationSettingsOptionEnum.TAGS && "underline decoration-[#ff4a4a] decoration-4 underline-offset-4 space-y-[20px]"}`}>
                     Tags
                 </motion.div>
 
@@ -53,7 +53,7 @@ export default function OrganizationSettingsOptions() {
                     transition={{ delay: 1 * 0.01 }}
                     onClick={() => setOrgSettingsAtom(OrganizationSettingsOptionEnum.LOCATION)}
                     className={`cursor-pointer text-md font-light text-lightText dark:text-darkText 
-                ${orgSettingsAtom === OrganizationSettingsOptionEnum.LOCATION && "underline decoration-blue-500 decoration-4 underline-offset-4 space-y-[20px]"}`}>
+                ${orgSettingsAtom === OrganizationSettingsOptionEnum.LOCATION && "underline decoration-[#ff4a4a] decoration-4 underline-offset-4 space-y-[20px]"}`}>
                     Locations
                 </motion.div>
 

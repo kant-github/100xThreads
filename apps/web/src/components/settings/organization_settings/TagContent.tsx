@@ -27,7 +27,7 @@ export default function TagContent({ loading, tags, handleDeleteTag, handleEditT
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="bg-secDark rounded-[10px] border-[1px] dark:border-neutral-700 h-full overflow-y-auto scrollbar-hide"
+            className="bg-secDark rounded-[10px] border-[1px] dark:border-neutral-700 max-h-full overflow-y-auto scrollbar-hide"
         >
             {tags.length === 0 ? (
                 <div className="h-full w-full flex items-center justify-center">
@@ -36,9 +36,9 @@ export default function TagContent({ loading, tags, handleDeleteTag, handleEditT
                     </p>
                 </div>
             ) : (
-                <table className="min-w-full divide-y divide-neutral-800">
+                <table className="min-w-full divide-y divide-neutral-700">
                     <thead className="sticky top-0 dark:bg-secDark z-10">
-                        <tr>
+                        <tr className="dark:bg-neutral-900">
                             <th
                                 scope="col"
                                 className="px-6 py-3 text-left text-xs font-medium text-neutral-200 uppercase tracking-wider"
@@ -59,9 +59,9 @@ export default function TagContent({ loading, tags, handleDeleteTag, handleEditT
                             </th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-neutral-800">
+                    <tbody className="divide-y divide-neutral-700">
                         {tags.map((tag) => (
-                            <tr key={tag.id} className="hover:bg-neutral-750">
+                            <tr key={tag.id} className="hover:bg-neutral-750 bg-secDark">
                                 <td className="px-6 py-2 whitespace-nowrap">
                                     <OrganizationTagTicker tag={tag} />
                                 </td>

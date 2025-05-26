@@ -33,6 +33,7 @@ export default function OrganizationSettingsUsersUI() {
     const [selectedMembers, setSelectedMembers] = useState<Set<number>>(new Set());
     const [selectAll, setSelectAll] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [inputFilter, setInputFilter] = useState<string>('');
 
     const [assignedTags, setAssignedTags] = useState<Set<string>>(new Set());
     const [previousTagMenuState, setPreviousTagMenuState] = useState<boolean>(false);
@@ -100,6 +101,14 @@ export default function OrganizationSettingsUsersUI() {
 
     function getFilteredUsers() {
         return organizationUsers.filter(orgUser => {
+
+            if (inputFilter) {
+
+                if (!orgUser.user.name.toLowerCase().includes(inputFilter)) {
+                    return false;
+                }
+
+            }
 
             if (roleFilter && orgUser.role !== roleFilter) {
                 return false;
@@ -397,12 +406,13 @@ export default function OrganizationSettingsUsersUI() {
                 <div className="relative max-w-xs">
                     <MagnifyingGlassIcon className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
                     <Input
+                        onChange={(e) => setInputFilter(e.target.value.toLowerCase())}
                         className={cn(
                             `pl-8 pr-2 py-1 text-xs font-light text-neutral-100 placeholder:text-neutral-100 placeholder:text-xs`,
                             `outline-none border border-neutral-700 rounded-[8px]`,
                             `w-full`
                         )}
-                        placeholder="Search location"
+                        placeholder="Search users"
                     />
                 </div>
             </div>

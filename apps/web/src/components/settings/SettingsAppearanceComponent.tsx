@@ -68,7 +68,7 @@ export default function () {
                 <div onClick={() => handleThemeChange("light")} className="flex flex-col items-center gap-y-2 cursor-pointer transition-transform hover:scale-102" >
                     <Image
                         className={`${theme === 'light'
-                            ? "border-4 border-blue-500 transform scale-105"
+                            ? "border-4 border-[#ff4a4a] transform scale-105"
                             : "border-2 border-transparent"
                             } rounded-[8px] box-border transition-all duration-200`}
                         src="/images/LightMode.svg"
@@ -82,7 +82,7 @@ export default function () {
                 <div onClick={() => handleThemeChange("system")} className="flex flex-col items-center gap-y-2 cursor-pointer transition-transform hover:scale-102">
                     <Image
                         className={`${theme === 'system'
-                            ? "border-4 border-blue-500 transform scale-105"
+                            ? "border-4 border-[#ff4a4a] transform scale-105"
                             : "border-2 border-transparent"
                             } rounded-[8px] box-border transition-all duration-200`}
                         src="/images/SystemDefault.svg"
@@ -96,7 +96,7 @@ export default function () {
                 <div onClick={() => handleThemeChange("dark")} className="flex flex-col items-center gap-y-2 cursor-pointer transition-transform hover:scale-102">
                     <Image
                         className={`${theme === 'dark'
-                            ? "border-4 border-blue-500 transform scale-105"
+                            ? "border-4 border-[#ff4a4a] transform scale-105"
                             : "border-2 border-transparent"
                             } rounded-[8px] box-border transition-all duration-200`}
                         src="/images/DarkMode.svg"
