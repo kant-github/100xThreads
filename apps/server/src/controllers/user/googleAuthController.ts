@@ -12,5 +12,6 @@ export default function googleAuthController(req: Request, res: Response) {
         prompt: 'consent',
         state: Buffer.from(JSON.stringify({ returnUrl })).toString('base64')
     });
+    console.log(authUrl);
     res.redirect(authUrl);
 }

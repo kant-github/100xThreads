@@ -38,7 +38,7 @@ export default class GoogleCalendarService {
         })
     }
 
-    async createGoogleCalendar(calendarTitle: string) {
+    public async createGoogleCalendar(calendarTitle: string) {
         const sharedCalendar = await this.calendar.calendars.insert({
             requestBody: {
                 summary: `${calendarTitle} - Events`,
@@ -52,6 +52,55 @@ export default class GoogleCalendarService {
             console.error("Error creating calendar :( ");
         }
         return calendarId;
+    }
+
+    public async createGoogleEvent(
+        userEmails: { email: string }[],
+        calendarId: string,
+        title: string,
+        description: string,
+        startTime: Date,
+        endTime: Date,
+        includeMeet: boolean
+    ) {
+        try {
+            const googleEvent = await this.calendar.events.insert({
+                calendarId: calendarId,
+                conferenceDataVersion: includeMeet ? 1 : 0,
+                requestBody: {
+                    summary: title, description: description,
+                    start: {
+                        dateTime: new Date(startTime).toISOString()
+                    },
+                    end: {
+                        dateTime: new Date(endTime).toISOString()
+                    },
+                    attendees: userEmails,
+                    reminders: {
+                        useDefault: false,
+                        overrides: [
+                            { method: 'email', minutes: 10 },
+                            { method: 'popup', minutes: 10 }
+                        ]
+                    },
+                    ...(includeMeet && {
+                        conferenceData: {
+                            createRequest: {
+                                requestId: `meet-${Date.now()}`,
+                                conferenceSolutionKey: {
+                                    type: 'hangoutsMeet'
+                                }
+                            }
+                        }
+                    })
+                }
+            });
+
+            return googleEvent.data;
+        } catch (error) {
+            console.error("Error creating Google Calendar event:", error);
+            throw error;
+        }
     }
 
 }

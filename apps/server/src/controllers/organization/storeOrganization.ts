@@ -1,7 +1,6 @@
 import prisma from "@repo/db/client";
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import { google } from "googleapis";
 import GoogleCalendarService from "../../calendar/googleCalendarService";
 import isExpiredtoken from "../../config/isExpiredtoken";
 

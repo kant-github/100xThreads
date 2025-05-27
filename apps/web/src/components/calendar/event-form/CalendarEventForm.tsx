@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormProgressBar from "../../form/FormProgressBar";
 import ProgressBarButtons from "../../form/ProgressBarButtons";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { eventFormProgressBarAtom } from "@/recoil/atoms/progressBarAtom";
 import { motion } from 'framer-motion'
 import CalendarEventfFormOne from "./CalendarEventfFormOne";
@@ -14,6 +14,11 @@ import { CreateEventFormSchema, createEventFormSchema } from "@/validations/crea
 import CalendarEventfFormTwo from "./CalendarEventfFormTwo";
 import { EventChannelType } from "types/types";
 import CalendarEventfFormThree from "./CalendarEventfFormThree";
+import axios from "axios";
+import { EVENT_URL } from "@/lib/apiAuthRoutes";
+import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
+import { userSessionAtom } from "@/recoil/atoms/atom";
+import { toast } from "sonner";
 
 interface CalendarEventFormProps {
     isOpen: boolean;
@@ -29,6 +34,25 @@ const steps = [
 ];
 
 export default function ({ isOpen, setIsOpen, channel, selectedDate }: CalendarEventFormProps) {
+    const organizationId = useRecoilValue(organizationIdAtom);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const session = useRecoilValue(userSessionAtom);
+    const [currentStep, setCurrentStep] = useRecoilState(eventFormProgressBarAtom);
+    const { control, reset, handleSubmit, formState: { errors } } = useForm<CreateEventFormSchema>({
+        resolver: zodResolver(createEventFormSchema),
+        defaultValues: {
+            title: "",
+            description: "",
+            start_time: getDefaultstartTime(),
+            end_time: getDefaultendTime(),
+            location: "",
+            meet_link: "",
+            created_by: 1,
+            event_room_id: channel.id,
+            status: "PENDING"
+        }
+    })
+
 
     function getDefaultstartTime() {
         if (selectedDate) {
@@ -46,26 +70,28 @@ export default function ({ isOpen, setIsOpen, channel, selectedDate }: CalendarE
         return endTime;
     }
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [currentStep, setCurrentStep] = useRecoilState(eventFormProgressBarAtom);
-    const { control, watch, reset, handleSubmit, formState: { errors } } = useForm<CreateEventFormSchema>({
-        resolver: zodResolver(createEventFormSchema),
-        defaultValues: {
-            title: "",
-            description: "",
-            start_time: getDefaultstartTime(),
-            end_time: getDefaultendTime(),
-            location: "",
-            meet_link: "",
-            created_by: 1,
-            event_room_id: "",
-            status: "PENDING"
-        }
-    })
 
-    function onSubmit(data: CreateEventFormSchema) {
-        console.log("submitting");
-        console.log("event data is : ", data);
+    async function onSubmit(payload: CreateEventFormSchema) {
+        setIsSubmitting(true);
+        if (!session.user?.token) return;
+        try {
+            const { data } = await axios.post(`${EVENT_URL}/${organizationId}`, payload, {
+                headers: {
+                    Authorization: `Bearer ${session.user?.token}`
+                }
+            })
+            console.log(data);
+            setCurrentStep(0);
+            reset();
+            setIsOpen(false);
+            if (data.success) {
+                toast.success(data.message);
+            }
+        } catch (err) {
+            console.error("Error in creating event");
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     const onError = (errors: any) => {

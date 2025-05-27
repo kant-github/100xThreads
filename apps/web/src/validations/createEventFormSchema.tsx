@@ -22,7 +22,7 @@ export const createEventFormSchema = z.object({
     description: z.string().optional(),
     end_time: z.date().nullable().optional(),
 
-    location: z.string().optional(),
+    location: z.string().uuid("Choose a location"),
 
     meet_link: z.string().optional(),
 

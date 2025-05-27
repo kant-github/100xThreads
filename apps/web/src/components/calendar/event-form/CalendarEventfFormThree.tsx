@@ -61,6 +61,7 @@ export default function CalendarEventfFormThree({ control, errors }: CalendarEve
                                         src="/images/google-meet.png"
                                         height={28}
                                         width={28}
+                                        unoptimized
                                         alt="Google Meet"
                                         className="object-contain"
                                     />
@@ -70,12 +71,13 @@ export default function CalendarEventfFormThree({ control, errors }: CalendarEve
                     );
                 }}
             />
-
             {errors.location && (
-                <p className="text-sm text-red-500 mt-1 ml-1">
+                <p className="text-xs text-red-500 mt-2 ml-2">
                     {errors.location.message}
                 </p>
             )}
+
+
 
             <Controller
                 name="linkedTags"

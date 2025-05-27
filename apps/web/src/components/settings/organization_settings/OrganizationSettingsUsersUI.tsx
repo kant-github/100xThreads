@@ -268,7 +268,7 @@ export default function OrganizationSettingsUsersUI() {
                     </GuardComponent>
                 </div>
 
-                {/* FILTERS */}
+
                 <div className="flex items-center justify-center gap-x-3">
 
                     {/* ROLE FILTER */}
@@ -397,9 +397,7 @@ export default function OrganizationSettingsUsersUI() {
                             clear filters
                         </Button>
                     )}
-
                 </div>
-
             </div>
             <div className="flex items-center justify-between">
                 <div className="text-neutral-100 text-xs ml-1">{selectedMembers.size} of {filteredUsers.length} selected</div>

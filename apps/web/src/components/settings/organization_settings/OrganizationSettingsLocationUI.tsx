@@ -103,14 +103,16 @@ function Option({ className, location, handleDeleteLocation }: OptionProps) {
 
     return (
         <div
-            className={`bg-terDark rounded-xl p-4 py-4 shadow text-sm font-medium flex justify-between items-center ${className}`}
+            className={`bg-neutral-900 rounded-xl p-4 py-4 shadow text-sm font-medium flex justify-between items-center ${className}`}
         >
             <div className='flex gap-x-3 items-center'>
                 {location.mode === LocationMode.ONLINE ? (
                     <Image
-                        src="/images/google-meet.png"
+                        src="/images/google-meet.webp"
                         height={32}
                         width={32}
+                        // quality={100}
+                        unoptimized
                         alt="Google Meet"
                     />
                 ) : (

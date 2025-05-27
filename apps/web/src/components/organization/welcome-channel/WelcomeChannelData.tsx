@@ -34,7 +34,7 @@ export default function ({ message, session, organizationId }: WelcomeChannelDat
                     {Number(message.user_id) === Number(session.user?.id) && <GreyButton onClick={askForRoleHandler} className="ml-8">Ask for Role</GreyButton>}
                     <WelcomeChannelRoleOptionMenu open={askForRoleOptionMenu} setOpen={setAskForRoleOptionMenu} />
                 </div>
-                <div className="text-[13px] text-neutral-600 dark:text-neutral-300 font-light italic text-balance">
+                <div className="text-[13px] text-neutral-600 dark:text-neutral-100 font-light italic text-balance">
                     <span>{message.message}</span>
                 </div>
             </div>

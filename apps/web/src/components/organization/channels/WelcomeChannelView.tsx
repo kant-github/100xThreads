@@ -76,6 +76,7 @@ export default function ({ channel }: WelcomeChannelViewProps) {
                     <Image
                         height={20}
                         width={1400}
+                        unoptimized
                         alt="help desk banner"
                         src={"/images/welcomeChannelDashboardImage.jpeg"}
                         className="rounded-[16px] object-cover h-full w-full"

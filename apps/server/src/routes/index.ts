@@ -36,6 +36,7 @@ import getOrgLocations from "../controllers/organization-settings/getOrgLocation
 import { updateOrgLocation } from "../controllers/organization-settings/updateOrgLoction";
 import { deleteOrgLocation } from "../controllers/organization-settings/deleteOrgLocation";
 import storeTagHandler from "../controllers/settings-channel/tags/StoreTagHandler";
+import createGoogleCalendarEventController from "../controllers/events/createGoogleCalendarEventController";
 
 const router: Router = Router();
 
@@ -102,6 +103,10 @@ router.post("/organizations/settings/location/:organizationId", authmiddleware, 
 router.get("/organizations/settings/location/:organizationId", authmiddleware, getOrgLocations);
 router.put("/organizations/settings/location/:organizationId/:tagId", authmiddleware, updateOrgLocation);
 router.delete("/organizations/settings/location/:organizationId/:id", authmiddleware, deleteOrgLocation);
+
+
+//event-controller
+router.post("/organizations/event/:organizationId", authmiddleware, createGoogleCalendarEventController);
 
 
 

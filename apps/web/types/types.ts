@@ -170,6 +170,7 @@ export type EventChannelType = {
   organization_id: string;
   title: string;
   description: string;
+  google_calendar_id?: string;
   created_at: string;
   created_by: number;
 }

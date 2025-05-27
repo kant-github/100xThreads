@@ -14,5 +14,6 @@ export const CHATS_URL = API_URL + "/chats";
 export const POLL_URL = API_URL + "/polls";
 export const P2P_URL = API_URL + '/p2p';
 export const ORGANIZATION_SETTINGS = ORGANIZATION + "/settings"
+export const EVENT_URL = ORGANIZATION + "/event"
 
 export const FRONTEND_BASE_URL = Env.APP_URL;

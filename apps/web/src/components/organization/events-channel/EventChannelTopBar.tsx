@@ -2,14 +2,16 @@ import DashboardComponentHeading from "@/components/dashboard/DashboardComponent
 import { Button } from "@/components/ui/button";
 import { organizationUserAtom } from "@/recoil/atoms/organizationAtoms/organizationUserAtom";
 import Image from "next/image";
+import { Dispatch, SetStateAction } from "react";
 import { useRecoilValue } from "recoil";
 import { EventChannelType } from "types/types";
 
 interface EventChannelTopBarProps {
     channel: EventChannelType;
+    setShowGoogleCalendarPage: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function ({ channel }: EventChannelTopBarProps) {
+export default function ({ channel, setShowGoogleCalendarPage }: EventChannelTopBarProps) {
     const organizationUser = useRecoilValue(organizationUserAtom);
 
     const isConnected = Boolean(
@@ -28,23 +30,25 @@ export default function ({ channel }: EventChannelTopBarProps) {
             <DashboardComponentHeading description={channel.description}>
                 {channel.title}
             </DashboardComponentHeading>
-            {isFullyConnected && (
-                <Button
-                    disabled={isFullyConnected}
-                    className="bg-neutral-700/70 rounded-[6px] px-4 w-fit flex items-center gap-x-3"
-                    variant={"ghost"}
-                >
-                    <Image
-                        src={"/images/google-calendar.png"}
-                        height={18}
-                        width={18}
-                        alt="google calendar"
-                    />
-                    <span className="text-neutral-100 text-[12px] tracking-wide font-normal">
-                        {isFullyConnected ? "Connected" : "Connect Google calendar"}
-                    </span>
-                </Button>
-            )}
+            <Button
+                onClick={() => {
+                    setShowGoogleCalendarPage(true);
+
+                }}
+                className="bg-neutral-700/70 rounded-[6px] px-4 w-fit flex items-center gap-x-3"
+                variant={"ghost"}
+            >
+                <Image
+                    src={"/images/google-calendar.png"}
+                    height={18}
+                    width={18}
+                    unoptimized
+                    alt="google calendar"
+                />
+                <span className="text-neutral-100 text-[12px] tracking-wide font-normal">
+                    {isFullyConnected ? "Connected" : "Connect Google calendar"}
+                </span>
+            </Button>
         </div>
     )
 }

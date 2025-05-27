@@ -12,6 +12,7 @@ interface GoogleCalendarConnectionDialogProps {
 export default function GoogleCalendarConnectionDialog({
     setOpen,
 }: GoogleCalendarConnectionDialogProps) {
+    
     function handleConnect() {
         const currentUrl = window.location.href;
         const authUrl = `http://localhost:7001/api/auth/google?returnUrl=${encodeURIComponent(
@@ -51,6 +52,7 @@ export default function GoogleCalendarConnectionDialog({
                             src={"/images/google-calendar.png"}
                             height={18}
                             width={18}
+                            unoptimized
                             alt="google calendar"
                         />
                         <span className="text-neutral-100 text-[12px] tracking-wide font-normal">
