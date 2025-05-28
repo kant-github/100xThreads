@@ -192,7 +192,16 @@ export type EventType = {
   meet_link?: string;
   created_by: number;
   linkedTags: string[];
-  // attendees: EventAttendee[];
+  attendees: EventAttendeeType[];
+}
+
+export type EventAttendeeType = {
+  id: Number;
+  user: UserType;
+  user_id: Number
+  event: EventType;
+  event_id: String
+  status: RSVPStatus
 }
 
 export type ProjectTypes = {
@@ -474,5 +483,12 @@ enum EventStatus {
   COMPLETED = 'COMPLETED',
   CANCELED = 'CANCELED'
 }
+
+enum RSVPStatus {
+  GOING = 'GOING',
+  MAYBE = 'MAYBE',
+  NOT_GOING = 'NOT_GOING'
+}
+
 
 export const UserRoleArray = Object.values(UserRole);

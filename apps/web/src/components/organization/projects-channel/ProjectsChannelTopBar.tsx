@@ -18,6 +18,8 @@ import CreateProjectsForm from "@/components/form/CreateProjectsForm";
 import { CgMathPlus } from "react-icons/cg";
 import GuardComponent from "@/rbac/GuardComponent";
 import { Action, Subject } from "types/permission";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 interface ProjectsChannelTopBarProps {
     channel: ChannelType;
@@ -85,10 +87,13 @@ export default function ({ channel }: ProjectsChannelTopBarProps) {
                 <>
                     <DashboardComponentHeading description={channel.description!}>{channel.title}</DashboardComponentHeading>
                     <GuardComponent subject={Subject.PROJECT} action={Action.CREATE} >
-                        <DesignButton onClick={() => setCreateProjectsModal(true)}>
+                        <Button
+                            className="flex items-center justify-center border-[1px] border-neutral-700 text-xs rounded-[8px] text-neutral-300"
+                            variant={"outline"}
+                            onClick={() => setCreateProjectsModal(true)}>
                             <CgMathPlus size={16} />
                             Add Project
-                        </DesignButton>
+                        </Button>
                     </GuardComponent>
                     {createProjectsModal && <CreateProjectsForm channel={channel} className='w-[30%]' open={createProjectsModal} setOpen={setCreateProjectsModal} />}
                 </>
@@ -96,9 +101,21 @@ export default function ({ channel }: ProjectsChannelTopBarProps) {
             {
                 selectedProject && (
                     <div className="flex items-center justify-center gap-x-3 relative">
-                        <DesignButton onClick={backHandler} ><IoChevronBackOutline />Back</DesignButton>
-                        <DesignButton disabled={!canView} onClick={() => setProjectSideBar(true)}>  <MdChat className="transform scale-x-[-1]" /> Chat</DesignButton>
-                        {canManage && <DesignButton className={"whitespace-nowrap"} onClick={createTaskHandler}>Add Task</DesignButton>}
+                        <Button
+                            className="flex items-center justify-center border-[1px] border-neutral-700 text-xs rounded-[8px] text-neutral-300"
+                            variant={"outline"}
+                            onClick={backHandler} ><IoChevronBackOutline />Back</Button>
+                        <Button
+                            className="flex items-center justify-center border-[1px] border-neutral-700 text-xs rounded-[8px] text-neutral-300"
+                            variant={"outline"}
+                            disabled={!canView} onClick={() => setProjectSideBar(true)}>  <MdChat className="transform scale-x-[-1]" /> Chat</Button>
+                        {canManage && <Button
+                            className="flex items-center justify-center border-[1px] border-neutral-700 text-xs rounded-[8px] text-neutral-300"
+                            variant={"outline"}
+                            onClick={createTaskHandler}>
+                            <Plus />
+                            <span>Add Task</span>
+                        </Button>}
                         <BsThreeDotsVertical onClick={() => setOpenOptionMenuCard(true)} className="text-neutral-300 mt-1.5" />
                         <ProjectOptionMenu isAdmin={canManage} open={openOptionMenuCard} setOpen={setOpenOptionMenuCard} />
 

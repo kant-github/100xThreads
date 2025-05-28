@@ -118,7 +118,8 @@ export default async function createGoogleCalendarEventController(req: Request, 
             finalEvent = await prisma.event.update({
                 where: { id: newEvent.id },
                 data: {
-                    meet_link: googleResponse.hangoutLink
+                    meet_link: googleResponse.hangoutLink,
+                    status: 'LIVE'
                 }
             })
 

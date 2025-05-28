@@ -6,32 +6,24 @@ import LogOutDialogBox from "../utility/LogOutDialogBox";
 import { FaGithub } from "react-icons/fa";
 import { IoLogOutOutline } from "react-icons/io5";
 import AccountInfoDropDown from "../utility/AccountInfoDropDown";
-import { toast } from "sonner";
-import { globalRoomHandler } from "@/lib/globalRoomHandler";
-import { globalGroupId } from "./DashNav";
-import { useRouter } from "next/navigation";
 import { handleClickOutside } from "@/lib/handleClickOutside";
+import { Settings2 } from "lucide-react";
+import { useSetRecoilState } from "recoil";
+import { dashboardOptionsAtom, RendererOption } from "@/recoil/atoms/DashboardOptionsAtom";
+import { settingsOptionAtom, settingsOptionEnum } from "@/recoil/atoms/SettingsOptionAtom";
 
 export default function () {
     const [dropDown, setDropDown] = useState<boolean>(false);
     const [logoutDropdown, setLogoutDropDown] = useState<boolean>(false);
     const [accountInfoDropDown, setAccountInfoDropDown] = useState(false);
     const { data: session } = useSession();
-    const router = useRouter();
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const setDashboardOptions = useSetRecoilState(dashboardOptionsAtom);
+    const setSettingOption = useSetRecoilState(settingsOptionAtom);
 
     function accountInfoHandler() {
         setAccountInfoDropDown(true);
         setDropDown(false);
-    }
-
-    async function globalRoomButtonHandler() {
-
-        if (!session?.user?.id) {
-            toast.error("User not authenticated");
-            return;
-        }
-        await globalRoomHandler(globalGroupId, session.user.id, router);
     }
 
     function handleLogout() {
@@ -39,23 +31,23 @@ export default function () {
         setDropDown(false);
     }
 
-    useEffect(() => {
+    function handleOpenSettings() {
+        setDashboardOptions(RendererOption.Settings);
+        setSettingOption(settingsOptionEnum.Profile);
+    }
 
-        const clickHandler = (event: MouseEvent) => {
-            handleClickOutside(event, dropdownRef, setDropDown)
+    useEffect(() => {
+        function clickHandler(event: MouseEvent) {
+            handleClickOutside(event, dropdownRef, setDropDown);
         }
 
         if (dropDown) {
             document.addEventListener("mousedown", clickHandler);
-        } else {
-            document.removeEventListener("mousedown", clickHandler);
+            return () => {
+                document.removeEventListener("mousedown", clickHandler);
+            };
         }
-
-        return () => {
-            document.removeEventListener("mousedown", clickHandler);
-        };
-
-    }, [dropDown, setDropDown]);
+    }, [dropDown]);
 
     return (
         <div ref={dropdownRef}>
@@ -73,25 +65,33 @@ export default function () {
             </div>
 
             {dropDown && (
-                <div className="absolute border-[1px] dark:border-zinc-800 cursor-pointer right-8 mt-2 w-36 font-light dark:bg-[#1c1c1c] bg-white rounded-[4] shadow-lg ring-1 ring-black ring-opacity-5 select-none z-50">
-                    <div className="">
-                        <div className="px-4 py-2 text-xs font-extralight text-gray-700 dark:hover:bg-[#262629] hover:bg-gray-200 dark:text-gray-200">Docs</div>
-                        <div onClick={accountInfoHandler} className="px-4 py-2 text-xs font-extralight text-gray-700 dark:hover:bg-[#262629] hover:bg-gray-200 dark:text-gray-200">Accounts Info</div>
-                        <div onClick={globalRoomButtonHandler} className="px-4 py-2 text-xs font-extralight text-gray-700 dark:hover:bg-[#262629] hover:bg-gray-200 dark:text-gray-200">Global Room</div>
+                <div className="absolute border-[1px] border-neutral-700 cursor-pointer right-8 mt-2 w-40 font-light dark:bg-neutral-900 bg-white rounded-[4] shadow-lg ring-1 ring-black ring-opacity-5 select-none z-50 overflow-hidden">
+                    <div>
+                        <div className="px-4 py-2.5 text-xs font-normal text-gray-700 dark:text-neutral-100 border-b-[1px] border-neutral-700 cursor-default">My Profile</div>
+                        <div className="px-4 py-2.5 text-xs font-extralight text-gray-700 dark:hover:bg-secDark hover:bg-gray-200 dark:text-neutral-100">Docs</div>
+                        <div onClick={accountInfoHandler} className="px-4 py-2 text-xs font-extralight text-gray-700 dark:hover:bg-secDark hover:bg-gray-200 dark:text-neutral-100">Accounts Info</div>
+
+                        <div
+                            onClick={handleOpenSettings}
+                            className="px-4 py-2.5 text-xs font-extralight text-gray-700 dark:hover:bg-secDark hover:bg-gray-200 dark:text-neutral-100 border-b-[1px] border-neutral-700 flex justify-between"
+                        >
+                            Settings
+                            <Settings2 size={14} />
+                        </div>
                         <a
                             href="https://github.com/kant-github/chat-app"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex flex-row justify-between px-4 py-2 text-xs text-blue-500 dark:text-blue-200 bg-blue-50 dark:bg-blue-600 dark:hover:bg-blue-500 hover:bg-blue-100"
+                            className="px-4 py-2.5 text-xs font-extralight text-gray-700 dark:hover:bg-secDark hover:bg-gray-200 dark:text-neutral-100 border-b-[1px] border-neutral-700 flex justify-between"
                         >
                             Github
                             <GithubSvg />
                         </a>
                         <div
                             onClick={handleLogout}
-                            className="flex justify-between px-4 py-2 text-xs text-red-600 dark:text-red-200 bg-red-50 dark:bg-red-600 dark:hover:bg-red-500 hover:bg-red-100"
+                            className="px-4 py-2.5 text-xs font-normal text-red-500 dark:hover:bg-secDark hover:bg-gray-200 flex justify-between"
                         >
-                            Logout
+                            Sign Out
                             <LogOutSvg />
                         </div>
                     </div>

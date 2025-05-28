@@ -18,7 +18,7 @@ import axios from "axios";
 import { EVENT_URL } from "@/lib/apiAuthRoutes";
 import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import { userSessionAtom } from "@/recoil/atoms/atom";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/useToast";
 
 interface CalendarEventFormProps {
     isOpen: boolean;
@@ -38,6 +38,7 @@ export default function ({ isOpen, setIsOpen, channel, selectedDate }: CalendarE
     const [isSubmitting, setIsSubmitting] = useState(false);
     const session = useRecoilValue(userSessionAtom);
     const [currentStep, setCurrentStep] = useRecoilState(eventFormProgressBarAtom);
+    const { toast } = useToast()
     const { control, reset, handleSubmit, formState: { errors } } = useForm<CreateEventFormSchema>({
         resolver: zodResolver(createEventFormSchema),
         defaultValues: {
@@ -85,7 +86,10 @@ export default function ({ isOpen, setIsOpen, channel, selectedDate }: CalendarE
             reset();
             setIsOpen(false);
             if (data.success) {
-                toast.success(data.message);
+                toast({
+                    title: 'Event created successfully',
+                    description: data.message
+                })
             }
         } catch (err) {
             console.error("Error in creating event");

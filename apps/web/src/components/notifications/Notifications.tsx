@@ -85,7 +85,7 @@ export default function ({ open, setOpen }: OrganizationNotificationsRendererPro
             open={open}
             setOpen={setOpen}
             content={
-                <div className="h-full flex flex-col px-5 py-3 min-w-[300px] bg-[#1c1c1c]">
+                <div className="h-full flex flex-col px-5 py-3 min-w-[300px] bg-neutral-900">
                     <NotificationFilterButtons activeFilter={activeFilter} setActiveFilter={setActiveFilter} />
                     <NotificationsRenderer activeFilter={activeFilter} filteredNotifications={filteredNotifications} />
                 </div>

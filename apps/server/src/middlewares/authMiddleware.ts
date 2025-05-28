@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
 
 export default function authmiddleware(req: Request, res: Response, next: NextFunction) {
-    console.log("hit middleware");
     try {
         const authHeader = req.headers.authorization;
         if (!authHeader) {

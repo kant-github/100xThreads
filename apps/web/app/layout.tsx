@@ -1,7 +1,7 @@
 "use client"
 import SessionProvider from "providers/SessionProvider";
 import localFont from "next/font/local";
-import { Toaster } from 'sonner';
+import { Toaster } from "@/components/ui/toaster"
 import "./globals.css";
 import { RecoilRoot } from "recoil";
 import { NotificationProvider } from "providers/NotificationProvider";
@@ -54,7 +54,7 @@ export default function RootLayout({
           <RecoilRoot>
             <NotificationProvider>
               {children}
-              <Toaster position="bottom-center" closeButton duration={2300} />
+              <Toaster />
             </NotificationProvider>
           </RecoilRoot>
         </body>

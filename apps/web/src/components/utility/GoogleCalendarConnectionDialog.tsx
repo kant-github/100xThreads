@@ -22,7 +22,7 @@ export default function GoogleCalendarConnectionDialog({
     }
 
     return (
-        <UtilityCard className="fixed bottom-6 right-6 z-50 max-w-sm shadow-lg border dark:border-neutral-700 rounded-[10px] bg-white dark:bg-secDark animate-in slide-in-from-bottom fade-in duration-700">
+        <UtilityCard className="fixed bottom-6 right-6 z-50 max-w-sm shadow-lg border dark:border-neutral-700 rounded-[10px] bg-white dark:bg-neutral-900 animate-in slide-in-from-bottom fade-in duration-700">
             <button
                 type="button"
                 onClick={() => setOpen(false)}

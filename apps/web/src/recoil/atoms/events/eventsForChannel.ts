@@ -1,0 +1,7 @@
+import { atom } from "recoil";
+import { EventType } from "types/types";
+
+export const eventsForChannel = atom<EventType[]>({
+    key: 'eventsForChannel',
+    default: []
+})

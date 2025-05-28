@@ -17,16 +17,17 @@ import Checkbox from "@/components/utility/CheckBox";
 import axios from "axios";
 import { ORGANIZATION_SETTINGS } from "@/lib/apiAuthRoutes";
 import { userSessionAtom } from "@/recoil/atoms/atom";
-import { toast } from "sonner";
 import Spinner from "@/components/loaders/Spinner";
 import AssignTagButtonAndMenu from "./AssignTagButtonAndMenu";
 import GuardComponent from "@/rbac/GuardComponent";
 import { Action, Subject } from "types/permission";
 import AssignRoleButtonAndMenu from "./AssignRoleButtonAndMenu";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { useToast } from "@/hooks/useToast";
 
 
 export default function OrganizationSettingsUsersUI() {
+    const { toast } = useToast();
     const session = useRecoilValue(userSessionAtom);
     const [organizationUsers, setOrganizationUsers] = useRecoilState(organizationUsersAtom);
     const organizationTags = useRecoilValue(organizationTagsAtom);
@@ -193,7 +194,9 @@ export default function OrganizationSettingsUsersUI() {
             })
 
             if (data.flag === 'SUCCESS') {
-                toast.success("successfully assigned tags");
+                toast({
+                    title: "successfully assigned tags"
+                });
             }
         } catch (err) {
             console.error("Error in assigning tags");
@@ -227,7 +230,9 @@ export default function OrganizationSettingsUsersUI() {
             })
 
             if (data.flag === 'SUCCESS') {
-                toast.success("successfully assigned tags");
+                toast({
+                    title: 'successfully assigned tags'
+                })
             }
 
             setOrganizationUsers(prev => prev.map((orgUser) => {

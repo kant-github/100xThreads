@@ -7,6 +7,8 @@ import { add, eachDayOfInterval, endOfMonth, format, isEqual, isSameMonth, isTod
 import UtilityCard from "../utility/UtilityCard";
 import CalendarEventForm from "./event-form/CalendarEventForm";
 import { EventChannelType } from "types/types";
+import { useAbility } from "@/rbac/abilityContext";
+import { Action, Subject } from "types/permission";
 
 interface Subscription {
   id: string;
@@ -28,7 +30,8 @@ interface CalendarProps {
 export default function ({ className, channel }: CalendarProps) {
   const [subscriptions, setSubscriptions] = React.useState<Subscription[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null); // Add selected date state
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const ability = useAbility();
   const [currentMonth, setCurrentMonth] = useState(
     format(new Date(), "MMM-yyyy")
   );
@@ -70,8 +73,10 @@ export default function ({ className, channel }: CalendarProps) {
   };
 
   function tapOnDateHandler(date: Date) {
-    setSelectedDate(date); // Set the selected date
-    setIsAddModalOpen(true); // Open the modal
+    if (ability.can(Action.CREATE, Subject.EVENT)) {
+      setSelectedDate(date);
+      setIsAddModalOpen(true);
+    }
   }
 
 

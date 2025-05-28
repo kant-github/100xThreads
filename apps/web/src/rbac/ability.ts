@@ -144,6 +144,7 @@ export class Ability {
             { action: Action.CREATE, subject: Subject.CHANNEL },
             { action: Action.UPDATE, subject: Subject.CHANNEL },
             { action: Action.CREATE, subject: Subject.ANNOUNCEMENT },
+            { action: Action.CREATE, subject: Subject.EVENT },
             { action: Action.UPDATE, subject: Subject.ANNOUNCEMENT, conditions: { isAuthor: true } },
             { action: Action.CREATE, subject: Subject.PROJECT },
             { action: Action.UPDATE, subject: Subject.PROJECT, conditions: { isCreator: true } },

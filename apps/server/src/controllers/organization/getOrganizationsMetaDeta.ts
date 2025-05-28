@@ -2,8 +2,6 @@ import prisma from "@repo/db/client";
 
 export async function getOrganizationsMetaDeta(organizationId: string, userId: number) {
 
-    console.log("hit this function");
-
     try {
         const [organization, eventChannel, channels, organizationUsers, welcomeChannel, organizationUser, organizationTags, organizationLocations] = await Promise.all([
             prisma.organization.findFirst({
