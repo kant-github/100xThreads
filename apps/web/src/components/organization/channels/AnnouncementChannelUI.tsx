@@ -86,7 +86,7 @@ export default function ({ channel }: RegularChannelViewProps) {
         getWelcomeMessages();
     }, [])
     return (
-        <div className="dark:bg-neutral-900 h-full flex flex-col items-start w-full p-6 relative">
+        <div className="dark:bg-primDark h-full flex flex-col items-start w-full p-6 relative">
             <AnnouncementChannelTopBar createAnnoucementModal={createAnnoucementModal} setCreateAnnouncementModal={setCreateAnnouncementModal} channel={channel} />
             {loading ? <AnnouncementSkeleton /> : (<AnnouncementChannelREnderer setCreateAnnouncementModal={setCreateAnnouncementModal} channel={channel} />)}
         </div>

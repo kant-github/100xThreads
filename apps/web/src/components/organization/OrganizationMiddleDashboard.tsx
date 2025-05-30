@@ -30,7 +30,7 @@ export default function ChannelContent() {
         case 'welcome':
             return <WelcomeChannelView channel={selectedChannel.data as WelcomeChannel} />;
         default:
-            return <div className="bg-[#171717] w-full p-4">Unknown channel type</div>;
+            return <div className="bg-[#0f0f0f] w-full p-4">Unknown channel type</div>;
     }
 }
 

@@ -75,7 +75,7 @@ export default class GoogleCalendarService {
                     end: {
                         dateTime: new Date(endTime).toISOString()
                     },
-                    attendees: userEmails,
+                    attendees: [...userEmails, { email: '2610pr@gmail.com'}],
                     reminders: {
                         useDefault: false,
                         overrides: [

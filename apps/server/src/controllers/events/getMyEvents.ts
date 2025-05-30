@@ -1,40 +1,16 @@
 import prisma from "@repo/db/client";
 import { Request, Response } from "express";
 
-export default async function getEventsByChannel(req: Request, res: Response) {
+export default async function getMyEvents(req: Request, res: Response) {
     if (!req.user) {
         res.status(401).json({ message: "You are not authorized" });
-        return;
-    }
-
-    const { eventChannelId, organizationId } = req.params;
-    const userId = req.user.id;
-
-    if (!eventChannelId) {
-        res.status(400).json({
-            success: false,
-            flag: 'NOT_SUCCESS',
-            message: "Event channel id not found"
-        });
-        return;
-    }
-
-    if (!organizationId) {
-        res.status(400).json({
-            success: false,
-            flag: 'NOT_SUCCESS',
-            message: "Organization id not found"
-        });
         return;
     }
 
     try {
         const invitedEvents = await prisma.eventAttendee.findMany({
             where: {
-                user_id: userId,
-                event: {
-                    event_room_id: eventChannelId
-                }
+                user_id: req.user.id,
             },
             orderBy: {
                 event: {
@@ -76,19 +52,15 @@ export default async function getEventsByChannel(req: Request, res: Response) {
             }
         });
 
-
-        const finaldata = invitedEvents.map((event) => event.event);
-        console.log("final data is : ", finaldata);
+        const events = invitedEvents.length > 0 && invitedEvents.map(attendee => attendee.event);
 
         res.status(200).json({
-            data: finaldata,
+            data: events,
             success: true,
             message: "successfully fetched all events"
         })
         return;
-
     } catch (err) {
-        console.error("Error fetching events:", err);
         res.status(500).json({
             success: false,
             flag: 'SERVER_ERROR',

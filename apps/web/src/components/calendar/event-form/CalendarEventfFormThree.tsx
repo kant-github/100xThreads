@@ -83,6 +83,7 @@ export default function CalendarEventfFormThree({ control, errors }: CalendarEve
                 name="linkedTags"
                 control={control}
                 render={({ field }) => {
+                    console.log(field.value);
                     const { value = [], onChange } = field;
 
                     const toggleTag = (tagId: string) => {

@@ -23,7 +23,7 @@ export default function ({ message, session, organizationId }: WelcomeChannelDat
     }
     return (
 
-        <div key={message.id} className="flex items-start gap-x-4 w-full bg-neutral-900/20 px-6 py-4 transition-colors border-b-[0.5px] border-neutral-700">
+        <div key={message.id} className="flex items-start gap-x-4 w-full px-6 py-4 transition-colors border-b-[0.5px] border-neutral-700">
             <FaHandPointRight size={12} className="text-yellow-500/90 mt-2.5" />
             <div className="flex flex-col gap-y-2 flex-grow">
                 <div className="flex items-center flex-row gap-x-1 text-sm font-semibold relative">
@@ -57,6 +57,4 @@ export default function ({ message, session, organizationId }: WelcomeChannelDat
         </div>
 
     );
-
-
 }

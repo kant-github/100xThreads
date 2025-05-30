@@ -477,7 +477,7 @@ export enum LocationMode {
 }
 
 
-enum EventStatus {
+export enum EventStatus {
   PENDING = 'PENDING',
   LIVE = 'LIVE',
   COMPLETED = 'COMPLETED',

@@ -43,12 +43,6 @@ export default function () {
                     label="Home"
                 />
                 <Option
-                    isSelected={renderOption === RendererOption.Notification}
-                    onClick={() => setNotificationMenu(prev => !prev)}
-                    Icon={IoIosNotifications}
-                    label="Notifications"
-                />
-                <Option
                     isSelected={renderOption === RendererOption.OwnedByYou}
                     onClick={() => setRenderOption(RendererOption.OwnedByYou)}
                     Icon={IoMdBody}
@@ -59,6 +53,18 @@ export default function () {
                     onClick={() => setRenderOption(RendererOption.AllOrganization)}
                     Icon={FaIndustry}
                     label="All Organizations"
+                />
+                <Option
+                    isSelected={renderOption === RendererOption.Notification}
+                    onClick={() => setNotificationMenu(prev => !prev)}
+                    Icon={IoIosNotifications}
+                    label="Notifications"
+                />
+                <Option
+                    isSelected={renderOption === RendererOption.Events}
+                    onClick={() => setRenderOption(RendererOption.Events)}
+                    Icon={IoMdBody}
+                    label="Events"
                 />
                 <Option
                     onClick={() => setFriendOptionMenu(prev => !prev)}

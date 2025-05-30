@@ -18,6 +18,7 @@ interface EventSideBarProps {
 export default function EventSideBar({ open, setOpen, channel }: EventSideBarProps) {
     const events = useRecoilValue(eventsForChannel);
     const [searchFilter, setSearchFilter] = useState<string>('');
+
     return (
         <UtilitySideBar
             width="[30%]"
@@ -42,13 +43,13 @@ export default function EventSideBar({ open, setOpen, channel }: EventSideBarPro
                             placeholder="Search events by title"
                         />
                     </div>
-                    <div className="flex-1 overflow-y-auto mt-4 space-y-4 min-h-0 scrollbar-hide rounded-[8px]">
+                    <div className="flex-1 overflow-y-auto mt-4 space-y-4 min-h-0 scrollbar-hide">
                         {events
                             .filter((event) =>
                                 event.title.toLowerCase().includes(searchFilter)
                             )
                             .map((event) => (
-                                <EventCard key={event.id} event={event} />
+                                <EventCard key={event.id} event={event} setOpen={setOpen} />
                             ))}
                     </div>
                 </div>

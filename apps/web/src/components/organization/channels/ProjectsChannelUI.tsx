@@ -46,7 +46,7 @@ export default function ({ channel }: WelcomeChannelViewProps) {
     }, [])
 
     return (
-        <div className="dark:bg-neutral-900 h-full flex flex-col items-start w-full p-6 relative">
+        <div className="dark:bg-primDark h-full flex flex-col items-start w-full p-6 relative">
             <ProjectsChannelTopBar channel={channel} />
             {loading ? <ProjectChannelskeleton /> : <ProjectsSectionRenderer channel={channel} />}
         </div>

@@ -163,10 +163,10 @@ export default function ({ channel }: ProjectsProps) {
 
     return (
         <DndContext onDragEnd={handleDragEnd}>
-            <div className='w-full flex flex-col flex-1 min-h-0 '>
+            <div className='w-full flex flex-col flex-1 min-h-0'>
                 {
                     !selectedProject ? (
-                        <UtilityCard className='p-8 w-full flex-1 mt-4 dark:bg-neutral-900 min-h-0 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4'>
+                        <UtilityCard className='p-8 w-full flex-1 mt-4 dark:bg-terDark min-h-0 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 shadow-lg shadow-black/20'>
                             {projectsChannelMessages.map((project) => (
                                 <Project channel={channel} key={project.id} project={project} setSelectedProject={setSelectedProject} />
                             ))}

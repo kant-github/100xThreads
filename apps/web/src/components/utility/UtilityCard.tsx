@@ -14,7 +14,7 @@ export default function UtilityCard({ children, className, ref }: UtilityCardPro
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            ref={ref} className={`${className} dark:text-gray-200 rounded-[16px] z-40`} onClick={(e) => e.stopPropagation()}>
+            ref={ref} className={`${className} dark:text-gray-200 rounded-[6px] z-40`} onClick={(e) => e.stopPropagation()}>
             {children}
         </motion.div>
     );

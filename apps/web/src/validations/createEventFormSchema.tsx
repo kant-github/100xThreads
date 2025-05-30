@@ -1,3 +1,4 @@
+import { EventStatus } from "types/types";
 import { z } from "zod";
 
 export const createEventFormSchema = z.object({
@@ -17,9 +18,9 @@ export const createEventFormSchema = z.object({
     event_room_id: z.string()
         .uuid("Event room ID must be a valid UUID"),
 
-    status: z.enum(["PENDING", "CONFIRMED", "CANCELLED"]),
+    status: z.enum([EventStatus.LIVE, EventStatus.COMPLETED, EventStatus.CANCELED, EventStatus.PENDING]),
 
-    description: z.string().optional(),
+    description: z.string().max(300, "Description must be 300 characters or less").optional(),
     end_time: z.date().nullable().optional(),
 
     location: z.string().uuid("Choose a location"),

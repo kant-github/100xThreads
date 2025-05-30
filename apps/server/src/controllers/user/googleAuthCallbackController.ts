@@ -59,9 +59,6 @@ export default async function googleAuthCallbackController(req: Request, res: Re
         })
 
         const urlObj = new URL(returnUrl);
-        urlObj.searchParams.set('success', 'true');
-        urlObj.searchParams.set('userId', user.id.toString());
-        urlObj.searchParams.set('googleConnected', 'true');
         res.redirect(urlObj.toString());
         return;
 

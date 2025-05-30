@@ -19,7 +19,7 @@ interface OptionImageProps {
     content: any
     imageClassName?: string;
     organizationId?: string;
-    userId: number;
+    userId: Number;
 }
 
 export default function ({ organizationId, userId, content }: OptionImageProps) {

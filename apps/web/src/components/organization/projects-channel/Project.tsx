@@ -21,12 +21,9 @@ export default function ({ project, setSelectedProject, channel }: ProjectProps)
     const { canView } = useProjectPermission(project);
     useEffect(() => {
     }, [project])
-    console.log(" ------------------------------ >");
-    console.log("can view is : ", canView);
-    console.log("for the project is : ", project.title);
 
     return (
-        <div key={project.id} className="flex flex-col items-start bg-terDark rounded-[14px] px-6 py-4 cursor-pointer hover:shadow-lg transition-shadow group relative h-48 border-[1px] border-neutral-700">
+        <div key={project.id} className="flex flex-col items-start bg-secDark rounded-[14px] px-6 py-4 cursor-pointer hover:shadow-lg transition-shadow group relative h-48 border-[1px] border-neutral-700">
             {
                 canView ? (
                     <MdChat className="absolute right-4 top-4 text-neutral-200" onClick={(e) => {

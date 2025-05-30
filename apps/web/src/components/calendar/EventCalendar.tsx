@@ -81,7 +81,7 @@ export default function ({ className, channel }: CalendarProps) {
 
 
   return (
-    <UtilityCard className={`p-4 mx-auto max-w-xl bg-secDark border-[1px] dark:border-neutral-700 rounded-[12px] ${className}`}>
+    <UtilityCard className={`p-4 mx-auto max-w-xl bg-secDark border-[1px] dark:border-neutral-700 rounded-[6px] ${className}`}>
       <CalendarHeader previousMonthHandler={previousMonthHandler} nextMonthHandler={nextMonthHandler} firstDayCurrentMonth={firstDayCurrentMonth} currentMonth={currentMonth} setIsAddModalOpen={setIsAddModalOpen} />
       <div className="grid grid-cols-7 gap-px bg-muted rounded-lg overflow-hidden">
         <AnimatePresence mode="wait">
@@ -136,7 +136,7 @@ export default function ({ className, channel }: CalendarProps) {
       </div>
       {
         isAddModalOpen && (
-          <CalendarEventForm channel={channel} isOpen={isAddModalOpen} setIsOpen={setIsAddModalOpen} selectedDate={selectedDate} />
+          <CalendarEventForm isEditMode={false} channelId={channel.id} isOpen={isAddModalOpen} setIsOpen={setIsAddModalOpen} selectedDate={selectedDate!} />
         )
       }
     </UtilityCard>

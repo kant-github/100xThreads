@@ -65,31 +65,31 @@ export default function () {
             </div>
 
             {dropDown && (
-                <div className="absolute border-[1px] border-neutral-700 cursor-pointer right-8 mt-2 w-40 font-light dark:bg-neutral-900 bg-white rounded-[4] shadow-lg ring-1 ring-black ring-opacity-5 select-none z-50 overflow-hidden">
+                <div className="absolute border-[1px] border-neutral-700 cursor-pointer right-8 mt-2 w-48 font-light dark:bg-neutral-900 bg-white rounded-[4] shadow-lg ring-1 ring-black ring-opacity-5 select-none z-50 overflow-hidden">
                     <div>
-                        <div className="px-4 py-2.5 text-xs font-normal text-gray-700 dark:text-neutral-100 border-b-[1px] border-neutral-700 cursor-default">My Profile</div>
-                        <div className="px-4 py-2.5 text-xs font-extralight text-gray-700 dark:hover:bg-secDark hover:bg-gray-200 dark:text-neutral-100">Docs</div>
-                        <div onClick={accountInfoHandler} className="px-4 py-2 text-xs font-extralight text-gray-700 dark:hover:bg-secDark hover:bg-gray-200 dark:text-neutral-100">Accounts Info</div>
+                        <div className="px-4 py-[11px] text-xs font-normal text-gray-700 dark:text-neutral-100 border-b-[1px] border-neutral-700 cursor-default">My Profile</div>
+                        <div className="px-4 py-[11px] text-xs font-extralight text-gray-700 dark:hover:bg-secDark hover:bg-gray-200 dark:text-neutral-100">Docs</div>
+                        <div onClick={accountInfoHandler} className="px-4 py-[11px] text-xs font-extralight text-gray-700 dark:hover:bg-secDark hover:bg-gray-200 dark:text-neutral-100">Accounts Info</div>
 
                         <div
                             onClick={handleOpenSettings}
-                            className="px-4 py-2.5 text-xs font-extralight text-gray-700 dark:hover:bg-secDark hover:bg-gray-200 dark:text-neutral-100 border-b-[1px] border-neutral-700 flex justify-between"
+                            className="px-4 py-[11px] text-xs font-extralight text-gray-700 dark:hover:bg-secDark hover:bg-gray-200 dark:text-neutral-100 border-b-[1px] border-neutral-700 flex justify-between"
                         >
                             Settings
                             <Settings2 size={14} />
                         </div>
                         <a
-                            href="https://github.com/kant-github/chat-app"
+                            href="https://github.com/kant-github/100xThreads"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-4 py-2.5 text-xs font-extralight text-gray-700 dark:hover:bg-secDark hover:bg-gray-200 dark:text-neutral-100 border-b-[1px] border-neutral-700 flex justify-between"
+                            className="px-4 py-[11px] text-xs font-extralight text-gray-700 dark:hover:bg-secDark hover:bg-gray-200 dark:text-neutral-100 border-b-[1px] border-neutral-700 flex justify-between"
                         >
                             Github
                             <GithubSvg />
                         </a>
                         <div
                             onClick={handleLogout}
-                            className="px-4 py-2.5 text-xs font-normal text-red-500 dark:hover:bg-secDark hover:bg-gray-200 flex justify-between"
+                            className="px-4 py-[11px] text-xs font-normal text-red-500 dark:hover:bg-secDark hover:bg-gray-200 flex justify-between"
                         >
                             Sign Out
                             <LogOutSvg />

@@ -1,10 +1,12 @@
 "use client"
 import SessionProvider from "providers/SessionProvider";
 import localFont from "next/font/local";
-import { Toaster } from "@/components/ui/toaster"
+
 import "./globals.css";
 import { RecoilRoot } from "recoil";
 import { NotificationProvider } from "providers/NotificationProvider";
+import { Toaster } from "@/components/ui/toaster"
+import GlobalSingleEventModal from "@/components/organization/events-channel/GlobalSingleEventModal";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -53,6 +55,7 @@ export default function RootLayout({
         <body className={`${geistSans.variable} ${geistMono.variable} dark:bg-neutral-900 bg-[#f2f2f2] transition-colors duration-200`}>
           <RecoilRoot>
             <NotificationProvider>
+              <GlobalSingleEventModal />
               {children}
               <Toaster />
             </NotificationProvider>

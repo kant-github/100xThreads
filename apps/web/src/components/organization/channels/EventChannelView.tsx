@@ -74,7 +74,7 @@ export default function EventChannelView({ channel }: EventChannelViewProps) {
 
 
     return (
-        <div className="bg-neutral-900 w-full p-4">
+        <div className="bg-primDark w-full p-6">
             {showDialoagBox && (<GoogleCalendarConnectionDialog setOpen={setShowDialoagBox} />)}
             {!showGoogleCalendarPage && channel.google_calendar_id && (
                 <>

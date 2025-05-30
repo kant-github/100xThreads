@@ -120,6 +120,20 @@ export default async function createGoogleCalendarEventController(req: Request, 
                 data: {
                     meet_link: googleResponse.hangoutLink,
                     status: 'LIVE'
+                },
+                include: {
+                    attendees: {
+                        include: {
+                            user: {
+                                select: {
+                                    name: true,
+                                    image: true,
+                                    id: true
+                                }
+                            }
+                        }
+                    },
+                    location: true
                 }
             })
 
@@ -129,7 +143,7 @@ export default async function createGoogleCalendarEventController(req: Request, 
                 flag: RESPONSE_FLAGS.CALENDAR_INTEGRATION_FAILED,
                 message: "Event created successfully, but Google Calendar integration failed",
                 success: true,
-                data: newEvent
+                data: finalEvent
             });
 
             return;

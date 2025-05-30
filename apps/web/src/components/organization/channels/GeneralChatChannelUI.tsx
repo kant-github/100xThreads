@@ -51,7 +51,7 @@ export default function WelcomeChannelView({ channel }: WelcomeChannelViewProps)
     }, [channel.id, session.user]);
 
     return (
-        <div className="dark:bg-neutral-900 h-full flex flex-col items-start w-full p-6">
+        <div className="dark:bg-primDark h-full flex flex-col items-start w-full p-6">
             <DashboardComponentHeading description={channel.description!}>
                 {channel.title} / Water cooler zone
             </DashboardComponentHeading>

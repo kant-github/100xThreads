@@ -14,7 +14,7 @@ export default function () {
     const organizationUsers = useRecoilValue(organizationUsersAtom);
     const previewUsers = organizationUsers.filter((user: OrganizationUsersType) => (user.role === 'ADMIN' || user.role === 'MEMBER' || user.role === 'GUEST'))
     return (
-        <div className="dark:bg-neutral-900 h-full flex flex-col items-start w-full p-6 relative">
+        <div className="dark:bg-primDark h-full flex flex-col items-start w-full p-6 relative">
             <div className="flex flex-row justify-start items-center gap-x-3 border-b-[0.5px] border-zinc-700 pb-6 w-full">
                 <Image className="rounded-[14px]" width={80} height={120} src={"/images/100xDevs-logo.png"} alt="logo" />
                 <div className="flex flex-col items-start justify-end text-neutral-50 w-full">

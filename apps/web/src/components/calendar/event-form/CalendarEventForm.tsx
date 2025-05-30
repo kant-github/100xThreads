@@ -6,25 +6,35 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormProgressBar from "../../form/FormProgressBar";
 import ProgressBarButtons from "../../form/ProgressBarButtons";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { eventFormProgressBarAtom } from "@/recoil/atoms/progressBarAtom";
 import { motion } from 'framer-motion'
 import CalendarEventfFormOne from "./CalendarEventfFormOne";
 import { CreateEventFormSchema, createEventFormSchema } from "@/validations/createEventFormSchema";
 import CalendarEventfFormTwo from "./CalendarEventfFormTwo";
-import { EventChannelType } from "types/types";
+import { EventStatus } from "types/types";
 import CalendarEventfFormThree from "./CalendarEventfFormThree";
 import axios from "axios";
 import { EVENT_URL } from "@/lib/apiAuthRoutes";
 import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import { useToast } from "@/hooks/useToast";
+import { eventsForChannel } from "@/recoil/atoms/events/eventsForChannel";
 
 interface CalendarEventFormProps {
     isOpen: boolean;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
-    channel: EventChannelType;
-    selectedDate: Date | null
+    channelId: string;
+    selectedDate?: Date;
+
+    start_time?: Date;
+    end_time?: Date;
+    status?: EventStatus;
+    title?: string;
+    description?: string;
+    tags?: string[];
+    location?: string;
+    isEditMode: Boolean;
 }
 
 const steps = [
@@ -33,29 +43,18 @@ const steps = [
     { id: "2", title: "location / users" },
 ];
 
-export default function ({ isOpen, setIsOpen, channel, selectedDate }: CalendarEventFormProps) {
+export default function ({ isOpen, setIsOpen, channelId, selectedDate, start_time, end_time, status, title, description, tags, location, isEditMode }: CalendarEventFormProps) {
     const organizationId = useRecoilValue(organizationIdAtom);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const session = useRecoilValue(userSessionAtom);
     const [currentStep, setCurrentStep] = useRecoilState(eventFormProgressBarAtom);
-    const { toast } = useToast()
-    const { control, reset, handleSubmit, formState: { errors } } = useForm<CreateEventFormSchema>({
-        resolver: zodResolver(createEventFormSchema),
-        defaultValues: {
-            title: "",
-            description: "",
-            start_time: getDefaultstartTime(),
-            end_time: getDefaultendTime(),
-            location: "",
-            meet_link: "",
-            created_by: 1,
-            event_room_id: channel.id,
-            status: "PENDING"
-        }
-    })
-
-
+    const setEvents = useSetRecoilState(eventsForChannel);
+    const { toast } = useToast();
+    console.log(channelId);
     function getDefaultstartTime() {
+        if (isEditMode && start_time) {
+            return start_time;
+        }
         if (selectedDate) {
             const startTime = new Date(selectedDate);
             const now = new Date();
@@ -66,10 +65,32 @@ export default function ({ isOpen, setIsOpen, channel, selectedDate }: CalendarE
     }
 
     function getDefaultendTime() {
+        if (isEditMode && end_time) {
+            return end_time;
+        }
         const startTime = getDefaultstartTime();
         const endTime = new Date(startTime.getTime() + 60 * 60 * 1000);
         return endTime;
     }
+
+
+    const { control, reset, handleSubmit, formState: { errors } } = useForm<CreateEventFormSchema>({
+        resolver: zodResolver(createEventFormSchema),
+        defaultValues: {
+            title: title || "",
+            description: description || "",
+            start_time: getDefaultstartTime(),
+            end_time: getDefaultendTime(),
+            location: location || "",
+            meet_link: "",
+            created_by: Number(session.user?.id),
+            event_room_id: channelId,
+            status: status || EventStatus.PENDING,
+            linkedTags: tags
+        }
+    })
+
+
 
 
     async function onSubmit(payload: CreateEventFormSchema) {
@@ -90,6 +111,7 @@ export default function ({ isOpen, setIsOpen, channel, selectedDate }: CalendarE
                     title: 'Event created successfully',
                     description: data.message
                 })
+                setEvents(prev => [data.data, ...prev]);
             }
         } catch (err) {
             console.error("Error in creating event");
@@ -117,7 +139,7 @@ export default function ({ isOpen, setIsOpen, channel, selectedDate }: CalendarE
     return (
         <OpacityBackground onBackgroundClick={() => setIsOpen(false)}>
             <UtilityCard open={isOpen} setOpen={setIsOpen} className="w-4/12 px-12 relative py-5 dark:bg-neutral-900 dark:border-neutral-600 border-[1px]">
-
+                {channelId}
                 <DashboardComponentHeading description="Quickly add details for your new event.">
                     New Calendar Event
                 </DashboardComponentHeading>

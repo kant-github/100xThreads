@@ -27,6 +27,7 @@ module.exports = {
             },
             colors: {
                 primary: '#f5a331',
+                primDark: '#171717',
                 secDark: '#1c1c1c',
                 terDark: '#1f1f1f',
                 forDark: '#262626',

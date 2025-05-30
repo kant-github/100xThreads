@@ -69,7 +69,7 @@ export default function ({ channel }: WelcomeChannelViewProps) {
     }, [organization?.id])
 
     return (
-        <div className="dark:bg-neutral-900 h-full flex flex-col items-start w-full p-6 relative">
+        <div className="dark:bg-primDark h-full flex flex-col items-start w-full p-6 relative">
             <DashboardComponentHeading description={channel.welcome_message!}>{`${organization?.name}'s welcome channel`}</DashboardComponentHeading>
             <UtilityCard className="w-full flex-grow mt-4 flex flex-col h-full">
                 <div className="relative rounded-[16px] h-[30%] w-full">

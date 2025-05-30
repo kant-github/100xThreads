@@ -38,6 +38,8 @@ import { deleteOrgLocation } from "../controllers/organization-settings/deleteOr
 import storeTagHandler from "../controllers/settings-channel/tags/StoreTagHandler";
 import createGoogleCalendarEventController from "../controllers/events/createGoogleCalendarEventController";
 import getEventsByChannel from "../controllers/events/getEventsByChannel";
+import getEvent from "../controllers/events/getEvent";
+import getMyEvents from "../controllers/events/getMyEvents";
 
 const router: Router = Router();
 
@@ -109,6 +111,8 @@ router.delete("/organizations/settings/location/:organizationId/:id", authmiddle
 //event-controller
 router.post("/organizations/event/:organizationId", authmiddleware, createGoogleCalendarEventController);
 router.get("/organizations/event/:eventChannelId/:organizationId", authmiddleware, getEventsByChannel);
+router.get("/event/:eventId", authmiddleware, getEvent);
+router.get("/my-events", authmiddleware, getMyEvents);
 
 
 
