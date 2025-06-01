@@ -1,7 +1,6 @@
 'use client'
 import OpacityBackground from "@/components/ui/OpacityBackground";
 import UtilityCard from "@/components/utility/UtilityCard";
-import { EventType, OrganizationTagType } from "types/types";
 import { getStatusColor } from "./EventCard";
 import { Clock, Edit2, ExternalLink, Map, Trash } from "lucide-react";
 import Image from "next/image";
@@ -17,8 +16,14 @@ import GlobalSingleEventModalSkeleton from "@/components/skeletons/GlobalSingleE
 import Link from "next/link";
 import OptionImage from "@/components/ui/OptionImage";
 import CalendarEventForm from "@/components/calendar/event-form/CalendarEventForm";
+import { useRecoilState } from "recoil";
+import { singleEventAtom } from "@/recoil/atoms/events/singleEventAtom";
+import { eventTagsAtom } from "@/recoil/atoms/events/eventTagsAtom";
 
 export function getStatusText(status: string) {
+    if (!status || typeof status !== 'string') {
+        return 'Unknown';
+    }
     return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
 }
 
@@ -31,8 +36,8 @@ interface GlobalSingleEventModalProps {
 export default function GlobalSingleEventModal({ selectedEventId, setOpen, isOrgPage }: GlobalSingleEventModalProps) {
     const { data: session } = useSession();
     const [loading, setLoading] = useState<boolean>(false);
-    const [event, setEvent] = useState<EventType | null>(null);
-    const [tags, setTags] = useState<OrganizationTagType[]>([]);
+    const [event, setEvent] = useRecoilState(singleEventAtom);
+    const [tags, setTags] = useRecoilState(eventTagsAtom);
     const [openeditEventModal, setOpeneditEventModal] = useState<boolean>(false);
 
     async function getEvents() {
@@ -42,13 +47,12 @@ export default function GlobalSingleEventModal({ selectedEventId, setOpen, isOrg
 
         try {
             setLoading(true);
-            await new Promise(t => setTimeout(t, 1000)); // Your delay
+            await new Promise(t => setTimeout(t, 1000));
             const { data } = await axios.get(`${API_URL}/event/${selectedEventId}`, {
                 headers: {
                     Authorization: `Bearer ${session.user.token}`
                 }
             })
-            console.log(data.event);
             setEvent(data.event);
             setTags(data.tags);
         } catch (err) {
@@ -221,6 +225,7 @@ export default function GlobalSingleEventModal({ selectedEventId, setOpen, isOrg
                 isOpen={openeditEventModal}
                 setIsOpen={setOpeneditEventModal}
                 isEditMode={true}
+                id={event?.id}
                 start_time={new Date(event?.start_time!)}
                 end_time={new Date(event?.end_time!)}
                 title={event?.title}

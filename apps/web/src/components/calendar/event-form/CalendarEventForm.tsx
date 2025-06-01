@@ -20,6 +20,8 @@ import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizatio
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import { useToast } from "@/hooks/useToast";
 import { eventsForChannel } from "@/recoil/atoms/events/eventsForChannel";
+import { singleEventAtom } from "@/recoil/atoms/events/singleEventAtom";
+import { eventTagsAtom } from "@/recoil/atoms/events/eventTagsAtom";
 
 interface CalendarEventFormProps {
     isOpen: boolean;
@@ -27,6 +29,7 @@ interface CalendarEventFormProps {
     channelId: string;
     selectedDate?: Date;
 
+    id?: string;
     start_time?: Date;
     end_time?: Date;
     status?: EventStatus;
@@ -43,9 +46,11 @@ const steps = [
     { id: "2", title: "location / users" },
 ];
 
-export default function ({ isOpen, setIsOpen, channelId, selectedDate, start_time, end_time, status, title, description, tags, location, isEditMode }: CalendarEventFormProps) {
+export default function ({ isOpen, setIsOpen, channelId, selectedDate, start_time, end_time, status, title, description, tags, location, isEditMode, id }: CalendarEventFormProps) {
     const organizationId = useRecoilValue(organizationIdAtom);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const setSingleEvent = useSetRecoilState(singleEventAtom)
+    const singleEventTags = useSetRecoilState(eventTagsAtom);
     const session = useRecoilValue(userSessionAtom);
     const [currentStep, setCurrentStep] = useRecoilState(eventFormProgressBarAtom);
     const setEvents = useSetRecoilState(eventsForChannel);
@@ -95,28 +100,55 @@ export default function ({ isOpen, setIsOpen, channelId, selectedDate, start_tim
     async function onSubmit(payload: CreateEventFormSchema) {
         setIsSubmitting(true);
         if (!session.user?.token) return;
-        
-        try {
-            const { data } = await axios.post(`${EVENT_URL}/${organizationId}`, payload, {
-                headers: {
-                    Authorization: `Bearer ${session.user?.token}`
-                }
-            })
-            console.log(data);
-            setCurrentStep(0);
-            reset();
-            setIsOpen(false);
-            if (data.success) {
-                toast({
-                    title: 'Event created successfully',
-                    description: data.message
+        if (isEditMode) {
+            try {
+                const { data } = await axios.put(`${EVENT_URL}/${organizationId}/${id}`, payload, {
+                    headers: {
+                        Authorization: `Bearer ${session.user?.token}`
+                    }
                 })
-                setEvents(prev => [data.data, ...prev]);
+                console.log(data);
+                setCurrentStep(0);
+                reset();
+                setIsOpen(false);
+                if (data.success) {
+                    toast({
+                        title: 'Event created successfully',
+                        description: data.message
+                    })
+                    setSingleEvent(data.data);
+                    singleEventTags(data.tags);
+                    setEvents(prev => [data.data, ...prev]);
+                }
+            } catch (err) {
+                console.error("Error in creating event");
+            } finally {
+                setIsSubmitting(false);
             }
-        } catch (err) {
-            console.error("Error in creating event");
-        } finally {
-            setIsSubmitting(false);
+        } else {
+
+            try {
+                const { data } = await axios.post(`${EVENT_URL}/${organizationId}`, payload, {
+                    headers: {
+                        Authorization: `Bearer ${session.user?.token}`
+                    }
+                })
+                console.log(data);
+                setCurrentStep(0);
+                reset();
+                setIsOpen(false);
+                if (data.success) {
+                    toast({
+                        title: 'Event created successfully',
+                        description: data.message
+                    })
+                    setEvents(prev => [data.data, ...prev]);
+                }
+            } catch (err) {
+                console.error("Error in creating event");
+            } finally {
+                setIsSubmitting(false);
+            }
         }
     }
 
@@ -140,7 +172,7 @@ export default function ({ isOpen, setIsOpen, channelId, selectedDate, start_tim
         <OpacityBackground onBackgroundClick={() => setIsOpen(false)}>
             <UtilityCard open={isOpen} setOpen={setIsOpen} className="w-4/12 px-12 relative py-5 dark:bg-neutral-900 dark:border-neutral-600 border-[1px]">
                 <DashboardComponentHeading description="Quickly add details for your new event.">
-                    { isEditMode ? (`Edit ${title}`) : ('New Calendar Event')}
+                    {isEditMode ? (`Edit ${title}`) : ('New Calendar Event')}
                 </DashboardComponentHeading>
 
                 <form key={isOpen.toString()} onSubmit={handleSubmit(onSubmit, onError)}>

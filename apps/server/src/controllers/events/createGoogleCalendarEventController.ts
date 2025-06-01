@@ -119,7 +119,8 @@ export default async function createGoogleCalendarEventController(req: Request, 
                 where: { id: newEvent.id },
                 data: {
                     meet_link: googleResponse.hangoutLink,
-                    status: 'LIVE'
+                    status: 'LIVE',
+                    google_event_id: googleResponse.id
                 },
                 include: {
                     attendees: {

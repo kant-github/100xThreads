@@ -78,7 +78,6 @@ export default async function getEventsByChannel(req: Request, res: Response) {
 
 
         const finaldata = invitedEvents.map((event) => event.event);
-        console.log("final data is : ", finaldata);
 
         res.status(200).json({
             data: finaldata,

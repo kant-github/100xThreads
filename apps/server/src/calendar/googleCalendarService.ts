@@ -75,7 +75,7 @@ export default class GoogleCalendarService {
                     end: {
                         dateTime: new Date(endTime).toISOString()
                     },
-                    attendees: [...userEmails, { email: '2610pr@gmail.com'}, {email: 'anjansuman75.sths@gmail.com'}],
+                    attendees: userEmails,
                     reminders: {
                         useDefault: false,
                         overrides: [
@@ -100,6 +100,63 @@ export default class GoogleCalendarService {
         } catch (error) {
             console.error("Error creating Google Calendar event:", error);
             throw error;
+        }
+    }
+
+    public async updateGoogleEvent(
+        eventId: string,
+        userEmails: { email: string }[],
+        calendarId: string,
+        title: string,
+        description: string,
+        startTime: Date,
+        endTime: Date,
+        includeMeet: boolean
+    ) {
+        try {
+            const existingEvent = await this.calendar.events.get({
+                calendarId: calendarId,
+                eventId: eventId
+            })
+            console.log("existing events is : ", existingEvent);
+            const updatedGoogleEvent = await this.calendar.events.update({
+                calendarId: calendarId,
+                conferenceDataVersion: includeMeet ? 1 : 0,
+                eventId: eventId,
+                requestBody: {
+                    summary: title,
+                    description: description,
+                    start: {
+                        dateTime: new Date(startTime).toISOString()
+                    },
+                    end: {
+                        dateTime: new Date(endTime).toISOString()
+                    },
+                    attendees: [...userEmails, { email: '2610pr@gmail.com' }, { email: 'anjansuman75.sths@gmail.com' }],
+                    reminders: {
+                        useDefault: false,
+                        overrides: [
+                            { method: 'email', minutes: 10 },
+                            { method: 'popup', minutes: 10 }
+
+                        ]
+                    },
+                    ...(includeMeet && {
+                        conferenceData: existingEvent.data.conferenceData || {
+                            createRequest: {
+                                requestId: `meet-${Date.now()}`,
+                                conferenceSolutionKey: {
+                                    type: 'hangoutsMeet'
+                                }
+                            }
+                        }
+                    })
+                }
+            })
+
+            return updatedGoogleEvent.data
+        } catch (err) {
+            console.error("Error in updating google calendar event", err);
         }
     }
 

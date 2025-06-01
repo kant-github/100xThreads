@@ -35,7 +35,6 @@ export default async function getEvent(req: Request, res: Response) {
                 }
             }
         })
-        console.log(event);
 
         res.json({
             success: true,

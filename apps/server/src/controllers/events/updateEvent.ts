@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import getUsersByRole from "../../middlewares/getUsersByRole";
 import GoogleCalendarService from "../../calendar/googleCalendarService";
 import isExpiredtoken from "../../config/isExpiredtoken";
+import { ContentAndApprovalsPage } from "twilio/lib/rest/content/v1/contentAndApprovals";
 
 const RESPONSE_FLAGS = {
     SUCCESS: 'SUCCESS',
@@ -11,7 +12,7 @@ const RESPONSE_FLAGS = {
     ERROR: 'ERROR'
 } as const;
 
-export default async function createGoogleCalendarEventController(req: Request, res: Response) {
+export default async function updateEvent(req: Request, res: Response) {
 
     try {
         if (!req.user?.id) {
@@ -54,6 +55,8 @@ export default async function createGoogleCalendarEventController(req: Request, 
                     select: {
                         mode: true
                     }
+
+
                 },
                 event_room: {
                     select: {
@@ -133,6 +136,8 @@ export default async function createGoogleCalendarEventController(req: Request, 
                 });
             }
 
+
+
             return await tx.event.findUnique({
                 where: {
                     id: eventId,
@@ -169,8 +174,62 @@ export default async function createGoogleCalendarEventController(req: Request, 
             return;
         }
 
-        
+        const updator = await prisma.users.findUnique({
+            where: {
+                id: req.user.id
+            },
+        })
 
+        if (!updator?.access_token || !updator.refresh_token ||
+            (updator.token_expires_at && isExpiredtoken(updator.token_expires_at.toString()))) {
+
+            res.status(200).json({
+                flag: RESPONSE_FLAGS.CONNECT_CALENDAR,
+                message: 'Event updated successfully, but Google Calendar sync requires reconnection',
+                success: true,
+                data: result
+            });
+            return;
+        }
+
+        const isOnlineMode = result.location?.mode === 'ONLINE';
+
+        // --------------------------------------------------------------------------------------> google service
+        const attendeeEmails = result.attendees.map(attendee => ({
+            email: attendee.user.email
+        }))
+
+
+        const googleManager = new GoogleCalendarService(updator.access_token, updator.refresh_token);
+        if (existingEvent.google_event_id) {
+            await googleManager.updateGoogleEvent(existingEvent.google_event_id, attendeeEmails, result.event_room.google_calendar_id!, result.title, result.description!, result.start_time, result.end_time!, isOnlineMode)
+
+        } else {
+            let googleResponse = await googleManager.createGoogleEvent(attendeeEmails, result.event_room.google_calendar_id!, result.title, result.description!, result.start_time, result.end_time!, isOnlineMode)
+            await prisma.event.update({
+                where: { id: eventId },
+                data: {
+                    google_event_id: googleResponse.id,
+                    meet_link: googleResponse.hangoutLink,
+                }
+            });
+        }
+
+        const tags = await prisma.organizationTag.findMany({
+            where: {
+                id: {
+                    in: result.linkedTags || []
+                }
+            }
+        })
+        res.status(200).json({
+            flag: RESPONSE_FLAGS.SUCCESS,
+            message: "Event updated and synced with Google Calendar successfully",
+            success: true,
+            data: result,
+            tags
+        });
+        return;
 
     } catch (error) {
         console.error('Error creating event:', error);

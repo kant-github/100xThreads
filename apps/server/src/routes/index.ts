@@ -40,6 +40,7 @@ import createGoogleCalendarEventController from "../controllers/events/createGoo
 import getEventsByChannel from "../controllers/events/getEventsByChannel";
 import getEvent from "../controllers/events/getEvent";
 import getMyEvents from "../controllers/events/getMyEvents";
+import updateEvent from "../controllers/events/updateEvent";
 
 const router: Router = Router();
 
@@ -110,6 +111,7 @@ router.delete("/organizations/settings/location/:organizationId/:id", authmiddle
 
 //event-controller
 router.post("/organizations/event/:organizationId", authmiddleware, createGoogleCalendarEventController);
+router.put("/organizations/event/:organizationId/:eventId", authmiddleware, updateEvent);
 router.get("/organizations/event/:eventChannelId/:organizationId", authmiddleware, getEventsByChannel);
 router.get("/event/:eventId", authmiddleware, getEvent);
 router.get("/my-events", authmiddleware, getMyEvents);

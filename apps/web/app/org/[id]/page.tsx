@@ -30,6 +30,7 @@ export type protectedOrganizationMetadata = {
 }
 
 export default function ({ params }: { params: { id: string } }) {
+    const { id } = params
     const session = useRecoilValue(userSessionAtom)
     const setEventChannel = useSetRecoilState(organizationEventChannelsAtom)
     const setChannels = useSetRecoilState(organizationChannelsAtom)
