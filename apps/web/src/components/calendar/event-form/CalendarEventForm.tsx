@@ -50,7 +50,7 @@ export default function ({ isOpen, setIsOpen, channelId, selectedDate, start_tim
     const [currentStep, setCurrentStep] = useRecoilState(eventFormProgressBarAtom);
     const setEvents = useSetRecoilState(eventsForChannel);
     const { toast } = useToast();
-    console.log(channelId);
+
     function getDefaultstartTime() {
         if (isEditMode && start_time) {
             return start_time;
@@ -92,10 +92,10 @@ export default function ({ isOpen, setIsOpen, channelId, selectedDate, start_tim
 
 
 
-
     async function onSubmit(payload: CreateEventFormSchema) {
         setIsSubmitting(true);
         if (!session.user?.token) return;
+        
         try {
             const { data } = await axios.post(`${EVENT_URL}/${organizationId}`, payload, {
                 headers: {
@@ -139,9 +139,8 @@ export default function ({ isOpen, setIsOpen, channelId, selectedDate, start_tim
     return (
         <OpacityBackground onBackgroundClick={() => setIsOpen(false)}>
             <UtilityCard open={isOpen} setOpen={setIsOpen} className="w-4/12 px-12 relative py-5 dark:bg-neutral-900 dark:border-neutral-600 border-[1px]">
-                {channelId}
                 <DashboardComponentHeading description="Quickly add details for your new event.">
-                    New Calendar Event
+                    { isEditMode ? (`Edit ${title}`) : ('New Calendar Event')}
                 </DashboardComponentHeading>
 
                 <form key={isOpen.toString()} onSubmit={handleSubmit(onSubmit, onError)}>

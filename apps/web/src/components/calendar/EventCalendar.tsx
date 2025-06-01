@@ -90,7 +90,7 @@ export default function ({ className, channel }: CalendarProps) {
               key={day}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-center text-xs font-light tracking-wider bg-background text-neutral-100 mt-4"
+              className="text-center text-xs font-light tracking-wider bg-background text-neutral-100 my-4"
             >
               {day}
             </motion.div>

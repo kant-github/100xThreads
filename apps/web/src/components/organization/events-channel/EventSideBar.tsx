@@ -8,6 +8,7 @@ import { eventsForChannel } from "@/recoil/atoms/events/eventsForChannel";
 import { Input } from "@/components/ui/input";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/utils";
+import GlobalSingleEventModal from "./GlobalSingleEventModal";
 
 interface EventSideBarProps {
     open: boolean;
@@ -18,6 +19,13 @@ interface EventSideBarProps {
 export default function EventSideBar({ open, setOpen, channel }: EventSideBarProps) {
     const events = useRecoilValue(eventsForChannel);
     const [searchFilter, setSearchFilter] = useState<string>('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+
+    function handleEventClick(eventId: string) {
+        setSelectedEventId(eventId);
+        setIsModalOpen(true);
+    };
 
     return (
         <UtilitySideBar
@@ -49,9 +57,16 @@ export default function EventSideBar({ open, setOpen, channel }: EventSideBarPro
                                 event.title.toLowerCase().includes(searchFilter)
                             )
                             .map((event) => (
-                                <EventCard key={event.id} event={event} setOpen={setOpen} />
+                                <EventCard key={event.id} event={event} setOpen={setOpen} onEventClick={handleEventClick} />
                             ))}
                     </div>
+                    {isModalOpen && selectedEventId && (
+                        <GlobalSingleEventModal
+                            isOrgPage={true}
+                            setOpen={setIsModalOpen}
+                            selectedEventId={selectedEventId}
+                        />
+                    )}
                 </div>
             }
         />

@@ -1,5 +1,6 @@
 import { Dispatch, ForwardedRef, SetStateAction } from "react";
 import { motion } from 'framer-motion'
+import { cn } from "@/lib/utils";
 
 interface UtilityCardProps {
     children: React.ReactNode;
@@ -14,7 +15,9 @@ export default function UtilityCard({ children, className, ref }: UtilityCardPro
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            ref={ref} className={`${className} dark:text-gray-200 rounded-[6px] z-40`} onClick={(e) => e.stopPropagation()}>
+            ref={ref} className={cn("dark:text-gray-200 rounded-[6px] z-40",
+                className
+            )} onClick={(e) => e.stopPropagation()}>
             {children}
         </motion.div>
     );

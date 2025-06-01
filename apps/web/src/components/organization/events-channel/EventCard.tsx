@@ -4,13 +4,12 @@ import Image from "next/image";
 import { EventType } from "types/types";
 import { formatDistanceStrict } from "date-fns";
 import Link from "next/link";
-import { useSetRecoilState } from "recoil";
-import { singleEventAtom } from "@/recoil/atoms/events/singleEventAtom";
 import { Dispatch, SetStateAction } from "react";
 
 interface EventCardProps {
     event: EventType;
     setOpen?: Dispatch<SetStateAction<boolean>>;
+    onEventClick?: (eventId: string) => void;
 }
 
 export function getStatusText(status: string) {
@@ -32,9 +31,7 @@ export function getStatusColor(status: string) {
     }
 }
 
-export default function EventCard({ event, setOpen }: EventCardProps) {
-
-    const setEventState = useSetRecoilState(singleEventAtom);
+export default function EventCard({ event, setOpen, onEventClick }: EventCardProps) {
 
     function formatDate(dateString: string) {
         const date = new Date(dateString);
@@ -59,18 +56,18 @@ export default function EventCard({ event, setOpen }: EventCardProps) {
         return formatDistanceStrict(new Date(start), new Date(end));
     }
 
+    const handleCardClick = () => {
+        if (setOpen) {
+            setOpen(false);
+        }
+        if (onEventClick) {
+            onEventClick(event.id);
+        }
+    };
+
     return (
         <UtilityCard className="p-5 bg-terDark rounded-[6px] border-[1px] border-neutral-700 overflow-hidden cursor-pointer shadow-lg">
-
-            <div onClick={() => {
-                if (setOpen) {
-                    setOpen(false);
-                }
-                setEventState({
-                    selectedEventId: event.id,
-                    openModal: true
-                })
-            }} className="flex flex-col gap-y-4">
+            <div onClick={handleCardClick} className="flex flex-col gap-y-4">
                 <div className="flex items-center justify-between">
                     <div className="text-base font-semibold text-neutral-100">
                         {event.title}
@@ -101,17 +98,22 @@ export default function EventCard({ event, setOpen }: EventCardProps) {
                                 <span className="">
                                     {event.attendees?.length ?? 0} attending..
                                 </span>
-                                <Dot size={12} />
-                                <span className="">
-                                    starts at {formatTime(event.start_time)}
-                                </span>
                             </span>
                         )}
+                        <span className="text-xs font-medium text-neutral-300">
+                            starts at {formatTime(event.start_time)}
+                        </span>
                     </div>
                 </div>
                 {
                     event.location?.mode === 'ONLINE' ? (
-                        <Link target="_blank" rel="noopener noreferrer" href={event.meet_link!} className="flex items-center gap-x-2 ">
+                        <Link 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            href={event.meet_link!} 
+                            className="flex items-center gap-x-2"
+                            onClick={(e) => e.stopPropagation()}
+                        >
                             <Image
                                 src="/images/google-meet.png"
                                 height={19}
@@ -131,6 +133,6 @@ export default function EventCard({ event, setOpen }: EventCardProps) {
                     )
                 }
             </div>
-        </UtilityCard >
+        </UtilityCard>
     );
 }

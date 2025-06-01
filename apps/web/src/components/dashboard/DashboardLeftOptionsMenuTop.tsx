@@ -1,6 +1,6 @@
 import { GoHomeFill } from "react-icons/go";
 import { FaIndustry } from "react-icons/fa6";
-import { IoMdBody, IoMdSettings, IoIosNotifications } from "react-icons/io";
+import { IoMdSettings, IoIosNotifications } from "react-icons/io";
 import ProfileOption from "../ui/ProfileOption";
 import { useRecoilState } from "recoil";
 import { dashboardOptionsAtom, RendererOption } from "@/recoil/atoms/DashboardOptionsAtom";
@@ -9,20 +9,26 @@ import { useState } from "react";
 import UtilitySideBar from "../utility/UtilitySideBar";
 import OrganizationNotificationsRenderer from "../notifications/Notifications";
 import FriendsRenderer from "../utility/FriendsRenderer";
+import { IoCalendarSharp } from "react-icons/io5"
+import { FaDoorClosed } from "react-icons/fa";
+
+
+
 
 export const baseDivStyles = "flex items-center justify-start gap-x-2 sm:gap-x-3 py-1.5 sm:py-2 px-2 sm:px-3 rounded-[8px] cursor-pointer select-none";
 const textStyles = "text-[12px] sm:text-[13px] text-lightText dark:text-neutral-100 font-normal mt-0.5 tracking-wide hidden sm:block";
 
-function Option({ isSelected, onClick, Icon, label }: {
+function Option({ isSelected, onClick, Icon, label, iconSize = 18, }: {
     isSelected?: boolean;
     onClick: () => void;
     Icon: React.ComponentType<{ size: number } & React.SVGProps<SVGSVGElement>>;
     label: string;
+    iconSize?: number
 }) {
     return (
         <div onClick={onClick} className={`${baseDivStyles} ${isSelected ? "dark:bg-neutral-700 bg-[#d9d3cc] dark:text-darkText text-lightText" : "dark:hover:bg-neutral-800 hover:bg-secondLight"}`}>
             <Icon size={16} className="sm:hidden" />
-            <Icon size={18} className="hidden sm:block" />
+            <Icon size={iconSize} className="hidden sm:block" />
             <span className={`${textStyles}`}>{label}</span>
         </div>
     );
@@ -40,12 +46,14 @@ export default function () {
                     isSelected={renderOption === RendererOption.Home}
                     onClick={() => setRenderOption(RendererOption.Home)}
                     Icon={GoHomeFill}
+                    iconSize={16}
                     label="Home"
                 />
                 <Option
                     isSelected={renderOption === RendererOption.OwnedByYou}
                     onClick={() => setRenderOption(RendererOption.OwnedByYou)}
-                    Icon={IoMdBody}
+                    Icon={FaDoorClosed}
+                    iconSize={15}
                     label="Owned by you"
                 />
                 <Option
@@ -53,18 +61,21 @@ export default function () {
                     onClick={() => setRenderOption(RendererOption.AllOrganization)}
                     Icon={FaIndustry}
                     label="All Organizations"
+                    iconSize={15}
+                />
+                <Option
+                    isSelected={renderOption === RendererOption.Events}
+                    onClick={() => setRenderOption(RendererOption.Events)}
+                    Icon={IoCalendarSharp}
+                    label="Events"
+                    iconSize={15}
                 />
                 <Option
                     isSelected={renderOption === RendererOption.Notification}
                     onClick={() => setNotificationMenu(prev => !prev)}
                     Icon={IoIosNotifications}
                     label="Notifications"
-                />
-                <Option
-                    isSelected={renderOption === RendererOption.Events}
-                    onClick={() => setRenderOption(RendererOption.Events)}
-                    Icon={IoMdBody}
-                    label="Events"
+                    iconSize={19}
                 />
                 <Option
                     onClick={() => setFriendOptionMenu(prev => !prev)}

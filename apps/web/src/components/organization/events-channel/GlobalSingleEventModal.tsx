@@ -1,8 +1,6 @@
 'use client'
 import OpacityBackground from "@/components/ui/OpacityBackground";
 import UtilityCard from "@/components/utility/UtilityCard";
-import { singleEventAtom } from "@/recoil/atoms/events/singleEventAtom";
-import { useRecoilState } from "recoil";
 import { EventType, OrganizationTagType } from "types/types";
 import { getStatusColor } from "./EventCard";
 import { Clock, Edit2, ExternalLink, Map, Trash } from "lucide-react";
@@ -10,7 +8,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import ToolTipComponent from "@/components/ui/ToolTipComponent";
 import AppLogo from "@/components/heading/AppLogo";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { API_URL } from "@/lib/apiAuthRoutes";
@@ -24,24 +22,28 @@ export function getStatusText(status: string) {
     return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
 }
 
-export default function GlobalSingleEventModal() {
-    const [eventState, setEventState] = useRecoilState(singleEventAtom);
+interface GlobalSingleEventModalProps {
+    setOpen: Dispatch<SetStateAction<boolean>>;
+    isOrgPage: boolean
+    selectedEventId: string;
+}
+
+export default function GlobalSingleEventModal({ selectedEventId, setOpen, isOrgPage }: GlobalSingleEventModalProps) {
     const { data: session } = useSession();
     const [loading, setLoading] = useState<boolean>(false);
     const [event, setEvent] = useState<EventType | null>(null);
     const [tags, setTags] = useState<OrganizationTagType[]>([]);
     const [openeditEventModal, setOpeneditEventModal] = useState<boolean>(false);
-    const shouldShow = eventState.openModal && eventState.selectedEventId;
 
     async function getEvents() {
-        if (!session?.user?.token || !eventState.selectedEventId) {
+        if (!session?.user?.token || !selectedEventId) {
             return;
         }
 
         try {
             setLoading(true);
             await new Promise(t => setTimeout(t, 1000)); // Your delay
-            const { data } = await axios.get(`${API_URL}/event/${eventState.selectedEventId}`, {
+            const { data } = await axios.get(`${API_URL}/event/${selectedEventId}`, {
                 headers: {
                     Authorization: `Bearer ${session.user.token}`
                 }
@@ -59,7 +61,7 @@ export default function GlobalSingleEventModal() {
     }
 
     useEffect(() => {
-        if (shouldShow && eventState.selectedEventId) {
+        if (selectedEventId) {
             setEvent(null);
             setTags([]);
 
@@ -67,26 +69,17 @@ export default function GlobalSingleEventModal() {
                 getEvents();
             }
         }
-    }, [shouldShow, session?.user?.token, eventState.selectedEventId])
+    }, [session?.user?.token, selectedEventId])
 
-    // Don't render anything if modal shouldn't show
-    if (!shouldShow) {
-        return null;
-    }
-
-    // Single OpacityBackground container with conditional content
     return (
         <OpacityBackground
             className={loading || !event ? "" : "bg-terDark"}
-            onBackgroundClick={() => setEventState({
-                openModal: false,
-                selectedEventId: null
-            })}
+            onBackgroundClick={() => setOpen(false)}
         >
             {loading || !event ? (
                 <GlobalSingleEventModalSkeleton />
             ) : (
-                <UtilityCard className="w-8/12 bg-primDark grid grid-cols-4 h-[50%] border-[1px] border-neutral-800 rounded-[6px] relative">
+                <UtilityCard className="w-8/12 bg-primDark grid grid-cols-4 h-[50%] border-[1px] border-neutral-800 rounded-[6px] relative ">
                     <section className={cn("border-r-[1px] border-neutral-800 col-span-1 py-6 px-6",
                         "flex flex-col justify-between gap-y-2"
                     )}>
@@ -172,12 +165,19 @@ export default function GlobalSingleEventModal() {
                         "flex flex-col gap-y-2 h-full min-h-0"
                     )}>
                         <div className="flex flex-row gap-x-2 flex-shrink-0">
-                            <ToolTipComponent content="Edit event">
-                                <Edit2 onClick={() => setOpeneditEventModal(true)} size={31} className="text-neutral-200 dark:bg-neutral-400/20 hover:bg-neutral-500 transition-colors p-[7px] rounded-[4px]" />
-                            </ToolTipComponent>
-                            <ToolTipComponent content="Delete event">
-                                <Trash size={28} className="text-neutral-100 bg-red-600/80 hover:bg-red-600 transition-colors p-1.5 rounded-[4px]" />
-                            </ToolTipComponent>
+                            {
+                                isOrgPage && (
+                                    <>
+                                        <ToolTipComponent content="Edit event">
+                                            <Edit2 onClick={() => setOpeneditEventModal(true)} size={31} className="text-neutral-200 dark:bg-neutral-400/20 hover:bg-neutral-500 transition-colors p-[7px] rounded-[4px]" />
+                                        </ToolTipComponent>
+                                        <ToolTipComponent content="Delete event">
+                                            <Trash size={28} className="text-neutral-100 bg-red-600/80 hover:bg-red-600 transition-colors p-1.5 rounded-[4px]" />
+                                        </ToolTipComponent>
+                                    </>
+                                )
+                            }
+
                         </div>
 
                         <span className="text-xs text-neutral-300 font-medium flex-shrink-0">Invited Users</span>
