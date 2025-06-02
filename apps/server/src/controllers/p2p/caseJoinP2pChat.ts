@@ -6,12 +6,9 @@ export default async function caseJoinP2pChat(req: Request, res: Response) {
         res.status(401).json({ message: "You are not authorized" });
         return;
     }
-    console.log("hitted");
 
     const user1Id = Number(req.user.id);
     const user2Username = req.query.user_2_username as string;
-    console.log("user id : ", user1Id);
-    console.log("user 2 username : ", user2Username);
 
     if (!user1Id || !user2Username) {
         res.status(400).json({ error: 'Missing user ID or username' });

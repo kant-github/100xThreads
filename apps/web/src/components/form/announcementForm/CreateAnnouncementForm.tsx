@@ -19,16 +19,21 @@ import { announcementChannelMessgaes } from "@/recoil/atoms/organizationAtoms/an
 import { v4 as uuidv4 } from 'uuid';
 import { organizationUserAtom } from "@/recoil/atoms/organizationAtoms/organizationUserAtom";
 
+
 const PriorityEnum = z.enum(["LOW", "NORMAL", "HIGH", "URGENT"]);
 
 const createAnnouncementFormSchema = z.object({
     title: z.string().min(1, "Title is required").max(255, "Title must be less than 255 characters"),
     content: z.string().min(1, "Content is required").max(10000, "Content must be less than 10000 characters"),
-    priority: PriorityEnum.default('LOW'),
-    tags: z.array(z.string()).default([]).transform(tags => tags.filter(tag => tag.length > 0)),
+    priority: PriorityEnum,
+    tags: z.array(z.string()),
     expires_at: z.string().min(1, 'Select the date'),
     creator_name: z.string()
-})
+}).transform(data => ({
+    ...data,
+    priority: data.priority || 'LOW' as const,
+    tags: data.tags.filter(tag => tag.length > 0)
+}));
 
 export type CreateAnnouncementFormSchemaType = z.infer<typeof createAnnouncementFormSchema>;
 const steps = [
@@ -55,7 +60,9 @@ export default function ({ createAnnoucementModal, setCreateAnnouncementModal, c
     const { control, reset, handleSubmit, formState: { errors } } = useForm<CreateAnnouncementFormSchemaType>({
         resolver: zodResolver(createAnnouncementFormSchema),
         defaultValues: {
-            creator_name: session.user?.name!
+            creator_name: session.user?.name!,
+            priority: 'LOW',
+            tags: []
         }
     })
 

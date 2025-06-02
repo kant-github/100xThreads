@@ -70,9 +70,6 @@ export default class FriendsChannelManager {
                 ? [senderId, receiverId]
                 : [receiverId, senderId];
 
-            console.log("user id 1 is : ", user_id_1);
-            console.log("user id 2 is : ", user_id_2);
-
             const friendship = await tx.friendship.create({
                 data: {
                     user_id_1,

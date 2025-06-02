@@ -32,14 +32,17 @@ const createTaskFormSchema = z.object({
     description: z.string().min(1, 'Description is missing').max(70, 'Max 70 characters'),
     priority: z.enum([Priority.LOW, Priority.NORMAL, Priority.HIGH, Priority.URGENT]),
     dueDate: z.string().optional(),
-    status: z.enum([TaskStatus.TODO, TaskStatus.IN_PROGRESS, TaskStatus.DONE]).default(TaskStatus.TODO),
+    status: z.enum([TaskStatus.TODO, TaskStatus.IN_PROGRESS, TaskStatus.DONE]),
     assignees: z.array(z.number()).min(1, "At least one assignee is required"),
     tags: z.array(z.string()).min(1, "Add at least one tag").max(5, "Maximum 5 tags allowed"),
     color: z.string().refine(
         (color) => !color || presetColors.some((preset) => preset.value === color),
         "Select a color"
     ),
-})
+}).transform(data => ({
+    ...data,
+    status: data.status || TaskStatus.TODO
+}));
 
 export type CreateTaskFormType = z.infer<typeof createTaskFormSchema>
 

@@ -13,7 +13,6 @@ export default class WelcomeChannelManager {
 
 
     public async welcomeUserHandler(message: WebSocketMessage, tokenData: any) {
-        console.log("hi")
         const channelKey = this.getChannelKey({
             organizationId: tokenData.organizationId,
             channelId: message.payload.channelId,
@@ -69,8 +68,6 @@ export default class WelcomeChannelManager {
                     user: true
                 }
             })
-
-            console.log("org user is : ", orgUser);
 
 
             await this.publisher.publish(channelKey, JSON.stringify({

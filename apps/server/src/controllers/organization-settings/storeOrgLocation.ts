@@ -7,7 +7,7 @@ export default async function storeOrgLocation(req: Request, res: Response) {
             res.status(401).json({ message: "You are not authorized" });
             return;
         }
-        console.log(req.body);
+
         const { organization_id, mode, name, description, address, city } = req.body;
 
         const orgLocation = await prisma.organizationLocations.create({

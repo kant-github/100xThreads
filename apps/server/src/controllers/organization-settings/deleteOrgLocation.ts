@@ -9,7 +9,6 @@ export async function deleteOrgLocation(req: Request, res: Response) {
         }
 
         const { id } = req.params;
-        console.log(req.params.id);
 
         await prisma.organizationLocations.delete({
             where: { id }

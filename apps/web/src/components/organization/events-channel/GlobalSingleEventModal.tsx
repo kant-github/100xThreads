@@ -153,7 +153,7 @@ export default function GlobalSingleEventModal({ selectedEventId, setOpen, isOrg
                             <div className="mt-3 flex flex-col gap-y-2">
                                 <span className="text-xs text-neutral-300 font-medium">Invited tags</span>
                                 <div className="flex items-center justify-start ">
-                                    {tags.length > 0 && tags.map((tag, index) => (
+                                    {tags?.length > 0 && tags.map((tag, index) => (
                                         <OrganizationTagTicker key={index} tag={tag} />
                                     ))}
                                 </div>

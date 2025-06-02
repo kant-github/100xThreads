@@ -155,11 +155,8 @@ export default class ProjectChannelManager {
             type: message.payload.type
         });
 
-        console.log("hitted ------------------------------------------------- >");
-
         const activityLogchannelKey = `${tokenData.organizationId}:${message.payload.channelId}:project-channel-chat-messages`
 
-        // First create the task without assignees
         const task = await this.prisma.tasks.create({
             data: {
                 project_id: message.payload.projectId,

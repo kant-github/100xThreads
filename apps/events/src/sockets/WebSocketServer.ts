@@ -217,9 +217,7 @@ export default class WebSocketServerManager {
     }
 
     public sendToUser(userId: string, type: string, data: any) {
-        console.log("sending");
         const userConnections = this.userSockets.get(userId);
-        console.log("user connected for the user id " + userId + " is : ", userConnections?.size);
         if (!userConnections || userConnections.size === 0) {
             return false;
         }
@@ -243,8 +241,6 @@ export default class WebSocketServerManager {
     }
 
     public broadcastToChannel(key: string, type: string, data: any, excludeSocketId?: string) {
-
-        console.log("data is ---------------------- >", data);
         const channelKey = `${key}:${type}`;
 
         const messagePayload = {
@@ -253,7 +249,6 @@ export default class WebSocketServerManager {
         }
 
         const channelSubscribers = this.channels.get(channelKey);
-        console.log("length is : ", channelSubscribers?.size);
         if (!channelSubscribers || channelSubscribers.size === 0) {
             return false;
         }

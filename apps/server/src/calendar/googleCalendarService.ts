@@ -118,7 +118,7 @@ export default class GoogleCalendarService {
                 calendarId: calendarId,
                 eventId: eventId
             })
-            console.log("existing events is : ", existingEvent);
+            
             const updatedGoogleEvent = await this.calendar.events.update({
                 calendarId: calendarId,
                 conferenceDataVersion: includeMeet ? 1 : 0,

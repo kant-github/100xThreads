@@ -10,8 +10,6 @@ export default class P2pChatsManager {
     }
 
     public async handleIncomingNewMessage(message: WebSocketMessage) {
-        console.log("message is : ", message);
-
         const chat = await this.prisma.chatMessageOneToOne.create({
             data: {
                 senderId: message.payload.senderId,
