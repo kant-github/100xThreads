@@ -1,11 +1,11 @@
 import { useWebSocket } from "@/hooks/useWebsocket";
-import { Dispatch, SetStateAction, useEffect, useRef } from "react";
+import { Dispatch, SetStateAction, useRef } from "react";
 import { ChannelType, MessageType } from "types/types";
-import { motion, AnimatePresence } from "framer-motion";
 import { useSetRecoilState } from "recoil";
 import { messageEditingState } from "@/recoil/atoms/chats/messageEditingStateAtom";
 import { toast } from "sonner";
 import UtilityOptionMenuCard from "../utility/UtilityOptionMenuCard";
+import { useToast } from "@/hooks/useToast";
 
 interface MessageOptionMenuProps {
   message: MessageType;
@@ -24,9 +24,10 @@ export default function ({
   className,
   channel,
 }: MessageOptionMenuProps) {
-  
+
   if (message.is_deleted) return null;
   const ref = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
 
   const { sendMessage } = useWebSocket();
   const setEditingState = useSetRecoilState(messageEditingState);
@@ -40,7 +41,9 @@ export default function ({
         messageId: message.id,
       };
       sendMessage(newMessage, channel.id, "delete-message");
-      toast.success('Message deleted')
+      toast({
+        title: "Message deleted",
+      });
     }
     setOpen(false);
   }

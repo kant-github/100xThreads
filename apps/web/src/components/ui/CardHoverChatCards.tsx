@@ -7,9 +7,9 @@ import { FRONTEND_BASE_URL } from "@/lib/apiAuthRoutes";
 import { IoEye } from "react-icons/io5";
 import { IoEyeOff } from "react-icons/io5";
 import { IoIosCopy } from "react-icons/io";
-import { toast } from "sonner";
 import { OrganizationType } from "types/types";
 import GroupImage from "./GroupImage";
+import { useToast } from "@/hooks/useToast";
 
 
 interface CardHoverChatCardsProps {
@@ -23,6 +23,7 @@ export default function ({ organizations, className }: CardHoverChatCardsProps) 
   const [deleteDialogBox, setDeleteDialogBox] = useState<boolean>(false);
   const [editDialogBox, setEditDialogBox] = useState<boolean>(false);
   const router = useRouter();
+  const { toast } = useToast();
 
 
   return (
@@ -130,6 +131,7 @@ function CardDescription({
   children: React.ReactNode;
 }) {
   const [showPasscode, setShowPasscode] = useState(false);
+  const { toast } = useToast();
 
   const togglePasscodeVisibility = () => {
     setShowPasscode((prev) => !prev);
@@ -141,9 +143,13 @@ function CardDescription({
 
     try {
       await navigator.clipboard.writeText(passcodeText);
-      toast.success("Passcode copied to clipboard");
+      toast({
+        title: "Passcode copied to clipboard"
+      });
     } catch (err) {
-      toast.error("Error in copying passcode");
+      toast({
+        title: "Error in copying passcode"
+      });
     }
   }
 

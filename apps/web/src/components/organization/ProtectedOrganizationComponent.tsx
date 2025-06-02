@@ -15,12 +15,12 @@ import { ORGANIZATION } from "@/lib/apiAuthRoutes";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import Spinner from "../loaders/Spinner";
-import { toast } from "sonner";
 import { organizationChannelsAtom, organizationEventChannelsAtom, organizationWelcomeChannelAtom } from "@/recoil/atoms/organizationAtoms/organizationChannelAtoms";
 import { organizationUsersAtom } from "@/recoil/atoms/organizationAtoms/organizationUsersAtom";
 import { organizationAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import { useWebSocket } from "@/hooks/useWebsocket";
 import OptionImage from "../ui/OptionImage";
+import { useToast } from "@/hooks/useToast";
 
 interface props {
     metaData: protectedOrganizationMetadata,
@@ -38,10 +38,10 @@ export default function ({ metaData, organizationId, setFlag }: props) {
     const [welcomeChannel, setWelcomeChannel] = useRecoilState(organizationWelcomeChannelAtom)
     const setOrganizationUsers = useSetRecoilState(organizationUsersAtom);
     const setOrganization = useSetRecoilState(organizationAtom);
+    const { toast } = useToast();
     const date = metaData.created_at ? format(new Date(metaData.created_at), 'MMMM dd, yyyy') : null;
 
     const { subscribeToBackend, sendMessage } = useWebSocket();
-    console.log("protected component rendered");
     useEffect(() => {
         if (metaData.WelcomeChannel.id) {
             subscribeToBackend(metaData.WelcomeChannel.id, organizationId, 'welcome-user');
@@ -83,7 +83,9 @@ export default function ({ metaData, organizationId, setFlag }: props) {
                 setWelcomeChannel(welcomeChannel);
 
                 setFlag('ALLOWED')
-                toast.success(`Welcome ${session.user?.name}`);
+                toast({
+                    title: `Welcome ${session.user?.name}`
+                });
             } else {
                 setError('wrong password');
                 setFlag('PROTECTED');

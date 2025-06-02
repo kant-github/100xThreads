@@ -50,7 +50,7 @@ router.put("/user", authmiddleware, updateUserDetails);
 router.get("/user/profile-data/:organizationId/:userId", authmiddleware, getUserProfileData);
 router.get("/check-username", authmiddleware, getUserNameDetails);
 router.get('/auth/google', googleAuthController);
-router.get('/auth/google/callback', googleAuthCallbackController);
+router.get('/api/auth/google/callback', googleAuthCallbackController);
 
 
 // organizations controller

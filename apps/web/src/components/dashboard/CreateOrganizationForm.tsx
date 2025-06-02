@@ -16,13 +16,13 @@ import axios from "axios";
 import { ORGANIZATION } from "@/lib/apiAuthRoutes";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import moment from "moment";
-import { toast } from "sonner";
 import { userCreatedOrganizationAtom } from "@/recoil/atoms/organizationsAtom";
 import { hashPassword } from "@/authentication/organizationAuthentication";
 import CreateOrganizationFormOne from "../form/organizationForm/CreateOrganizationFormOne";
 import CreateOrganizationFormSecond from "../form/organizationForm/CreateOrganizationFormSecond";
 import CreateOrganizationFormThree from "../form/organizationForm/CreateOrganizationFormThree";
 import CreateOrganizationFormFour from "../form/organizationForm/CreateOrganizationFormFour";
+import { useToast } from "@/hooks/useToast";
 
 interface CreateRoomProps {
     open: boolean;
@@ -46,7 +46,7 @@ export default function CreateOrganization({ open, setOpen }: CreateRoomProps) {
     const session = useRecoilValue(userSessionAtom);
     const setOwnedOrganization = useSetRecoilState(userCreatedOrganizationAtom);
     const [isSubmitting, setIsSubmitting] = useState(false);
-
+    const { toast } = useToast();
     const { control, watch, reset, handleSubmit, formState: { errors } } = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -131,15 +131,19 @@ export default function CreateOrganization({ open, setOpen }: CreateRoomProps) {
             });
 
             setOwnedOrganization((prev) => [response.data.data, ...prev]);
-            toast.success("Organization created successfully!", {
+            toast({
+                title: "Organization created successfully!",
                 description: moment().format("dddd, MMMM D, YYYY")
             });
+
+
 
             setCurrentStep(1);
             reset();
             setOpen(false);
         } catch (error) {
-            toast.error("Failed to create organization. Please try again.", {
+            toast({
+                title: "Failed to create organization. Please try again.",
                 description: "Please check your input and try again."
             });
             console.error("Organization creation error:", error);

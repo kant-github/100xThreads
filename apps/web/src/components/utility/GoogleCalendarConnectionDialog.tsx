@@ -4,6 +4,7 @@ import { ExternalLink } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 import { RxCross1 } from "react-icons/rx";
 import UtilityCard from "./UtilityCard";
+import { API_URL } from "@/lib/apiAuthRoutes";
 
 interface GoogleCalendarConnectionDialogProps {
     setOpen: Dispatch<SetStateAction<boolean>>;
@@ -12,10 +13,10 @@ interface GoogleCalendarConnectionDialogProps {
 export default function GoogleCalendarConnectionDialog({
     setOpen,
 }: GoogleCalendarConnectionDialogProps) {
-    
+
     function handleConnect() {
         const currentUrl = window.location.href;
-        const authUrl = `http://localhost:7001/api/auth/google?returnUrl=${encodeURIComponent(
+        const authUrl = `${API_URL}/auth/google?returnUrl=${encodeURIComponent(
             currentUrl
         )}`;
         window.location.href = authUrl;
