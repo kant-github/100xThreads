@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
-import { oauth2Client } from "../../config/google";
 import { google } from "googleapis";
 import prisma from "@repo/db/client";
+import { getGoogleAuth2client } from "../../config/google";
 
 export default async function googleAuthCallbackController(req: Request, res: Response) {
     const { code, state } = req.query;
-
-    let returnUrl = 'http://localhost:3000';
+    const { oauth2Client } = getGoogleAuth2client();
+    let FRONTEND_URL = process.env.BASE_URL
+    let returnUrl = FRONTEND_URL;
     try {
         if (state) {
             const decodedState = JSON.parse(Buffer.from(state as string, 'base64').toString());
@@ -17,11 +18,10 @@ export default async function googleAuthCallbackController(req: Request, res: Re
     }
 
     if (!code) {
-        return res.redirect('http://localhost:3000?error=no_code');
+        return res.redirect(`${returnUrl}/error=no_code`);
     }
 
     try {
-
         const { tokens } = await oauth2Client.getToken(code as string);
         oauth2Client.setCredentials(tokens);
         const tokenExpiresAt = tokens.expiry_date ? new Date(tokens.expiry_date) : null;
@@ -30,7 +30,7 @@ export default async function googleAuthCallbackController(req: Request, res: Re
         const { data: userInfo } = await oauth2.userinfo.get();
 
         if (!userInfo.email) {
-            res.redirect(`http://localhost:3000?success=false&userId=${userInfo.email}`);
+            res.redirect(`${FRONTEND_URL}?success=false&userId=${userInfo.email}`);
             return;
         }
 
@@ -42,7 +42,7 @@ export default async function googleAuthCallbackController(req: Request, res: Re
 
 
         if (!user?.id) {
-            res.redirect(`http://localhost:3000?success=false&userId=${userInfo.email}`);
+            res.redirect(`${FRONTEND_URL}?success=false&userId=${userInfo.email}`);
             return;
         }
 
@@ -58,13 +58,13 @@ export default async function googleAuthCallbackController(req: Request, res: Re
             }
         })
 
-        const urlObj = new URL(returnUrl);
+        const urlObj = new URL(returnUrl!);
         res.redirect(urlObj.toString());
         return;
 
     } catch (error) {
         console.error('Error during OAuth callback:', error);
-        res.redirect('http://localhost:3000?error=auth_failed');
+        res.redirect(`${FRONTEND_URL}?error=auth_failed`);
         return;
     }
 }

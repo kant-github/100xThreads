@@ -41,16 +41,19 @@ import getEventsByChannel from "../controllers/events/getEventsByChannel";
 import getEvent from "../controllers/events/getEvent";
 import getMyEvents from "../controllers/events/getMyEvents";
 import updateEvent from "../controllers/events/updateEvent";
+import loginUserController from "../controllers/user/loginUserController";
+import isValidOrganizationName from "../controllers/organization/isValidOrganizationName";
 
 const router: Router = Router();
 
 // user_controller
+router.post("/auth/login", loginUserController);
 router.get("/user/:id", authmiddleware, getUserDetails);
 router.put("/user", authmiddleware, updateUserDetails);
 router.get("/user/profile-data/:organizationId/:userId", authmiddleware, getUserProfileData);
 router.get("/check-username", authmiddleware, getUserNameDetails);
-router.get('/auth/google', googleAuthController);
-router.get('/api/auth/google/callback', googleAuthCallbackController);
+router.get('/oauth/google', googleAuthController);
+router.get('/oauth/google/callback', googleAuthCallbackController);
 
 
 // organizations controller
@@ -61,6 +64,7 @@ router.post("/organizations", authmiddleware, storeOrganization);
 router.delete("/organizations/:organizationId", authmiddleware, deleteOrganizations);
 router.get("/organizations-and-user-by-search", authmiddleware, getOrganizationAndUserBySearch);
 router.get("/organizations-all", authmiddleware, getAllOrganizations);
+router.get("/organizations-search", authmiddleware, isValidOrganizationName);
 
 // organization-settings controller
 router.post("/organizations/settings/users/assign-tags", authmiddleware, assignTagsHandler);

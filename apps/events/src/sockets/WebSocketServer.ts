@@ -148,10 +148,11 @@ export default class WebSocketServerManager {
     }
 
     private async handleCustomMessage(ws: WebSocketClient, type: string, message: any) {
-
+        console.log("message type is : ", message.type);
         switch (type) {
             case 'accept-friend-request': {
                 const data = await this.friendsChannelManager.handleIncomingFriendRequest(message);
+
                 if (data.user1.userId) {
                     this.sendToUser(String(data.user1.userId), type, data.user1.data);
                 }
@@ -162,6 +163,7 @@ export default class WebSocketServerManager {
             }
             case 'send-friend-request': {
                 const data = await this.friendsChannelManager.addFriendHandler(message);
+                console.log("send : ", data);
                 if (data?.user1.userId) {
                     this.sendToUser(String(data.user1.userId), type, data.user1.data);
                 }

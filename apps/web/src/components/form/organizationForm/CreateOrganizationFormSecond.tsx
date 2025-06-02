@@ -1,10 +1,17 @@
 import { Control, Controller, FieldErrors } from "react-hook-form";
-import { KeyboardEvent, useState } from "react";
+import { KeyboardEvent, useEffect, useState } from "react";
 import { X } from "lucide-react";
 import ErrorMessage from "@/components/utility/ErrorMessage";
 import { FormValues } from "@/components/dashboard/CreateOrganizationForm";
 import InputBox from "@/components/utility/InputBox";
 import { FileUpload } from "@/components/ui/file-upload";
+import InputBoxCalls from "@/components/utility/InputBoxCalls";
+import { CiCircleCheck } from "react-icons/ci";
+import { RxCross2 } from "react-icons/rx";
+import axios from "axios";
+import { API_URL } from "@/lib/apiAuthRoutes";
+import { useRecoilValue } from "recoil";
+import { userSessionAtom } from "@/recoil/atoms/atom";
 
 export const presetChannels = [
     {
@@ -49,7 +56,12 @@ export default function ({
     control,
     errors
 }: OrganizationDetailsSectionProps) {
+    const session = useRecoilValue(userSessionAtom);
     const [tagInput, setTagInput] = useState<string>("");
+    const [orgName, setOrgName] = useState<string>('');
+    const [timeOut, setTimeOut] = useState<NodeJS.Timeout | null>(null);
+    const [orgNameValid, setOrgNameValid] = useState<boolean>(false);
+
 
     function handleKeyDown(e: KeyboardEvent<HTMLInputElement>, value: string[], onChange: (value: string[]) => void) {
         if (e.key === 'Enter' || e.key === ',') {
@@ -65,6 +77,40 @@ export default function ({
         }
     };
 
+    async function checkValidOrgName(name: string) {
+        if (!name) {
+            setOrgNameValid(false);
+            return;
+        }
+
+        try {
+            const { data } = await axios.get(`${API_URL}/organizations-search?name=${orgName}`, {
+                headers: {
+                    Authorization: `Bearer ${session.user?.token}`
+                }
+            });
+            setOrgNameValid(data.isValid);
+        } catch (error) {
+            setOrgNameValid(false);
+            console.error("Error checking org name validity:", error);
+        }
+    }
+
+    async function debounced(name: string) {
+        if (timeOut) {
+            clearTimeout(timeOut);
+        }
+        const newTimeOut = setTimeout(() => {
+            checkValidOrgName(name);
+        }, 1000)
+        setTimeOut(newTimeOut);
+
+    }
+
+    useEffect(() => {
+        debounced(orgName);
+    }, [orgName]);
+
     return (
         <div className="">
             <div className="flex flex-row gap-x-4 w-full">
@@ -73,26 +119,38 @@ export default function ({
                     control={control}
                     render={({ field: { onChange, value } }) => (
                         <FileUpload
-                        className="mt-8"
+                            className="mt-8"
                             value={value}
                             onChange={onChange}
                             error={errors.image?.message}
                         />
                     )}
                 />
-                <div className="flex-col w-full">
+                <div className="flex-col w-full relative">
+                    <span className="absolute right-2 top-1">
+                        {orgNameValid ? <CiCircleCheck className="bg-green-500/90 rounded-full text-green-950 p-[1px]" /> : <RxCross2 className="bg-red-500/90 rounded-full text-red-950 p-[3px]" />}
+                    </span>
                     <Controller
                         name="organizationName"
                         control={control}
-                        render={({ field }) => (
-                            <InputBox
-                                className="mt-4"
-                                label="Organization name"
-                                value={field.value}
-                                onChange={field.onChange}
-                                error={errors.ownerName?.message}
-                            />
-                        )}
+                        render={({ field }) => {
+
+                            function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+                                const value = e.target.value;
+                                field.onChange(value);
+                                setOrgName(value);
+                            }
+
+                            return (
+                                <InputBoxCalls
+                                    className="mt-4"
+                                    label="Organization name"
+                                    value={field.value}
+                                    onChange={handleChange}
+                                    error={errors.ownerName?.message}
+                                />
+                            )
+                        }}
                     />
                     <Controller
                         name="organizationDescription"

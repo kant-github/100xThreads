@@ -1,11 +1,15 @@
 import { google } from 'googleapis';
-import dotenv from 'dotenv';
-import { GOOGLE_CONFIG } from '../calendar/googleCalendarService';
-dotenv.config();
+import { getGoogleConfig } from '../calendar/googleCalendarService';
 
+export function getGoogleAuth2client() {
 
-export const oauth2Client = new google.auth.OAuth2(
-  GOOGLE_CONFIG.CLIENT_ID,
-  GOOGLE_CONFIG.CLIENT_SECRET,
-  GOOGLE_CONFIG.REDIRECT_URI
-);
+  const config = getGoogleConfig();
+  const oauth2Client = new google.auth.OAuth2(
+    config.CLIENT_ID,
+    config.CLIENT_SECRET,
+    config.REDIRECT_URI
+  );
+  return { config, oauth2Client };
+
+}
+

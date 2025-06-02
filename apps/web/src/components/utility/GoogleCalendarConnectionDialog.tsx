@@ -16,7 +16,7 @@ export default function GoogleCalendarConnectionDialog({
 
     function handleConnect() {
         const currentUrl = window.location.href;
-        const authUrl = `${API_URL}/auth/google?returnUrl=${encodeURIComponent(
+        const authUrl = `${API_URL}/oauth/google?returnUrl=${encodeURIComponent(
             currentUrl
         )}`;
         window.location.href = authUrl;
@@ -54,6 +54,7 @@ export default function GoogleCalendarConnectionDialog({
                             height={18}
                             width={18}
                             unoptimized
+                            priority
                             alt="google calendar"
                         />
                         <span className="text-neutral-100 text-[12px] tracking-wide font-normal">

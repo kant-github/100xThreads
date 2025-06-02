@@ -5,10 +5,11 @@ import fileUpload from "express-fileupload";
 import Routes from "./routes";
 import WebSocketServerManager from "./websockets/webSocketServer";
 import dotenv from 'dotenv'
+import path from "path";
 
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const app = express();
-dotenv.config();
 app.use(cors());
 
 app.use(express.json());
@@ -29,8 +30,8 @@ app.get("/health-check", (req, res) => {
 
 app.use("/api", Routes);
 
-server.listen(7001, () => {
-  console.log(`App is listening on port ${7001}`);
+server.listen(PORT, () => {
+  console.log(`App is listening on port ${PORT}`);
 }).on("error", (err) => {
   console.error(`Server failed to start on port ${PORT}:`, err.message);
 });

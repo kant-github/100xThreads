@@ -74,8 +74,10 @@ export default class KafkaConsumerService {
         console.warn('Received message with no value');
         return;
       }
+      console.log("message recieved is : ", message);
 
       const eventData = JSON.parse(message.value.toString());
+      console.log("event data : ", eventData);
       const payload: NotificationEvent = eventData.value;
       const userId = eventData.userId;
       const notification = await this.storeNotification(payload, userId);

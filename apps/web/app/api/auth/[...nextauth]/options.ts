@@ -1,8 +1,8 @@
 import { Account, AuthOptions, ISODateString } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import prisma from "@repo/db/client";
-import jwt from "jsonwebtoken";
 import { JWT } from "next-auth/jwt";
+import axios from "axios";
+import { API_URL } from "@/lib/apiAuthRoutes";
 
 export interface UserType {
     id?: string | null;
@@ -27,49 +27,19 @@ export const authOption: AuthOptions = {
         async signIn({ user, account }: { user: UserType; account: Account | null }) {
             try {
                 if (account?.provider === "google") {
-
-                    const existingUser = await prisma.users.findFirst({
-                        where: {
-                            email: user.email!,
-                        },
+                    const response = await axios.post(`${API_URL}/auth/login`, {
+                        user,
+                        account
                     });
-                    let myUser;
-                    if (existingUser) {
-                        myUser = await prisma.users.update({
-                            where: { email: user.email! },
-                            data: {
-                                name: user.name!,
-                                image: user.image,
-                                provider: account.provider,
-                                oauth_id: account.providerAccountId!,
-                            },
-                        });
-                    } else {
-                        myUser = await prisma.users.create({
-                            data: {
-                                email: user.email!,
-                                name: user.name!,
-                                image: user.image,
-                                provider: account.provider,
-                                oauth_id: account.providerAccountId!,
-                            },
-                        });
+                    
+                    const result = response.data;
+                    
+                    if (result?.success) {
+                        user.id = result.user.id.toString();
+                        user.token = result.token;
+                        return true;
                     }
-
-                    const jwtPayload = {
-                        name: myUser.name,
-                        email: myUser.email,
-                        id: myUser.id,
-                    };
-
-                    const token = jwt.sign(jwtPayload, "default_secret", {
-                        expiresIn: "365d",
-                    });
-                    user.id = myUser?.id?.toString();
-                    user.token = token;
-                    return true;
                 }
-
                 return false;
             } catch (err) {
                 console.error(err);

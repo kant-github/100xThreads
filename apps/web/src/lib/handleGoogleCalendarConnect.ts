@@ -1,5 +1,7 @@
+import { API_URL } from "./apiAuthRoutes"
+
 export default function handleGoogleCalendarConnect(currentUrl: string) {
-    const authUrl = `http://localhost:7001/api/auth/google?returnUrl=${encodeURIComponent(
+    const authUrl = `${API_URL}/oauth/google?returnUrl=${encodeURIComponent(
         currentUrl
     )}`;
     window.location.href = authUrl;
