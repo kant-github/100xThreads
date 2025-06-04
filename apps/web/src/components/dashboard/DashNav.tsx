@@ -17,8 +17,7 @@ import { createOrganizationAtom, userSessionAtom } from "@/recoil/atoms/atom";
 import { useRecoilState, useRecoilValue } from "recoil";
 
 
-export const globalGroupId: string = "d023e34a-3aaf-46f4-88b5-b38b2ec6cffe";
-export default function Header() {
+export default function DashNav() {
   const [searchInput, setSearchInput] = useState("");
   const [usersList, setUsersList] = useState<UserType[] | []>([]);
   const [organizationsList, setOrganizationsList] = useState<OrganizationType[]>([]);

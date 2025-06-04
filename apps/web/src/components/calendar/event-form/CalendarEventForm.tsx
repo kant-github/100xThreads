@@ -22,6 +22,9 @@ import { useToast } from "@/hooks/useToast";
 import { eventsForChannel } from "@/recoil/atoms/events/eventsForChannel";
 import { singleEventAtom } from "@/recoil/atoms/events/singleEventAtom";
 import { eventTagsAtom } from "@/recoil/atoms/events/eventTagsAtom";
+import { useAbility } from "@/rbac/abilityContext";
+import { Action, Subject } from "types/permission";
+import { useGoogleAuthStatus } from "@/hooks/useGoogleAuthStatus";
 
 interface CalendarEventFormProps {
     isOpen: boolean;
@@ -47,6 +50,8 @@ const steps = [
 ];
 
 export default function ({ isOpen, setIsOpen, channelId, selectedDate, start_time, end_time, status, title, description, tags, location, isEditMode, id }: CalendarEventFormProps) {
+    const ability = useAbility();
+    const googleAuthStatus = useGoogleAuthStatus();
     const organizationId = useRecoilValue(organizationIdAtom);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const setSingleEvent = useSetRecoilState(singleEventAtom)
@@ -98,9 +103,21 @@ export default function ({ isOpen, setIsOpen, channelId, selectedDate, start_tim
 
 
     async function onSubmit(payload: CreateEventFormSchema) {
+
+        if (!googleAuthStatus) {
+            toast({
+                title: "Google token expired or missing",
+                description: "Please reconnect your Google account to create or update events.",
+                variant: "destructive",
+            });
+            setIsSubmitting(false);
+            return;
+        }
+
         setIsSubmitting(true);
         if (!session.user?.token) return;
         if (isEditMode) {
+            if (ability.cannot(Action.UPDATE, Subject.EVENT)) return;
             try {
                 const { data } = await axios.put(`${EVENT_URL}/${organizationId}/${id}`, payload, {
                     headers: {
@@ -126,7 +143,7 @@ export default function ({ isOpen, setIsOpen, channelId, selectedDate, start_tim
                 setIsSubmitting(false);
             }
         } else {
-
+            if (ability.cannot(Action.CREATE, Subject.EVENT)) return;
             try {
                 const { data } = await axios.post(`${EVENT_URL}/${organizationId}`, payload, {
                     headers: {

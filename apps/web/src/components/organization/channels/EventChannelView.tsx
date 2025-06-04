@@ -6,12 +6,12 @@ import { organizationUserAtom } from "@/recoil/atoms/organizationAtoms/organizat
 import { useEffect, useState } from "react";
 import GoogleCalendarConnectionDialog from "@/components/utility/GoogleCalendarConnectionDialog";
 import isExpiredtoken from "@/lib/isExpiredToken";
-import EventNotConnectedComponent from "../events-channel/EventNotConnectedComponent";
 import { ORGANIZATION } from "@/lib/apiAuthRoutes";
 import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
 import { userSessionAtom } from "@/recoil/atoms/atom";
 import axios from "axios";
 import { eventsForChannel } from "@/recoil/atoms/events/eventsForChannel";
+import EventNotConnectedToGoogle from "../events-channel/EventNotConnectedToGoogle";
 
 interface EventChannelViewProps {
     channel: EventChannelType;
@@ -74,7 +74,7 @@ export default function EventChannelView({ channel }: EventChannelViewProps) {
 
 
     return (
-        <div className="bg-primDark w-full p-6">
+        <div className="bg-primDark w-full px-6 pt-6">
             {showDialoagBox && (<GoogleCalendarConnectionDialog setOpen={setShowDialoagBox} />)}
             {!showGoogleCalendarPage && channel.google_calendar_id && (
                 <>
@@ -87,7 +87,7 @@ export default function EventChannelView({ channel }: EventChannelViewProps) {
             )}
 
             {showGoogleCalendarPage && (
-                <EventNotConnectedComponent googleCalendarConnectionDialog={googleCalendarConnectionDialog} setShowGoogleCalendarPage={setShowGoogleCalendarPage} channel={channel} />
+                <EventNotConnectedToGoogle channel={channel} />
             )}
         </div>
     );

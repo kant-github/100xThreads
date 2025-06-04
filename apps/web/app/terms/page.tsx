@@ -1,7 +1,13 @@
-import React from 'react';
-import { FileText, Users, Shield, CheckCircle } from 'lucide-react';
 
-export default function TermsPage() {
+import React from 'react';
+import { Users, Shield, CheckCircle } from 'lucide-react';
+import UnclickableTicker from '@/components/ui/UnclickableTicker';
+import { GiDoubleDragon } from 'react-icons/gi';
+import DashNav from '@/components/dashboard/DashNav';
+import { Button } from '@/components/ui/button';
+import DesignButton from '@/components/buttons/DesignButton';
+
+export default function () {
     const keyTerms = [
         { icon: <Users className="w-5 h-5" />, text: "Use responsibly", desc: "Manage organizations ethically" },
         { icon: <Shield className="w-5 h-5" />, text: "Respect privacy", desc: "Protect user data always" },
@@ -48,17 +54,26 @@ export default function TermsPage() {
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-amber-50/20 to-yellow-50/30 dark:from-primDark dark:via-secDark dark:to-terDark py-16 px-4">
-            <div className="max-w-3xl mx-auto">
+        <div className="min-h-screen w-full flex flex-col">
+            <div className="min-h-[60px] sm:min-h-[70px] h-20 bg-emerald-200">
+                <DashNav />
+            </div>
+            <div className="max-w-3xl mx-auto pt-8">
 
                 {/* Compact Header */}
-                <div className="text-center mb-10">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-amber-500 to-yellow-500 rounded-[6px] mb-4">
-                        <FileText className="w-8 h-8 text-white" />
+                <div className="text-center mb-10 flex flex-col items-center justify-center gap-y-2">
+                    <div className="flex items-center justify-center gap-x-4 mb-8">
+                        <GiDoubleDragon
+                            size={50}
+                            className="text-[#f2a633] dark:text-[#f2a633]"
+                        />
+                        <div className="text-3xl md:text-5xl tracking-widest text-black dark:text-gray-300 flex items-center font-afacad">
+                            Shelv<span className="text-red-500">R</span>
+                        </div>
                     </div>
-                    <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-yellow-600 bg-clip-text text-transparent mb-2">
+                    <UnclickableTicker>
                         Terms of Service
-                    </h1>
+                    </UnclickableTicker>
                     <p className="text-gray-600 dark:text-gray-300 text-sm max-w-lg mx-auto">
                         Simple rules for using Shelvr's organization and calendar management platform
                     </p>
@@ -70,8 +85,8 @@ export default function TermsPage() {
                 {/* Key Points */}
                 <div className="grid md:grid-cols-3 gap-4 mb-8">
                     {keyTerms.map((term, index) => (
-                        <div key={index} className="bg-white/70 dark:bg-secDark/70 backdrop-blur-sm border border-amber-200/50 dark:border-amber-500/20 rounded-12 p-4 text-center hover:bg-white dark:hover:bg-secDark transition-all duration-300">
-                            <div className="inline-flex items-center justify-center w-10 h-10 bg-gradient-to-r from-amber-500 to-yellow-500 rounded-[6px]  -8 mb-2">
+                        <div key={index} className="bg-white/70 dark:bg-secDark/70 backdrop-blur-sm border border-amber-200/50 dark:border-amber-500/20 rounded-[6px] p-4 text-center hover:bg-white dark:hover:bg-secDark transition-all duration-300">
+                            <div className="inline-flex items-center justify-center w-10 h-10 bg-primary rounded-[6px]  -8 mb-2">
                                 {term.icon}
                             </div>
                             <h3 className="font-semibold text-gray-800 dark:text-gray-200 text-sm">{term.text}</h3>
@@ -85,7 +100,7 @@ export default function TermsPage() {
                     {sections.map((section, index) => (
                         <div key={index} className="bg-white/80 dark:bg-secDark/80 backdrop-blur-sm rounded-[6px]  -12 p-6 hover:shadow-lg transition-all duration-300 border border-amber-100/50 dark:border-amber-500/10">
                             <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
-                                <div className="w-2 h-2 bg-amber-500 rounded-[6px] mr-3"></div>
+                                <div className="w-2 h-2 bg-primary rounded-[6px] mr-3"></div>
                                 {section.title}
                             </h2>
                             <ul className="space-y-2">
@@ -101,16 +116,16 @@ export default function TermsPage() {
                 </div>
 
                 {/* Quick Actions */}
-                <div className="bg-gradient-to-r from-amber-500 to-yellow-500 rounded-[6px]  -16 p-6 text-center text-white mb-6">
+                <div className="bg-primary rounded-[6px]  -16 p-6 text-center text-white mb-6 dark:text-secDark">
                     <h2 className="text-xl font-bold mb-2">Need Help?</h2>
-                    <p className="text-amber-100 text-sm mb-4">Questions about terms or need support?</p>
-                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                        <button className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-[6px] text-sm font-medium hover:bg-white/30 transition-colors border border-white/30">
+                    <p className="text-amber-100 text-sm mb-4 dark:text-terDark">Questions about terms or need support?</p>
+                    <div className="flex flex-col sm:flex-row gap-x-4 justify-center">
+                        <DesignButton className={"bg-neutral-800"}>
                             Contact Support
-                        </button>
-                        <button className="bg-white text-amber-600 px-4 py-2 rounded-[6px] text-sm font-medium hover:bg-amber-50 transition-colors">
+                        </DesignButton>
+                        <Button variant="outline" className="px-3 flex items-center justify-center gap-x-1 border border-yellow-500 bg-yellow-600/60 rounded-[6px] text-[11px] tracking-wide">
                             Download PDF
-                        </button>
+                        </Button>
                     </div>
                 </div>
 

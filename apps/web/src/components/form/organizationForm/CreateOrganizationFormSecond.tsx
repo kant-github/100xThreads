@@ -128,7 +128,7 @@ export default function ({
                 />
                 <div className="flex-col w-full relative">
                     <span className="absolute right-2 top-1">
-                        {orgNameValid ? <CiCircleCheck className="bg-green-500/90 rounded-full text-green-950 p-[1px]" /> : <RxCross2 className="bg-red-500/90 rounded-full text-red-950 p-[3px]" />}
+                        {orgNameValid ? <div className="flex items-center gap-x-2 text-xs font-medium text-green-600">name is available<CiCircleCheck size={16} className="bg-green-500/90 rounded-full text-green-950 p-[1px]" /></div> : <div className="flex items-center gap-x-2 text-xs font-medium text-red-600">name is already taken<RxCross2 size={15} className="bg-red-500/90 rounded-full text-red-950 p-[3px]" /></div>}
                     </span>
                     <Controller
                         name="organizationName"

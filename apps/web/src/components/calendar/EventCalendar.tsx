@@ -105,7 +105,7 @@ export default function ({ className, channel }: CalendarProps) {
               className={cn(
                 "relative min-h-[65px] flex items-center justify-center cursor-pointer rounded-[10px]",
                 !day.isCurrentMonth && "bg-muted/50",
-                isToday(day.date) && "font-semibold bg-[#ff4a4a] text-neutral-900",
+                isToday(day.date) && "font-semibold bg-[#f54242] text-neutral-900",
                 isEqual(day.date, new Date()) && "bg-accent"
               )}
             >

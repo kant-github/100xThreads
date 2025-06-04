@@ -16,7 +16,7 @@ interface EventNotConnectedComponentProps {
     setShowGoogleCalendarPage: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function EventNotConnectedComponent({ channel, googleCalendarConnectionDialog, setShowGoogleCalendarPage }: EventNotConnectedComponentProps) {
+export default function ConnectGooglCalendar({ channel, googleCalendarConnectionDialog, setShowGoogleCalendarPage }: EventNotConnectedComponentProps) {
 
     function handleConnect() {
         handleGoogleCalendarConnect(window.location.href);
@@ -39,7 +39,7 @@ export default function EventNotConnectedComponent({ channel, googleCalendarConn
             </DashboardComponentHeading>
 
             <div className="grid grid-cols-[1.3fr_1fr] w-full mt-2">
-                <UtilityCard className="rounded-[8px] bg-terDark flex flex-col items-center justify-center gap-y-8 p-8">
+                <UtilityCard className="absolute top-[30%] -right-28 rounded-[11px] p-[5px] border-[1px] border-dashed border-neutral-600 bg-neutral-500/30">
                     <Image
                         src={"/images/google-calendar-demo.png"}
                         width={600}

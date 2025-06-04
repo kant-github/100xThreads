@@ -19,6 +19,9 @@ import CalendarEventForm from "@/components/calendar/event-form/CalendarEventFor
 import { useRecoilState } from "recoil";
 import { singleEventAtom } from "@/recoil/atoms/events/singleEventAtom";
 import { eventTagsAtom } from "@/recoil/atoms/events/eventTagsAtom";
+import { useAbility } from "@/rbac/abilityContext";
+import GuardComponent from "@/rbac/GuardComponent";
+import { Action, Subject } from "types/permission";
 
 export function getStatusText(status: string) {
     if (!status || typeof status !== 'string') {
@@ -34,6 +37,7 @@ interface GlobalSingleEventModalProps {
 }
 
 export default function GlobalSingleEventModal({ selectedEventId, setOpen, isOrgPage }: GlobalSingleEventModalProps) {
+
     const { data: session } = useSession();
     const [loading, setLoading] = useState<boolean>(false);
     const [event, setEvent] = useRecoilState(singleEventAtom);
@@ -171,14 +175,14 @@ export default function GlobalSingleEventModal({ selectedEventId, setOpen, isOrg
                         <div className="flex flex-row gap-x-2 flex-shrink-0">
                             {
                                 isOrgPage && (
-                                    <>
+                                    <GuardComponent action={Action.MANAGE} subject={Subject.EVENT}>
                                         <ToolTipComponent content="Edit event">
                                             <Edit2 onClick={() => setOpeneditEventModal(true)} size={31} className="text-neutral-200 dark:bg-neutral-400/20 hover:bg-neutral-500 transition-colors p-[7px] rounded-[4px]" />
                                         </ToolTipComponent>
                                         <ToolTipComponent content="Delete event">
                                             <Trash size={28} className="text-neutral-100 bg-red-600/80 hover:bg-red-600 transition-colors p-1.5 rounded-[4px]" />
                                         </ToolTipComponent>
-                                    </>
+                                    </GuardComponent>
                                 )
                             }
 

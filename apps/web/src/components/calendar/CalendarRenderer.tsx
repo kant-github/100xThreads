@@ -8,8 +8,8 @@ interface CalendarRenderedProps {
 
 export default function ({ className, channel }: CalendarRenderedProps) {
     return (
-        <div className={`${className}`}>
-            <EventCalendar channel={channel} />
+        <div className={`${className} `}>
+            <EventCalendar channel={channel} className="" />
         </div>
     )
 }

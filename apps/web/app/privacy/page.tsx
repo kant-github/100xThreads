@@ -1,6 +1,10 @@
 import React from 'react';
 import { Calendar, Users, Lock, Eye, Database, Globe } from 'lucide-react';
 import { GiDoubleDragon } from 'react-icons/gi';
+import { Button } from '@/components/ui/button';
+import UnclickableTicker from '@/components/ui/UnclickableTicker';
+import DesignButton from '@/components/buttons/DesignButton';
+import DashNav from '@/components/dashboard/DashNav';
 
 export default function PrivacyPage() {
     const sections = [
@@ -67,99 +71,101 @@ export default function PrivacyPage() {
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-primDark dark:to-secDark py-12 px-4">
-            <div className="max-w-4xl mx-auto">
+        <div className="min-h-screen w-full flex flex-col">
+            <div className="min-h-[60px] sm:min-h-[70px] h-20 bg-emerald-200">
+                <DashNav />
+            </div>
+            <div className="w-[56rem] mx-auto pt-8">
+
                 {/* Header */}
-                <div className="text-center mb-12">
-                    <div className="flex items-center justify-center gap-x-4 mb-6">
+                <div className="text-center mb-16">
+                    <div className="flex items-center justify-center gap-x-4 mb-8">
                         <GiDoubleDragon
                             size={50}
-                            className="transition-transform transform group-hover:-translate-x-[3px] text-[#f2a633] dark:text-[#f2a633]"
+                            className="text-[#f2a633] dark:text-[#f2a633]"
                         />
-                        <div
-                            className={`text-xl md:text-5xl tracking-widest text-black dark:text-gray-300 flex items-center font-afacad`}>
+                        <div className="text-3xl md:text-5xl tracking-widest text-black dark:text-gray-300 flex items-center font-afacad">
                             Shelv<span className="text-red-500">R</span>
                         </div>
                     </div>
-                    <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
+                    <UnclickableTicker>
+                        Privacy Policy
+                    </UnclickableTicker>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 max-w-3xl mx-auto my-4">
                         Your privacy matters to us. This policy explains how Shelvr handles your data when you use our
                         organization and event management platform with Google Calendar integration.
                     </p>
-                    <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
-                        Last updated: {new Date().toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                        })}
+                    <div className="mt-3 text-xs text-gray-500 dark:text-gray-400">
+                        Updated {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </div>
                 </div>
 
                 {/* Quick Summary */}
-                <div className="bg-amber-50 dark:bg-terDark border-l-4 border-amber-500 p-6 mb-8 rounded-[8px]">
-                    <h2 className="text-xl font-semibold text-amber-900 dark:text-amber-100 mb-3">Privacy at a Glance</h2>
-                    <div className="grid md:grid-cols-2 gap-4 text-sm text-amber-800 dark:text-amber-200">
-                        <div className="flex items-center">
+                <div className="bg-amber-50 dark:bg-terDark border border-amber-200 dark:border-amber-700/30 p-6 mb-12 rounded-[6px]">
+                    <h2 className="text-xl font-semibold text-amber-900 dark:text-amber-100 mb-4">Privacy at a Glance</h2>
+                    <div className="grid md:grid-cols-2 gap-4 text-sm">
+                        <div className="flex items-center text-amber-800 dark:text-amber-200">
                             <Calendar className="w-4 h-4 mr-2" />
                             Google Calendar access only as you authorize
                         </div>
-                        <div className="flex items-center">
+                        <div className="flex items-center text-amber-800 dark:text-amber-200">
                             <Users className="w-4 h-4 mr-2" />
                             Organization data shared only with your team
                         </div>
-                        <div className="flex items-center">
+                        <div className="flex items-center text-amber-800 dark:text-amber-200">
                             <Lock className="w-4 h-4 mr-2" />
                             End-to-end encryption for all data
                         </div>
-                        <div className="flex items-center">
+                        <div className="flex items-center text-amber-800 dark:text-amber-200">
                             <Eye className="w-4 h-4 mr-2" />
                             Full control over your data and privacy
                         </div>
                     </div>
                 </div>
 
-                {/* Main Sections */}
-                <div className="space-y-8">
+                {/* Main Sections - 2 Column Grid */}
+                <div className="grid lg:grid-cols-2 gap-6 mb-12">
                     {sections.map((section, index) => (
-                        <div key={index} className="bg-white dark:bg-secDark rounded-[8px] shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">
-                            <div className="p-8">
-                                <div className="flex items-center mb-6">
-                                    <div className="bg-gradient-to-r from-amber-500 to-yellow-500 p-3 rounded-[8px] text-white mr-4">
-                                        {section.icon}
-                                    </div>
-                                    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">{section.title}</h2>
+                        <div key={index} className="bg-white/80 dark:bg-secDark/80 backdrop-blur-sm rounded-[6px]  -12 p-6 hover:shadow-lg transition-all duration-300 border border-amber-100/50 dark:border-amber-500/10">
+                            <div className="flex items-center mb-4">
+                                <div className="bg-amber-500/70 p-2 rounded-[6px] text-white dark:text-primDark mr-3">
+                                    {section.icon}
                                 </div>
-                                <ul className="space-y-3">
-                                    {section.content.map((item, itemIndex) => (
-                                        <li key={itemIndex} className="flex items-start text-gray-600 dark:text-gray-300">
-                                            <div className="w-2 h-2 bg-amber-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                                            <span className="leading-relaxed text-sm">{item}</span>
-                                        </li>
-                                    ))}
-                                </ul>
+                                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                                    {section.title}
+                                </h3>
                             </div>
+                            <ul className="space-y-2">
+                                {section.content.map((item, itemIndex) => (
+                                    <li key={itemIndex} className="flex items-start text-gray-600 dark:text-gray-300 text-[13px] font-normal tracking-wider">
+                                        <div className="w-1.5 h-1.5 bg-amber-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                        <span>{item}</span>
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
                     ))}
                 </div>
 
                 {/* Contact Section */}
-                <div className="mt-12 bg-gradient-to-r from-amber-500 to-yellow-500 rounded-xl text-white p-8 text-center">
-                    <h2 className="text-2xl font-bold mb-4">Questions About Your Privacy?</h2>
-                    <p className="text-amber-100 mb-6 max-w-2xl mx-auto">
+                <div className="bg-primary rounded-[6px] text-white p-8 text-center mb-8">
+                    <h2 className="text-xl font-bold mb-4 dark:text-primDark">Questions About Your Privacy?</h2>
+                    <p className="text-amber-100 mb-6 max-w-2xl mx-auto text-sm font-normal dark:text-neutral-800">
                         We're committed to transparency. If you have any questions about how we handle your data
                         or need to exercise your privacy rights, don't hesitate to reach out.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <button className="bg-white text-amber-600 px-6 py-3 rounded-[8px] font-semibold hover:bg-amber-50 transition-colors">
+                    <div className="flex flex-col sm:flex-row gap-x-4 justify-center">
+                        <DesignButton className={"bg-neutral-800"}>
                             Contact Support
-                        </button>
-                        <button className="border-2 border-white text-white px-6 py-3 rounded-[8px] font-semibold hover:bg-white hover:text-amber-600 transition-colors">
+                        </DesignButton>
+                        <Button variant="outline" className="px-2  flex items-center justify-center gap-x-1 border border-yellow-500 bg-yellow-600/60 rounded-[6px] text-[11px]">
                             Download My Data
-                        </button>
+                        </Button>
                     </div>
                 </div>
 
                 {/* Footer */}
-                <div className="mt-8 text-center text-gray-500 dark:text-gray-400 text-sm">
+                <div className="text-center text-gray-500 dark:text-gray-400 text-sm">
                     <p>
                         By using Shelvr, you agree to this Privacy Policy. We may update this policy from time to time,
                         and we'll notify you of any significant changes.
