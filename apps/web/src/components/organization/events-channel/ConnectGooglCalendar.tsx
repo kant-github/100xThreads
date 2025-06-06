@@ -4,30 +4,45 @@ import ToolTipComponent from "@/components/ui/ToolTipComponent";
 import UnclickableTicker from "@/components/ui/UnclickableTicker";
 import UtilityCard from "@/components/utility/UtilityCard";
 import handleGoogleCalendarConnect from "@/lib/handleGoogleCalendarConnect";
+import isExpiredtoken from "@/lib/isExpiredToken";
+import { organizationUserAtom } from "@/recoil/atoms/organizationAtoms/organizationUserAtom";
 import { ChevronLeft, Dot } from "lucide-react";
 import Image from "next/image";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { IoIosInformationCircleOutline } from "react-icons/io";
+import { useRecoilValue } from "recoil";
 import { EventChannelType } from "types/types";
 
 interface EventNotConnectedComponentProps {
     channel: EventChannelType;
-    googleCalendarConnectionDialog: boolean;
-    setShowGoogleCalendarPage: Dispatch<SetStateAction<boolean>>;
+    setShowGoogleCalendarPage?: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function ConnectGooglCalendar({ channel, googleCalendarConnectionDialog, setShowGoogleCalendarPage }: EventNotConnectedComponentProps) {
-
+export default function EventNotConnectedComponent({ channel, setShowGoogleCalendarPage }: EventNotConnectedComponentProps) {
+    const organizationUser = useRecoilValue(organizationUserAtom);
+    const [googleCalendarConnectionDialog, setGoogleCalendarConnectionDialog] = useState<boolean>(false);
     function handleConnect() {
         handleGoogleCalendarConnect(window.location.href);
     }
 
+    useEffect(() => {
+        const shouldShowDialog = !organizationUser?.user?.token_expires_at || isExpiredtoken(organizationUser?.user?.token_expires_at);
+
+        if (shouldShowDialog) {
+            setGoogleCalendarConnectionDialog(true);
+        }
+    }, [organizationUser?.user?.token_expires_at]);
+
     return (
-        <UtilityCard className="flex flex-col gap-y-4">
+        <UtilityCard className="flex flex-col gap-y-4 px-6">
             <span>
                 {
                     channel.google_calendar_id && (
-                        <Button onClick={() => setShowGoogleCalendarPage(false)} variant={'ghost'} className="rounded-full aspect-square flex items-center justify-center gap-x-2 hover:bg-terDark">
+                        <Button onClick={() => {
+                            if (setShowGoogleCalendarPage) {
+                                setShowGoogleCalendarPage(false)
+                            }
+                        }} variant={'ghost'} className="rounded-full aspect-square flex items-center justify-center gap-x-2 hover:bg-terDark">
                             <ChevronLeft className="text-neutral-200" />
                             <span className="text-sm text-neutral-200">Back</span>
                         </Button>
@@ -39,7 +54,7 @@ export default function ConnectGooglCalendar({ channel, googleCalendarConnection
             </DashboardComponentHeading>
 
             <div className="grid grid-cols-[1.3fr_1fr] w-full mt-2">
-                <UtilityCard className="absolute top-[30%] -right-28 rounded-[11px] p-[5px] border-[1px] border-dashed border-neutral-600 bg-neutral-500/30">
+                <UtilityCard className="rounded-[8px] bg-terDark flex flex-col items-center justify-center gap-y-8 p-8">
                     <Image
                         src={"/images/google-calendar-demo.png"}
                         width={600}

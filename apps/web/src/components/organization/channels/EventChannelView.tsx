@@ -12,6 +12,7 @@ import { userSessionAtom } from "@/recoil/atoms/atom";
 import axios from "axios";
 import { eventsForChannel } from "@/recoil/atoms/events/eventsForChannel";
 import EventNotConnectedToGoogle from "../events-channel/EventNotConnectedToGoogle";
+import EventsCaseBasedGoogleConnectRenderer from "../events-channel/EventsCaseBasedGoogleConnectRenderer";
 
 interface EventChannelViewProps {
     channel: EventChannelType;
@@ -74,20 +75,20 @@ export default function EventChannelView({ channel }: EventChannelViewProps) {
 
 
     return (
-        <div className="bg-primDark w-full px-6 pt-6">
-            {showDialoagBox && (<GoogleCalendarConnectionDialog setOpen={setShowDialoagBox} />)}
+        <div className="bg-primDark w-full">
+            {/* {showDialoagBox && (<GoogleCalendarConnectionDialog setOpen={setShowDialoagBox} />)} */}
             {!showGoogleCalendarPage && channel.google_calendar_id && (
-                <>
+                <div className="px-6 pt-6">
                     <EventChannelTopBar
                         channel={channel}
                         setShowGoogleCalendarPage={setShowGoogleCalendarPage}
                     />
                     <EventsChannelrenderer channel={channel} />
-                </>
+                </div>
             )}
 
             {showGoogleCalendarPage && (
-                <EventNotConnectedToGoogle channel={channel} />
+                <EventsCaseBasedGoogleConnectRenderer googleCalendarConnectionDialog={googleCalendarConnectionDialog} channel={channel} />
             )}
         </div>
     );

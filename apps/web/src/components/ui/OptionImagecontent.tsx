@@ -57,7 +57,7 @@ export default function ({ friendshipStatus, sendFriendRequestHandler, organizat
                 ) : friendshipStatus.startsWith("REQUEST_SENT") ? (
                     <DesignButton disabled>Request Sent</DesignButton>
                 ) : (
-                    <DesignButton onClick={sendFriendRequestHandler}>Add Friend</DesignButton>
+                    <DesignButton className={'py-2'} onClick={sendFriendRequestHandler}>Add Friend</DesignButton>
                 )}
             </div>
 
