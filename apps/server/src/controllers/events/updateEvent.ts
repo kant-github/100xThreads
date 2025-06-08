@@ -5,7 +5,7 @@ import GoogleCalendarService from "../../calendar/googleCalendarService";
 import isExpiredtoken from "../../config/isExpiredtoken";
 import { ContentAndApprovalsPage } from "twilio/lib/rest/content/v1/contentAndApprovals";
 
-const RESPONSE_FLAGS = {
+export const RESPONSE_FLAGS = {
     SUCCESS: 'SUCCESS',
     CONNECT_CALENDAR: 'CONNECT_CALENDAR',
     CALENDAR_INTEGRATION_FAILED: 'CALENDAR_INTEGRATION_FAILED',

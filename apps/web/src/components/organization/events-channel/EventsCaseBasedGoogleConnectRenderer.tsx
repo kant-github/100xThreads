@@ -1,13 +1,15 @@
 import { eventsCaseGoogleConnectAtom } from "@/recoil/atoms/events/eventsCaseGoogleConnectAtom"
 import { useRecoilState } from "recoil"
-import EventNotConnectedToGoogle from "./EventNotConnectedToGoogle";
 import { EventChannelType } from "types/types";
 import EventGoogleConnectProgressBar from "./EventGoogleConnectProgressBar";
-import ConnectGooglCalendar from "./ConnectGooglCalendar";
+import ConnectUserToGooglCalendar from "./ConnectUserToGooglCalendar";
+import { Dispatch, SetStateAction } from "react";
+import ConnectChannelToGooglCalendar from "./ConnectChannelToGooglCalendar";
 
 interface EventsCaseBasedGoogleConnectRendererProps {
     channel: EventChannelType;
-    googleCalendarConnectionDialog: boolean;
+    setIsEventConnectedToGoogle: Dispatch<SetStateAction<boolean>>;
+    
 }
 
 const steps = [
@@ -20,16 +22,16 @@ const steps = [
     }
 ]
 
-export default function EventsCaseBasedGoogleConnectRenderer({ channel, googleCalendarConnectionDialog }: EventsCaseBasedGoogleConnectRendererProps) {
+export default function EventsCaseBasedGoogleConnectRenderer({ channel, setIsEventConnectedToGoogle }: EventsCaseBasedGoogleConnectRendererProps) {
 
     const [eventsCaseBasedGoogleSteps, setEventsCaseBasedGoogleSteps] = useRecoilState(eventsCaseGoogleConnectAtom);
 
     function renderComponent() {
         switch (eventsCaseBasedGoogleSteps) {
             case 0:
-                return <ConnectGooglCalendar channel={channel} />
+                return <ConnectUserToGooglCalendar channel={channel} />
             case 1:
-                return <EventNotConnectedToGoogle channel={channel} />
+                return <ConnectChannelToGooglCalendar setIsEventConnectedToGoogle={setIsEventConnectedToGoogle} channel={channel} />
         }
     }
 

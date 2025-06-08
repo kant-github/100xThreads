@@ -71,7 +71,7 @@ export async function storeOrganization(req: Request, res: Response) {
         let calendarId: string | undefined | null;
         if (user?.token_expires_at && !isExpiredtoken(user.token_expires_at.toString())) {
             googleCalendarService = new GoogleCalendarService(user.access_token!, user.access_token!);
-            calendarId = await googleCalendarService.createGoogleCalendar(organizationName);
+            calendarId = await googleCalendarService.createGoogleCalendar(`${organizationName} - Events`);
         }
 
         const newOrganization = await prisma.$transaction(async (tx) => {

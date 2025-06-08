@@ -38,7 +38,7 @@ export default class GoogleCalendarService {
     public async createGoogleCalendar(calendarTitle: string) {
         const sharedCalendar = await this.calendar.calendars.insert({
             requestBody: {
-                summary: `${calendarTitle} - Events`,
+                summary: calendarTitle,
                 description: `Events calendar for ${calendarTitle} organization`,
 
             }
@@ -154,6 +154,20 @@ export default class GoogleCalendarService {
             return updatedGoogleEvent.data
         } catch (err) {
             console.error("Error in updating google calendar event", err);
+        }
+    }
+
+    public async deleteGoogleEvent(calendarId: string, eventId: string) {
+        try {
+            await this.calendar.events.delete({
+                calendarId,
+                eventId
+            });
+            console.log(`Event with ID ${eventId} deleted successfully from calendar ${calendarId}.`);
+            return true;
+        } catch (error) {
+            console.error("Error deleting Google Calendar event:", error);
+            throw error;
         }
     }
 

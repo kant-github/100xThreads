@@ -2,7 +2,7 @@
 import OpacityBackground from "@/components/ui/OpacityBackground";
 import UtilityCard from "@/components/utility/UtilityCard";
 import { getStatusColor } from "./EventCard";
-import { Clock, Edit2, ExternalLink, Map, Trash } from "lucide-react";
+import { Clock, Edit2, ExternalLink, Loader2, LoaderCircle, Map, Trash } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import ToolTipComponent from "@/components/ui/ToolTipComponent";
@@ -10,18 +10,23 @@ import AppLogo from "@/components/heading/AppLogo";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import { API_URL } from "@/lib/apiAuthRoutes";
+import { API_URL, EVENT_URL } from "@/lib/apiAuthRoutes";
 import OrganizationTagTicker from "@/components/utility/tickers/OrganizationTagTicker";
 import GlobalSingleEventModalSkeleton from "@/components/skeletons/GlobalSingleEventModalSkeleton";
 import Link from "next/link";
 import OptionImage from "@/components/ui/OptionImage";
 import CalendarEventForm from "@/components/calendar/event-form/CalendarEventForm";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { singleEventAtom } from "@/recoil/atoms/events/singleEventAtom";
 import { eventTagsAtom } from "@/recoil/atoms/events/eventTagsAtom";
 import { useAbility } from "@/rbac/abilityContext";
 import GuardComponent from "@/rbac/GuardComponent";
 import { Action, Subject } from "types/permission";
+import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";
+import { userSessionAtom } from "@/recoil/atoms/atom";
+import { useToast } from "@/hooks/useToast";
+import { eventsForChannel } from "@/recoil/atoms/events/eventsForChannel";
+import { myEventsAtom } from "@/recoil/atoms/events/myEventsAtom";
 
 export function getStatusText(status: string) {
     if (!status || typeof status !== 'string') {
@@ -37,12 +42,41 @@ interface GlobalSingleEventModalProps {
 }
 
 export default function GlobalSingleEventModal({ selectedEventId, setOpen, isOrgPage }: GlobalSingleEventModalProps) {
-
-    const { data: session } = useSession();
     const [loading, setLoading] = useState<boolean>(false);
+    const setEventsForChannels = useSetRecoilState(eventsForChannel);
+    const setMyEvents = useSetRecoilState(myEventsAtom);
     const [event, setEvent] = useRecoilState(singleEventAtom);
     const [tags, setTags] = useRecoilState(eventTagsAtom);
+    const [isDeleting, setIsDeleting] = useState<boolean>(false);
     const [openeditEventModal, setOpeneditEventModal] = useState<boolean>(false);
+    const session = useRecoilValue(userSessionAtom);
+    const { toast } = useToast();
+    const organizationId = useRecoilValue(organizationIdAtom);
+
+    async function deleteEvent() {
+        if (!session.user?.token) return;
+        setIsDeleting(true)
+        try {
+            const { data } = await axios.delete(`${EVENT_URL}/${organizationId}/${selectedEventId}`, {
+                headers: {
+                    Authorization: `Bearer ${session?.user?.token}`
+                }
+            })
+            console.log(data);
+            if (data.success) {
+                setEventsForChannels(prev => prev.filter(event => event.id !== data.deletedEvent.id));
+                setMyEvents(prev => prev.filter(event => event.id !== data.deletedEvent.id));
+                toast({
+                    title: data.message,
+                })
+            }
+        } catch (err) {
+            console.error("Error in creating event");
+        } finally {
+            setIsDeleting(false);
+            setOpen(false);
+        }
+    }
 
     async function getEvents() {
         if (!session?.user?.token || !selectedEventId) {
@@ -179,8 +213,22 @@ export default function GlobalSingleEventModal({ selectedEventId, setOpen, isOrg
                                         <ToolTipComponent content="Edit event">
                                             <Edit2 onClick={() => setOpeneditEventModal(true)} size={31} className="text-neutral-200 dark:bg-neutral-400/20 hover:bg-neutral-500 transition-colors p-[7px] rounded-[4px]" />
                                         </ToolTipComponent>
-                                        <ToolTipComponent content="Delete event">
-                                            <Trash size={28} className="text-neutral-100 bg-red-600/80 hover:bg-red-600 transition-colors p-1.5 rounded-[4px]" />
+                                        <ToolTipComponent content={loading ? "Deleting..." : "Delete event"}>
+                                            <button
+                                                type="button"
+                                                onClick={deleteEvent}
+                                                disabled={loading}
+                                                className={`text-neutral-100 transition-colors p-[7px] rounded-[4px] bg-red-600/80 hover:bg-red-600`}
+                                            >
+                                                {isDeleting ? (
+                                                    <div className="flex items-center justify-center gap-x-2">
+                                                        <span className="font-normal text-xs">deleting..</span>
+                                                        <LoaderCircle size={12} className="animate-spin" />
+                                                    </div>
+                                                ) : (
+                                                    <Trash size={16} />
+                                                )}
+                                            </button>
                                         </ToolTipComponent>
                                     </GuardComponent>
                                 )

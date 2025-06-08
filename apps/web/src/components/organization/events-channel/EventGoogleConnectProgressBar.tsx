@@ -32,7 +32,7 @@ export default function EventGoogleConnectProgressBar({ className, steps, curren
     }
 
     function handleBack() {
-        if (currentStep > 0) {
+        if (currentStep >= 0) {
             setCurrentStep(prev => prev - 1);
         }
     }

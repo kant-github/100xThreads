@@ -4,17 +4,19 @@ import { eventssideBarAtom } from "@/recoil/atoms/events/eventssideBarAtom";
 import { organizationUserAtom } from "@/recoil/atoms/organizationAtoms/organizationUserAtom";
 import { Calendar } from "lucide-react";
 import Image from "next/image";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { EventChannelType } from "types/types";
 import EventSideBar from "./EventSideBar";
 
 interface EventChannelTopBarProps {
     channel: EventChannelType;
+    setIsEventConnectedToGoogle: Dispatch<SetStateAction<boolean>>;
     setShowGoogleCalendarPage: Dispatch<SetStateAction<boolean>>;
+    showGoogleCalendarPage: boolean
 }
 
-export default function ({ channel, setShowGoogleCalendarPage }: EventChannelTopBarProps) {
+export default function ({ channel, setIsEventConnectedToGoogle, setShowGoogleCalendarPage, showGoogleCalendarPage }: EventChannelTopBarProps) {
     const organizationUser = useRecoilValue(organizationUserAtom);
     const [eventSideBar, setEventSideBar] = useRecoilState(eventssideBarAtom)
     const isConnected = Boolean(
@@ -32,9 +34,13 @@ export default function ({ channel, setShowGoogleCalendarPage }: EventChannelTop
 
     return (
         <div className="flex items-center justify-between">
-            <DashboardComponentHeading description={channel.description}>
-                {channel.title}
-            </DashboardComponentHeading>
+            <div>
+                {!showGoogleCalendarPage && (
+                    <DashboardComponentHeading description={channel.description}>
+                        {channel.title}
+                    </DashboardComponentHeading>
+                )}
+            </div>
             <div className="flex flex-row items-center gap-x-3">
                 <Button
                     onClick={() => setEventSideBar(true)}
@@ -65,6 +71,7 @@ export default function ({ channel, setShowGoogleCalendarPage }: EventChannelTop
                 </Button>
             </div>
             <EventSideBar channel={channel} open={eventSideBar} setOpen={setEventSideBar} />
+
         </div>
     )
 }

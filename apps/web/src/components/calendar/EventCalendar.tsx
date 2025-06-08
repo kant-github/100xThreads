@@ -3,23 +3,19 @@ import React, { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import CalendarHeader from "./CalendarHeader";
-import { add, eachDayOfInterval, endOfMonth, format, isEqual, isSameMonth, isToday, parse, startOfMonth, startOfWeek, endOfWeek, } from "date-fns";
+import { add, eachDayOfInterval, endOfMonth, format, isEqual, isSameMonth, isToday, parse, startOfMonth, startOfWeek, endOfWeek, isSameDay } from "date-fns";
 import UtilityCard from "../utility/UtilityCard";
 import CalendarEventForm from "./event-form/CalendarEventForm";
-import { EventChannelType } from "types/types";
+import { EventChannelType, EventType } from "types/types";
 import { useAbility } from "@/rbac/abilityContext";
 import { Action, Subject } from "types/permission";
+import { myEventsAtom } from "@/recoil/atoms/events/myEventsAtom";
+import { useRecoilState } from "recoil";
+import { eventsForChannel } from "@/recoil/atoms/events/eventsForChannel";
 
-interface Subscription {
-  id: string;
-  name: string;
-  date: number;
-  icon: string;
-  color: string;
-}
-interface SubscriptionDay {
+interface CalendarDay {
   date: Date;
-  subscriptions: Subscription[];
+  events: EventType[];
   isCurrentMonth: boolean;
 }
 
@@ -27,8 +23,9 @@ interface CalendarProps {
   className?: string;
   channel: EventChannelType;
 }
+
 export default function ({ className, channel }: CalendarProps) {
-  const [subscriptions, setSubscriptions] = React.useState<Subscription[]>([]);
+  const [myEvents, setMyEvents] = useRecoilState(eventsForChannel);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const ability = useAbility();
@@ -41,17 +38,23 @@ export default function ({ className, channel }: CalendarProps) {
   const days = useMemo(() => {
     const start = startOfWeek(startOfMonth(firstDayCurrentMonth));
     const end = endOfWeek(endOfMonth(firstDayCurrentMonth));
-    return eachDayOfInterval({ start, end }).map(
-      (day): SubscriptionDay => ({
-        date: day,
-        subscriptions: subscriptions.filter(
-          (subscription) => subscription.date === day.getDate()
-        ),
-        isCurrentMonth: isSameMonth(day, firstDayCurrentMonth),
-      })
-    );
-  }, [firstDayCurrentMonth, subscriptions]);
 
+    return eachDayOfInterval({ start, end }).map(
+      (day): CalendarDay => {
+        // Filter events for this specific day
+        const dayEvents = myEvents.filter((event) => {
+          const eventDate = new Date(event.start_time);
+          return isSameDay(eventDate, day);
+        });
+
+        return {
+          date: day,
+          events: dayEvents,
+          isCurrentMonth: isSameMonth(day, firstDayCurrentMonth),
+        };
+      }
+    );
+  }, [firstDayCurrentMonth, myEvents]);
 
   function previousMonthHandler() {
     const firstDayNextMonth = add(firstDayCurrentMonth, { months: -1 });
@@ -63,15 +66,6 @@ export default function ({ className, channel }: CalendarProps) {
     setCurrentMonth(format(firstDayNextMonth, "MMM-yyyy"));
   }
 
-  function handleAddSubscription(newSubscription: Omit<Subscription, "id">) {
-    const subscription = { ...newSubscription, id: Date.now().toString() };
-    setSubscriptions([...subscriptions, subscription]);
-  };
-
-  function handleRemoveSubscription(id: string) {
-    setSubscriptions(subscriptions.filter((sub) => sub.id !== id));
-  };
-
   function tapOnDateHandler(date: Date) {
     if (ability.can(Action.CREATE, Subject.EVENT)) {
       setSelectedDate(date);
@@ -79,10 +73,15 @@ export default function ({ className, channel }: CalendarProps) {
     }
   }
 
-
   return (
     <UtilityCard className={`p-4 mx-auto max-w-xl bg-secDark border-[1px] dark:border-neutral-700 rounded-[6px] ${className}`}>
-      <CalendarHeader previousMonthHandler={previousMonthHandler} nextMonthHandler={nextMonthHandler} firstDayCurrentMonth={firstDayCurrentMonth} currentMonth={currentMonth} setIsAddModalOpen={setIsAddModalOpen} />
+      <CalendarHeader
+        previousMonthHandler={previousMonthHandler}
+        nextMonthHandler={nextMonthHandler}
+        firstDayCurrentMonth={firstDayCurrentMonth}
+        currentMonth={currentMonth}
+        setIsAddModalOpen={setIsAddModalOpen}
+      />
       <div className="grid grid-cols-7 gap-px bg-muted rounded-lg overflow-hidden">
         <AnimatePresence mode="wait">
           {["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"].map((day) => (
@@ -120,26 +119,26 @@ export default function ({ className, channel }: CalendarProps) {
                 {format(day.date, "d")}
               </time>
 
-              {day.subscriptions.length > 0 && (
-                <div className="mt-1 flex items-center justify-center absolute right-1.5 bottom-1.5">
-                  <span
-                    className="bg-red-500 text-white text-[4px] font-medium px-[5px] rounded-full"
-                  >
-                    {day.subscriptions.length}
+              {day.events.length > 0 && (
+                <div className="mt-1 flex items-center justify-center absolute right-2.5 bottom-2.5">
+                  <span className="bg-amber-500 text-[2px] font-medium rounded-full min-w-[14px] flex items-center justify-center text-neutral-800">
+                    {day.events.length}
                   </span>
                 </div>
               )}
-
             </motion.div>
           ))}
         </AnimatePresence>
       </div>
-      {
-        isAddModalOpen && (
-          <CalendarEventForm isEditMode={false} channelId={channel.id} isOpen={isAddModalOpen} setIsOpen={setIsAddModalOpen} selectedDate={selectedDate!} />
-        )
-      }
+      {isAddModalOpen && (
+        <CalendarEventForm
+          isEditMode={false}
+          channelId={channel.id}
+          isOpen={isAddModalOpen}
+          setIsOpen={setIsAddModalOpen}
+          selectedDate={selectedDate!}
+        />
+      )}
     </UtilityCard>
   );
 }
-

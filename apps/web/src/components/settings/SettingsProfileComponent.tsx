@@ -27,7 +27,6 @@ export default function () {
                 <hr className="border-t border-zinc-600 border-0 h-px bg-zinc-500" />
                 <DashboardComponentHeading className="mt-2" description="Stay on top of your schedule">Upcoming Events</DashboardComponentHeading>
                 <div className="flex items-center justify-start gap-x-5">
-
                     {events.length > 0 && events?.slice(0, 3).map((event) => <MiniEventCard event={event} />)}
                 </div>
             </div>

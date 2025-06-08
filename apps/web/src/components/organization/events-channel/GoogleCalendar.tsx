@@ -15,34 +15,30 @@ import { EventChannelType } from "types/types";
 
 interface EventNotConnectedComponentProps {
     channel: EventChannelType;
-    setShowGoogleCalendarPage?: Dispatch<SetStateAction<boolean>>;
+    setShowGoogleCalendarPage: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function EventNotConnectedComponent({ channel, setShowGoogleCalendarPage }: EventNotConnectedComponentProps) {
+export default function GooglCalendar({ channel, setShowGoogleCalendarPage }: EventNotConnectedComponentProps) {
     const organizationUser = useRecoilValue(organizationUserAtom);
-    const [googleCalendarConnectionDialog, setGoogleCalendarConnectionDialog] = useState<boolean>(false);
+    const [isUserConnected, setIsUserConnected] = useState<boolean>(false);
     function handleConnect() {
         handleGoogleCalendarConnect(window.location.href);
     }
 
     useEffect(() => {
-        const shouldShowDialog = !organizationUser?.user?.token_expires_at || isExpiredtoken(organizationUser?.user?.token_expires_at);
-
+        const shouldShowDialog = organizationUser?.user?.token_expires_at && !isExpiredtoken(organizationUser?.user?.token_expires_at);
+        console.log("should show : ", shouldShowDialog);
         if (shouldShowDialog) {
-            setGoogleCalendarConnectionDialog(true);
+            setIsUserConnected(true);
         }
     }, [organizationUser?.user?.token_expires_at]);
 
     return (
-        <UtilityCard className="flex flex-col gap-y-4 px-6">
+        <UtilityCard className="flex flex-col gap-y-4 relative">
             <span>
                 {
                     channel.google_calendar_id && (
-                        <Button onClick={() => {
-                            if (setShowGoogleCalendarPage) {
-                                setShowGoogleCalendarPage(false)
-                            }
-                        }} variant={'ghost'} className="rounded-full aspect-square flex items-center justify-center gap-x-2 hover:bg-terDark">
+                        <Button onClick={() => setShowGoogleCalendarPage(false)} variant={'ghost'} className="rounded-full aspect-square flex items-center justify-center gap-x-2 hover:bg-terDark">
                             <ChevronLeft className="text-neutral-200" />
                             <span className="text-sm text-neutral-200">Back</span>
                         </Button>
@@ -54,7 +50,7 @@ export default function EventNotConnectedComponent({ channel, setShowGoogleCalen
             </DashboardComponentHeading>
 
             <div className="grid grid-cols-[1.3fr_1fr] w-full mt-2">
-                <UtilityCard className="rounded-[8px] bg-terDark flex flex-col items-center justify-center gap-y-8 p-8">
+                <UtilityCard className=" rounded-[11px] p-[5px] border-[1px] border-dashed border-neutral-600 bg-neutral-500/30">
                     <Image
                         src={"/images/google-calendar-demo.png"}
                         width={600}
@@ -84,7 +80,7 @@ export default function EventNotConnectedComponent({ channel, setShowGoogleCalen
                     <hr className="border-neutral-700" />
                     <div className="flex items-center justify-between w-full">
 
-                        {!googleCalendarConnectionDialog ? (
+                        {isUserConnected ? (
                             <Button variant={"ghost"} className="border-[1px] border-red-600 text-red-600 hover:bg-terDark text-xs rounded-[8px] py-0.5">
                                 Disconnect
                             </Button>

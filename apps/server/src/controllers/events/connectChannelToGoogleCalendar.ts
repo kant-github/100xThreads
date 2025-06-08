@@ -9,9 +9,9 @@ export default async function connectChannelToGoogleCalendar(req: Request, res: 
         return;
     }
 
-    const { channelId } = req.params;
+    const { eventChannelId } = req.params;
 
-    if (!channelId) {
+    if (!eventChannelId) {
         res.status(400).json({
             message: 'Event channel id is not found',
             success: false
@@ -21,9 +21,9 @@ export default async function connectChannelToGoogleCalendar(req: Request, res: 
 
     try {
         const eventChannel = await prisma.eventChannel.findUnique({
-            where: { id: channelId },
+            where: { id: eventChannelId },
             include: {
-                organization: { select: { name: true } }
+                organization: { select: { name: true, id: true } }
             }
         });
 
@@ -78,15 +78,37 @@ export default async function connectChannelToGoogleCalendar(req: Request, res: 
             return;
         }
 
-        await prisma.eventChannel.update({
-            where: { id: eventChannel.id },
-            data: { google_calendar_id: googleCalendarId }
-        });
+        const transactionData = await prisma.$transaction(async (tx) => {
+            await tx.eventChannel.update({
+                where: { id: eventChannel.id },
+                data: { google_calendar_id: googleCalendarId }
+            });
+
+            const onlineLocations = await tx.organizationLocations.findFirst({
+                where: {
+                    mode: 'ONLINE',
+                    organization_id: eventChannel.organization.id,
+                }
+            })
+            let orgLocations;
+            if (!onlineLocations) {
+                orgLocations = await tx.organizationLocations.create({
+                    data: {
+                        mode: 'ONLINE',
+                        organization_id: eventChannel.organization.id,
+                        name: 'Google Meet',
+                    }
+                });
+            }
+            return orgLocations
+        })
 
         res.status(200).json({
             success: true,
             message: 'Successfully connected to Google Calendar',
-            googleCalendarId
+            eventChannelId: eventChannel.id,
+            googleCalendarId,
+            ...(transactionData && { orgLocation: transactionData })
         });
         return;
 

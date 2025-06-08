@@ -82,7 +82,7 @@ export default function OrganizationSettingsLocationUI() {
             <div className="h-full overflow-y-auto p-4 space-y-4 bg-secDark rounded-[10px] border-[1px] dark:border-neutral-700 scrollbar-hide">
                 {
                     organizationLocations.map((location: OrganizationLocationTypes) => (
-                        <Option handleDeleteLocation={handleDeleteLocation} key={location.id || location.name} className='group' location={location} />
+                        <Option handleDeleteLocation={handleDeleteLocation} key={location?.id || location.name} className='group' location={location} />
                     ))
                 }
             </div>

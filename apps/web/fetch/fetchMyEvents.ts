@@ -4,7 +4,6 @@ import axios from "axios";
 export async function fetchMyEvents(token: string) {
 
     try {
-        await new Promise(t => setTimeout(t, 1000));
         const { data } = await axios.get(`${API_URL}/my-events`, {
             headers: {
                 Authorization: `Bearer ${token}`

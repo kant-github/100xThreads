@@ -1,15 +1,65 @@
 import DashboardComponentHeading from "@/components/dashboard/DashboardComponentHeading";
+import Spinner from "@/components/loaders/Spinner";
 import { Button } from "@/components/ui/button";
 import UtilityCard from "@/components/utility/UtilityCard";
-import { CalendarClock, Hourglass, Link } from "lucide-react";
+import { useToast } from "@/hooks/useToast";
+import { EVENT_URL } from "@/lib/apiAuthRoutes";
+import { userSessionAtom } from "@/recoil/atoms/atom";
+import { organizationEventChannelsAtom } from "@/recoil/atoms/organizationAtoms/organizationChannelAtoms";
+import { organizationLocationsAtom } from "@/recoil/atoms/organizationAtoms/organizationLocation/organizationLocationsAtom";
+import axios from "axios";
+import { CalendarClock, Hourglass, Link, LoaderCircle } from "lucide-react";
 import Image from "next/image";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { EventChannelType } from "types/types";
 
 interface EventNotConnectedToGoogleProps {
     channel: EventChannelType;
+    setIsEventConnectedToGoogle: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function EventNotConnectedToGoogle({ channel }: EventNotConnectedToGoogleProps) {
+export default function ConnectChannelToGooglCalendar({ channel, setIsEventConnectedToGoogle }: EventNotConnectedToGoogleProps) {
+    const session = useRecoilValue(userSessionAtom);
+    const [eventChannels, setEventChannels] = useRecoilState(organizationEventChannelsAtom);
+    const setOrgLocations = useSetRecoilState(organizationLocationsAtom);
+    const [loading, setLoading] = useState<boolean>(false);
+    const { toast } = useToast();
+    async function connectChannelToGoogleCalendar() {
+        try {
+            setLoading(true);
+            const { data } = await axios.get(`${EVENT_URL}/${channel.id}/connect-google-calendar`, {
+                headers: {
+                    Authorization: `Bearer ${session.user?.token}`
+                }
+            })
+            if (data.success) {
+                setIsEventConnectedToGoogle(true);
+                if (data.orgLocation) {
+                    setOrgLocations(prev => [data.orgLocation, ...prev]);
+                }
+                setEventChannels((prev) =>
+                    prev.map((channel) =>
+                        channel.id === data.eventChannelId ?
+                            { ...channel, google_calendar_id: data.googleCalendarId } :
+                            channel
+                    ))
+                toast({
+                    title: data.message,
+                })
+            }
+        } catch (err) {
+            console.error("Error in connecting channel to google calendar");
+        } finally {
+            setLoading(false);
+        }
+
+    }
+
+    useEffect(() => {
+        console.log("events channel is : ", eventChannels);
+    }, [eventChannels, setEventChannels]);
+
     return (
         <div className="overflow-hidden relative h-full">
             {/* Animated background elements */}
@@ -99,7 +149,7 @@ export default function EventNotConnectedToGoogle({ channel }: EventNotConnected
 
                         <UtilityCard className="group relative flex items-center gap-x-3 border-[1px] border-neutral-700 px-6 py-5">
                             <div className="bg-amber-500 p-1.5 rounded-[4px]">
-                                <CalendarClock className="text-neutral-950" />
+                                <CalendarClock className="text-white w-4 h-4" />
                             </div>
                             <div>
                                 <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 text-sm">Auto Sync</h3>
@@ -108,7 +158,7 @@ export default function EventNotConnectedToGoogle({ channel }: EventNotConnected
                         </UtilityCard>
                         <UtilityCard className="group relative flex items-center gap-x-3 border-[1px] border-neutral-700 px-6 py-5">
                             <div className="bg-amber-500 p-1.5 rounded-[4px]">
-                                <Hourglass className="text-neutral-950" />
+                                <Hourglass className="text-white w-4 h-4" />
                             </div>
                             <div>
                                 <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 text-sm">Smart Scheduling</h3>
@@ -131,14 +181,18 @@ export default function EventNotConnectedToGoogle({ channel }: EventNotConnected
                         </p>
                     </div>
 
-                    <Button className="group relative overflow-hidden bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-neutral-900 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/30 hover:scale-105 active:scale-95 border border-amber-400/50">
-                        <div className="absolute inset-0 bg-gradient-to-r from-white/30 to-neutral-100/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12"></div>
-                        <span className="relative flex items-center space-x-2">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                            </svg>
-                            <span>Connect Now</span>
-                        </span>
+                    <Button variant={"outline"} onClick={connectChannelToGoogleCalendar} className="flex items-center justify-center border-[1px] border-neutral-500 text-xs rounded-[8px] text-neutral-300">
+                        {!loading ? (
+                            <span className="relative flex items-center space-x-2">
+                                <Link />
+                                <span className="font-medium">Connect Now</span>
+                            </span>
+                        ) : (
+                            <div className="flex items-center justify-center gap-x-2">
+                                <span className="font-medium">connecting..</span>
+                                <LoaderCircle className="text-neutral-500 animate-spin" />
+                            </div>
+                        )}
                     </Button>
                 </div>
             </div>
