@@ -45,6 +45,7 @@ import loginUserController from "../controllers/user/loginUserController";
 import isValidOrganizationName from "../controllers/organization/isValidOrganizationName";
 import connectChannelToGoogleCalendar from "../controllers/events/connectChannelToGoogleCalendar";
 import deleteEvent from "../controllers/events/deleteEvent";
+import getEventsForChannelByDate from "../controllers/events/getEventsForChannelByDate";
 
 const router: Router = Router();
 
@@ -120,6 +121,7 @@ router.post("/organizations/event/:organizationId", authmiddleware, createGoogle
 router.put("/organizations/event/:organizationId/:eventId", authmiddleware, updateEvent);
 router.delete("/organizations/event/:organizationId/:eventId", authmiddleware, deleteEvent);
 router.get("/organizations/event/:eventChannelId/connect-google-calendar", authmiddleware, connectChannelToGoogleCalendar);
+router.get("/organizations/event/get-channel-events-by-date/:organizationId/:eventChannelId/:date", authmiddleware, getEventsForChannelByDate);
 router.get("/organizations/event/:eventChannelId/:organizationId", authmiddleware, getEventsByChannel);
 router.get("/event/:eventId", authmiddleware, getEvent);
 router.get("/my-events", authmiddleware, getMyEvents);

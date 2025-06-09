@@ -6,7 +6,7 @@ import UtilityCard from "@/components/utility/UtilityCard";
 import handleGoogleCalendarConnect from "@/lib/handleGoogleCalendarConnect";
 import isExpiredtoken from "@/lib/isExpiredToken";
 import { organizationUserAtom } from "@/recoil/atoms/organizationAtoms/organizationUserAtom";
-import { ChevronLeft, Dot, User, Shield, Calendar, Zap, Link } from "lucide-react";
+import { ChevronLeft, Dot, User, Shield, Zap } from "lucide-react";
 import Image from "next/image";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { IoIosInformationCircleOutline } from "react-icons/io";
@@ -79,6 +79,7 @@ export default function ConnectUserToGooglCalendar({ channel, setShowGoogleCalen
                                 width={600}
                                 height={400}
                                 unoptimized
+                                priority
                                 alt="Google Calendar demo screenshot"
                                 className="rounded-[10px] opacity-80 hover:opacity-100 transition-opacity duration-300"
                             />
@@ -154,6 +155,7 @@ export default function ConnectUserToGooglCalendar({ channel, setShowGoogleCalen
                             height={60}
                             width={60}
                             unoptimized
+                            priority
                             alt="Google Calendar logo"
                             className="object-contain"
                         />
@@ -211,7 +213,15 @@ export default function ConnectUserToGooglCalendar({ channel, setShowGoogleCalen
                                 variant={'ghost'}
                             >
                                 <span className="relative flex items-center space-x-2">
-                                    <Link />
+                                    <Image
+                                        src="/images/google-calendar.png"
+                                        height={18}
+                                        width={18}
+                                        unoptimized
+                                        priority
+                                        alt="Google Calendar logo"
+                                        className="object-contain"
+                                    />
                                     <span className="font-medium">Connect Now</span>
                                 </span>
                             </Button>

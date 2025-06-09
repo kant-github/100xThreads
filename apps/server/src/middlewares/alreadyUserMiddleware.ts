@@ -7,6 +7,8 @@ export default async function alreadyUserMiddleware(req: Request, res: Response,
     const user = req.user;
     const { organizationId } = req.params;
 
+
+
     if (!user?.id) {
         res.status(401).json({ message: "Unauthorized: User not authenticated." });
         return;
@@ -18,6 +20,9 @@ export default async function alreadyUserMiddleware(req: Request, res: Response,
     }
 
     try {
+
+        
+
         const alreadyUser = await prisma.organizationUsers.findUnique({
             where: {
                 organization_id_user_id: {

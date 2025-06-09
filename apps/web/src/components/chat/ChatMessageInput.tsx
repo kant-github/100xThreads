@@ -88,7 +88,7 @@ export default function ChatMessageInput({
                 placeholder={editingState ? "Edit message..." : "Type a message..."}
                 value={message}
                 rows={rows}
-                className={`${className} p-2 py-2.5 pl-4 font-light text-sm rounded-[8px] outline-none placeholder:text-black dark:bg-neutral-900 dark:text-gray-200 dark:placeholder:text-neutral-400 dark:placeholder:font-thin dark:placeholder:text-xs placeholder:font-light bg-neutral-900 resize-none`}
+                className={`${className} p-2 py-3 pl-4 font-light text-[13px] text-neutral-400 rounded-[8px] outline-none placeholder:text-black dark:bg-neutral-900 dark:text-gray-200 dark:placeholder:text-neutral-400 dark:placeholder:font-thin dark:placeholder:text-xs placeholder:font-light bg-neutral-900 resize-none`}
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}
             />

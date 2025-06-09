@@ -9,9 +9,9 @@ import CalendarEventForm from "./event-form/CalendarEventForm";
 import { EventChannelType, EventType } from "types/types";
 import { useAbility } from "@/rbac/abilityContext";
 import { Action, Subject } from "types/permission";
-import { myEventsAtom } from "@/recoil/atoms/events/myEventsAtom";
 import { useRecoilState } from "recoil";
 import { eventsForChannel } from "@/recoil/atoms/events/eventsForChannel";
+import EventsSideBarByDates from "../organization/events-channel/EventsSideBarByDates";
 
 interface CalendarDay {
   date: Date;
@@ -27,7 +27,9 @@ interface CalendarProps {
 export default function ({ className, channel }: CalendarProps) {
   const [myEvents, setMyEvents] = useRecoilState(eventsForChannel);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [openEventsSideBarByDates, setOpenEventsSideBarByDates] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedEventDate, setSelectedEventDate] = useState<Date | null>(null);
   const ability = useAbility();
   const [currentMonth, setCurrentMonth] = useState(
     format(new Date(), "MMM-yyyy")
@@ -55,6 +57,10 @@ export default function ({ className, channel }: CalendarProps) {
       }
     );
   }, [firstDayCurrentMonth, myEvents]);
+
+
+
+
 
   function previousMonthHandler() {
     const firstDayNextMonth = add(firstDayCurrentMonth, { months: -1 });
@@ -120,12 +126,20 @@ export default function ({ className, channel }: CalendarProps) {
               </time>
 
               {day.events.length > 0 && (
-                <div className="mt-1 flex items-center justify-center absolute right-2.5 bottom-2.5">
-                  <span className="bg-amber-500 text-[2px] font-medium rounded-full min-w-[14px] flex items-center justify-center text-neutral-800">
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedEventDate(day.date);
+                    setOpenEventsSideBarByDates(true);
+                  }}
+                  className="mt-1 flex items-center justify-center absolute right-2.5 bottom-2.5 aspect-square"
+                >
+                  <span className="bg-amber-500 text-[8px] font-medium rounded-full w-[14px] h-[14px] flex items-center justify-center text-neutral-800 transition-transform hover:scale-110">
                     {day.events.length}
                   </span>
                 </div>
               )}
+
             </motion.div>
           ))}
         </AnimatePresence>
@@ -139,6 +153,7 @@ export default function ({ className, channel }: CalendarProps) {
           selectedDate={selectedDate!}
         />
       )}
+      <EventsSideBarByDates open={openEventsSideBarByDates} setOpen={setOpenEventsSideBarByDates} channel={channel} date={selectedEventDate!} />
     </UtilityCard>
   );
 }

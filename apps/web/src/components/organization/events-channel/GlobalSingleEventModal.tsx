@@ -2,14 +2,13 @@
 import OpacityBackground from "@/components/ui/OpacityBackground";
 import UtilityCard from "@/components/utility/UtilityCard";
 import { getStatusColor } from "./EventCard";
-import { Clock, Edit2, ExternalLink, Loader2, LoaderCircle, Map, Trash } from "lucide-react";
+import { Clock, Edit2, ExternalLink, LoaderCircle, Map, Trash } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import ToolTipComponent from "@/components/ui/ToolTipComponent";
 import AppLogo from "@/components/heading/AppLogo";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import axios from "axios";
-import { useSession } from "next-auth/react";
 import { API_URL, EVENT_URL } from "@/lib/apiAuthRoutes";
 import OrganizationTagTicker from "@/components/utility/tickers/OrganizationTagTicker";
 import GlobalSingleEventModalSkeleton from "@/components/skeletons/GlobalSingleEventModalSkeleton";
@@ -19,7 +18,6 @@ import CalendarEventForm from "@/components/calendar/event-form/CalendarEventFor
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { singleEventAtom } from "@/recoil/atoms/events/singleEventAtom";
 import { eventTagsAtom } from "@/recoil/atoms/events/eventTagsAtom";
-import { useAbility } from "@/rbac/abilityContext";
 import GuardComponent from "@/rbac/GuardComponent";
 import { Action, Subject } from "types/permission";
 import { organizationIdAtom } from "@/recoil/atoms/organizationAtoms/organizationAtom";

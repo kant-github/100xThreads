@@ -44,7 +44,6 @@ export default function EventChannelView({ channel }: EventChannelViewProps) {
                     Authorization: `Bearer ${session.user.token}`
                 }
             })
-            await new Promise(t => setTimeout(t, 4000));
             setEvents(data.data);
         } catch (err) {
             console.error("Error in fetching the events");
@@ -52,11 +51,8 @@ export default function EventChannelView({ channel }: EventChannelViewProps) {
     }
 
     useEffect(() => {
-        console.log("check is ", isEventConnectedToGoogle);
         getEvents();
     }, [])
-
-
 
     return (
         <UtilityCard className="bg-primDark w-full">
