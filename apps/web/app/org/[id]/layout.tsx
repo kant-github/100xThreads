@@ -17,7 +17,7 @@ export default function ({
     const { data: session } = useSession();
     const setUserSession = useSetRecoilState(userSessionAtom);
     const setOrganizationId = useSetRecoilState(organizationIdAtom);
-    const organizationUserRole = useRecoilValue(organizationUserAtom).role;
+    const organizationUserRole = useRecoilValue(organizationUserAtom)?.role;
 
 
     const ability = useMemo(() => {

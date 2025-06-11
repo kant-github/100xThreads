@@ -25,10 +25,11 @@ import { useToast } from "@/hooks/useToast";
 interface props {
     metaData: protectedOrganizationMetadata,
     organizationId: string,
-    setFlag: Dispatch<SetStateAction<'PROTECTED' | 'ALLOWED' | 'INIT'>>
+    flag: 'PROTECTED' | 'ALLOWED' | 'INIT' | 'INVITE_ONLY'
+    setFlag: Dispatch<SetStateAction<'PROTECTED' | 'ALLOWED' | 'INIT' | 'INVITE_ONLY'>>
 }
 
-export default function ({ metaData, organizationId, setFlag }: props) {
+export default function ({ metaData, organizationId, setFlag, flag }: props) {
     const [loading, setLoading] = useState<boolean>(false);
     const session = useRecoilValue(userSessionAtom);
     const [password, setPassword] = useState('');
@@ -101,7 +102,7 @@ export default function ({ metaData, organizationId, setFlag }: props) {
     return (
         <div className="h-[50rem] w-full bg-white dark:bg-neutral-900 dark:bg-dot-white/[0.2] bg-dot-black/[0.2] relative flex items-center justify-center select-none">
             <OpacityBackground>
-                <UtilityCard className="w-5/12 px-12 relative py-8 flex flex-col items-start justify-center dark:bg-neutral-900">
+                <UtilityCard className="w-5/12 px-12 relative py-8 flex flex-col items-start justify-center dark:bg-neutral-900 border-[1px] border-neutral-700">
                     <div className="rounded-[12px] mt-4 absolute top-0 right-4" style={{ backgroundColor: `${metaData.organizationColor}` }}>
                         <Image src="/images/protected.png" width={80} height={40} alt="empty" className="p-3" />
                     </div>
@@ -127,7 +128,8 @@ export default function ({ metaData, organizationId, setFlag }: props) {
                                 ))
                             }
                         </div>
-                        <span className="text-[11px] font-light italic text-zinc-500">This is a private organization and needs password authentication to access</span>
+                        {flag === 'PROTECTED' && <span className="text-[11px] font-light italic text-zinc-500">This is a private organization and needs password authentication to access</span>}
+                        {flag === 'INVITE_ONLY' && <span className="text-[11px] font-light italic text-zinc-500">This organization is invite-only. You need an invitation to join.</span>}
                         {
                             !loading ? (
                                 <form onSubmit={clickHandler} className="w-full">

@@ -43,7 +43,7 @@ export async function caseJoinOrganization(req: Request, res: Response) {
 
         })
 
-
+        console.log("acess type is : ", organization?.access_type);
         if (organization?.access_type === 'PUBLIC') {
             const data = await getOrganizationsMetaDeta(organizationId, user.id);
             res.status(200).json({
@@ -51,7 +51,14 @@ export async function caseJoinOrganization(req: Request, res: Response) {
                 data: data
             })
             return;
-        } else {
+        } else if (organization?.access_type === 'INVITE_ONLY') {
+            res.status(201).json({
+                flag: 'INVITE_ONLY',
+                data: organization
+            })
+            return;
+        }
+        else {
             res.status(201).json({
                 flag: 'PROTECTED',
                 data: organization

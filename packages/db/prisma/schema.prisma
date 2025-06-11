@@ -89,7 +89,7 @@ model Organization {
   WelcomeChannel        WelcomeChannel?
   JoinRequests          OrganizationJoinRequest[]
   Invites               OrganizationInvite[]
-  OrganizationTags      OrganizationTag[] // Add this relation
+  OrganizationTags      OrganizationTag[]
   OrganizationLocations OrganizationLocations[]
 
   @@unique([name, owner_id])

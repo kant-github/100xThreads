@@ -22,9 +22,16 @@ export default async function (req: Request, res: Response) {
         const organization = await prisma.organization.findUnique({
             where: { id: organizationId },
             select: {
-                passwordHash: true
+                passwordHash: true,
+                access_type: true
             }
         })
+        if (organization?.access_type !== 'PRIVATE') {
+            res.json({
+                message: "This organization is not private"
+            })
+            return;
+        }
 
         const [clientSalt, clientHash] = password.split(":");
         const submittedHash = clientHash + clientSalt;

@@ -18,7 +18,7 @@ interface EventSideBarByDatesProps {
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
     channel: EventChannelType;
-    date: Date | null; // Allow null to handle cases where date might not be available
+    date: Date | null;
 }
 
 export default function EventsSideBarByDates({ open, setOpen, channel, date }: EventSideBarByDatesProps) {

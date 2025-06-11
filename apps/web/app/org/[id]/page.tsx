@@ -30,6 +30,7 @@ export type protectedOrganizationMetadata = {
 }
 
 export default function ({ params }: { params: { id: string } }) {
+    const { id } = params
     const session = useRecoilValue(userSessionAtom)
     const setEventChannel = useSetRecoilState(organizationEventChannelsAtom)
     const setChannels = useSetRecoilState(organizationChannelsAtom)
@@ -39,7 +40,7 @@ export default function ({ params }: { params: { id: string } }) {
     const setOrganizationUser = useSetRecoilState(organizationUserAtom);
     const setOrganizationTags = useSetRecoilState(organizationTagsAtom);
     const setOrganizationLocations = useSetRecoilState(organizationLocationsAtom);
-    const [flag, setFlag] = useState<'PROTECTED' | 'ALLOWED' | 'INIT'>('INIT')
+    const [flag, setFlag] = useState<'PROTECTED' | 'ALLOWED' | 'INIT' | 'INVITE_ONLY'>('INIT')
     const [data, setData] = useState<protectedOrganizationMetadata>({} as protectedOrganizationMetadata)
 
 
@@ -71,7 +72,12 @@ export default function ({ params }: { params: { id: string } }) {
             if (response.data.flag === 'ALLOWED') {
                 setFlag('ALLOWED')
                 updateChannels(response.data.data)
-            } else {
+            }
+            else if (response.data.flag === 'INVITE_ONLY') {
+                setFlag('INVITE_ONLY')
+                setData(response.data.data)
+            }
+            else {
                 setFlag('PROTECTED')
                 setData(response.data.data)
             }
@@ -86,6 +92,7 @@ export default function ({ params }: { params: { id: string } }) {
 
     const protectedComponent = useMemo(() => (
         <ProtectedOrganizationComponent
+            flag={flag}
             setFlag={setFlag}
             organizationId={params.id}
             metaData={data}
@@ -97,7 +104,7 @@ export default function ({ params }: { params: { id: string } }) {
     return (
         <div className="h-[100dvh] w-full flex flex-col overflow-hidden">
             {/* <OrgNavBar /> */}
-            {flag === 'PROTECTED' && protectedComponent}
+            {(flag === 'PROTECTED' || flag === 'INVITE_ONLY') && protectedComponent}
             {flag === 'ALLOWED' && (<div className="flex-1 overflow-auto">
                 <OrgDashboard />
             </div>

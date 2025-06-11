@@ -146,8 +146,10 @@ export async function storeOrganization(req: Request, res: Response) {
             message: "Organization created successfully",
             data: newOrganization,
         });
+        return;
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Error in creating organization" });
+        return;
     }
 }

@@ -14,7 +14,7 @@ export default async function getMyEvents(req: Request, res: Response) {
             },
             orderBy: {
                 event: {
-                    start_time: 'asc'
+                    start_time: 'desc'
                 }
             },
             select: {
